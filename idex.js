@@ -1,8 +1,10 @@
-var curBase;
-var curRel;
+
+var rpcport = "7778"
 var isPollingOrderbook = false;
 var SATOSHI = 10000000
-var prevPrice = 0;
+var curBase = 0;
+var curRel = 0;
+var orderbookTimeout;
 
 var currentOrderbook = 
 {
@@ -15,15 +17,24 @@ var currentOrderbook =
 	"relid":""
 };
 
+var postParams = 
+{
+	"orderbook":["baseid","relid","allfields"],
+	"allorderbooks":[],
+	"placebid":["baseid","relid","price","volume"],
+	"placeask":["baseid","relid","price","volume"],
+	"openorders":[],
+	"tradehistory":["timestamp"],
+	"cancelorder":["quoteid"]
+};
 
 
-//		POST TO DAEMON
 
 function sendPost(params) 
 {
-    var rpcport = "7778"
     var dfd = new $.Deferred();
     params = JSON.stringify(params);
+
 	$.ajax
     ({
 	  type: "POST",
@@ -32,14 +43,10 @@ function sendPost(params)
       contentType: 'application/json'
 	}).done(function(data)
     {
-
 		data = $.parseJSON(data)
-        //console.dir(data)
         dfd.resolve(data);
     }).fail(function(data)
     {
-
-        //console.dir(data)
         dfd.reject(data);
     })
 
@@ -47,326 +54,219 @@ function sendPost(params)
 }
 
 
-
-function getAllOrderbooks()
-{
-    var dfd = new $.Deferred();
-
-    var params = {"requestType":"allorderbooks"};
-
-    sendPost(params).done(function(data)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-function getOrderbook(baseid, relid)
-{
-    var dfd = new $.Deferred();
-
-    var params = {"requestType":"orderbook","baseid":baseid,"relid":relid,"allfields":1}
-
-    sendPost(params).done(function(data)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-
-function placeOrder(orderType, baseid, relid, price, volume)
-{
-    var dfd = new $.Deferred();
-
-    params = {"requestType":orderType,"baseid":baseid,"relid":relid,"price":price,"volume":volume}
-
-    sendPost(params).done(function(data)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-function placeBid(baseid, relid, price, volume)
-{
-    var dfd = new $.Deferred();
-
-    var params = {"requestType":"placebid","baseid":baseid,"relid":relid,"price":price,"volume":volume}
-
-    sendPost(params).done(function(params)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-function placeAsk(baseid, relid, price, volume)
-{
-    var params = {"requestType":"placeask","baseid":baseid,"relid":relid,"price":price,"volume":volume}
-
-    sendPost(params).done(function(params)
-    {
-        return data
-    })
-}
-
-
-function getOpenOrders()
-{
-    var dfd = new $.Deferred();
-
-    var params = {"requestType":"openorders"}
-
-    sendPost(params).done(function(data)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-function getTradeHistory()
-{
-    var dfd = new $.Deferred();
-
-    var params = {"requestType":"tradehistory","timestamp":0}
-
-    sendPost(params).done(function(data)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-function cancelOrder(quoteid)
-{
-    var dfd = new $.Deferred();
-
-    var params = {"requestType":"cancelquote","quoteid":quoteid}
-
-    sendPost(params).done(function(data)
-    {
-		dfd.resolve(data)
-    })
-
-	return dfd.promise()
-}
-
-
-$("#modal-01").on("show", function(e)
-{
-	//console.log('hellooo');
-
-})
-
 $("#openOrders table tbody").on("click", "tr td.cancelOrder", function(e)
 {
     var quoteid = $(this).data("quoteid")
 
 	cancelOrder(quoteid).done(function(data)
 	{
-		//console.dir(data)
 		$("#icoOrders").trigger("click");
 	})
-	
-	
 })
 
-$("#icoFolio").on('click', function(e)
+
+$(".popupLoad").on("click", function(e)
 {
-	getTradeHistory().done(function(data)
+	var params = extractPostPayload($(this))
+	if (params['requestType'] == "tradehistory")
+	{
+		params['timestamp'] = 0;
+	}
+	var $thisScope = $(this)
+	sendPost(params).done(function(data)
 	{
 		var row = ""
-		var $tradeHistoryTable = $("#tradeHistory table tbody")
-		//console.dir(data)
-		if ('assets' in data)
-		{
-			for (var i = 0; i < data.assets.length; ++i)
-			{
-				var asset = data.assets[i]
-				var assetid = asset.assetid
-				var purchased = asset.purchased
-				var sold = asset.sold
-				var net = asset.net
+		var modal = "#" + $thisScope.data("modal")
+		var $modalTable = $(modal + " table")
+		var keys = $modalTable.find("thead").data("keys").split(" ")
 
-				row += "<tr><td>"+asset+"</td><td>"+purchased+"</td><td>"+sold+"</td><td>"+net+"</td></tr>"
+		if (keys[0] in data)
+		{
+			var tableData = data[keys[0]]
+			keys.splice(0,1)
+
+			if (params['requestType'] == "openOrders")
+			{
+				tableData['market'] = tableData['base'] + "/" + tableData['rel']
+				keys = ["requestType", "market", "price", "volume", "relamount", "quoteid", "age"]
+				//<td data-quoteid='"+quoteid+"' class='cancelOrder'>CANCEL</td>
 			}
+
+			row = buildTableRows(objToList(tableData, keys))	
 		}
-		$tradeHistoryTable.empty().append(row)
-	})
-})
 
-$("#icoMarkets").on('click', function(e)
-{
-	getAllOrderbooks().done(function(data)
-	{
-	
-		var row = ""
-		var $allOrderbooksTable = $("#allOrderbooks table tbody")
-		//console.dir(data)
-		if (!('error' in data))
-		{
-			for (var i = 0; i < data.orderbooks.length; ++i)
-			{
-				var orderbook = data.orderbooks[i]
-				var base = orderbook.base
-				var rel = orderbook.rel
-				var numquotes = orderbook.numquotes
-				var exchange = orderbook.exchange
-
-				row += "<tr><td>"+base+"/"+rel+"</td><td>"+numquotes+"</td><td>"+exchange+"</td></tr>"
-			}
-		}
-		$allOrderbooksTable.empty().append(row)
-		/*RESPONSE
-		{
-		"orderbooks":	[
-			{
-			"base":	"NXT",
-			"baseid":	"5527630",
-			"rel":	"BTC",
-			"relid":	"4412482",
-			"numquotes":	13,
-			"type":	"0",
-			"exchange":	"cryptsy"
-			},
-			{
-				...
-			}
-		]
-		*/
+		$modalTable.find("tbody").empty().append(row)
 	})
 })
 
 
-
-$("#icoOrders").on('click', function(e)
+function getFormData($form) 
 {
+	var serialized = $form.serializeArray();
+	var data = {};
 
-	getOpenOrders().done(function(data)
+	for (var s in serialized) 
 	{
-		var row = ""
-		var $openOrdersTable = $("#openOrders table tbody")
-		//console.dir(data)
-		if (!('error' in data))
-		{
-			for (var i = 0; i < data.openorders.length; ++i)
-			{
-				var openOrder = data.openorders[i]
-				var market = openOrder.base +"/"+ openOrder.rel
-				var price = openOrder.price
-				var volume = openOrder.volume
-				var relAmount = openOrder.relamount
-				var quoteid = openOrder.quoteid
-				var age = openOrder.age
-				var typeOrder = openOrder.requestType
+		data[serialized[s]['name']] = serialized[s]['value']
+	}
 
-				row += "<tr><td>"+typeOrder+"</td><td>"+market+"</td><td>"+price+"</td><td>"+volume+"</td><td>"+relAmount+"</td><td>"+quoteid+"</td><td>"+age+"</td><td data-quoteid='"+quoteid+"' class='cancelOrder'>CANCEL</td></tr>"
-			}
-		}
-		$openOrdersTable.empty().append(row)
-		// RESPONSE
-		/*{
-		"openorders":	[{
-				"requestType":	"bid",
-				"base":	"1000BURST",
-				"rel":	"1000FIM",
-				"price":	1,
-				"volume":	1,
-				"exchange":	"iDEX",
-				"timestamp":	1425627464,
-				"age":	3,
-				"type":	"4294967297",
-				"NXT":	"9572159016638540187",
-				"baseid":	"251006016744564741",
-				"baseamount":	"100000000",
-				"relid":	"12404894802398759379",
-				"relamount":	"100000000"
-			}]
-		}*/
-
-		// {"result":"no openorders"}
-	})
-
-})
-
-
-
-
-//		POLL FOR BIDS/ASKS
-
-function pollOrderbook(baseid, relid, timeout, dfd)
-{
-	//var i = 0;
-
-	setTimeout(function() 
-	{
-		if (isPollingOrderbook)
-		{
-			getOrderbook(baseid, relid).done(function(data)
-			{
-				if (!('error' in data))
-				{
-					$("#currPair .order-text").html(data.pair)	
-					var bidData = groupOrders(data['bids'], currentOrderbook['bids'])
-					var askData = groupOrders(data['asks'], currentOrderbook['asks'])
-					//currentOrderbook['highestPrice'] = data['bids'][0]['price']
-
-					//console.log('bids')
-					//console.dir(bidData)
-					//console.log('asks')
-					//console.dir(askData)
-					//console.log('done')
-
-					currentOrderbook = data
-					updateOrderbook(data, bidData, askData)
-					//updateOrders(bidData, askData)
-				}
-
-				else
-				{
-					//$("#currPair .order-text").html(+String(baseid)+"/"+String(relid))
-					$("#currPair .order-text").html("No bids or asks")
-					$("#buyBook table tbody").empty()
-					$("#sellBook table tbody").empty()
-					$("#currLast .order-text").empty().html('0');
-					//console.log(data['error'])
-				}
-
-				pollOrderbook(baseid,relid,5000,dfd)
-			
-			})
-		}
-		else
-		{
-			dfd.resolve(true)
-		}
-	}, timeout);
-
-	return dfd.promise();
+	return data;
 }
 
 
-//	UPDATE OBOOK HANDLER
-
-function updateOrderbook(data, bidData, askData)
+function extractPostPayload($element)
 {
-	var lastPrice = data['bids'].length ? Math.round(Number(data['bids'][0].price) * SATOSHI) / SATOSHI : 0
+	var params = {}
 
-	updateOrders($("#buyBook table"), bidData, false)
-	updateOrders($("#sellBook table"), askData, true)
+	if ($element.is("button"))
+	{
+		var $form = $("#" + $element.data("form"))
+		params = getFormData($form)
+	}
+	else
+	{
+		params = $element.data()
+	}
+
+	params = buildPostPayload($element.data("method"), params)
+
+	return params
+}
+
+
+function buildPostPayload(method, data)
+{
+	var params = {}
+
+	for (var i = 0; i < postParams[method].length; ++i)
+	{
+		for (var key in data)
+		{
+			if (key == postParams[method][i])
+			{
+				params[key] = data[key]
+				break
+			}
+		}
+	}
+
+	params['requestType'] = method
+
+	return params
+}
+
+
+$(".idex-submit").on("click", function()
+{
+	var $form = $("#" + $(this).data("form"))
+	var params = extractPostPayload($(this))
+	var method = params['requestType']
+
+	if (method == "placebid" || method == "placeask")
+	{
+		params['baseid'] = curBase
+		params['relid'] = curRel
+	}
+	else if (method == "orderbook")
+	{
+		params['allfields'] = 1
+	}
+
+	sendPost(params).done(function(data)
+	{
+		if (method == "placebid" || method == "placeask")
+		{
+			if ('result' in data && data['result'])
+			{
+				// success popup?
+				// update orderbook bids/asks?
+			}
+			else
+			{
+				// fail popup?
+			}
+		}
+		else if (method == "orderbook")
+		{
+			curBase = params['baseid']
+			curRel = params['relid']
+
+			if (!isPollingOrderbook)
+			{
+				emptyOrderbook("Loading")
+				pollOrderbook()
+			}
+			else
+			{
+				stopPollOrderbook()
+				pollOrderbook(1)
+			}
+		}
+		else if (method == "cancelorder")
+		{
+			$("#modal-04").removeClass("md-show")
+		}
+	})
+
+	$("#modal-04").removeClass("md-show")
+	if ($form)
+	{
+		$form.trigger("reset")
+	}
+})
+
+
+function pollOrderbook(timeout)
+{
+	isPollingOrderbook = true
+
+	orderbookTimeout = setTimeout(function() 
+	{
+		var params = {"requestType":"orderbook","baseid":curBase,"relid":curRel,"allfields":1}
+
+		sendPost(params).done(function(orderbookData)
+		{
+			updateOrderbook(orderbookData);
+			pollOrderbook(3000)
+		})
+	}, timeout)
+}
+
+
+function stopPollOrderbook()
+{
+	clearTimeout(orderbookTimeout)
+	emptyOrderbook(" ")	
+	currentOrderbook = {"NXT":"","asks":[],"baseid":"","bids":[],"obookid":"","pair":"","relid":""};
+	isPollingOrderbook = false
+}
+
+
+function updateOrderbook(orderbookData)
+{
+	if (!('error' in orderbookData))
+	{
+		var lastPrice = orderbookData['bids'].length ? orderbookData['bids'][0]['price'] : 0
+		var bidData = groupOrders(orderbookData['bids'], currentOrderbook['bids'])
+		var askData = groupOrders(orderbookData['asks'], currentOrderbook['asks'])
+		askData['newOrders'].reverse()	
+		currentOrderbook = orderbookData
+
+		updateOrders($("#buyBook table"), bidData)
+		updateOrders($("#sellBook table"), askData)
+		animateOrderbook()
+		$("#currLast .order-text").empty().html(Number(lastPrice).toFixed(8));
+		$("#currPair .order-text").html(orderbookData.pair)
+	}
+	else
+	{
+		emptyOrderbook("No bids or asks")
+	}
+}
+
+
+function animateOrderbook()
+{
 	$(".newrow").find('td').wrapInner('<div style="display: none; background-color:#333;" />').parent().find('td > div').slideDown(700, function(){
 		var $set = $(this)
 		$set.replaceWith($set.contents())
@@ -374,49 +274,105 @@ function updateOrderbook(data, bidData, askData)
 	$(".expiredRow").find('td').wrapInner('<div style="display: block; color:#CCC;" />').parent().find('td > div').slideUp(700, function(){
 		$(this).parent().parent().remove();
 	})
+
 	$(".newrow").removeClass("newrow")
 	$(".expiredRow").removeClass("expiredRow")
-	$("#currLast .order-text").empty().html(lastPrice.toFixed(8));
 }
 
 
-
-//		UPDATE ORDERBOOK BIDS/ASKS
-
-function updateOrders($book, orderData, isAsk)
+function emptyOrderbook(currPair)
 {
-	var tableData = "";
+	$("#currPair .order-text").html(currPair)
+	$("#buyBook table tbody").empty()
+	$("#sellBook table tbody").empty()
+	$("#currLast .order-text").empty().html('0');
+}
 
+
+function buildTableRows(data, rowClass)
+{
+	var row = ""
+	//var rowWrap = typeof rowClass !== "undefined" ? "<tr class='"+rowClass+"'>" : "<tr>";
+
+	for (var i = 0; i < data.length; ++i)
+	{
+		var td = ""
+
+		for (var j = 0; j < data[i].length; ++j)
+		{
+			td += "<td>"+data[i][j]+"</td>"
+		}
+		row += "<tr>"+td+"</tr>"
+	}
+
+	return row
+}
+
+
+function objToList(data, keys)
+{
+	var arr = []
+
+	for (var i = 0; i < data.length; ++i)
+	{
+		var loopArr = []
+
+		for (var j = 0; j < keys.length; ++j)
+		{
+			loopArr.push(data[i][keys[j]])
+		}
+		arr.push(loopArr)
+	}
+
+	return arr
+}
+
+
+function updateOrders($book, orderData)
+{
 	if (!($book.find("tr").length))
 	{
-		//console.log('fresh')
-		//console.dir(orderData['newOrders'])
-		tableData = addRow(orderData['newOrders'], isAsk);
-		$book.find("tbody").empty().append(tableData);
+		var jqList = []
+		for (var i = 0; i < orderData['newOrders'].length; ++i)
+		{
+			// really bad
+			var loopNewOrd = orderData['newOrders'][i]
+			var price = toSatoshi(loopNewOrd['price'])
+			var volume = toSatoshi(loopNewOrd['volume'])
+			var dataKeys = ['price','volume','other','exchange']
+			var dataVals = [String(price), String(volume), loopNewOrd['other'], loopNewOrd['exchange']]
+			var trString = buildTableRows([[price.toFixed(8)+"&nbsp;&nbsp;", volume.toFixed(8)]])
+			jqList.push(addTableProps($(trString), "", dataKeys , dataVals))
+		}
+
+		$book.find("tbody").empty()
+		for (var i = 0; i < jqList.length; ++i)
+		{
+			$book.find("tbody").append(jqList[i]);
+		}
 	}
 	else
 	{
 		$book.find("tr").each(function(index, element)
 		{
-			addNewOrders($(element), orderData, isAsk)
+			addNewOrders($(element), orderData)
 			showClosed($(this), orderData)
 			removeOrders($(this), orderData)
-			/*if (!removeOrders($(this), orderData))
-			{
-			
-			}*/
 		})
 	}
 }
 
+
+function toSatoshi(number)
+{
+	return Math.round(Number(number) * SATOSHI) / SATOSHI 
+}
+
+
 function showClosed($row, orderData)
 {
 	var keys = ['price','volume','other','exchange']
-	var obj = {}
-	obj['price'] = $row.data('price')
-	obj['volume'] = $row.data('volume')
-	obj['other'] = $row.data('other')
-	obj['exchange'] = $row.data('exchange')
+	var obj = $row.data()
 
 	for (var i = 0; i < orderData['oldOrders'].length; i++)
 	{
@@ -427,59 +383,57 @@ function showClosed($row, orderData)
 	}
 }
 
-//	EXPIRED ORDERS
+
 function removeOrders($row, orderData)
 {
 	var keys = ['price','volume','other','exchange']
-	var obj = {}
-	obj['price'] = $row.data('price')
-	obj['volume'] = $row.data('volume')
-	obj['other'] = $row.data('other')
-	obj['exchange'] = $row.data('exchange')
-
+	var obj = $row.data()
 	for (var i = 0; i < orderData['expiredOrders'].length; i++)
 	{
 		if (compObjs(obj, orderData['expiredOrders'][i], keys))
 		{
-			//console.log('remove')
-			//console.log(typeof obj['price'])
-			//console.log(typeof orderData['expiredOrders'][i]['price'])
 			$row.addClass("expiredRow");
-
-			return true
 		}
 	}
-
-	return false
-
 }
 
 
-//	NEW ORDERS
-
-function addNewOrders($row, orderData, isAsk)
+function addTableProps($element, orderClass, dataKeys, dataVals)
 {
-	if (isAsk)
+	$element.each(function()
 	{
-		orderData['newOrders'].reverse()
-	}
+		$(this).addClass(orderClass)
+
+		for (var i = 0; i < dataKeys.length; ++i)
+		{
+			$(this).data(dataKeys[i], dataVals[i])
+		}
+	})	
+
+	return $element
+}
+
+
+function addNewOrders($row, orderData)
+{
 	for (var i = 0; i < orderData['newOrders'].length; i++)
 	{
-
 		var loopNewOrd = orderData['newOrders'][i]
-		var price = Math.round(Number(loopNewOrd['price']) * SATOSHI) / SATOSHI 
-		var volume = Math.round(Number(loopNewOrd['volume']) * SATOSHI) / SATOSHI
-		var trString = '<tr class="newrow" data-price="'+String(price)+'" data-volume="'+String(volume)+'" data-other="'+loopNewOrd['other']+'" data-exchange="'+loopNewOrd['exchange']+'"><td>'+price.toFixed(8)+'&nbsp;&nbsp;</td><td>'+volume.toFixed(8)+'</td></tr>'
-		//var trString = addRow(loopNewOrd)
-
+		var price = toSatoshi(loopNewOrd['price'])
+		var volume = toSatoshi(loopNewOrd['volume'])
+		var dataKeys = ['price','volume','other','exchange']
+		var dataVals = [String(price), String(volume), loopNewOrd['other'], loopNewOrd['exchange']]
+		var trString = buildTableRows([[price.toFixed(8)+"&nbsp;&nbsp;", volume.toFixed(8)]])
+		var $trElement = addTableProps($(trString), "newrow", dataKeys , dataVals)
+		
 		if (price < Number($row.data('price')))
 		{
-			var sib = $row.next()
-			if (sib && $(sib).length)
+			var $sib = $row.next()
+			if ($sib && $sib.length)
 			{
-				if (price >= Number(sib.data('price')))
+				if (price >= Number($sib.data('price')))
 				{
-					$row.after(trString)
+					$row.after($trElement)
 					orderData['newOrders'].splice(i,1)
 					--i
 				}
@@ -488,17 +442,16 @@ function addNewOrders($row, orderData, isAsk)
 					break
 				}
 			}	
-
 			else
 			{
-				$row.after(trString)
+				$row.after($trElement)
 				orderData['newOrders'].splice(i,1)
 				--i
 			}
 		}
 		else
 		{
-			$row.before(trString)
+			$row.before($trElement)
 			orderData['newOrders'].splice(i,1)
 			--i
 		}
@@ -506,20 +459,13 @@ function addNewOrders($row, orderData, isAsk)
 }
 
 
-//	    tableDataAsk += "<tr><td>"+obj.price+"</td><td>"+obj.volume+"</td><td>"+obj.other+"</td><td>"+obj.exchange+"</td></tr>"
-
-//		DETERMINE EXPIRED/OLD/NEW ORDERS
-
 function groupOrders(orders, currentOrders)
 {
 	var oldOrders = []
 	var newOrders = []
 	var expiredOrders = []
-
 	var keys = ['price','volume','other','exchange']
 
-					//console.dir(currentOrders)
-					//console.dir(orders)
 	for (var i = 0; i < orders.length; i++)
 	{
 		var loopOrd = orders[i]
@@ -563,50 +509,7 @@ function groupOrders(orders, currentOrders)
 		}
 	}
 
-	//currentOrders = orders
-
 	return {"expiredOrders":expiredOrders, "newOrders":newOrders, "oldOrders":oldOrders}
-}
-
-
-// ONLY USED FOR INITIATING AN OBOOK FROM SCRATCH CURRENTL
-
-function addRow(arr, isAsk)
-{
-	var row = ""
-	var sum = 0;
-	var total = 0;
-	var askRow = []
-
-    for (var i = 0; i < arr.length; ++i)
-    {
-
-		var obj = arr[i]
-		var price = Math.round(Number(obj.price) * SATOSHI) / SATOSHI 
-		var volume = Math.round(Number(obj.volume) * SATOSHI) / SATOSHI 
-		total = Math.round((price*volume) * SATOSHI) / SATOSHI 
-		sum += total
-		sum = Math.round(sum * SATOSHI) / SATOSHI 
-		var inner = '<tr data-price="'+String(price)+'" data-volume="'+String(volume)+'" data-other="'+obj['other']+'" data-exchange="'+obj['exchange']+'">'
-		inner += '<td>'+price.toFixed(8)+'&nbsp;&nbsp;</td>'
-		inner += '<td>'+volume.toFixed(8)+'</td>'
-		//inner += '<td>'+total.toFixed(8)+'</td>'
-		//inner += '<td>'+sum.toFixed(8)+'</td>'
-		inner += "</tr>"
-
-		askRow.push(inner)
-	}
-
-	if (isAsk && askRow.length)
-	{
-		askRow.reverse()
-	}
-	for (var i = 0; i < askRow.length; ++i)
-	{
-		row+= askRow[i]
-	}
-
-	return row
 }
 
 
@@ -626,154 +529,14 @@ function compObjs(aObj, bObj, keys)
 }
 
 
-
-function getFormData($form, unmodified) 
-{
-	var serialized = $form.serializeArray();
-	var data = {};
-
-	for (var s in serialized) 
-	{
-		data[serialized[s]['name']] = serialized[s]['value']
-	}
-
-	if (!unmodified) 
-	{
-		delete data.request_type;
-		delete data.converted_account_id;
-		delete data.merchant_info;
-	}
-
-	return data;
-}
-
-
-$(".idex-submit").on("click", function()
-{
-	if ($(this).is("button"))
-	{
-		var $form = $("#" + $(this).data("form"))
-		var params = getFormData($form)
-	}
-	var method = $(this).data("method")
-
-	if (method == "placebid" || method == "placeask")
-	{
-		placeOrder(method, curBase, curRel, params['price'], params['amount']).done(function(data)
-		{
-			//console.log(data)
-			if ('result' in data && data['result'])
-			{
-				// success popup?
-				// update orderbook bids/asks?
-			}
-			else
-			{
-				// fail popup?
-			}
-		})
-	}
-	else if (method == "getOrderbook")
-	{
-		if ($form)
-		{
-			curBase = params['baseid']
-			curRel = params['relid']
-		}
-		else
-		{
-			curBase = $(this).data("baseid")
-			curRel = $(this).data("relid")
-		}
-		//console.log(curBase)
-		//console.log(curRel)
-
-		if (!isPollingOrderbook)
-		{
-			initPoll(curBase, curRel)
-		}
-		else
-		{
-			isPollingOrderbook = false
-		}
-	}
-
-	$("#modal-04").removeClass("md-show")
-	if ($form)
-	{
-		$form.trigger("reset")
-	}
-})
-
-
-//	POLL HANDLER
-function initPoll(baseid, relid)
-{
-	var dfd = new $.Deferred();
-	//console.log('starting polling')
-	isPollingOrderbook = true;
-
-	pollOrderbook(baseid, relid, 1,dfd).done(function(data)
-	{
-		//console.log('stopping poll')
-		$("#buyBook table tbody").empty()
-		$("#sellBook table tbody").empty()
-		$("#currLast .order-text").empty().html('0')
-		currentOrderbook = 
-		{
-			"NXT":"",
-			"asks":[],
-			"baseid":"",
-			"bids":[],
-			"obookid":"",
-			"pair":"",
-			"relid":""
-		};
-		initPoll(curBase, curRel)
-	})
-}
-
-
-
-$("input[name='price'], input[name='amount']").on("keyup", function() 
+$("input[name='price'], input[name='volume']").on("keyup", function() 
 {
 	var $form = $(this).closest("form")
 	var price = $form.find("input[name='price']").val()
-	var amount = $form.find("input[name='amount']").val()
+	var amount = $form.find("input[name='volume']").val()
     var total = Number(price)*Number(amount)
 	
     $form.find("input[name='total']").val(String(total))
 });
 
 
-
-/*
-var w;
-
-function startWorker() 
-{
-    if(typeof(Worker) !== "undefined") 
-	{
-        if(typeof(w) == "undefined") 
-		{
-            w = new Worker("pollWorker.js");
-        }
-        w.onmessage = function(event) 
-		{
-			console.log(event.data)
-        };
-    } 
-	else 
-	{
-		console.log('no work')
-    }
-}
-
-
-function stopWorker() 
-{ 
-    w.terminate();
-    w = undefined;
-}
-
-*/
