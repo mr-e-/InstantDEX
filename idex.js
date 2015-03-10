@@ -85,11 +85,16 @@ $(".popupLoad").on("click", function(e)
 			var tableData = data[keys[0]]
 			keys.splice(0,1)
 
-			if (params['requestType'] == "openOrders")
+			if (params['requestType'] == "openorders")
 			{
-				tableData['market'] = tableData['base'] + "/" + tableData['rel']
+				for (var i = 0; i < tableData.length; ++i)
+				{
+				tableData[i]['market'] = tableData[i]['base'] + "/" + tableData[i]['rel']
+				}
+
 				keys = ["requestType", "market", "price", "volume", "relamount", "quoteid", "age"]
 				//<td data-quoteid='"+quoteid+"' class='cancelOrder'>CANCEL</td>
+				console.dir(tableData)
 			}
 
 			row = buildTableRows(objToList(tableData, keys))	
@@ -425,6 +430,7 @@ function addNewOrders($row, orderData)
 		var dataVals = [String(price), String(volume), loopNewOrd['other'], loopNewOrd['exchange']]
 		var trString = buildTableRows([[price.toFixed(8)+"&nbsp;&nbsp;", volume.toFixed(8)]])
 		var $trElement = addTableProps($(trString), "newrow", dataKeys , dataVals)
+		//class = order-row cbutton cbutton--effect-jelena
 		
 		if (price < Number($row.data('price')))
 		{

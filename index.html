@@ -10,17 +10,25 @@
 	<link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
 	<link rel="stylesheet" type="text/css" href="css/jelena.css" />
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
+	<link rel="stylesheet" type="text/css" href="css/minichart/graph.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.structure.min.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.theme.min.css" />
 	<!--<link rel="stylesheet" href="css/modal/component.css">-->
 	<link rel="icon" href="img/snicon.ico" type="image/x-icon" />
     
 	<script src="js/modernizr.js"></script> <!-- Modernizr -->
     <script src="js/jquery-2.1.1.js"></script>
-	<script type="text/javascript" src="js/jquery.tooltipster.min.js"></script>
+	<script src="js/jquery.tooltipster.min.js"></script>
+	<script src="js/jquery.tablesorter.min.js"></script> 
 	<script src="js/modal/classie.js"></script>
+	<script src="js/d3.v3.min.js"></script>
+	<script src="js/minichart/graph.js"></script>
+	<script src="jquery-ui/jquery-ui.min.js"></script>
 	<script src="js/lib.js"></script>
 	<script src="js/main.js"></script> <!-- Resource jQuery -->
 	
-	<title>instantDEX GUI prototype v2.14</title>
+	<title>instantDEX GUI prototype v2.16</title>
 	<!--TOOLTIP SETTINGS-->
     <script>
         $(document).ready(function() {
@@ -222,17 +230,47 @@
 	
 	<!-- Modal Windows -->
 	<div class="md-modal md-effect" id="modal-01">
-		<div class="md-content" style="overflow:auto">
-			<h1 id="test_allOrderbooks">Active Orderbooks</h1>
-		    <div id="allOrderbooks" style="position:relative;">
-				<table class="table">
-					<thead data-keys="orderbooks base rel numquotes exchange">
-					<tr><th>Market</th><th>Num Quotes</th><th>Exchange</th></tr>
-					</thead>
-					<tbody style="">
-					</tbody>
-				</table>
-		    </div>
+		<div class="md-content">
+			<div id="tabs1" class="tabs-container">
+				<ul>
+				  <li><a href="#tabs-1">Tab 1</a></li>
+				  <li><a href="#tabs-2">Tab 2</a></li>
+				  <li><a href="#tabs-3">Tab 3</a></li>
+				</ul>
+				<div id="tabs-1">
+					<div>
+						<table id="marketTable" class="tablesorter table"> 
+							<thead data-keys="orderbooks base rel numquotes exchange">
+								<tr><th>Market</th><th>Num Quotes</th><th>Exchange</th></tr>
+							</thead>
+							<tbody> 
+							</tbody> 
+						</table>
+					</div>
+					
+					<div class="table-footer">
+						<button class="table-button">Button 1</button>
+						<input type="search" class="table-searchbox">
+						<span class="pagination">
+							<button>FIRST</button>
+							<button><</button>
+							<button>1</button>
+							<button>2</button>
+							<button>3</button>
+							<button>4</button>
+							<button>5</button>
+							<button>></button>
+							<button>LAST</button>
+						</span>
+					</div>
+				</div>
+				<div id="tabs-2">
+					Tab 2 Content
+				</div>
+				<div id="tabs-3">
+					Tab 3 Content
+				</div>
+			</div>
 		</div>
 	</div>
 	
@@ -288,12 +326,16 @@
 		    </div>
 		</div>
 	</div>
-
+	
+	<div class="md-modal-2 md-effect-2" id="modal-05">
+		<div class="md-content">
+			<h1>OPTIONS PANEL</h1><br>
+            - UNDER CONSTRUCTION -
+		</div>
+	</div>
 	
 	<div class="md-overlay"></div><!-- the overlay element -->
-
-
-
+	
 	<script src="js/modal/modalEffects.js"></script>
 
 	<script src="Highstock-2.1.3/js/highstock.js"></script>
@@ -304,5 +346,3 @@
 </body>
 
 </html>
-
-

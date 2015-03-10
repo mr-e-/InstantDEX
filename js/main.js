@@ -86,4 +86,8 @@ jQuery(document).ready(function($){
 			} );
 		} );
 	} );
+	
+	// jQuery UI
+	$( "#tabs1" ).tabs();
+	$( "#marketTable" ).tablesorter(); 
 });
