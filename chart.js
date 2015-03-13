@@ -1,7 +1,6 @@
 var datau = []
 var datab = []
 var latestTrade;
-var a = 1;
 Highcharts.setOptions({
 	global: {
 		useUTC: false
@@ -110,8 +109,6 @@ $(function ()
 					load:chartLoadHander,
 					redraw:function() 
 					{
-						console.log(a)
-						a++
 						//$('#mainChart').highcharts().tooltip.refresh($('#mainChart').highcharts().hoverPoints ? );
 					}
 				},
