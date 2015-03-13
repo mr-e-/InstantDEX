@@ -57,6 +57,7 @@
 				
 				if (type === 'column'){
 					var otherPoint = chart.series[0].points[i]
+					//console.log(i)
 					strokeColor = otherPoint.open > otherPoint.close ? "#d00" : "#0c0";
 					fillColor = otherPoint.open > otherPoint.close ? '#a80808' : backgroundColor;
 
@@ -82,6 +83,8 @@
 
 				}
 				else {
+					strokeColor = point.open > point.close ? "#d00" : "#0c0";
+					fillColor = point.open > point.close ? '#a80808' : backgroundColor;
                 // replace default attributes
                 point.pointAttr = merge(attribute, {
                     '': {
@@ -105,5 +108,6 @@
                 // update SVG elements color attribute
             });
         }
+
     });
 }(Highcharts));

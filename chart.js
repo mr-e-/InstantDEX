@@ -1,101 +1,135 @@
 var datau = []
 var datab = []
+var latestTrade;
+
+Highcharts.setOptions({
+	global: {
+		useUTC: false
+	}
+});
 
 $(function () 
 {
     $.getJSON('https://s5.bitcoinwisdom.com/period?step=60&symbol=bitfinexbtcusd&nonce=', function (data) 
     {
-        // split the data set into ohlc and volume
-        var ohlc = [],
-        volume = [],
-        dataLength = data.length,
-            // set the allowed units for data grouping
-        groupingUnits = [[
-            'week',                         // unit name
-            [1]                             // allowed multiples
-        ], [
-            'month',
-            [1, 2, 3, 4, 6]
-        ]],
+		var curDate = String(Date.now())
+		//console.dir(data)
+        var ohlc = []
+        var volume = []
+        var dataLength = data.length
 
-        i = 0;
-        tempDate = 1423330020000;
+        var groupingUnits = [[
+            'minute',           
+            [1, 2]                           
+        ]]
 
-        //for (x = 0; x < 5; x++)
-        //{
+        var i = 0;
+        var prevTempDate = 0;
+
         for (i = 0; i < dataLength; i += 1) 
         {
-            ohlc.push({
-                x:tempDate, // the date
-                open:data[i][3], // open
-                high:data[i][5], // high
-                low:data[i][6], // low
-                close:data[i][4] // close
-            });
+            var colr = ((data[i][3] > data[i][4]) ? "#c00" : "#0c0")
+            var tempDate = data[i][0]*1000;
+            var diff = tempDate - prevTempDate
 
-            colr = ((data[i][3] > data[i][6]) ? "#c00" : "#0c0")
-            //colr = ((data[i][1] > data[i][4]) ? "blue" : "red")
+            if ((diff != 60000 && prevTempDate != 0))
+            {
+                var cycles = diff/60000
+
+                for (var j = 1; j < cycles; ++j)
+                {
+		            var tempObj = {}
+					var cycleDate = (data[i-1][0]*1000) + (60000*j)
+					tempObj['open'] = data[i-1][4]
+					tempObj['high'] = data[i-1][4]
+					tempObj['low'] = data[i-1][4]
+					tempObj['close'] = data[i-1][4]
+					tempObj['x'] = cycleDate
+
+                    ohlc.push(tempObj)
+				    volume.push({
+				        name:"point",
+				        color:colr,
+				        x:cycleDate,
+				        y:0
+				    });
+                }
+            }
+
+            ohlc.push({
+                x:tempDate,
+                open:data[i][3],
+                high:data[i][5],
+                low:data[i][6],
+                close:data[i][4]
+            });
             volume.push({
                 name:"point",
                 color:colr,
-                x:tempDate, // the date
-                y:data[i][7] // the volume
+                x:tempDate,
+                y:data[i][7]
             });
-            tempDate += 60000;
-        }
-        //}
 
-		//console.dir(ohlc)
-        //console.dir(volume)
-        //console.dir(data)
+            prevTempDate = tempDate
+        }
+
+		latestTrade = String((data[data.length-1][2]+1))
+        var tempDate = data[data.length-1][0]*1000;
+        var diff = curDate - tempDate
+		if (diff >= 60000)
+		{
+            var cycles = diff/60000
+            for (var j = 1; j <= cycles; ++j)
+            {
+	            var tempObj = {}
+				var cycleDate = (data[data.length-1][0]*1000) + (60000*j)
+				tempObj['open'] = data[data.length-1][4]
+				tempObj['high'] = data[data.length-1][4]
+				tempObj['low'] = data[data.length-1][4]
+				tempObj['close'] = data[data.length-1][4]
+				tempObj['x'] = cycleDate
+
+                ohlc.push(tempObj)
+			    volume.push({
+			        //name:"point",
+			        //color:colr,
+			        x:cycleDate,
+			        y:0
+			    });
+            }		
+		}
+
         datau = ohlc
         datab = volume
 
-        // create the chart
         $('#mainChart').highcharts('StockChart', 
         {
             chart:
             {
                 events:
 				{
-				load:updateData,
-				redraw:function() {
-					//$('#mainChart').highcharts().tooltip.refresh($('#mainChart').highcharts().hoverPoints ? );
+					load:chartLoadHander,
+					redraw:function() 
+					{
+						//$('#mainChart').highcharts().tooltip.refresh($('#mainChart').highcharts().hoverPoints ? );
 					}
 				},
                 backgroundColor: '#000',
-                /*
-                backgroundColor: 
-                {
-                    linearGradient: { x1: 0, y1: 0, x2: 1, y2: 1 },
-                    stops: [
-                    [0, 'rgb(48, 48, 96)'],
-                    [1, 'rgb(0, 0, 0)']
-                    ]
-                },*/
                 borderColor: '#424242',
                 borderWidth: 1,
-                //plotBackgroundColor: 'rgba(255, 255, 255, .1)',
-                plotBorderColor: 'white',
                 plotBorderWidth: 0,
-                //alignTicks: true
+                alignTicks: true
+				//renderTo:'#mainChart',
             },
-
-
-            /*navigation:{
-                buttonOptions:
-                {
-                    enabled:false
-                }
-            },*/
 
             navigator:
             {
 			
                 adaptToUpdatedData:true,
                 enabled:true,
+				height:30,
+				//margin:30,
             },
-
 
             scrollbar:
             {
@@ -105,16 +139,105 @@ $(function ()
             rangeSelector: 
             {
                 enabled:false,
+				
                 inputEnabled:false,
                 selected: 0
             },
 
             title: 
             {
-                text: null
+                useHTML:true,
+				text:"&nbsp;",
             },
 
 
+		    exporting: 
+			{
+				enabled:true,
+		        buttons: 
+				{
+				//enabled:true,
+		            contextButton: 
+					{
+						enabled:false,
+					},
+		            a: 
+					{
+						y:-3,
+						align:"right",
+				        theme: 
+						{
+							height:10,
+							style:
+							{
+								color:"silver",
+							},
+							fill:"black",
+				            'stroke-width': 1,
+				            stroke: 'silver',
+				            r: 0,
+				            states: 
+							{
+				                hover: 
+								{
+				            		'stroke-width': 1,
+				            		stroke: 'silver',
+				                    fill: '#424242'
+				                },
+				                select: 
+								{
+				            		'stroke-width': 1,
+				            		stroke: 'silver',
+				                    fill: '#424242'
+				                }
+				            }
+				        },
+						symbol:null,
+						menuItems:null,
+						enabled:true,
+						text:"3m",
+						onclick:threeMinuteGrouping,
+		            },
+		            b: 
+					{
+						align:"right",
+						y:-3,
+						x:-35,
+				        theme: 
+						{
+							height:10,
+							style:
+							{
+								color:"silver",
+							},
+							fill:"black",
+				            'stroke-width': 1,
+				            stroke: 'silver',
+				            r: 0,
+				            states: 
+							{
+				                hover: 
+								{
+				            		'stroke-width': 1,
+				            		stroke: 'silver',
+				                    fill: '#424242'
+				                },
+				                select: 
+								{
+				            		'stroke-width': 1,
+				            		stroke: 'silver',
+				                    fill: '#424242'
+				                }
+				            }
+				        },
+						symbol:null,
+						menuItems:null,
+						enabled:true,
+						text:"1m",
+						onclick:oneMinuteGrouping,
+		            },
+		        }
+		    },
 
             tooltip:
             {
@@ -133,32 +256,26 @@ $(function ()
                     align: 'left',
 					y:3.3,
                 },
+				top:"5%",
                 gridLineWidth:0,
-                height: '70%',
+                height: '60%',
                 lineWidth: 0,
                 tickWidth:0.4,
 				offset:10,
                 startOnTick:true,
                 endOnTick:true,
 				showLastLabel:true,
-				maxPadding:0.055,
-				minPadding:0.055,
-				//minorTickWidth:1,
-				//minorTickInterval:'auto',
-                //endOnTick:true,
-           		/*crosshair: {
-                    color: 'blue',
-                    snap: false
-                }*/
+				showFirstLabel:true,
+				maxPadding:0.125,
+				minPadding:0.125,
             }, 
             {
                 labels: 
                 {
                     align: 'left',
 					y:3.3,
-
                 },
-                endOnTick:false,
+                //endOnTick:true,
 				showLastLabel:true,
                 //startOnTick:true,
                 gridLineWidth:0,
@@ -167,103 +284,81 @@ $(function ()
                 offset: 10,
                 lineWidth: 0,
                 tickWidth:0.4,
-				//tickInterval:1,
-				//minorTickWidth:1,
-				//minorTickInterval:'auto',
-            	/*crosshair: {
-                    color: 'blue',
-                    snap: false,
-                },*/
-                //lineColor: 'white',
-                //minorGridLineWidth:0.5,
-                //minorGridLineColor: 'transparent'
+				maxPadding:0.255,
+				minPadding:0.255,
             }],
 
             xAxis: [
             {
-                //type:'datetime',
                 labels: 
                 {
                     align: 'center',
                     y:0
                 },
-
-                /*crosshair: {
-                    color: 'white',
-                    snap: false,
-                },*/
-				//maxPadding:10,
-                startOnTick:true,
+                //startOnTick:true,
                 lineWidth:0,
                 gridLineWidth:0,
                 tickWidth:1,
                 range: 15* 600 * 1000,
-				minRange: 5 * 60 * 1000,
-                events:
+				minRange: 15 * 60 * 1000,
+                /*events:
                 {
                     afterSetExtremes: changeColours
-                }
+                }*/
             }],
-
-
 
             credits:
             {
-                text:"CryptoEth"
+                text:""
             },
-
 
             plotOptions: 
             {
                 candlestick:
                 {
-                    //borderColor: '#CCCCCC',
-                    //borderWidth: 1,
-
-                    stickyTracking:false,
+                    //stickyTracking:false,
+                	//enableMouseTracking: false,
                     color: '#a80808',
                     lineColor:'#d00',
-                    upLineColor: '#0c0', // docs
+                    upLineColor: '#0c0', 
                     pointPadding: 0.1,
-                    groupPadding: 0.1,
+                    //pointRange: 10,
+                    //groupPadding: 0.1,
                     upColor: '#0c0',
 					fillColor:"black",
-                	//enableMouseTracking: false,
+					minPointLength:0.1,
+					
+					//grouping:false,
                 }, 
                 column:
                 {
-					/*dataLabels:{
-						enabled:true
-					},*/
-					//pointRange:60*1000,
-                    //pointPlacement: -0.5,
-					borderWidth:1,
-					borderRadius:0,
-					colorByPoint:false,
+					minPointLength:0.1,
+					//borderRadius:2,
+					//colorByPoint:false,
                 	//enableMouseTracking: false,
-                    stickyTracking:false,
+                    //stickyTracking:false,
                     pointPadding: 0.1,
-                    groupPadding: 0.1,
-                
+                    //groupPadding: 0.1,
+					//animation:false,
+					//grouping:false,
                 },
                 series:
                 {
 					//events:{mouseOut:destroyChartRenders, mouseOver:buildChartRenders},
+					//grouping:false,
 					lineWidth: 1,
-					//threshold: null,
                 }
             },
-
 
             series: [
             {
                 yAxis:0,
+				xAxis:0,
                 type: 'candlestick',
                 name: 'AAPL',
-                turboThreshold:9000,
+                turboThreshold:2000,
                 data: ohlc,
-				borderColor:"white",
-				borderWidth:"1",
+				borderWidth:0.5,
                 dataGrouping: 
                 {
                     enabled:false,
@@ -273,7 +368,8 @@ $(function ()
             {
                 type: 'column',
                 name: 'Volume',
-                turboThreshold:9000,
+				borderWidth:1,
+                turboThreshold:2000,
                 data: volume,
                 xAxis:0,
                 yAxis: 1,
@@ -286,49 +382,6 @@ $(function ()
 
         }, function(chart)
            {
-                //console.dir(chart);
-
-                /*
-                renderer = chart.renderer
-
-                renderer.rect(10, 10, 100, 50, 5).attr({
-                    fill: 'blue',
-                    stroke: 'black',
-                    'stroke-width': 1
-                }).add();
-
-
-                renderer.circle(100, 100, 50).attr({
-                    fill: 'red',
-                    stroke: 'black',
-                    'stroke-width': 1
-                }).add();
-
-                renderer.text('Hello world', 200, 100).attr({
-                    rotation: 45
-                }).css({
-                    fontSize: '16pt',
-                    color: 'green'
-                }).add();*/
-
-                /*var point = chart.series[0].data[chart.series[0].data.length-2]
-                var text = chart.renderer.text(
-                        'Max',
-                        point.plotX + chart.plotLeft + 10,
-                        point.plotY + chart.plotTop - 10
-                    ).attr({
-                        zIndex: 5
-                    }).add(),
-                    box = text.getBBox();
-
-                chart.renderer.rect(box.x - 5, box.y - 5, box.width + 10, box.height + 10, 5)
-                    .attr({
-                        fill: '#FFFFEF',
-                        stroke: 'gray',
-                        'stroke-width': 1,
-                        zIndex: 4
-                    })
-                    .add();*/
 
                 $(chart.container).on('mousewheel', function(event) {
 					event.preventDefault()
@@ -339,8 +392,6 @@ $(function ()
                     var isInside = chart.isInsidePlot(x, y);
                     if (isInside)
                     {
-                        //console.dir($("#mainChart").highcharts())
-                        //console.dir(chart.xAxis)
                         var curMax = chart.xAxis[0]['max']
                         curMin = chart.xAxis[0]['min']
                         //userMax = chart.xAxis[0]['userMax']
@@ -360,9 +411,8 @@ $(function ()
                         {
                             chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
                         }
-                        //chart.redraw()
+                        chart.redraw()
                     }
-                    //console.dir( (isInside ? 'inside' : 'outside') + ' the plotarea');
                 });
             }
         );
@@ -375,34 +425,37 @@ $("#mainChart").on("mousemove", buildChartRenders)
 
 function buildChartRenders(event)
 {
-
 	var chart = $('#mainChart').highcharts()
 	var offset = $('#mainChart').offset();
 
 	while (!chart || !chart.hasRendered)
+	{
 		return
+	}
     var insideX = event.clientX - chart.plotLeft - offset.left;
     var insideY = event.clientY - chart.plotTop - offset.top;
     var isInside = chart.isInsidePlot(insideX, insideY);
 	if (!isInside)
+	{
 		return
+	}
 
     var x = event.pageX - offset.left;
     var y = event.pageY - offset.top
-	//console.dir(chart)
 
     var path = ['M', chart.plotLeft, y,
             'L', chart.plotLeft + chart.plotWidth, y,
             'M', x, chart.plotTop,
             'L', x, chart.plotTop + chart.plotHeight];
-      
-    if (chart.crossLines) {
-        // update lines
+
+    if (chart.crossLines) 
+	{
         chart.crossLines.attr({
             d: path
         });
-    } else {
-        // draw lines
+    } 
+	else 
+	{
         chart.crossLines = chart.renderer.path(path).attr({
             'stroke-width': 1,
             stroke: '#999',
@@ -410,56 +463,58 @@ function buildChartRenders(event)
         }).add();
     }
     
-    if (chart.crossLabel) {
-        // update label
+    if (chart.crossLabel) 
+	{
         chart.crossLabel.attr({
             y: y+6,
             'stroke-width': 1,
             stroke: '#999',
             text: chart.yAxis[0].toValue(y).toFixed(2)
         });
-    } else {
-        // draw label
+    } 
+	else 
+	{
         chart.crossLabel = chart.renderer.text(chart.yAxis[0].toValue(y).toFixed(2), chart.plotLeft+chart.plotWidth, y+6).add();
     }
 
 	
 	var dd = Number(chart.xAxis[0].toValue(x).toFixed())
-	//console.log(dd)
 	dd += chart.xAxis[0].minPointOffset
 	var d = new Date(dd)
 	var hours = String(d.getHours())
 	var minutes = d.getMinutes()
 	minutes = minutes < 10 ? "0"+String(minutes) : String(minutes)
 	var dString = hours+":"+minutes
-    if (chart.crossLabelX) {
-        // update label
+    if (chart.crossLabelX) 
+	{
         chart.crossLabelX.attr({
             x: x-15,
             'stroke-width': 1,
             stroke: '#999',
             text: dString
         });
-    } else {
-        // draw label
+    } 
+	else 
+	{
         chart.crossLabelX = chart.renderer.text(dString, x, chart.plotTop+chart.plotHeight).add();
     }
 
 	   
 	var closest = Number(chart.xAxis[0].toValue(x).toFixed())
-	closest += chart.xAxis[0].minPointOffset
-	var b = getPoint(chart, 0, closest)
+	closest += chart.xAxis[0].minPointOffset	
+	var b = getPoint(0, closest)
 	var index = chart.series[0].data.indexOf(b)
+	//console.log(chart.series[0])
 	if (index >= 0)
 	{
 		var vol = chart.series[1].data[index].y
 		var d = new Date(b.x)
-		var marketInfoText = "Date: "+String(d)+"  Open: "+b.open+"  High: "+b.high+"  Low: "+b.low+"  Close: "+b.close+"  Volume: "+vol
+		var marketInfoText = "Open: "+b.open+"  High: "+b.high+"  Low: "+b.low+"  Close: "+b.close+"  Volume: "+vol+"<br>Date: "+String(d)
 		if (chart.marketInfo) 
 		{
 		    chart.marketInfo.attr(
 			{
-		        y: chart.plotBox.y+5,
+		        y: chart.plotBox.y-25,
 		        'stroke-width': 1,
 		        stroke: '#999',
 		        text: marketInfoText
@@ -474,15 +529,14 @@ function buildChartRenders(event)
 }
 
 
-function getPoint(chartObj, seriesIndex, value) 
+function getPoint(seriesIndex, value) 
 {
     var val = null;
-    var points = chartObj.series[seriesIndex].points;
+	var chart = $('#mainChart').highcharts()
+    var points = chart.series[seriesIndex].points;
 
 	if (value >= points[points.length-1].x)
 	{
-		//console.log(value)
-		//console.log(points[points.length-1].x)
 		val = points[points.length-1]
 	}
 	else
@@ -494,9 +548,9 @@ function getPoint(chartObj, seriesIndex, value)
 				val = points[i-1]
 				break;
 			}
-		    //val = points[i].x;
 		}
 	}
+
     return val;
 }
 
@@ -506,20 +560,14 @@ $("#mainChart").on("mouseleave", destroyChartRenders)
 function destroyChartRenders(event)
 {
 	var chart = $('#mainChart').highcharts()
-	/*var offset = $('#mainChart').offset();
-    var insideX = event.clientX - chart.plotLeft - offset.left;
-    var insideY = event.clientY - chart.plotTop - offset.top;
-    var isInside = chart.isInsidePlot(insideX, insideY);
-	if (isInside)
-		return*/
-
-	if (chart.crossLabel && chart.crossLines && chart.marketInfo)
-	{
+	if (chart.crossLabel)
 		chart.crossLabel.destroy()
+	if (chart.crossLabelX)
 		chart.crossLabelX.destroy()
+	if (chart.crossLines)
 		chart.crossLines.destroy()
+	if (chart.marketInfo)
 		chart.marketInfo.destroy()
-	}
 	chart.crossLabelX = null
 	chart.crossLabel = null
 	chart.crossLines = null
@@ -529,14 +577,11 @@ function destroyChartRenders(event)
 
 }
 
-
-counter = 0
-volSim = getRandomInt(5,10) 
+var sinceCount;
 
 function dataSim(point)
 {
-    //point = series.data[series.data.length-1]
-    var date = point.x
+    var dfd = new $.Deferred();	
     var OHLC = 
     {
         x: point.x,
@@ -545,46 +590,152 @@ function dataSim(point)
         low: point.low,
         close: point.close
     }
-
-
-    var newVal = getRandomInt(282,284)
-
-    OHLC.close = newVal
-
-    if (newVal > OHLC.high)
-    {
-        OHLC.high = newVal
-    }
-    else if (newVal < OHLC.low)
-    {
-        OHLC.low = newVal
-    }
-
-
-    counter += 1
-    volSim += getRandomInt(10,15) 
-    if (counter > 10)
-    {
-        counter = 0
-        OHLC.x += 60000
-        OHLC.open = point.close
-        OHLC.close = point.close
-        OHLC.high = point.close
-        OHLC.low = point.close
-        //OHLC.high = newVal > OHLC.open ? newVal : OHLC.open
-        //OHLC.low = newVal > OHLC.open ? OHLC.open : newVal
-        volSim = getRandomInt(10,30) 
-    }
-
     var vol = 
     {
-        name:"point",
         color: ((OHLC.open >= OHLC.close) ? "#c00" : "#0c0"),
-        x:OHLC.x, // the date
-        y:volSim 
+        x:OHLC.x,
+        y:datab[datab.length - 1].y
     }
 
-    return [OHLC, vol]
+	var curDate = point.x
+
+	if (!sinceCount)
+	{
+		sinceCount = String(datau[datau.length - 1].x +1)
+	}
+	
+	//console.log(latestTrade + "  1")
+	//console.log(datau)
+
+    $.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
+    {
+		//console.log('1')
+		//console.log(data)
+		/*$.getJSON('https://s5.bitcoinwisdom.com/trades?since=""&symbol=bitfinexbtcusd&nonce=', function (newData) 
+		{
+			console.log('2')
+			console.log(newData)
+			console.log(newData[0])
+		})*/
+		//sinceCount = String(Date.now())
+		//console.log(sinceCount + "  2")
+		var pastArr = []
+		var futureArr = []
+		var pastPoints = []
+		var futurePoints = []
+
+		if (data.length)
+		{
+			latestTrade = String(data[0]['tid'] )
+			var pastVol = vol.y
+			var futureVol = 0
+ 			//console.log(data)
+			for (var i = data.length-1; i > -1; --i)
+			{
+				var loopDate = data[i]['date']*1000
+				var timeOffset = loopDate - curDate	
+		
+				if (timeOffset >= 60000)
+				{
+					if (i < data.length-1)
+					{
+						futureArr = data.slice(0,i+1)
+						pastArr = data.slice(i+1);
+					}
+					else
+					{
+						futureArr = data.slice(0)
+					}
+					break;
+				} 
+				else if (i == 0)
+				{
+					pastArr = data.slice(0);
+				}
+			}
+
+			if (pastArr.length)
+			{
+				//console.log(pastArr)
+				var pastPrice = pastArr[0]['price']
+				OHLC = updateOHLC(OHLC, pastPrice)
+				vol.y += volCount(pastArr)
+				pastPoints.push(OHLC)
+				pastPoints.push(vol)
+			}
+
+			if (futureArr.length)
+			{
+				//console.log(futureArr)
+				var both = makeBothPoints(point)
+				var futureOHLC = both[0]
+				var futureVol = both[1]
+				var futurePrice = futureArr[0]['price']
+
+				futureOHLC = updateOHLC(futureOHLC, futurePrice)
+				futureVol.y = volCount(futureArr)
+    			futureVol.color = ((futureOHLC.open >= futureOHLC.close) ? "#c00" : "#0c0");
+				futurePoints.push(futureOHLC)
+				futurePoints.push(futureVol)
+			}
+
+		}
+
+		//console.log(pastPoints)
+		//console.log(futurePoints)
+		dfd.resolve([pastPoints,futurePoints])
+    })
+
+    return dfd.promise()
+}
+
+
+function makeBothPoints(point)
+{
+	var OHLC = {}
+	var vol = {}
+	var nextDate = point.x + 60000
+
+    OHLC.open = point.close
+	OHLC.high = point.close
+	OHLC.low = point.close
+	OHLC.close = point.close
+	//OHLC.high = price > OHLC.open ? price : OHLC.open
+	//OHLC.low = price > OHLC.open ? OHLC.open : price
+	OHLC.x = nextDate
+
+    vol.color = ((OHLC.open >= OHLC.close) ? "#c00" : "#0c0");
+	vol.y = 0;
+	vol.x = nextDate
+
+	return [OHLC, vol]
+}
+
+function volCount(data)
+{
+	var vol = 0;
+
+	for (var i = 0; i < data.length; ++i)
+	{
+    	vol += data[i]['amount']
+	}
+
+	return vol
+}
+
+function updateOHLC(OHLC, price)
+{
+	OHLC.close = price
+	if (price > OHLC.high)
+	{
+		OHLC.high = price
+	}
+	else if (price < OHLC.low)
+	{
+		OHLC.low = price
+	}
+
+	return OHLC
 }
 
 
@@ -594,240 +745,165 @@ function getRandomInt(min, max)
 }
 
 
-counters = 1
+function chartLoadHander()
+{
+	drawDivideLine()
+	updateData()
+}
+
 function updateData()
 {
     var chart = $('#mainChart').highcharts()
-	/*var offset = $('#mainChart').offset();
-    chart.renderer.rect(chart.plotLeft+1, chart.plotTop+1, chart.plotWidth-10, chart.plotHeight-1, 0)
-        .attr({
-            fill: 'transparent',
-            zIndex: 44
-        }).on("mouseout", destroyChartRenders)
-        .add();*/
-    var series = chart.series[1];
-    var series2 = chart.series[0];
+    var volSeries = chart.series[1];
+    var ohlcSeries = chart.series[0];
+
     setTimeout(function () 
     {
-		//console.dir(chart);
+    	var curPointOHLC = datau[datau.length - 1]
+    	var curPointVol = datab[datab.length - 1]
 
-        var oldDataMax = chart.xAxis[0]['dataMax']
-        var pointVOL = datab[datab.length - 1]
-        var pointOHLC = datau[datau.length - 1]
-        var both = dataSim(pointOHLC)
-        var candle = both[0]
-        var vol = both[1]
-        //datau.push(candle)
-        //datab.push(vol)
-        //console.log(datau.length)
+        dataSim(curPointOHLC).done(function(both)
+		{
+		    var pastArr = both[0]
+		    var futureArr = both[1]
 
-        if (candle.x > pointOHLC.x)
-        {
-        //datau.push(candle)
-        //datab.push(vol)
-            //console.log(counter)
-            //console.log("B OLD:"+String(pointOHLC.x))
-            //console.log("B CANDLE:"+ String(candle.x))
-            //console.log(chart.series[1].data.length)
-            //console.dir(chart.xAxis[0].getExtremes())
-            //console.log(chart.xAxis[0]['dataMax'])
+			//if (!$.isEmptyObject(candle) && !$.isEmptyObject(vol))
+			if (pastArr.length)
+			{
+				//console.log(pastArr)
+				var pastCandle = pastArr[0]
+				var pastVol = pastArr[1]
 
-            series.addPoint(vol, false, false);
-            series2.addPoint(candle, false, false);
-            //series.setData(datab,true,true,true)
-            //series2.setData(datau,true,true,true)
+				if (volSeries.data.length == datau.length)
+				{
+				    volSeries.data[volSeries.data.length -1].update(pastVol, false, true);
+				    ohlcSeries.data[ohlcSeries.data.length -1].update(pastCandle, true, true);
+				}
+				else
+				{
+				    datau.pop()
+				    datab.pop()
+				    datau.push(pastCandle)
+				    datab.push(pastVol)
+				    volSeries.setData(datab,false,true,true)
+				    ohlcSeries.setData(datau,true,true,true)
+				}
+			}
 
-            //console.dir(chart.xAxis[0].getExtremes())
-			chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max);
-            //chart.xAxis[0].setExtremes(candle.x-(60*15*1000), candle.x);
-            //console.dir(chart.xAxis[0].getExtremes())
-            /*chart.xAxis[0].update({
-                max: candle.x,
-            });*/
-            //chart.xAxis[0].setExtremes(candle.x-(60*15*1000), pointOHLC.x);
+			if (Number(sinceCount) - curPointOHLC.x >= 60000)
+			{
+				if (futureArr.length)
+				{
+					
+					var futureCandle = futureArr[0]
+					var futureVol = futureArr[1]
+					ohlcSeries.addPoint(futureCandle, false, false);
+					volSeries.addPoint(futureVol, false, false);
+					chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max);
+				}
+				else
+				{
+					var emptyPoints = makeBothPoints(curPointOHLC)
 
-            //console.log(chart.xAxis[0]['dataMax'])
-        }
-        else
-        {
-            //console.log(counter)
-            //console.log("OLD:"+String(pointOHLC.x))
-            //console.log("CANDLE:"+ String(candle.x))
-            //console.log(series.data.length)
-            //console.log(series2.data.length)
-            //console.log(datau.length)
-            //console.dir(series2)
-            //console.log(series2.data[series2.data.length -1].x)
-            if (series.data.length == datau.length)
-            {
-                series.data[series.data.length -1].update(vol, false, true);
-                series2.data[series2.data.length -1].update(candle, true, true);
-            }
-            else
-            {
-                datau.pop()
-                datab.pop()
-                datau.push(candle)
-                datab.push(vol)
-                series.setData(datab,false,true,true)
-                series2.setData(datau,true,true,true)
-                //series.addPoint(vol, false, false);
-                //series2.addPoint(candle, true, false);
-            }
-        }
+					ohlcSeries.addPoint(emptyPoints[0], false, false);						
+					volSeries.addPoint(emptyPoints[1], false, false);
+					chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max);
+				}
+			}
+			sinceCount = String(Date.now())
+			//console.log(String(Date.now()) + "  3")
+			updatePlotPos()
+		    updateData();
+		})
 
-        //chart.redraw()
-        //chart.xAxis[0].update({type:'datetime'});
-		
-        curMax = chart.xAxis[0]['max']
-        curMin = chart.xAxis[0]['min']
-        dataMax = chart.xAxis[0]['dataMax']
-        dataMin = chart.xAxis[0]['dataMin']
-        ordinal = chart.xAxis[0].ordinalPositions
-        if (curMax == oldDataMax || curMax == dataMax)
-        {
-            //pos = ((ordinal && ordinal[1]) ? ordinal[1] : curMin) 
-            chart.xAxis[0].setExtremes(curMin, dataMax);
-            //console.log("hi "+String(series.data.length))
-        }
-        updateData();
-    }, 500);
+    }, 3000);
 }
 
 
-function changeColours(e)
+function updatePlotPos()
 {
-    //console.dir(e.target.series)
+    var chart = $('#mainChart').highcharts()
 
-    /*groupedData = e.target.series[0].groupedData
-    if (groupedData)
-    {
-        len = groupedData.length;
-        for (var i = 0; i < len; i++)
-        {
-            e.target.series[1].groupedData[i].color = groupedData[i].color
-        }
-    }
+	var curMax = chart.xAxis[0]['max']
+	var curMin = chart.xAxis[0]['min']
+	var dataMax = chart.xAxis[0]['dataMax']
+	var dataMin = chart.xAxis[0]['dataMin']
+	var oldDataMax = chart.xAxis[0]['dataMax']
 
-    $('#mainChart').highcharts().redraw()*/
+	if (curMax == oldDataMax || curMax == dataMax)
+	{
+		chart.xAxis[0].setExtremes(curMin, dataMax);
+	}
 }
 
-
-function initTable() 
-{
-    //sendPost().done(function(data){
-        //len = Object.keys(data['orderbooks']).length;
-        //console.dir(len)
-        $("table.example tbody").first().empty();
-        for(var i=0; i<5; i++)
-        {
-            var row = $("<tr><td>test"+String(i)+"</td></tr>")
-            $("table.example tbody").first().append(row);
-        }
-    //})
-}
+//ordinal = chart.xAxis[0].ordinalPositions
+//pos = ((ordinal && ordinal[1]) ? ordinal[1] : curMin) 
 
 
-
-$("#t1").on('click', function(e)
+function oneMinuteGrouping()
 {
     chart = $('#mainChart').highcharts()
 
-    chart.xAxis[0].update({
+    /*chart.xAxis[0].update({
         min: 142533006000,
         max: 142533006000,
         minRange: 40 * 60 * 1000,
-    });
-    chart.series[0].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [1]] ] } })
+    });*/
+    chart.series[0].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [1]] ] } }, false)
     chart.series[1].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [1]] ] } })
 
 
-})
+}
 
 
-$("#t2").on('click', function(e){
-
+function threeMinuteGrouping()
+{
     chart = $('#mainChart').highcharts()
-    //console.dir(chart)
-    obj = {
+    /*obj = {
         min: 1425330060000,
         max: 1425336060000,
         minRange: 40 * 180 * 1000,
     }
-    //console.dir(obj)
-    chart.xAxis[0].update(obj);
-    chart.series[0].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [3]] ] } })
-    chart.series[1].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [3]] ] } })
+    chart.xAxis[0].update(obj);*/
+    chart.series[0].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [3]] ] } }, false)
+    chart.series[1].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [3]] ] } } )
+	//chart.redraw()
     //console.dir(chart)
-})
+}
 
-
-$("#t3").on('click', function(e){
-
-    chart = $('#mainChart').highcharts()
-    chart.xAxis[0].update({
-        minRange: 40 * 1440 * 1000,
-    });
-    chart.series[0].update({ dataGrouping: { forced: true, units: [ ['day', [1]] ] } })
-    chart.series[1].update({ dataGrouping: { forced: true, units: [ ['day', [1]] ] } })
-
-
-})
-
-
-$(document).ready(function () 
+$(window).resize(function()
 {
-    //console.dir(1)
-    initTable()
-});
+	drawDivideLine()
+})
 
-/*
-units: [[
-	'millisecond', // unit name
-	[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-], [
-	'second',
-	[1, 2, 5, 10, 15, 30]
-], [
-	'minute',
-	[1, 2, 5, 10, 15, 30]
-], [
-	'hour',
-	[1, 2, 3, 4, 6, 8, 12]
-], [
-	'day',
-	[1]
-], [
-	'week',
-	[1]
-], [
-	'month',
-	[1, 3, 6]
-], [
-	'year',
-	null
-]]
-*/
+function drawDivideLine()
+{
+	//console.log($("#mainChart"))
+    chart = $('#mainChart').highcharts()
+	var offset = $('#mainChart').offset();
+    var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top,
+            'L', 0 + $("#mainChart")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top]
 
-
-
-/*
-
-$(function () {
-
-    function afterSetExtremes(e) {
-
-        var chart = $('#mainChart').highcharts();
-
-        chart.showLoading('Loading data from server...');
-        $.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
-                '&end=' + Math.round(e.max) + '&callback=?', function (data) {
-
-                chart.series[0].setData(data);
-                chart.hideLoading();
-            });
+    if (chart.splitLine) 
+	{
+        chart.splitLine.attr({
+            d: path
+        });
+    } 
+	else 
+	{
+        chart.splitLine = chart.renderer.path(path).attr({
+            'stroke-width': 0.5,
+            stroke: '#999',
+            zIndex: 10,
+			opacity:1,
+        }).add();
     }
 
+	//chart.redraw()
+}
 
-*/
+
+
+
 
