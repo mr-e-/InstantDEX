@@ -1,7 +1,7 @@
 var datau = []
 var datab = []
 var latestTrade;
-
+var a = 1;
 Highcharts.setOptions({
 	global: {
 		useUTC: false
@@ -20,7 +20,7 @@ $(function ()
 
         var groupingUnits = [[
             'minute',           
-            [1, 2]                           
+            [1, 2, 3, 4]                           
         ]]
 
         var i = 0;
@@ -64,7 +64,6 @@ $(function ()
                 close:data[i][4]
             });
             volume.push({
-                name:"point",
                 color:colr,
                 x:tempDate,
                 y:data[i][7]
@@ -111,6 +110,8 @@ $(function ()
 					load:chartLoadHander,
 					redraw:function() 
 					{
+						console.log(a)
+						a++
 						//$('#mainChart').highcharts().tooltip.refresh($('#mainChart').highcharts().hoverPoints ? );
 					}
 				},
@@ -301,10 +302,10 @@ $(function ()
                 tickWidth:1,
                 range: 15* 600 * 1000,
 				minRange: 15 * 60 * 1000,
-                /*events:
+                events:
                 {
                     afterSetExtremes: changeColours
-                }*/
+                }
             }],
 
             credits:
@@ -333,19 +334,20 @@ $(function ()
                 column:
                 {
 					minPointLength:0.1,
-					//borderRadius:2,
+					//borderRadius:1,
 					//colorByPoint:false,
                 	//enableMouseTracking: false,
                     //stickyTracking:false,
                     pointPadding: 0.1,
                     //groupPadding: 0.1,
-					//animation:false,
-					//grouping:false,
+					animation:false,
+					grouping:false,
                 },
                 series:
                 {
 					//events:{mouseOut:destroyChartRenders, mouseOver:buildChartRenders},
 					//grouping:false,
+					///oxymoronic:true,
 					lineWidth: 1,
                 }
             },
@@ -358,7 +360,7 @@ $(function ()
                 name: 'AAPL',
                 turboThreshold:2000,
                 data: ohlc,
-				borderWidth:0.5,
+				borderWidth:0,
                 dataGrouping: 
                 {
                     enabled:false,
@@ -366,9 +368,10 @@ $(function ()
                 }
             }, 
             {
+				borderColor:"black",
                 type: 'column',
                 name: 'Volume',
-				borderWidth:1,
+				borderWidth:0.5,
                 turboThreshold:2000,
                 data: volume,
                 xAxis:0,
@@ -385,6 +388,7 @@ $(function ()
 
                 $(chart.container).on('mousewheel', function(event) {
 					event.preventDefault()
+					//console.log(event)
 		            var container = $(chart.container);
 		            var offset = container.offset();
                     var x = event.clientX - chart.plotLeft - offset.left;
@@ -411,7 +415,7 @@ $(function ()
                         {
                             chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
                         }
-                        chart.redraw()
+                        //chart.redraw()
                     }
                 });
             }
@@ -879,7 +883,7 @@ $(window).resize(function()
 function drawDivideLine()
 {
 	//console.log($("#mainChart"))
-    chart = $('#mainChart').highcharts()
+    var chart = $('#mainChart').highcharts()
 	var offset = $('#mainChart').offset();
     var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top,
             'L', 0 + $("#mainChart")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top]
@@ -902,6 +906,60 @@ function drawDivideLine()
 
 	//chart.redraw()
 }
+
+var oneTime = 1;
+function changeColours(e)
+{
+
+	var chart =  $('#mainChart').highcharts()
+	var points = chart.series[0].points;
+	var points2 = chart.series[1].points;
+   	var obj = {}
+
+	if (points.length > 400)
+	{
+		//obj={borderWidth:0,'stroke-width':"0.6px",}
+		//obj={"stroke-alignment":"inner"}
+	}
+	else
+	{
+		//obj={borderWidth:0,'stroke-width':1}
+	}
+
+	if ((chart.xAxis[0].oldMax != chart.xAxis[0].max) || (chart.xAxis[0].oldMin != chart.xAxis[0].min)) 
+	{
+		for (var i = 0; i < points.length; ++i)
+		{
+			//console.log(chart)
+			var graphic = points[i].graphic
+			var commands = graphic.d.split(/(?=[LMC])/)
+			var sub = graphic.d.split(" ")
+			strokeColor = points[i].open > points[i].close ? "#d00" : "#0c0";
+			//console.log( sub)
+			sub[1] = String((Number(sub[1]) + 0.5))
+			sub[4] = String((Number(sub[4]) + 0.5))
+			sub[7] = String((Number(sub[7]) - 0.5))
+			sub[10] = String((Number(sub[10]) - 0.5))
+			if (Number(sub[7]) - Number(sub[1]) == 1)
+				graphic.attr({d:sub.join(" ")})
+			//graphic.attr({'stroke-width':"1px"})
+			//console.log(points[i].pointAttr)
+			//points[i].pointAttr[""]['stroke'] = strokeColor
+			//console.log( graphic.d)
+		}
+
+		for (var i = 0; i < points2.length; ++i)
+		{
+			var graphic = points2[i].graphic
+			var width =	graphic.attr('width')
+			if (width == 2)
+				graphic.attr('width', width-1)
+		}
+	}
+	//chart.redraw()
+
+}
+
 
 
 

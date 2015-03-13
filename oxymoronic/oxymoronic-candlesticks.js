@@ -80,7 +80,6 @@
 		            });
                 graphic.attr('stroke', strokeColor);
                 graphic.attr('fill', fillColor);
-
 				}
 				else {
 					strokeColor = point.open > point.close ? "#d00" : "#0c0";
