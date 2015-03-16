@@ -905,13 +905,14 @@ function changeColours(e)
 			}
 			var tempgr = points2[i].graphic
 			graphic.attr({'stroke':strokeColor})
+			graphic.attr('stroke-width', 1)
 			//console.log(chart.series[1].yAxis)
 			var colWidth = Number(Math.round((points[i].graphic.d.split(" ")[7] - points[i].graphic.d.split(" ")[1]) * 100000) / 100000).toFixed(5)
 			if (colWidth < 0.3)
 				colWidth = 0.3
 			points2[i].graphic.attr('width', colWidth)
 			points2[i].graphic.attr('stroke', strokeColor)
-			points2[i].graphic.attr('stroke-width', 0.1)
+			points2[i].graphic.attr('stroke-width', 1)
 			//points2[i].graphic.attr('fill', "black")	
 		}
 
