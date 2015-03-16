@@ -1,9 +1,11 @@
 
-var rpcport = "7778"
+var snURL = "http://127.0.0.1:7778";
+var nxtURL = "http://127.0.0.1:7876/nxt?";
 var isPollingOrderbook = false;
-var SATOSHI = 10000000
+var SATOSHI = 10000000;
 var curBase = 0;
 var curRel = 0;
+var rs = "";
 var orderbookTimeout;
 
 var currentOrderbook = 
@@ -34,11 +36,11 @@ function sendPost(params)
 {
     var dfd = new $.Deferred();
     params = JSON.stringify(params);
-
+    
 	$.ajax
     ({
 	  type: "POST",
-	  url: 'http://127.0.0.1:' + rpcport,
+	  url: snURL,
 	  data: params,
       contentType: 'application/json'
 	}).done(function(data)
@@ -54,6 +56,7 @@ function sendPost(params)
 }
 
 
+
 $("#openOrders table tbody").on("click", "tr td.cancelOrder", function(e)
 {
     var quoteid = $(this).data("quoteid")
@@ -67,12 +70,13 @@ $("#openOrders table tbody").on("click", "tr td.cancelOrder", function(e)
 
 $(".popupLoad").on("click", function(e)
 {
+	var $thisScope = $(this)
 	var params = extractPostPayload($(this))
 	if (params['requestType'] == "tradehistory")
 	{
 		params['timestamp'] = 0;
 	}
-	var $thisScope = $(this)
+
 	sendPost(params).done(function(data)
 	{
 		var row = ""
@@ -82,27 +86,44 @@ $(".popupLoad").on("click", function(e)
 
 		if (keys[0] in data)
 		{
+			var method = params['requestType']
 			var tableData = data[keys[0]]
 			keys.splice(0,1)
 
-			if (params['requestType'] == "openorders")
+			if (method == "openorders")
 			{
-				for (var i = 0; i < tableData.length; ++i)
-				{
-				tableData[i]['market'] = tableData[i]['base'] + "/" + tableData[i]['rel']
-				}
-
-				keys = ["requestType", "market", "price", "volume", "relamount", "quoteid", "age"]
+				tableData = formatPairName(tableData, "base", "rel")
 				//<td data-quoteid='"+quoteid+"' class='cancelOrder'>CANCEL</td>
-				console.dir(tableData)
 			}
-
+			else if (method ==  "allorderbooks")
+			{
+				tableData = formatPairName(tableData, "base", "rel")
+			}
+			else if (method == "tradehistory")
+			{
+				if ("rawtrades" in tableData ) 
+				{
+					tableData = tableData['rawtrades']
+					tableData = formatPairName(tableData, "assetA", "assetB")
+				}
+			}
+			
 			row = buildTableRows(objToList(tableData, keys))	
 		}
-
 		$modalTable.find("tbody").empty().append(row)
 	})
 })
+
+
+function formatPairName(tableData, baseName, relName)
+{
+	for (var i = 0; i < tableData.length; ++i)
+	{
+		tableData[i]['market'] = tableData[i][baseName] + "/" + tableData[i][relName]
+	}
+
+	return tableData
+}
 
 
 function getFormData($form) 
@@ -272,11 +293,13 @@ function updateOrderbook(orderbookData)
 
 function animateOrderbook()
 {
-	$(".newrow").find('td').wrapInner('<div style="display: none; background-color:#333;" />').parent().find('td > div').slideDown(700, function(){
+	$(".newrow").find('td').wrapInner('<div style="display: none; background-color:#333;" />').parent().find('td > div').slideDown(700, function()
+	{
 		var $set = $(this)
 		$set.replaceWith($set.contents())
 	})
-	$(".expiredRow").find('td').wrapInner('<div style="display: block; color:#CCC;" />').parent().find('td > div').slideUp(700, function(){
+	$(".expiredRow").find('td').wrapInner('<div style="display: block; color:#CCC;" />').parent().find('td > div').slideUp(700, function()
+	{
 		$(this).parent().parent().remove();
 	})
 
@@ -544,5 +567,6 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 	
     $form.find("input[name='total']").val(String(total))
 });
+
 
 

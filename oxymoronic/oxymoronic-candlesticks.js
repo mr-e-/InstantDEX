@@ -64,7 +64,7 @@
 		            point.pointAttr = merge(attribute, {
 		                '': {
                         stroke: strokeColor,
-		                    //borderColor: strokeColor,
+		                    borderColor: strokeColor,
 		                    fill: fillColor
 		                },
 		                hover: {

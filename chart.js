@@ -1,27 +1,81 @@
 var datau = []
 var datab = []
+var ohlcTimeout;
 var latestTrade;
-Highcharts.setOptions({
-	global: {
-		useUTC: false
-	}
-});
+var groupingUnits = [
+[
+    'minute',           
+    [1, 2, 3, 4]                           
+]]
 
-$(function () 
+function testOHLC(obj) 
 {
-    $.getJSON('https://s5.bitcoinwisdom.com/period?step=60&symbol=bitfinexbtcusd&nonce=', function (data) 
+    var __construct = function(that) 
     {
+		that.open = obj.open
+		that.high = obj.high
+		that.low = obj.low
+		that.close = obj.close
+		that.x = obj.date
+    }(this)
+    
+    this.next = function() {
+        return this
+    };
+}
+
+/*
+function skynet() 
+{
+    var dfd = new $.Deferred();
+    var params = {'run':'qts','mode':'bars','exchange':'ex_nxtae','pair':'12071612744977229797_NXT','type':'tick','len':'25','num':'100'}
+    //var params = JSON.stringify(params);
+    var turl = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100"
+	$.ajax
+    ({
+	  type: "GET",
+	  url: turl,
+	  	async:true,
+	  crossDomain:true,
+	  //data: "run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100&callback=?",
+	  dataType:"jsonp",
+	  //jsonp:false,
+	  //jsonpCallback:jsonCallback,
+	  contentType:"text/javascript",
+	  success:function(json, a){
+	  	console.log(typeof a)
+	  },
+	  error:function(json, a, c){
+	  	console.log('bb')
+	  	json.always(function(a,b){ console.log(b)})
+	  	console.log(a)
+	  	console.log(c)
+	  }
+      //contentType: 'application/json'
+	})
+	
+    return dfd.promise()
+}
+*/
+
+
+Highcharts.setOptions(Highcharts.theme);
+
+var makeChart =  (function make(step) 
+{
+	step = (typeof step === "undefined") ? "60" : step;
+	//var sock = new WebSocket("ws://idex.finhive.com/socket");
+    $.getJSON('https://s5.bitcoinwisdom.com/period?step='+step+'&symbol=bitfinexbtcusd&nonce=', function (data) 
+    //$.getJSON('http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100', function (data) 
+    {
+    	//console.log(data)
 		var curDate = String(Date.now())
-		//console.dir(data)
         var ohlc = []
         var volume = []
         var dataLength = data.length
-
-        var groupingUnits = [[
-            'minute',           
-            [1, 2, 3, 4]                           
-        ]]
-
+        var mStep = Number(step)*1000
+        
+        //var test = new testOHLC({'open':'a'})
         var i = 0;
         var prevTempDate = 0;
 
@@ -31,23 +85,25 @@ $(function ()
             var tempDate = data[i][0]*1000;
             var diff = tempDate - prevTempDate
 
-            if ((diff != 60000 && prevTempDate != 0))
+            if ((diff != mStep) && (prevTempDate != 0))
             {
-                var cycles = diff/60000
+                var cycles = diff/mStep
 
                 for (var j = 1; j < cycles; ++j)
                 {
 		            var tempObj = {}
-					var cycleDate = (data[i-1][0]*1000) + (60000*j)
+					var cycleDate = (data[i-1][0]*1000) + (mStep*j)
 					tempObj['open'] = data[i-1][4]
 					tempObj['high'] = data[i-1][4]
 					tempObj['low'] = data[i-1][4]
 					tempObj['close'] = data[i-1][4]
 					tempObj['x'] = cycleDate
-
+					var tt = data[i-1][4]
+                    //ohlc.push([cycleDate,tt,tt,tt,tt])
+                    //volume.push([cycleDate,0])
                     ohlc.push(tempObj)
-				    volume.push({
-				        name:"point",
+				    volume.push(
+					{
 				        color:colr,
 				        x:cycleDate,
 				        y:0
@@ -55,7 +111,10 @@ $(function ()
                 }
             }
 
-            ohlc.push({
+			//ohlc.push([tempDate,data[i][3],data[i][5],data[i][6],data[i][4]])
+			//volume.push([cycleDate,data[i][7]])
+            ohlc.push(
+			{
                 x:tempDate,
                 open:data[i][3],
                 high:data[i][5],
@@ -74,13 +133,13 @@ $(function ()
 		latestTrade = String((data[data.length-1][2]+1))
         var tempDate = data[data.length-1][0]*1000;
         var diff = curDate - tempDate
-		if (diff >= 60000)
+		if (diff >= mStep)
 		{
-            var cycles = diff/60000
+            var cycles = diff/mStep
             for (var j = 1; j <= cycles; ++j)
             {
 	            var tempObj = {}
-				var cycleDate = (data[data.length-1][0]*1000) + (60000*j)
+				var cycleDate = (data[data.length-1][0]*1000) + (mStep*j)
 				tempObj['open'] = data[data.length-1][4]
 				tempObj['high'] = data[data.length-1][4]
 				tempObj['low'] = data[data.length-1][4]
@@ -107,135 +166,60 @@ $(function ()
                 events:
 				{
 					load:chartLoadHander,
-					redraw:function() 
-					{
-						//$('#mainChart').highcharts().tooltip.refresh($('#mainChart').highcharts().hoverPoints ? );
-					}
+					redraw:changeColours
 				},
-                backgroundColor: '#000',
-                borderColor: '#424242',
-                borderWidth: 1,
-                plotBorderWidth: 0,
                 alignTicks: true
 				//renderTo:'#mainChart',
             },
-
-            navigator:
-            {
-			
-                adaptToUpdatedData:true,
-                enabled:true,
-				height:30,
-				//margin:30,
-            },
-
-            scrollbar:
-            {
-                enabled:false
-            },
-
-            rangeSelector: 
-            {
-                enabled:false,
-				
-                inputEnabled:false,
-                selected: 0
-            },
-
+            
             title: 
             {
                 useHTML:true,
 				text:"&nbsp;",
             },
-
+            
+            credits:
+            {
+                text:""
+            },
 
 		    exporting: 
 			{
 				enabled:true,
 		        buttons: 
 				{
-				//enabled:true,
-		            contextButton: 
-					{
-						enabled:false,
-					},
-		            a: 
-					{
-						y:-3,
-						align:"right",
-				        theme: 
-						{
-							height:10,
-							style:
-							{
-								color:"silver",
-							},
-							fill:"black",
-				            'stroke-width': 1,
-				            stroke: 'silver',
-				            r: 0,
-				            states: 
-							{
-				                hover: 
-								{
-				            		'stroke-width': 1,
-				            		stroke: 'silver',
-				                    fill: '#424242'
-				                },
-				                select: 
-								{
-				            		'stroke-width': 1,
-				            		stroke: 'silver',
-				                    fill: '#424242'
-				                }
-				            }
-				        },
-						symbol:null,
-						menuItems:null,
-						enabled:true,
-						text:"3m",
+		            a:{
+						onclick:fifteenMinuteGrouping,
+		            },
+		            b: {
+						onclick:fiveMinuteGrouping,
+		            },
+		            c: {
 						onclick:threeMinuteGrouping,
 		            },
-		            b: 
-					{
-						align:"right",
-						y:-3,
-						x:-35,
-				        theme: 
-						{
-							height:10,
-							style:
-							{
-								color:"silver",
-							},
-							fill:"black",
-				            'stroke-width': 1,
-				            stroke: 'silver',
-				            r: 0,
-				            states: 
-							{
-				                hover: 
-								{
-				            		'stroke-width': 1,
-				            		stroke: 'silver',
-				                    fill: '#424242'
-				                },
-				                select: 
-								{
-				            		'stroke-width': 1,
-				            		stroke: 'silver',
-				                    fill: '#424242'
-				                }
-				            }
-				        },
-						symbol:null,
-						menuItems:null,
-						enabled:true,
-						text:"1m",
+		            d: {
 						onclick:oneMinuteGrouping,
 		            },
 		        }
 		    },
+		    
+            navigator:
+            {
+                enabled:true,
+                adaptToUpdatedData:true,
+            },
+		    
+            rangeSelector: 
+            {
+                enabled:false,
+                inputEnabled:false,
+                selected: 0
+            },
+		    
+		    scrollbar:
+            {
+                enabled:false
+            },
 
             tooltip:
             {
@@ -243,8 +227,6 @@ $(function ()
                 followPointer:false,    
                 shared:true,
                 crosshairs:[false,false],
-                animation:true,
-                hideDelay:0.5,
             },
 
             yAxis: [
@@ -255,17 +237,14 @@ $(function ()
 					y:3.3,
                 },
 				top:"5%",
-                gridLineWidth:0,
                 height: '60%',
-                lineWidth: 0,
-                tickWidth:0.4,
 				offset:10,
-                startOnTick:true,
-                endOnTick:true,
-				showLastLabel:true,
+                //startOnTick:true,
+                //endOnTick:true,
 				showFirstLabel:true,
-				maxPadding:0.125,
-				minPadding:0.125,
+				//showLastLabel:true,
+				minPadding:0.0,
+				maxPadding:0.0,
             }, 
             {
                 labels: 
@@ -273,91 +252,66 @@ $(function ()
                     align: 'left',
 					y:3.3,
                 },
-                //endOnTick:true,
-				showLastLabel:true,
-                //startOnTick:true,
-                gridLineWidth:0,
                 top: '75%',
                 height: '20%',
                 offset: 10,
-                lineWidth: 0,
-                tickWidth:0.4,
-				maxPadding:0.255,
-				minPadding:0.255,
+                //startOnTick:true,
+                //endOnTick:true,
+				showLastLabel:true,
+				//minPadding:0.125,
+				//maxPadding:0.125,
             }],
-
+            
             xAxis: [
             {
+            	//startOnTick:true,
+            	            	//endOnTick:true,
                 labels: 
                 {
                     align: 'center',
                     y:0
                 },
-                //startOnTick:true,
-                lineWidth:0,
-                gridLineWidth:0,
-                tickWidth:1,
-                range: 15* 600 * 1000,
+                range: 100* 60 * 1000,
 				minRange: 15 * 60 * 1000,
                 events:
                 {
-                    afterSetExtremes: changeColours
+                    //afterSetExtremes: changeColours
                 }
             }],
 
-            credits:
-            {
-                text:""
-            },
 
             plotOptions: 
             {
                 candlestick:
                 {
-                    //stickyTracking:false,
-                	//enableMouseTracking: false,
-                    color: '#a80808',
-                    lineColor:'#d00',
-                    upLineColor: '#0c0', 
-                    pointPadding: 0.1,
+
+				    //minPointLength:0.1,
                     //pointRange: 10,
-                    //groupPadding: 0.1,
-                    upColor: '#0c0',
-					fillColor:"black",
-					minPointLength:0.1,
-					
-					//grouping:false,
                 }, 
                 column:
                 {
-					minPointLength:0.1,
-					//borderRadius:1,
-					//colorByPoint:false,
-                	//enableMouseTracking: false,
-                    //stickyTracking:false,
-                    pointPadding: 0.1,
-                    //groupPadding: 0.1,
-					animation:false,
-					grouping:false,
+                	minPointLength:0.1,
+					borderRadius:0,
                 },
                 series:
                 {
-					//events:{mouseOut:destroyChartRenders, mouseOver:buildChartRenders},
-					//grouping:false,
-					///oxymoronic:true,
-					lineWidth: 1,
-                }
-            },
+                pointPadding:0.1,
+                //groupPadding:0.8
+               	//grouping:false,
 
+                }
+            },   
+            
+            
             series: [
             {
                 yAxis:0,
 				xAxis:0,
                 type: 'candlestick',
                 name: 'AAPL',
-                turboThreshold:2000,
+                turboThreshold:8000,
                 data: ohlc,
-				borderWidth:0,
+				borderWidth:0.0,
                 dataGrouping: 
                 {
                     enabled:false,
@@ -365,11 +319,11 @@ $(function ()
                 }
             }, 
             {
-				borderColor:"black",
+				//borderColor:"black",
                 type: 'column',
                 name: 'Volume',
 				borderWidth:0.5,
-                turboThreshold:2000,
+                turboThreshold:8000,
                 data: volume,
                 xAxis:0,
                 yAxis: 1,
@@ -383,42 +337,11 @@ $(function ()
         }, function(chart)
            {
 
-                $(chart.container).on('mousewheel', function(event) {
-					event.preventDefault()
-					//console.log(event)
-		            var container = $(chart.container);
-		            var offset = container.offset();
-                    var x = event.clientX - chart.plotLeft - offset.left;
-                    var y = event.clientY - chart.plotTop - offset.top;
-                    var isInside = chart.isInsidePlot(x, y);
-                    if (isInside)
-                    {
-                        var curMax = chart.xAxis[0]['max']
-                        curMin = chart.xAxis[0]['min']
-                        //userMax = chart.xAxis[0]['userMax']
-                        //if (!userMax)
-                        //    userMax = curMax
-                        //userMin = chart.xAxis[0]['userMin']
-                        //diff = curMax - curMin
-                        var dataMax = chart.xAxis[0]['dataMax']
-                        var dataMin = chart.xAxis[0]['dataMin']
-                        var diff = curMax - curMin
-                        diff /= 10                 
-                        if (event.originalEvent.wheelDeltaY < 0)
-                        {
-                            chart.xAxis[0].setExtremes((curMin-diff > dataMin) ? curMin-diff : dataMin, curMax, true, false);
-                        }
-                        else if (event.originalEvent.wheelDeltaY > 0)
-                        {
-                            chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
-                        }
-                        //chart.redraw()
-                    }
-                });
-            }
+           }
         );
     });
-});
+    return make
+})();
 
 
 
@@ -429,7 +352,7 @@ function buildChartRenders(event)
 	var chart = $('#mainChart').highcharts()
 	var offset = $('#mainChart').offset();
 
-	while (!chart || !chart.hasRendered)
+	if (!chart || !chart.hasRendered)
 	{
 		return
 	}
@@ -561,6 +484,8 @@ $("#mainChart").on("mouseleave", destroyChartRenders)
 function destroyChartRenders(event)
 {
 	var chart = $('#mainChart').highcharts()
+	if (!chart)
+		return
 	if (chart.crossLabel)
 		chart.crossLabel.destroy()
 	if (chart.crossLabelX)
@@ -607,7 +532,6 @@ function dataSim(point)
 	
 	//console.log(latestTrade + "  1")
 	//console.log(datau)
-
     $.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
     {
 		//console.log('1')
@@ -636,7 +560,7 @@ function dataSim(point)
 				var loopDate = data[i]['date']*1000
 				var timeOffset = loopDate - curDate	
 		
-				if (timeOffset >= 60000)
+				if (timeOffset >= point.pointRange)
 				{
 					if (i < data.length-1)
 					{
@@ -695,7 +619,7 @@ function makeBothPoints(point)
 {
 	var OHLC = {}
 	var vol = {}
-	var nextDate = point.x + 60000
+	var nextDate = point.x + point.pointRange
 
     OHLC.open = point.close
 	OHLC.high = point.close
@@ -750,6 +674,7 @@ function chartLoadHander()
 {
 	drawDivideLine()
 	updateData()
+	changeColours()
 }
 
 function updateData()
@@ -757,14 +682,18 @@ function updateData()
     var chart = $('#mainChart').highcharts()
     var volSeries = chart.series[1];
     var ohlcSeries = chart.series[0];
+	//console.log(chart)
+	//console.log(chart.xAxis[0])
 
-    setTimeout(function () 
+    ohlcTimeout = setTimeout(function () 
     {
     	var curPointOHLC = datau[datau.length - 1]
     	var curPointVol = datab[datab.length - 1]
 
         dataSim(curPointOHLC).done(function(both)
 		{
+			if (!chart)
+				return
 		    var pastArr = both[0]
 		    var futureArr = both[1]
 
@@ -791,7 +720,7 @@ function updateData()
 				}
 			}
 
-			if (Number(sinceCount) - curPointOHLC.x >= 60000)
+			if (Number(sinceCount) - curPointOHLC.x >= curPointOHLC.pointRange)
 			{
 				if (futureArr.length)
 				{
@@ -844,32 +773,31 @@ function updatePlotPos()
 function oneMinuteGrouping()
 {
     chart = $('#mainChart').highcharts()
-
-    /*chart.xAxis[0].update({
-        min: 142533006000,
-        max: 142533006000,
-        minRange: 40 * 60 * 1000,
-    });*/
-    chart.series[0].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [1]] ] } }, false)
-    chart.series[1].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [1]] ] } })
-
-
+    chart.destroy()
+    clearTimeout(ohlcTimeout)
+    makeChart("60")
 }
-
 
 function threeMinuteGrouping()
 {
     chart = $('#mainChart').highcharts()
-    /*obj = {
-        min: 1425330060000,
-        max: 1425336060000,
-        minRange: 40 * 180 * 1000,
-    }
-    chart.xAxis[0].update(obj);*/
-    chart.series[0].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [3]] ] } }, false)
-    chart.series[1].update({ dataGrouping: { enabled: true, forced: true, units: [ ['minute', [3]] ] } } )
-	//chart.redraw()
-    //console.dir(chart)
+    chart.destroy()
+    clearTimeout(ohlcTimeout)
+    makeChart("180")
+}
+function fiveMinuteGrouping()
+{
+    chart = $('#mainChart').highcharts()
+    chart.destroy()
+    clearTimeout(ohlcTimeout)
+    makeChart("300")
+}
+function fifteenMinuteGrouping()
+{
+    chart = $('#mainChart').highcharts()
+    chart.destroy()
+    clearTimeout(ohlcTimeout)
+    makeChart("900")
 }
 
 $(window).resize(function()
@@ -904,61 +832,128 @@ function drawDivideLine()
 	//chart.redraw()
 }
 
-var oneTime = 1;
 function changeColours(e)
 {
-
 	var chart =  $('#mainChart').highcharts()
 	var points = chart.series[0].points;
 	var points2 = chart.series[1].points;
    	var obj = {}
+   	var xAxis = chart.xAxis[0]
 
-	if (points.length > 400)
+	if ((xAxis.oldMax != xAxis.max) || (xAxis.oldMin != xAxis.min) || ((xAxis.userMax == xAxis.dataMax) && (xAxis.userMin == xAxis.dataMin)) )
+	//&& !((xAxis.userMax != xAxis.dataMax) && (xAxis.userMin != xAxis.dataMin))
 	{
-		//obj={borderWidth:0,'stroke-width':"0.6px",}
-		//obj={"stroke-alignment":"inner"}
-	}
-	else
-	{
-		//obj={borderWidth:0,'stroke-width':1}
-	}
-
-	if ((chart.xAxis[0].oldMax != chart.xAxis[0].max) || (chart.xAxis[0].oldMin != chart.xAxis[0].min)) 
-	{
+		var graphic = points2[0].graphic
+		var width =	graphic.attr('width')
+		var total = points2.length*width
+		var a = points[0].graphic.d.split(" ")[1]
+		var b = (points[points.length-1].graphic.d.split(" ")[7])
+		var c = ((b-a) / points.length)
+		var dec = 1 - (points.length / total)
+		//console.log(graphic)
 		for (var i = 0; i < points.length; ++i)
 		{
-			//console.log(chart)
-			var graphic = points[i].graphic
+			graphic = points[i].graphic
 			var commands = graphic.d.split(/(?=[LMC])/)
 			var sub = graphic.d.split(" ")
-			strokeColor = points[i].open > points[i].close ? "#d00" : "#0c0";
-			//console.log( sub)
-			sub[1] = String((Number(sub[1]) + 0.5))
-			sub[4] = String((Number(sub[4]) + 0.5))
-			sub[7] = String((Number(sub[7]) - 0.5))
-			sub[10] = String((Number(sub[10]) - 0.5))
-			if (Number(sub[7]) - Number(sub[1]) == 1)
-				graphic.attr({d:sub.join(" ")})
-			//graphic.attr({'stroke-width':"1px"})
-			//console.log(points[i].pointAttr)
-			//points[i].pointAttr[""]['stroke'] = strokeColor
-			//console.log( graphic.d)
+			var strokeColor = points[i].open > points[i].close ? "#d00" : "#0c0";
+			var pairwidth = Number(sub[7]) - Number(sub[4])
+
+			var diff = (pairwidth - c)
+			if (i > points.length-10)
+			{
+			//	console.log(points[i].graphic.d.split(" ")[4] + "  " + points[i].graphic.d.split(" ")[7]); console.log(diff)
+			}
+			diff = diff/2
+			//if (diff < 0)
+				//diff  *= -1
+			if (diff > 1 )
+				diff = 1
+			else if (diff > 0 )
+				diff = 0.4
+			else if (diff < -0.5)
+				diff = -0.2
+			else if (diff < 0)
+				diff = 0.3
+			
+			//diff = Number(Math.round(diff * 100000) / 100000).toFixed(5);
+			diff = Number(diff)
+			sub[1] = String((Number(sub[1])) + (diff))
+			sub[4] = String((Number(sub[4])) + (diff))
+			sub[7] = String((Number(sub[7])) - (diff))
+			sub[10] = String((Number(sub[10])) - (diff))
+			graphic.attr({d:sub.join(" ")})
+			//graphic.attr({'stroke-width':"0.09em"})
+			//graphic.attr({'stroke-linecap':"butt"})
+			//graphic.attr({'stroke-opacity':1})
+			//graphic.attr({'fill':strokeColor})
+			/*if (i > points.length-10 )
+			{
+				console.log('point len' + String(points.length))
+				console.log("pw:  "+String(pairwidth))
+				console.log("a: "+String(a))
+				console.log("b: "+String(b))
+				console.log("c: "+String(c))
+				console.log(diff)
+				console.log(points[i].graphic.d.split(" ")[1] + "  " + points[i].graphic.d.split(" ")[7])
+			}*/
+			
+			if (points2[i].y < 1 && points2[i].y > 0)
+			{
+				points2[i].graphic.attr('height', 1)
+				points2[i].graphic.attr('y', chart.series[1].yAxis.bottom - (chart.series[1].yAxis.bottom - chart.series[1].yAxis.height))
+			}
+			var tempgr = points2[i].graphic
+			graphic.attr({'stroke':strokeColor})
+			//console.log(chart.series[1].yAxis)
+			var colWidth = Number(Math.round((points[i].graphic.d.split(" ")[7] - points[i].graphic.d.split(" ")[1]) * 100000) / 100000).toFixed(5)
+			if (colWidth < 0.3)
+				colWidth = 0.3
+			points2[i].graphic.attr('width', colWidth)
+			points2[i].graphic.attr('stroke', strokeColor)
+			points2[i].graphic.attr('stroke-width', 0.1)
+			//points2[i].graphic.attr('fill', "black")	
 		}
 
-		for (var i = 0; i < points2.length; ++i)
-		{
-			var graphic = points2[i].graphic
-			var width =	graphic.attr('width')
-			if (width == 2)
-				graphic.attr('width', width-1)
-		}
+		
 	}
-	//chart.redraw()
-
 }
 
 
-
+$("#mainChart").on('mousewheel', function(event) 
+{
+	event.preventDefault()
+	
+	var chart =  $('#mainChart').highcharts()
+    var container = $(chart.container);
+    var offset = container.offset();
+    var x = event.clientX - chart.plotLeft - offset.left;
+    var y = event.clientY - chart.plotTop - offset.top;
+    var isInside = chart.isInsidePlot(x, y);
+    if (isInside)
+    {
+        var curMax = chart.xAxis[0]['max']
+        curMin = chart.xAxis[0]['min']
+        //userMax = chart.xAxis[0]['userMax']
+        //if (!userMax)
+        //    userMax = curMax
+        //userMin = chart.xAxis[0]['userMin']
+        //diff = curMax - curMin
+        var dataMax = chart.xAxis[0]['dataMax']
+        var dataMin = chart.xAxis[0]['dataMin']
+        var diff = curMax - curMin
+        diff /= 10                 
+        if (event.originalEvent.wheelDeltaY < 0)
+        {
+            chart.xAxis[0].setExtremes((curMin-diff > dataMin) ? curMin-diff : dataMin, curMax, true, false);
+        }
+        else if (event.originalEvent.wheelDeltaY > 0)
+        {
+            chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
+        }
+        //chart.redraw()
+    }
+});
 
 
 

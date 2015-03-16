@@ -168,7 +168,7 @@
 								<input type="text" class="form-control" name="price" id="placeBidPrice" placeholder=""></input>
 							</div>
 							<div class="form-group">
-								<label for="placeBidAmount">Amount (BASE)</label>
+								<label for="placeBidAmount">Amount</label>
 								<input type="text" class="form-control" name="volume" id="placeBidAmount" placeholder=""></input>
 							</div>
 							<div class="form-group">
@@ -176,7 +176,7 @@
 								<input disabled type="text" class="form-control" name="fee" id="placeBidFee" placeholder="2.5 NXT"></input>
 							</div>
 							<div class="form-group">
-								<label for="placeBidTotal">Total (REL)</label>
+								<label for="placeBidTotal">Total</label>
 								<input disabled type="text" class="form-control" name="total" id="placeBidTotal" placeholder=""></input>
 							</div>
 						</form>
@@ -240,8 +240,8 @@
 				<div id="tabs-1">
 					<div>
 						<table id="marketTable" class="tablesorter table"> 
-							<thead data-keys="orderbooks base rel numquotes exchange">
-								<tr><th>Market</th><th>Num Quotes</th><th>Exchange</th></tr>
+							<thead data-keys="orderbooks market numquotes exchange">
+								<tr><th>Market</th><th>Num Quotes</th><th>Exchange</th><th>Volume</th><th>Change</th><th>Last Trade</th></tr>
 							</thead>
 							<tbody> 
 							</tbody> 
@@ -279,7 +279,7 @@
 			<h1 id="test_getOpenOrders">Open Orders</h1>
 		    <div id="openOrders" style="position:relative;">
 				<table class="table">
-					<thead data-keys="openorders requestType base rel price volume relamount quoteid age">
+					<thead data-keys="openorders requestType market price volume relamount quoteid age">
 					<tr><th>Type</th><th>Market</th><th>Price</th><th>Base Amount</th><th>Rel Amount</th><th>Quote ID</th><th>Age</th><th></th></tr>
 					</thead>
 					<tbody style="font-family:Consolas, Monospace">
@@ -294,8 +294,8 @@
 			<h1 id="test_tradeHistory">Trade History</h1>
 		    <div id="tradeHistory" style="position:relative;">
 				<table class="table">
-					<thead data-keys="assets assetid purchased sold net">
-					<tr><th>AssetID</th><th>Purchased</th><th>Sold</th><th>Net</th></tr>
+					<thead data-keys="tradehistory market amountA amountB NXT triggerhash">
+					<tr><th>Market</th><th>Base Amount</th><th>Rel Amount</th><th>NXT</th><th>Trigger Hash</th</tr>
 					</thead>
 					<tbody style="font-family:Consolas, Monospace">
 					</tbody>
@@ -337,11 +337,13 @@
 	<div class="md-overlay"></div><!-- the overlay element -->
 	
 	<script src="js/modal/modalEffects.js"></script>
-
+	
+    
 	<script src="Highstock-2.1.3/js/highstock.js"></script>
 	<script src="Highstock-2.1.3/js/modules/exporting.js"></script>
 	<script src="oxymoronic/oxymoronic-candlesticks.js"></script>
 	<script src="idex.js" type="text/javascript"></script>	
+	<script src="theme.js" type="text/javascript"></script>	
 	<script src="chart.js" type="text/javascript"></script>	
 
 </body>
