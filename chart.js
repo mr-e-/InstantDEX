@@ -242,9 +242,9 @@ var makeChart =  (function make(step)
                 //startOnTick:true,
                 //endOnTick:true,
 				showFirstLabel:true,
-				//showLastLabel:true,
-				minPadding:0.0,
-				maxPadding:0.0,
+				showLastLabel:true,
+				minPadding:0.2,
+				maxPadding:0.2,
             }, 
             {
                 labels: 
