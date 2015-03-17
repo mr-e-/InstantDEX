@@ -79,7 +79,7 @@
 						//console.log(Number(sub[7]) - Number(sub[4]))
 					}
 					graphic.attr({d:sub.join(" ")})
-					graphic.attr('stroke-width', "0.04rem")
+					graphic.attr('stroke-width', 1)
 			        graphic.attr('stroke', strokeColor);
 			        graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
@@ -107,8 +107,8 @@
 						w = 0.2
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
-					graphic.attr('stroke-width', "0.04rem")
-					graphic.attr('borderWidth', "0.04rem")
+					graphic.attr('stroke-width', 1)
+					graphic.attr('borderWidth', 1)
 			        graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
 				} 

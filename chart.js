@@ -232,6 +232,7 @@ var makeChart =  (function make(step)
 				chart.crossLabelY = chart.renderer.text().attr(statAttr).add();
 				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
 				$(chart.container).on("mousemove",buildChartRenders)
+				
            }
         );
     });
