@@ -24,6 +24,13 @@ function testOHLC(obj)
     };
 }
 
+var crossLinesAttr=
+{
+	'stroke-width': 1,
+	stroke: '#999',
+	zIndex: 10
+}
+
 /*
 function skynet() 
 {
@@ -57,7 +64,6 @@ function skynet()
     return dfd.promise()
 }
 */
-
 
 Highcharts.setOptions(Highcharts.theme);
 
@@ -159,17 +165,18 @@ var makeChart =  (function make(step)
         datau = ohlc
         datab = volume
 
-        $('#mainChart').highcharts('StockChart', 
+        var $chart1 = new Highcharts.StockChart(
         {
             chart:
             {
+            	renderTo:"mainChart",
                 events:
 				{
 					load:chartLoadHander,
 					redraw:changeColours
 				},
-                alignTicks: true
-				//renderTo:'#mainChart',
+                alignTicks: true,
+                spacingLeft:0,
             },
             
             title: 
@@ -239,7 +246,7 @@ var makeChart =  (function make(step)
 				top:"5%",
                 height: '60%',
 				offset:10,
-                //startOnTick:true,
+                startOnTick:true,
                 //endOnTick:true,
 				showFirstLabel:true,
 				showLastLabel:true,
@@ -255,7 +262,7 @@ var makeChart =  (function make(step)
                 top: '75%',
                 height: '20%',
                 offset: 10,
-                //startOnTick:true,
+                startOnTick:true,
                 //endOnTick:true,
 				showLastLabel:true,
 				//minPadding:0.125,
@@ -265,7 +272,7 @@ var makeChart =  (function make(step)
             xAxis: [
             {
             	//startOnTick:true,
-            	            	//endOnTick:true,
+            	          	//endOnTick:true,
                 labels: 
                 {
                     align: 'center',
@@ -284,7 +291,6 @@ var makeChart =  (function make(step)
             {
                 candlestick:
                 {
-
 				    //minPointLength:0.1,
                     //pointRange: 10,
                 }, 
@@ -295,6 +301,7 @@ var makeChart =  (function make(step)
                 },
                 series:
                 {
+                
                 pointPadding:0.1,
                 //groupPadding:0.8
                	//grouping:false,
@@ -307,11 +314,12 @@ var makeChart =  (function make(step)
             {
                 yAxis:0,
 				xAxis:0,
+				
                 type: 'candlestick',
                 name: 'AAPL',
                 turboThreshold:8000,
                 data: ohlc,
-				borderWidth:0.0,
+				borderWidth:0.5,
                 dataGrouping: 
                 {
                     enabled:false,
@@ -336,7 +344,10 @@ var makeChart =  (function make(step)
 
         }, function(chart)
            {
-
+			//chart._cursor = null
+            //console.log(chart.renderer.defs.element.css({"cursor":"none"}))
+			//console.dir(chart.renderTo)
+			//chart.renderTo = $("#mainChart")[0]
            }
         );
     });
@@ -347,109 +358,126 @@ var makeChart =  (function make(step)
 
 $("#mainChart").on("mousemove", buildChartRenders)
 
+function buildCrossLines(svg, path, attr)
+{            
+    if (svg) 
+	{
+        chart.crossLinesY.attr({d: crossPathY});
+    } 
+	else 
+	{
+        chart.crossLinesY = chart.renderer.path(path).attr(crossLinesAttr).add();
+    }
+}
+
+var prevIndex;
+
 function buildChartRenders(event)
 {
 	var chart = $('#mainChart').highcharts()
 	var offset = $('#mainChart').offset();
-
-	if (!chart || !chart.hasRendered)
-	{
-		return
-	}
     var insideX = event.clientX - chart.plotLeft - offset.left;
     var insideY = event.clientY - chart.plotTop - offset.top;
     var isInside = chart.isInsidePlot(insideX, insideY);
-	if (!isInside)
+	if (isInside)
 	{
-		return
-	}
-
-    var x = event.pageX - offset.left;
-    var y = event.pageY - offset.top
-
-    var path = ['M', chart.plotLeft, y,
-            'L', chart.plotLeft + chart.plotWidth, y,
-            'M', x, chart.plotTop,
-            'L', x, chart.plotTop + chart.plotHeight];
-
-    if (chart.crossLines) 
-	{
-        chart.crossLines.attr({
-            d: path
-        });
-    } 
-	else 
-	{
-        chart.crossLines = chart.renderer.path(path).attr({
-            'stroke-width': 1,
-            stroke: '#999',
-            zIndex: 10
-        }).add();
-    }
-    
-    if (chart.crossLabel) 
-	{
-        chart.crossLabel.attr({
-            y: y+6,
-            'stroke-width': 1,
-            stroke: '#999',
-            text: chart.yAxis[0].toValue(y).toFixed(2)
-        });
-    } 
-	else 
-	{
-        chart.crossLabel = chart.renderer.text(chart.yAxis[0].toValue(y).toFixed(2), chart.plotLeft+chart.plotWidth, y+6).add();
-    }
-
-	
-	var dd = Number(chart.xAxis[0].toValue(x).toFixed())
-	dd += chart.xAxis[0].minPointOffset
-	var d = new Date(dd)
-	var hours = String(d.getHours())
-	var minutes = d.getMinutes()
-	minutes = minutes < 10 ? "0"+String(minutes) : String(minutes)
-	var dString = hours+":"+minutes
-    if (chart.crossLabelX) 
-	{
-        chart.crossLabelX.attr({
-            x: x-15,
-            'stroke-width': 1,
-            stroke: '#999',
-            text: dString
-        });
-    } 
-	else 
-	{
-        chart.crossLabelX = chart.renderer.text(dString, x, chart.plotTop+chart.plotHeight).add();
-    }
-
-	   
-	var closest = Number(chart.xAxis[0].toValue(x).toFixed())
-	closest += chart.xAxis[0].minPointOffset	
-	var b = getPoint(0, closest)
-	var index = chart.series[0].data.indexOf(b)
-	//console.log(chart.series[0])
-	if (index >= 0)
-	{
-		var vol = chart.series[1].data[index].y
-		var d = new Date(b.x)
-		var marketInfoText = "Open: "+b.open+"  High: "+b.high+"  Low: "+b.low+"  Close: "+b.close+"  Volume: "+vol+"<br>Date: "+String(d)
-		if (chart.marketInfo) 
+		var pointRange = chart.series[0].pointRange
+		var x = event.pageX - offset.left;
+		var y = event.pageY - offset.top
+		var closestTime = Number(chart.xAxis[0].toValue(x).toFixed())
+		//console.log(closestTime % pointRange)
+		var closestPoint = getPoint(0, closestTime)
+		//console.log(closestPoint)
+		var index = chart.series[0].data.indexOf(closestPoint)
+		//console.log(index)
+		if ((index != prevIndex && index > 0) && (closestTime % pointRange <= pointRange/2))
 		{
-		    chart.marketInfo.attr(
+			//console.log(chart.series[0])
+			//console.log(x)
+			var d = new Date(closestTime + chart.xAxis[0].minPointOffset)
+			var hours = String(d.getHours())
+			var minutes = d.getMinutes()
+			minutes = minutes < 10 ? "0"+String(minutes) : String(minutes)
+			var dString = hours+":"+minutes
+	
+			var xPos = closestPoint.clientX
+			var path = [
+		    'M', xPos, chart.plotTop,
+		    'L', xPos, chart.plotTop + chart.plotHeight];
+            
+			if (chart.crossLinesX) 
 			{
-		        y: chart.plotBox.y-25,
-		        'stroke-width': 1,
-		        stroke: '#999',
-		        text: marketInfoText
-		    });
+				chart.crossLinesX.attr({d: path});
+			} 
+			else 
+			{
+				chart.crossLinesX = chart.renderer.path(path).attr(crossLinesAttr).add();
+			}
+			
+			if (chart.crossLabelX) 
+			{
+				chart.crossLabelX.attr(
+				{
+				    x: xPos-15,
+				    'stroke-width': 1,
+				    stroke: '#999',
+				    text: dString
+				});
+			} 
+			else 
+			{
+				chart.crossLabelX = chart.renderer.text(dString, x, chart.plotTop+chart.plotHeight).add();
+			}
+
+
+			var vol = chart.series[1].data[index].y
+			var d = new Date(closestPoint.x)
+			var marketInfoText = "Open: "+closestPoint.open+"  High: "+closestPoint.high+"  Low: "+closestPoint.low+"  Close: "+closestPoint.close+"  Volume: "+vol+"<br>Date: "+String(d)
+			if (chart.marketInfo) 
+			{
+				chart.marketInfo.attr(
+				{
+					y: chart.plotBox.y-25,
+					'stroke-width': 1,
+					stroke: '#999',
+					text: marketInfoText
+				});
+			} 
+			else 
+			{
+				chart.marketInfo = chart.renderer.text('hello', chart.plotBox.x+2, chart.plotBox.y).add();
+			}
+			
+			
+					prevIndex = index
+		}
+		
+		var crossPathY = [
+		'M', chart.plotLeft, y,
+        'L', chart.plotLeft + chart.plotWidth, y]
+		if (chart.crossLinesY) 
+		{
+			chart.crossLinesY.attr({d: crossPathY});
 		} 
 		else 
 		{
-		    chart.marketInfo = chart.renderer.text('hello', chart.plotBox.x-5, chart.plotBox.y).add();
+			chart.crossLinesY = chart.renderer.path(crossPathY).attr(crossLinesAttr).add();
+		}
+	
+		if (chart.crossLabelY) 
+		{
+			chart.crossLabelY.attr({
+			    y: y+6,
+			    'stroke-width': 1,
+			    stroke: '#999',
+			    text: chart.yAxis[0].toValue(y).toFixed(2)
+			});
+		} 
+		else 
+		{
+			chart.crossLabelY = chart.renderer.text(chart.yAxis[0].toValue(y).toFixed(2), chart.plotLeft+chart.plotWidth, y+6).add();
 		}
 	}
-
 }
 
 
@@ -462,6 +490,10 @@ function getPoint(seriesIndex, value)
 	if (value >= points[points.length-1].x)
 	{
 		val = points[points.length-1]
+	}
+	else if (value <= points[0].x)
+	{
+		val = points[0]
 	}
 	else
 	{
@@ -486,19 +518,23 @@ function destroyChartRenders(event)
 	var chart = $('#mainChart').highcharts()
 	if (!chart)
 		return
-	if (chart.crossLabel)
-		chart.crossLabel.destroy()
+	if (chart.crossLabelY)
+		chart.crossLabelY.destroy()
 	if (chart.crossLabelX)
 		chart.crossLabelX.destroy()
-	if (chart.crossLines)
-		chart.crossLines.destroy()
+	if (chart.crossLinesX)
+		chart.crossLinesX.destroy()
+	if (chart.crossLinesY)
+		chart.crossLinesY.destroy()
 	if (chart.marketInfo)
 		chart.marketInfo.destroy()
 	chart.crossLabelX = null
-	chart.crossLabel = null
-	chart.crossLines = null
+	chart.crossLabelY = null
+	chart.crossLinesX = null
+	chart.crossLinesY = null
 	chart.marketInfo = null
 
+	prevIndex = -2
 	chart.redraw()
 
 }
@@ -769,7 +805,7 @@ function updatePlotPos()
 
 function oneMinuteGrouping()
 {
-    chart = $('#mainChart').highcharts()
+    var chart = $('#mainChart').highcharts()
     chart.destroy()
     clearTimeout(ohlcTimeout)
     makeChart("60")
@@ -777,21 +813,21 @@ function oneMinuteGrouping()
 
 function threeMinuteGrouping()
 {
-    chart = $('#mainChart').highcharts()
+    var chart = $('#mainChart').highcharts()
     chart.destroy()
     clearTimeout(ohlcTimeout)
     makeChart("180")
 }
 function fiveMinuteGrouping()
 {
-    chart = $('#mainChart').highcharts()
+    var chart = $('#mainChart').highcharts()
     chart.destroy()
     clearTimeout(ohlcTimeout)
     makeChart("300")
 }
 function fifteenMinuteGrouping()
 {
-    chart = $('#mainChart').highcharts()
+    var chart = $('#mainChart').highcharts()
     chart.destroy()
     clearTimeout(ohlcTimeout)
     makeChart("900")
@@ -895,7 +931,7 @@ function changeColours(e)
 				console.log(points[i].graphic.d.split(" ")[1] + "  " + points[i].graphic.d.split(" ")[7])
 			}*/
 			
-			if (points2[i].y < 1 && points2[i].y > 0)
+			if (points2[i].y < 1 && points2[i].y > 0.00)
 			{
 				points2[i].graphic.attr('height', 1)
 				points2[i].graphic.attr('y', chart.series[1].yAxis.bottom - (chart.series[1].yAxis.bottom - chart.series[1].yAxis.height))
@@ -909,7 +945,7 @@ function changeColours(e)
 				colWidth = 0.3
 			points2[i].graphic.attr('width', colWidth)
 			points2[i].graphic.attr('stroke', strokeColor)
-			points2[i].graphic.attr('stroke-width', 1)
+			points2[i].graphic.attr('stroke-width', "0.07em")
 			//points2[i].graphic.attr('fill', "black")	
 		}
 

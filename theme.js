@@ -29,9 +29,6 @@ var buttonTheme =
 
 Highcharts.theme = {
             
-            
-      
-            
 			global: 
 			{
 				useUTC: false
@@ -135,11 +132,13 @@ Highcharts.theme = {
                     upLineColor: '#0c0', 
                     upColor: '#0c0',
 					fillColor:"black",
+					minPointLength:0.1,
                     //pointRange: 10,
                 }, 
                 column:
                 {
 					//borderRadius:1,
+					minPointLength:0.1,
                 },
                 series:
                 {
@@ -149,7 +148,6 @@ Highcharts.theme = {
                     //stickyTracking:false,
                 	//enableMouseTracking: false,
                     //groupPadding: 0.1,
-                	minPointLength:0.1,
                     pointPadding: 0.1,
                     //pointRange: 60*1000,
                     		//			borderRadius:0,
