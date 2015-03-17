@@ -170,7 +170,7 @@ var makeChart =  (function make(step)
                 events:
 				{
 					load:chartLoadHander,
-					redraw:changeColours
+					//redraw:changeColours
 				},
                 alignTicks: true,
                 spacingLeft:0,
@@ -325,7 +325,7 @@ var makeChart =  (function make(step)
                 name: 'AAPL',
                 turboThreshold:8000,
                 data: ohlc,
-				borderWidth:0.5,
+				borderWidth:0.0,
                 dataGrouping: 
                 {
                     enabled:false,
@@ -336,7 +336,7 @@ var makeChart =  (function make(step)
 				//borderColor:"black",
                 type: 'column',
                 name: 'Volume',
-				borderWidth:0.5,
+				borderWidth:0.0,
                 turboThreshold:8000,
                 data: volume,
                 xAxis:0,
@@ -682,7 +682,7 @@ function chartLoadHander()
 {
 	drawDivideLine()
 	updateData()
-	changeColours()
+	//changeColours()
 }
 
 function updateData()
@@ -841,88 +841,6 @@ function drawDivideLine()
 function changeColours(e)
 {
 	return
-	var chart =  $('#mainChart').highcharts()
-	var points = chart.series[0].points;
-	var points2 = chart.series[1].points;
-   	var obj = {}
-   	var xAxis = chart.xAxis[0]
-
-	if ((xAxis.oldMax != xAxis.max) || (xAxis.oldMin != xAxis.min) || ((xAxis.userMax == xAxis.dataMax) && (xAxis.userMin == xAxis.dataMin)) )
-	//&& !((xAxis.userMax != xAxis.dataMax) && (xAxis.userMin != xAxis.dataMin))
-	{
-		var graphic = points2[0].graphic
-		var width =	graphic.attr('width')
-		var total = points2.length*width
-		var a = points[0].graphic.d.split(" ")[1]
-		var b = (points[points.length-1].graphic.d.split(" ")[7])
-		var c = ((b-a) / points.length)
-		var dec = 1 - (points.length / total)
-		//console.log(graphic)
-		for (var i = 0; i < points.length; ++i)
-		{
-			graphic = points[i].graphic
-			var commands = graphic.d.split(/(?=[LMC])/)
-			var sub = graphic.d.split(" ")
-			var strokeColor = points[i].open > points[i].close ? "#d00" : "#0c0";
-			var pairwidth = Number(sub[7]) - Number(sub[4])
-
-			var diff = (pairwidth - c)
-			if (i > points.length-10)
-			{
-			//	console.log(points[i].graphic.d.split(" ")[4] + "  " + points[i].graphic.d.split(" ")[7]); console.log(diff)
-			}
-			diff = diff/2
-			//if (diff < 0)
-				//diff  *= -1
-			if (diff > 1 )
-				diff = 1
-			else if (diff > 0 )
-				diff = 0.4
-			else if (diff < -0.5)
-				diff = -0.2
-			else if (diff < 0)
-				diff = 0.3
-			
-			//diff = Number(Math.round(diff * 100000) / 100000).toFixed(5);
-			diff = Number(diff)
-			sub[1] = String((Number(sub[1])) + (diff))
-			sub[4] = String((Number(sub[4])) + (diff))
-			sub[7] = String((Number(sub[7])) - (diff))
-			sub[10] = String((Number(sub[10])) - (diff))
-			graphic.attr({d:sub.join(" ")})
-			//graphic.attr({'stroke-width':"0.09em"})
-			//graphic.attr({'stroke-linecap':"butt"})
-			//graphic.attr({'stroke-opacity':1})
-			//graphic.attr({'fill':strokeColor})
-			/*if (i > points.length-10 )
-			{
-				console.log('point len' + String(points.length))
-				console.log("pw:  "+String(pairwidth))
-				console.log("a: "+String(a))
-				console.log("b: "+String(b))
-				console.log("c: "+String(c))
-				console.log(diff)
-				console.log(points[i].graphic.d.split(" ")[1] + "  " + points[i].graphic.d.split(" ")[7])
-			}*/
-			
-			if (points2[i].y < 1 && points2[i].y > 0.00)
-			{
-				points2[i].graphic.attr('height', 1)
-				points2[i].graphic.attr('y', chart.series[1].yAxis.bottom - (chart.series[1].yAxis.bottom - chart.series[1].yAxis.height))
-			}
-			var tempgr = points2[i].graphic
-			graphic.attr({'stroke':strokeColor})
-			graphic.attr('stroke-width', 1)
-			//console.log(chart.series[1].yAxis)
-			var colWidth = Number(Math.round((points[i].graphic.d.split(" ")[7] - points[i].graphic.d.split(" ")[1]) * 100000) / 100000).toFixed(5)
-			if (colWidth < 0.3)
-				colWidth = 0.3
-			points2[i].graphic.attr('width', colWidth)
-			points2[i].graphic.attr('stroke', strokeColor)
-			points2[i].graphic.attr('stroke-width', "0.07em")
-			//points2[i].graphic.attr('fill', "black")	
-		}
-	}
 }
 
 

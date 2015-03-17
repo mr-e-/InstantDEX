@@ -73,7 +73,7 @@
 						//console.log(Number(sub[7]) - Number(sub[4]))
 					}
 					graphic.attr({d:sub.join(" ")})
-					//graphic.attr('stroke-width', 1)
+					graphic.attr('stroke-width', "0.07rem")
 			        graphic.attr('stroke', strokeColor);
 			        graphic.attr('fill', fillColor);
 				}
@@ -100,7 +100,7 @@
 						w = 0.2
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
-					//graphic.attr('stroke-width', "0.07em")
+					graphic.attr('stroke-width', "0.07rem")
 			        graphic.attr('fill', fillColor);
 				} 
             });
