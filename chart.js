@@ -74,14 +74,11 @@ var makeChart =  (function make(step)
     $.getJSON('https://s5.bitcoinwisdom.com/period?step='+step+'&symbol=bitfinexbtcusd&nonce=', function (data) 
     //$.getJSON('http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100', function (data) 
     {
-    	//console.log(data)
 		var curDate = String(Date.now())
         var ohlc = []
         var volume = []
         var dataLength = data.length
         var mStep = Number(step)*1000
-        
-        //var test = new testOHLC({'open':'a'})
         var i = 0;
         var prevTempDate = 0;
 
@@ -272,7 +269,7 @@ var makeChart =  (function make(step)
             xAxis: [
             {
             	//startOnTick:true,
-            	          	//endOnTick:true,
+            	//endOnTick:true,
                 labels: 
                 {
                     align: 'center',
@@ -301,10 +298,20 @@ var makeChart =  (function make(step)
                 },
                 series:
                 {
-                pointPadding:0.1,
-                //groupPadding:0.8
-               	//grouping:false,
-
+                	states:
+                	{
+                		hover:
+                		{
+                			enabled:false
+                		},
+                		select:
+                		{
+                			enabled:false
+                		}
+               		},
+		            pointPadding:0.1,
+		            //groupPadding:0.8
+		           	//grouping:false,
                 }
             },   
             
@@ -391,8 +398,8 @@ function buildChartRenders(event)
 		
 		if ((index != prevIndex && index > 0) && (closestTime % pointRange <= pointRange/2))
 		{
+			//console.log(chart)
 			var d = new Date(closestPoint.x)
-	
 			var xPos = closestPoint.clientX
 			var crossPathX = [
 		    'M', xPos, chart.plotTop,
@@ -762,7 +769,7 @@ function updatePlotPos()
 	{
 		chart.xAxis[0].setExtremes(curMin, dataMax);
 	}
-	chart.redraw();
+	//chart.redraw();
 }
 
 //ordinal = chart.xAxis[0].ordinalPositions
@@ -833,6 +840,7 @@ function drawDivideLine()
 
 function changeColours(e)
 {
+	return
 	var chart =  $('#mainChart').highcharts()
 	var points = chart.series[0].points;
 	var points2 = chart.series[1].points;
@@ -914,8 +922,6 @@ function changeColours(e)
 			points2[i].graphic.attr('stroke-width', "0.07em")
 			//points2[i].graphic.attr('fill', "black")	
 		}
-
-		
 	}
 }
 
