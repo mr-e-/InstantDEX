@@ -2,26 +2,17 @@ var datau = []
 var datab = []
 var ohlcTimeout;
 var latestTrade;
-var groupingUnits = [
-[
-    'minute',           
-    [1, 2, 3, 4]                           
-]]
 
 function testOHLC(obj) 
 {
     var __construct = function(that) 
     {
-		that.open = obj.open
-		that.high = obj.high
-		that.low = obj.low
-		that.close = obj.close
-		that.x = obj.date
+		that.x = obj[0]
+		that.open = obj[1]
+		that.high = obj[2]
+		that.low = obj[3]
+		that.close = obj[4]
     }(this)
-    
-    this.next = function() {
-        return this
-    };
 }
 
 var statAttr=
@@ -31,134 +22,68 @@ var statAttr=
 	zIndex: 10
 }
 
-/*
-function skynet() 
-{
-    var dfd = new $.Deferred();
-    var params = {'run':'qts','mode':'bars','exchange':'ex_nxtae','pair':'12071612744977229797_NXT','type':'tick','len':'25','num':'100'}
-    //var params = JSON.stringify(params);
-    var turl = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100"
-	$.ajax
-    ({
-	  type: "GET",
-	  url: turl,
-	  	async:true,
-	  crossDomain:true,
-	  //data: "run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100&callback=?",
-	  dataType:"jsonp",
-	  //jsonp:false,
-	  //jsonpCallback:jsonCallback,
-	  contentType:"text/javascript",
-	  success:function(json, a){
-	  	console.log(typeof a)
-	  },
-	  error:function(json, a, c){
-	  	console.log('bb')
-	  	json.always(function(a,b){ console.log(b)})
-	  	console.log(a)
-	  	console.log(c)
-	  }
-      //contentType: 'application/json'
-	})
-	
-    return dfd.promise()
-}
-*/
 
 Highcharts.setOptions(Highcharts.theme);
 
 var makeChart =  (function make(step) 
 {
 	step = (typeof step === "undefined") ? "60" : step;
-	//var sock = new WebSocket("ws://idex.finhive.com/socket");
     $.getJSON('https://s5.bitcoinwisdom.com/period?step='+step+'&symbol=bitfinexbtcusd&nonce=', function (data) 
     //$.getJSON('http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100', function (data) 
+	//ohlc.push([tempDate,data[i][3],data[i][5],data[i][6],data[i][4]])
+	//volume.push([cycleDate,data[i][7]])
     {
-		var curDate = String(Date.now())
         var ohlc = []
         var volume = []
         var dataLength = data.length
         var mStep = Number(step)*1000
-        var i = 0;
-        var prevTempDate = 0;
 
-        for (i = 0; i < dataLength; i += 1) 
+        for (var i = 0; i < dataLength; i += 1) 
         {
-            var colr = ((data[i][3] > data[i][4]) ? "#c00" : "#0c0")
-            var tempDate = data[i][0]*1000;
-            var diff = tempDate - prevTempDate
-
-            if ((diff != mStep) && (prevTempDate != 0))
+            var pointDate = data[i][0]*1000;
+            var diff = (i == 0) ? 0 : pointDate - data[i-1][0]*1000
+            
+            if ((diff >= mStep) && (i != 0))
             {
                 var cycles = diff/mStep
 
                 for (var j = 1; j < cycles; ++j)
                 {
-		            var tempObj = {}
 					var cycleDate = (data[i-1][0]*1000) + (mStep*j)
-					tempObj['open'] = data[i-1][4]
-					tempObj['high'] = data[i-1][4]
-					tempObj['low'] = data[i-1][4]
-					tempObj['close'] = data[i-1][4]
-					tempObj['x'] = cycleDate
-					var tt = data[i-1][4]
-                    //ohlc.push([cycleDate,tt,tt,tt,tt])
-                    //volume.push([cycleDate,0])
-                    ohlc.push(tempObj)
-				    volume.push(
-					{
-				        color:colr,
-				        x:cycleDate,
-				        y:0
-				    });
+                	var close = data[i-1][4]
+                    ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
+				    volume.push({x:cycleDate,y:0});
                 }
             }
 
-			//ohlc.push([tempDate,data[i][3],data[i][5],data[i][6],data[i][4]])
-			//volume.push([cycleDate,data[i][7]])
-            ohlc.push(
-			{
-                x:tempDate,
+            ohlc.push({
+                x:pointDate,
                 open:data[i][3],
                 high:data[i][5],
                 low:data[i][6],
                 close:data[i][4]
             });
             volume.push({
-                color:colr,
-                x:tempDate,
+                x:pointDate,
                 y:data[i][7]
             });
-
-            prevTempDate = tempDate
         }
-
-		latestTrade = String((data[data.length-1][2]+1))
-        var tempDate = data[data.length-1][0]*1000;
-        var diff = curDate - tempDate
+		
+        var diff = Date.now() - data[data.length-1][0]*1000
 		if (diff >= mStep)
 		{
-            var cycles = diff/mStep
-            for (var j = 1; j <= cycles; ++j)
+            var cycles = diff/mStep	
+
+            for (var j = 1; j < cycles; ++j)
             {
-	            var tempObj = {}
-				var cycleDate = (data[data.length-1][0]*1000) + (mStep*j)
-				tempObj['open'] = data[data.length-1][4]
-				tempObj['high'] = data[data.length-1][4]
-				tempObj['low'] = data[data.length-1][4]
-				tempObj['close'] = data[data.length-1][4]
-				tempObj['x'] = cycleDate
-
-                ohlc.push(tempObj)
-			    volume.push({
-			        //name:"point",
-			        //color:colr,
-			        x:cycleDate,
-			        y:0
-			    });
-            }		
+				var cycleDate = (data[i-1][0]*1000) + (mStep*j)
+            	var close = data[i-1][4]
+                ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
+			    volume.push({x:cycleDate,y:0});
+            }
 		}
-
+		
+		latestTrade = String((data[data.length-1][2]+1))
         datau = ohlc
         datab = volume
 
@@ -170,7 +95,6 @@ var makeChart =  (function make(step)
                 events:
 				{
 					load:chartLoadHander,
-					//redraw:changeColours
 				},
                 alignTicks: true,
                 spacingLeft:0,
@@ -217,7 +141,6 @@ var makeChart =  (function make(step)
             {
                 enabled:false,
                 inputEnabled:false,
-                selected: 0
             },
 		    
 		    scrollbar:
@@ -262,89 +185,42 @@ var makeChart =  (function make(step)
                 startOnTick:true,
                 //endOnTick:true,
 				showLastLabel:true,
-				//minPadding:0.125,
-				//maxPadding:0.125,
             }],
             
             xAxis: [
             {
-            	//startOnTick:true,
-            	//endOnTick:true,
                 labels: 
                 {
                     align: 'center',
                     y:0
                 },
+            	startOnTick:true,
+            	endOnTick:true,
                 range: 100* 60 * 1000,
 				minRange: 15 * 60 * 1000,
-                events:
-                {
-                    //afterSetExtremes: changeColours
-                }
             }],
 
-
-            plotOptions: 
-            {
-                candlestick:
-                {
-				    //minPointLength:0.1,
-                    //pointRange: 10,
-                }, 
-                column:
-                {
-                	minPointLength:0.1,
-					borderRadius:0,
-                },
-                series:
-                {
-                	states:
-                	{
-                		hover:
-                		{
-                			enabled:false
-                		},
-                		select:
-                		{
-                			enabled:false
-                		}
-               		},
-		            pointPadding:0.1,
-		            //groupPadding:0.8
-		           	//grouping:false,
-                }
-            },   
-            
             
             series: [
             {
-                yAxis:0,
-				xAxis:0,
-				
                 type: 'candlestick',
-                name: 'AAPL',
+				borderWidth:0,
                 turboThreshold:8000,
                 data: ohlc,
-				borderWidth:0.0,
                 dataGrouping: 
                 {
                     enabled:false,
-                    //units: groupingUnits
                 }
             }, 
             {
-				//borderColor:"black",
                 type: 'column',
-                name: 'Volume',
-				borderWidth:0.0,
+				borderWidth:0,
                 turboThreshold:8000,
                 data: volume,
-                xAxis:0,
                 yAxis: 1,
                 dataGrouping: 
                 {
                     enabled:false,
-                    //units: groupingUnits
                 }
             }]
 
@@ -355,40 +231,26 @@ var makeChart =  (function make(step)
 				chart.crossLabelX = chart.renderer.text().attr(statAttr).add();
 				chart.crossLabelY = chart.renderer.text().attr(statAttr).add();
 				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
+				$(chart.container).on("mousemove",buildChartRenders)
            }
         );
     });
+    
     return make
 })();
 
 
-
-$("#mainChart").on("mousemove", buildChartRenders)
-
-function buildCrossLines(svg, path, attr)
-{            
-    if (svg) 
-	{
-        chart.crossLinesY.attr({d: crossPathY});
-    } 
-	else 
-	{
-        chart.crossLinesY = chart.renderer.path(path).attr(crossLinesAttr).add();
-    }
-}
+//$("#mainChart").on("mousemove", buildChartRenders)
 
 var prevIndex;
 
 function buildChartRenders(event)
 {
-	var chart = $('#mainChart').highcharts()
-	var offset = $('#mainChart').offset();
-    var insideX = event.clientX - chart.plotLeft - offset.left;
-    var insideY = event.clientY - chart.plotTop - offset.top;
-    var isInside = chart.isInsidePlot(insideX, insideY);
     
-	if (isInside)
+	if (isInsidePlot(event))
 	{
+		var chart = $('#mainChart').highcharts()
+		var offset = $('#mainChart').offset();
 		var x = event.pageX - offset.left;
 		var y = event.pageY - offset.top
 		var pointRange = chart.series[0].pointRange
@@ -398,7 +260,6 @@ function buildChartRenders(event)
 		
 		if ((index != prevIndex && index > 0) && (closestTime % pointRange <= pointRange/2))
 		{
-			//console.log(chart)
 			var d = new Date(closestPoint.x)
 			var xPos = closestPoint.clientX
 			var crossPathX = [
@@ -412,7 +273,6 @@ function buildChartRenders(event)
 			    x: xPos-15,
 			    y: chart.plotTop+chart.plotHeight,
 			    text: formatTime(d)
-			    
 			}).show()
 			
 			var vol = chart.series[1].data[index].y
@@ -507,9 +367,7 @@ function destroyChartRenders(event)
 	chart.crossLabelX.hide()
 	chart.crossLabelY.hide()
 	chart.marketInfo.hide()
-
 	prevIndex = -2
-	chart.redraw()
 }
 
 var sinceCount;
@@ -527,7 +385,6 @@ function dataSim(point, mstep)
     }
     var vol = 
     {
-        color: ((OHLC.open >= OHLC.close) ? "#c00" : "#0c0"),
         x:OHLC.x,
         y:datab[datab.length - 1].y
     }
@@ -539,20 +396,8 @@ function dataSim(point, mstep)
 		sinceCount = String(datau[datau.length - 1].x +1)
 	}
 	
-	//console.log(latestTrade + "  1")
-	//console.log(datau)
     $.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
     {
-		//console.log('1')
-		//console.log(data)
-		/*$.getJSON('https://s5.bitcoinwisdom.com/trades?since=""&symbol=bitfinexbtcusd&nonce=', function (newData) 
-		{
-			console.log('2')
-			console.log(newData)
-			console.log(newData[0])
-		})*/
-		//sinceCount = String(Date.now())
-		//console.log(sinceCount + "  2")
 		var pastArr = []
 		var futureArr = []
 		var pastPoints = []
@@ -560,10 +405,15 @@ function dataSim(point, mstep)
 
 		if (data.length)
 		{
-			latestTrade = String(data[0]['tid'] )
 			var pastVol = vol.y
 			var futureVol = 0
- 			//console.log(data)
+			var tempFind = 0;
+			for (var i = 0; i < data.length; ++i)
+			{
+				tempFind = tempFind > data[i]['tid'] ? tempFind : data[i]['tid']
+			}
+			latestTrade = String(tempFind)
+
 			for (var i = data.length-1; i > -1; --i)
 			{
 				var loopDate = data[i]['date']*1000
@@ -590,7 +440,6 @@ function dataSim(point, mstep)
 
 			if (pastArr.length)
 			{
-				//console.log(pastArr)
 				var pastPrice = pastArr[0]['price']
 				OHLC = updateOHLC(OHLC, pastPrice)
 				vol.y += volCount(pastArr)
@@ -600,7 +449,6 @@ function dataSim(point, mstep)
 
 			if (futureArr.length)
 			{
-				//console.log(futureArr)
 				var both = makeBothPoints(point, mstep)
 				var futureOHLC = both[0]
 				var futureVol = both[1]
@@ -608,15 +456,12 @@ function dataSim(point, mstep)
 
 				futureOHLC = updateOHLC(futureOHLC, futurePrice)
 				futureVol.y = volCount(futureArr)
-    			futureVol.color = ((futureOHLC.open >= futureOHLC.close) ? "#c00" : "#0c0");
 				futurePoints.push(futureOHLC)
 				futurePoints.push(futureVol)
 			}
 
 		}
 
-		//console.log(pastPoints)
-		//console.log(futurePoints)
 		dfd.resolve([pastPoints,futurePoints])
     })
 
@@ -626,21 +471,10 @@ function dataSim(point, mstep)
 
 function makeBothPoints(point, mstep)
 {
-	var OHLC = {}
-	var vol = {}
-	var nextDate = point.x + mstep
-    OHLC.open = point.close
-	OHLC.high = point.close
-	OHLC.low = point.close
-	OHLC.close = point.close
-	//OHLC.high = price > OHLC.open ? price : OHLC.open
-	//OHLC.low = price > OHLC.open ? OHLC.open : price
-	OHLC.x = nextDate
-
-    vol.color = ((OHLC.open >= OHLC.close) ? "#c00" : "#0c0");
-	vol.y = 0;
-	vol.x = nextDate
-
+	var nextDate = point.x+mstep
+	var OHLC = new testOHLC([nextDate, point.close, point.close, point.close, point.close])
+	var vol = {y:0, x:nextDate}
+	
 	return [OHLC, vol]
 }
 
@@ -659,31 +493,15 @@ function volCount(data)
 function updateOHLC(OHLC, price)
 {
 	OHLC.close = price
+
 	if (price > OHLC.high)
-	{
 		OHLC.high = price
-	}
 	else if (price < OHLC.low)
-	{
 		OHLC.low = price
-	}
 
 	return OHLC
 }
 
-
-function getRandomInt(min, max) 
-{
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-
-function chartLoadHander()
-{
-	drawDivideLine()
-	updateData()
-	//changeColours()
-}
 
 function updateData()
 {
@@ -691,8 +509,6 @@ function updateData()
     var volSeries = chart.series[1];
     var ohlcSeries = chart.series[0];
     var mstep = ohlcSeries.pointRange
-	//console.log(chart)
-	//console.log(chart.xAxis[0])
 
     ohlcTimeout = setTimeout(function () 
     {
@@ -707,7 +523,6 @@ function updateData()
 			//if (!$.isEmptyObject(candle) && !$.isEmptyObject(vol))
 			if (pastArr.length)
 			{
-				//console.log(pastArr)
 				var pastCandle = pastArr[0]
 				var pastVol = pastArr[1]
 
@@ -769,12 +584,14 @@ function updatePlotPos()
 	{
 		chart.xAxis[0].setExtremes(curMin, dataMax);
 	}
-	//chart.redraw();
 }
 
-//ordinal = chart.xAxis[0].ordinalPositions
-//pos = ((ordinal && ordinal[1]) ? ordinal[1] : curMin) 
 
+function chartLoadHander()
+{
+	drawDivideLine()
+	updateData()
+}
 
 function oneMinuteGrouping()
 {
@@ -813,56 +630,38 @@ $(window).resize(function()
 
 function drawDivideLine()
 {
-	//console.log($("#mainChart"))
     var chart = $('#mainChart').highcharts()
 	var offset = $('#mainChart').offset();
     var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top,
-            'L', 0 + $("#mainChart")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top]
+    'L', 0 + $("#mainChart")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top]
 
-    if (chart.splitLine) 
-	{
-        chart.splitLine.attr({
-            d: path
-        });
-    } 
-	else 
-	{
-        chart.splitLine = chart.renderer.path(path).attr({
-            'stroke-width': 0.5,
-            stroke: '#999',
-            zIndex: 10,
-			opacity:1,
-        }).add();
-    }
-
-	//chart.redraw()
+    chart.splitLine = chart.renderer.path(path).attr(
+    {
+        'stroke-width': 0.5,
+        stroke: '#999',
+    }).add();
+ 
 }
 
-function changeColours(e)
+function isInsidePlot(event)
 {
-	return
-}
-
-
-$("#mainChart").on('mousewheel', function(event) 
-{
-	event.preventDefault()
-	
 	var chart =  $('#mainChart').highcharts()
     var container = $(chart.container);
     var offset = container.offset();
     var x = event.clientX - chart.plotLeft - offset.left;
     var y = event.clientY - chart.plotTop - offset.top;
-    var isInside = chart.isInsidePlot(x, y);
-    if (isInside)
+    
+    return chart.isInsidePlot(x, y);
+}
+
+$("#mainChart").on('mousewheel', function(event) 
+{
+	event.preventDefault()
+	var chart =  $('#mainChart').highcharts()
+    if (isInsidePlot(event))
     {
         var curMax = chart.xAxis[0]['max']
-        curMin = chart.xAxis[0]['min']
-        //userMax = chart.xAxis[0]['userMax']
-        //if (!userMax)
-        //    userMax = curMax
-        //userMin = chart.xAxis[0]['userMin']
-        //diff = curMax - curMin
+        var curMin = chart.xAxis[0]['min']
         var dataMax = chart.xAxis[0]['dataMax']
         var dataMin = chart.xAxis[0]['dataMin']
         var diff = curMax - curMin
@@ -875,7 +674,6 @@ $("#mainChart").on('mousewheel', function(event)
         {
             chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
         }
-        //chart.redraw()
     }
 });
 

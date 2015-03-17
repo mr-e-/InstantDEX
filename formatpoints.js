@@ -56,9 +56,14 @@
 					var pairwidth = Number(sub[7]) - Number(sub[4])
 					var diff = (pairwidth - c)
 					diff = diff/2
-
-					if (diff < 0.2)
-						diff = 0.2
+					//if (i == 10)
+						//console.log(diff)
+					if ( diff < 0.4 && points.length > 150)
+						diff = 0.5
+					else if (diff < 0.4 && points.length >150 && points.length < 300)
+						diff = 0.5
+					else if (diff < 0.4)
+						diff = 0.5
 	
 					//diff = Number(Math.round(diff * 100000) / 100000).toFixed(5);
 					diff = Number(diff)
@@ -69,13 +74,15 @@
 					if (i == 10)
 					{
 						//console.log(sub[1] + "  " + sub[7])
-						//console.log(point)
+						//console.log(points.length)
+						//console.log(diff)
 						//console.log(Number(sub[7]) - Number(sub[4]))
 					}
 					graphic.attr({d:sub.join(" ")})
-					graphic.attr('stroke-width', "0.07rem")
+					graphic.attr('stroke-width', "0.04rem")
 			        graphic.attr('stroke', strokeColor);
 			        graphic.attr('fill', fillColor);
+					graphic.attr('shape-rendering', "crispEdges")
 				}
 				else if (type === 'column')
 				{
@@ -100,8 +107,10 @@
 						w = 0.2
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
-					graphic.attr('stroke-width', "0.07rem")
+					graphic.attr('stroke-width', "0.04rem")
+					graphic.attr('borderWidth', "0.04rem")
 			        graphic.attr('fill', fillColor);
+					graphic.attr('shape-rendering', "crispEdges")
 				} 
             });
         }
