@@ -24,7 +24,7 @@ function testOHLC(obj)
     };
 }
 
-var crossLinesAttr=
+var statAttr=
 {
 	'stroke-width': 1,
 	stroke: '#999',
@@ -301,7 +301,6 @@ var makeChart =  (function make(step)
                 },
                 series:
                 {
-                
                 pointPadding:0.1,
                 //groupPadding:0.8
                	//grouping:false,
@@ -344,10 +343,11 @@ var makeChart =  (function make(step)
 
         }, function(chart)
            {
-			//chart._cursor = null
-            //console.log(chart.renderer.defs.element.css({"cursor":"none"}))
-			//console.dir(chart.renderTo)
-			//chart.renderTo = $("#mainChart")[0]
+           		chart.crossLinesX = chart.renderer.path().attr(statAttr).add();
+           		chart.crossLinesY = chart.renderer.path().attr(statAttr).add();
+				chart.crossLabelX = chart.renderer.text().attr(statAttr).add();
+				chart.crossLabelY = chart.renderer.text().attr(statAttr).add();
+				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
            }
         );
     });
@@ -379,104 +379,69 @@ function buildChartRenders(event)
     var insideX = event.clientX - chart.plotLeft - offset.left;
     var insideY = event.clientY - chart.plotTop - offset.top;
     var isInside = chart.isInsidePlot(insideX, insideY);
+    
 	if (isInside)
 	{
-		var pointRange = chart.series[0].pointRange
 		var x = event.pageX - offset.left;
 		var y = event.pageY - offset.top
+		var pointRange = chart.series[0].pointRange
 		var closestTime = Number(chart.xAxis[0].toValue(x).toFixed())
-		//console.log(closestTime % pointRange)
 		var closestPoint = getPoint(0, closestTime)
-		//console.log(closestPoint)
 		var index = chart.series[0].data.indexOf(closestPoint)
-		//console.log(index)
+		
 		if ((index != prevIndex && index > 0) && (closestTime % pointRange <= pointRange/2))
 		{
-			//console.log(chart.series[0])
-			//console.log(x)
-			var d = new Date(closestTime + chart.xAxis[0].minPointOffset)
-			var hours = String(d.getHours())
-			var minutes = d.getMinutes()
-			minutes = minutes < 10 ? "0"+String(minutes) : String(minutes)
-			var dString = hours+":"+minutes
+			var d = new Date(closestPoint.x)
 	
 			var xPos = closestPoint.clientX
-			var path = [
+			var crossPathX = [
 		    'M', xPos, chart.plotTop,
 		    'L', xPos, chart.plotTop + chart.plotHeight];
-            
-			if (chart.crossLinesX) 
-			{
-				chart.crossLinesX.attr({d: path});
-			} 
-			else 
-			{
-				chart.crossLinesX = chart.renderer.path(path).attr(crossLinesAttr).add();
-			}
+         
+			chart.crossLinesX.attr({d: crossPathX}).show()
 			
-			if (chart.crossLabelX) 
+			chart.crossLabelX.attr(
 			{
-				chart.crossLabelX.attr(
-				{
-				    x: xPos-15,
-				    'stroke-width': 1,
-				    stroke: '#999',
-				    text: dString
-				});
-			} 
-			else 
-			{
-				chart.crossLabelX = chart.renderer.text(dString, x, chart.plotTop+chart.plotHeight).add();
-			}
-
-
+			    x: xPos-15,
+			    y: chart.plotTop+chart.plotHeight,
+			    text: formatTime(d)
+			    
+			}).show()
+			
 			var vol = chart.series[1].data[index].y
-			var d = new Date(closestPoint.x)
 			var marketInfoText = "Open: "+closestPoint.open+"  High: "+closestPoint.high+"  Low: "+closestPoint.low+"  Close: "+closestPoint.close+"  Volume: "+vol+"<br>Date: "+String(d)
-			if (chart.marketInfo) 
+
+			chart.marketInfo.attr(
 			{
-				chart.marketInfo.attr(
-				{
-					y: chart.plotBox.y-25,
-					'stroke-width': 1,
-					stroke: '#999',
-					text: marketInfoText
-				});
-			} 
-			else 
-			{
-				chart.marketInfo = chart.renderer.text('hello', chart.plotBox.x+2, chart.plotBox.y).add();
-			}
-			
-			
-					prevIndex = index
+				y: chart.plotBox.y-25,
+				x: chart.plotBox.x+2,
+				text: marketInfoText
+			}).show()
+		
+			prevIndex = index
 		}
 		
 		var crossPathY = [
 		'M', chart.plotLeft, y,
         'L', chart.plotLeft + chart.plotWidth, y]
-		if (chart.crossLinesY) 
+
+		chart.crossLinesY.attr({d: crossPathY}).show()
+
+		var yText = ""
+		if (y >= chart.yAxis[1].top && y <= chart.yAxis[1].top + chart.yAxis[1].height)
 		{
-			chart.crossLinesY.attr({d: crossPathY});
-		} 
-		else 
-		{
-			chart.crossLinesY = chart.renderer.path(crossPathY).attr(crossLinesAttr).add();
+			yText = chart.yAxis[1].toValue(y).toFixed(2)
 		}
-	
-		if (chart.crossLabelY) 
+		else if (y >= chart.plotBox.y && y <= chart.yAxis[0].top + chart.yAxis[0].height)
 		{
-			chart.crossLabelY.attr({
-			    y: y+6,
-			    'stroke-width': 1,
-			    stroke: '#999',
-			    text: chart.yAxis[0].toValue(y).toFixed(2)
-			});
-		} 
-		else 
-		{
-			chart.crossLabelY = chart.renderer.text(chart.yAxis[0].toValue(y).toFixed(2), chart.plotLeft+chart.plotWidth, y+6).add();
+			yText = chart.yAxis[0].toValue(y).toFixed(2)
 		}
+
+		chart.crossLabelY.attr({
+		    y: y+6,
+		    x:chart.plotLeft+chart.plotWidth,
+		    text: yText
+		}).show()
 	}
 }
 
@@ -510,33 +475,34 @@ function getPoint(seriesIndex, value)
     return val;
 }
 
+function formatTime(d)
+{
+	var hours = String(d.getHours())
+	var minutes = d.getMinutes()
+	
+	minutes = minutes < 10 ? "0"+String(minutes) : String(minutes)
+	
+	return hours+":"+minutes
+}
+
 
 $("#mainChart").on("mouseleave", destroyChartRenders)
 
 function destroyChartRenders(event)
 {
 	var chart = $('#mainChart').highcharts()
+	
 	if (!chart)
 		return
-	if (chart.crossLabelY)
-		chart.crossLabelY.destroy()
-	if (chart.crossLabelX)
-		chart.crossLabelX.destroy()
-	if (chart.crossLinesX)
-		chart.crossLinesX.destroy()
-	if (chart.crossLinesY)
-		chart.crossLinesY.destroy()
-	if (chart.marketInfo)
-		chart.marketInfo.destroy()
-	chart.crossLabelX = null
-	chart.crossLabelY = null
-	chart.crossLinesX = null
-	chart.crossLinesY = null
-	chart.marketInfo = null
+
+	chart.crossLinesX.hide()
+	chart.crossLinesY.hide()
+	chart.crossLabelX.hide()
+	chart.crossLabelY.hide()
+	chart.marketInfo.hide()
 
 	prevIndex = -2
 	chart.redraw()
-
 }
 
 var sinceCount;
