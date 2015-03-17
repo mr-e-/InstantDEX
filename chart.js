@@ -505,7 +505,7 @@ function destroyChartRenders(event)
 
 var sinceCount;
 
-function dataSim(point)
+function dataSim(point, mstep)
 {
     var dfd = new $.Deferred();	
     var OHLC = 
@@ -560,7 +560,7 @@ function dataSim(point)
 				var loopDate = data[i]['date']*1000
 				var timeOffset = loopDate - curDate	
 		
-				if (timeOffset >= point.pointRange)
+				if (timeOffset >= mstep)
 				{
 					if (i < data.length-1)
 					{
@@ -592,7 +592,7 @@ function dataSim(point)
 			if (futureArr.length)
 			{
 				//console.log(futureArr)
-				var both = makeBothPoints(point)
+				var both = makeBothPoints(point, mstep)
 				var futureOHLC = both[0]
 				var futureVol = both[1]
 				var futurePrice = futureArr[0]['price']
@@ -615,12 +615,11 @@ function dataSim(point)
 }
 
 
-function makeBothPoints(point)
+function makeBothPoints(point, mstep)
 {
 	var OHLC = {}
 	var vol = {}
-	var nextDate = point.x + point.pointRange
-
+	var nextDate = point.x + mstep
     OHLC.open = point.close
 	OHLC.high = point.close
 	OHLC.low = point.close
@@ -682,6 +681,7 @@ function updateData()
     var chart = $('#mainChart').highcharts()
     var volSeries = chart.series[1];
     var ohlcSeries = chart.series[0];
+    var mstep = ohlcSeries.pointRange
 	//console.log(chart)
 	//console.log(chart.xAxis[0])
 
@@ -692,8 +692,6 @@ function updateData()
 
         dataSim(curPointOHLC).done(function(both)
 		{
-			if (!chart)
-				return
 		    var pastArr = both[0]
 		    var futureArr = both[1]
 
@@ -720,11 +718,10 @@ function updateData()
 				}
 			}
 
-			if (Number(sinceCount) - curPointOHLC.x >= curPointOHLC.pointRange)
+			if (Number(sinceCount) - curPointOHLC.x >= mstep)
 			{
 				if (futureArr.length)
 				{
-					
 					var futureCandle = futureArr[0]
 					var futureVol = futureArr[1]
 					ohlcSeries.addPoint(futureCandle, false, false);
@@ -733,7 +730,7 @@ function updateData()
 				}
 				else
 				{
-					var emptyPoints = makeBothPoints(curPointOHLC)
+					var emptyPoints = makeBothPoints(curPointOHLC, mstep)
 
 					ohlcSeries.addPoint(emptyPoints[0], false, false);						
 					volSeries.addPoint(emptyPoints[1], false, false);
@@ -741,7 +738,6 @@ function updateData()
 				}
 			}
 			sinceCount = String(Date.now())
-			//console.log(String(Date.now()) + "  3")
 			updatePlotPos()
 		    updateData();
 		})
@@ -764,6 +760,7 @@ function updatePlotPos()
 	{
 		chart.xAxis[0].setExtremes(curMin, dataMax);
 	}
+	chart.redraw();
 }
 
 //ordinal = chart.xAxis[0].ordinalPositions
