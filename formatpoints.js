@@ -69,8 +69,8 @@
 					if (i == 10)
 					{
 						//console.log(sub[1] + "  " + sub[7])
-						console.log(point)
-						console.log(Number(sub[7]) - Number(sub[4]))
+						//console.log(point)
+						//console.log(Number(sub[7]) - Number(sub[4]))
 					}
 					graphic.attr({d:sub.join(" ")})
 					//graphic.attr('stroke-width', 1)
@@ -87,7 +87,7 @@
 					if (i == 10)
 					{
 						//console.log(colWidth)
-						console.log(w)
+						//console.log(w)
 						//console.log(sw)
 						
 					}
