@@ -56,16 +56,8 @@
 					var pairwidth = Number(sub[7]) - Number(sub[4])
 					var diff = (pairwidth - c)
 					diff = diff/2
-					//if (i == 10)
-						//console.log(diff)
-					if ( diff < 0.4 && points.length > 150)
-						diff = 0.5
-					else if (diff < 0.4 && points.length >150 && points.length < 300)
-						diff = 0.5
-					else if (diff < 0.4)
-						diff = 0.5
+					diff = points.length > 700 ? 0.6 : 0.5
 	
-					//diff = Number(Math.round(diff * 100000) / 100000).toFixed(5);
 					diff = Number(diff)
 					sub[1] = String((Number(sub[1])) + (diff))
 					sub[4] = String((Number(sub[4])) + (diff))
