@@ -1,3 +1,6 @@
+
+var IDEX = (function(IDEX, $, undefined) {
+
 var datau = []
 var datab = []
 var ohlcTimeout;
@@ -35,6 +38,42 @@ var highLowAttr=
 
 Highcharts.setOptions(Highcharts.theme);
 
+function getStepOHLC(data, mStep)
+{
+    var ohlc = []
+    var volume = []
+    var dataLength = data.length
+	var diff = 0;
+	
+    for (var i = 0; i < dataLength; i++) 
+    {
+        var pointDate = data[i][0]*1000;
+		
+        ohlc.push(new testOHLC([pointDate,data[i][3],data[i][5],data[i][6],data[i][4]]))
+        volume.push({
+            x:pointDate,
+            y:data[i][7]
+        });
+        
+        var nextDate = (i == data.length-1) ? Date.now() : data[i+1][0]*1000
+		var diff = nextDate - pointDate
+		if (diff > mStep)
+		{
+			var cycles = diff/mStep
+			for (var j = 1; j < cycles; ++j)
+			{
+				var cycleDate =  pointDate + mStep*j
+				var close = data[i][4]
+				ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
+				volume.push({x:cycleDate,y:0});
+			}
+		}
+    }
+
+    return [ohlc, volume]
+}
+
+
 var makeChart =  (function make(step) 
 {
 	step = (typeof step === "undefined") ? "60" : step;
@@ -43,82 +82,31 @@ var makeChart =  (function make(step)
 	//ohlc.push([tempDate,data[i][3],data[i][5],data[i][6],data[i][4]])
 	//volume.push([cycleDate,data[i][7]])
     {
-        var ohlc = []
-        var volume = []
-        var dataLength = data.length
         var mStep = Number(step)*1000
-
-        for (var i = 0; i < dataLength; i += 1) 
-        {
-            var pointDate = data[i][0]*1000;
-            var diff = (i == 0) ? 0 : pointDate - data[i-1][0]*1000
-            
-            if ((diff >= mStep) && (i != 0))
-            {
-                var cycles = diff/mStep
-
-                for (var j = 1; j < cycles; ++j)
-                {
-					var cycleDate = (data[i-1][0]*1000) + (mStep*j)
-                	var close = data[i-1][4]
-                    ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
-				    volume.push({x:cycleDate,y:0});
-                }
-            }
-
-            ohlc.push({
-                x:pointDate,
-                open:data[i][3],
-                high:data[i][5],
-                low:data[i][6],
-                close:data[i][4]
-            });
-            volume.push({
-                x:pointDate,
-                y:data[i][7]
-            });
-        }
+		var both = getStepOHLC(data, mStep)
+		var ohlc = both[0]
+		var volume = both[1]
 		
-        var diff = Date.now() - data[data.length-1][0]*1000
-		if (diff >= mStep)
-		{
-            var cycles = diff/mStep	
-
-            for (var j = 1; j < cycles; ++j)
-            {
-				var cycleDate = (data[i-1][0]*1000) + (mStep*j)
-            	var close = data[i-1][4]
-                ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
-			    volume.push({x:cycleDate,y:0});
-            }
-		}
-		
-		latestTrade = String((data[data.length-1][2]+1))
+		latestTrade = String(data[data.length-1][2])
         datau = ohlc
         datab = volume
 
-        var $chart1 = new Highcharts.StockChart(
+        var chart1 = new Highcharts.StockChart(
         {
             chart:
             {
             	renderTo:"mainChart",
                 events:
-				{
+                {
 					load:chartLoadHander,
 				},
-                alignTicks: true,
-                spacingLeft:0,
+				spacingLeft:0,
             },
             
             title: 
             {
                 useHTML:true,
 				text:"&nbsp;",
-            },
-            
-            credits:
-            {
-                text:""
             },
 
 		    exporting: 
@@ -145,8 +133,9 @@ var makeChart =  (function make(step)
             {
                 enabled:true,
                 adaptToUpdatedData:true,
+				baseSeries:1,
             },
-		    
+            
             rangeSelector: 
             {
                 enabled:false,
@@ -245,7 +234,7 @@ var makeChart =  (function make(step)
 				chart.lowestPrice = chart.renderer.text().attr(highLowAttr).add();
 				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
 				$(chart.container).on("mousemove",buildChartRenders)
-				
+				//console.log(IDEX.snURL)
            }
         );
     });
@@ -260,6 +249,7 @@ var prevIndex;
 
 function buildChartRenders(event)
 {
+	
 	if (isInsidePlot(event))
 	{
 		var chart = $('#mainChart').highcharts()
@@ -328,6 +318,7 @@ function buildChartRenders(event)
 
 function highLowPrice()
 {
+
 	var chart = $('#mainChart').highcharts()
 	var points = chart.series[0].points
 	var highestPrice = null;
@@ -347,13 +338,12 @@ function highLowPrice()
 	
 	chart.highestPrice.attr({'text':"←"+" "+String(highestPrice.high),'x':chart.xAxis[0].toPixels(highestPrice.x),'y':chart.yAxis[0].toPixels(highestPrice.high)})
 	chart.lowestPrice.attr({'text':"←"+" "+String(lowestPrice.low),'x':chart.xAxis[0].toPixels(lowestPrice.x),'y':chart.yAxis[0].toPixels(lowestPrice.low)+2})
-	//console.log(chart.yAxis[0])
-	//console.log(lowestPrice)
 }
 
 
 function getPoint(seriesIndex, value) 
 {
+
     var val = null;
 	var chart = $('#mainChart').highcharts()
     var points = chart.series[seriesIndex].points;
@@ -411,123 +401,6 @@ function destroyChartRenders(event)
 
 var sinceCount;
 
-function dataSim(point, mstep)
-{
-    var dfd = new $.Deferred();	
-    var OHLC = 
-    {
-        x: point.x,
-        open: point.open,
-        high: point.high,
-        low: point.low,
-        close: point.close
-    }
-    var vol = 
-    {
-        x:OHLC.x,
-        y:datab[datab.length - 1].y
-    }
-
-	var curDate = point.x
-
-	if (!sinceCount)
-	{
-		sinceCount = String(datau[datau.length - 1].x +1)
-	}
-	
-    $.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
-    {
-		var pastArr = []
-		var futureArr = []
-		var pastPoints = []
-		var futurePoints = []
-
-		if (data.length)
-		{
-			var pastVol = vol.y
-			var futureVol = 0
-			var tempFind = 0;
-			for (var i = 0; i < data.length; ++i)
-			{
-				tempFind = tempFind > data[i]['tid'] ? tempFind : data[i]['tid']
-			}
-			latestTrade = String(tempFind)
-
-			for (var i = data.length-1; i > -1; --i)
-			{
-				var loopDate = data[i]['date']*1000
-				var timeOffset = loopDate - curDate	
-		
-				if (timeOffset >= mstep)
-				{
-					if (i < data.length-1)
-					{
-						futureArr = data.slice(0,i+1)
-						pastArr = data.slice(i+1);
-					}
-					else
-					{
-						futureArr = data.slice(0)
-					}
-					break;
-				} 
-				else if (i == 0)
-				{
-					pastArr = data.slice(0);
-				}
-			}
-
-			if (pastArr.length)
-			{
-				var pastPrice = pastArr[0]['price']
-				OHLC = updateOHLC(OHLC, pastPrice)
-				vol.y += volCount(pastArr)
-				pastPoints.push(OHLC)
-				pastPoints.push(vol)
-			}
-
-			if (futureArr.length)
-			{
-				var both = makeBothPoints(point, mstep)
-				var futureOHLC = both[0]
-				var futureVol = both[1]
-				var futurePrice = futureArr[0]['price']
-
-				futureOHLC = updateOHLC(futureOHLC, futurePrice)
-				futureVol.y = volCount(futureArr)
-				futurePoints.push(futureOHLC)
-				futurePoints.push(futureVol)
-			}
-
-		}
-
-		dfd.resolve([pastPoints,futurePoints])
-    })
-
-    return dfd.promise()
-}
-
-
-function makeBothPoints(point, mstep)
-{
-	var nextDate = point.x+mstep
-	var OHLC = new testOHLC([nextDate, point.close, point.close, point.close, point.close])
-	var vol = {y:0, x:nextDate}
-	
-	return [OHLC, vol]
-}
-
-function volCount(data)
-{
-	var vol = 0;
-
-	for (var i = 0; i < data.length; ++i)
-	{
-    	vol += data[i]['amount']
-	}
-
-	return vol
-}
 
 function updateOHLC(OHLC, price)
 {
@@ -547,83 +420,53 @@ function updateData()
     var chart = $('#mainChart').highcharts()
     var volSeries = chart.series[1];
     var ohlcSeries = chart.series[0];
-    var mstep = ohlcSeries.pointRange
-
+    var mStep = ohlcSeries.pointRange
+    
     ohlcTimeout = setTimeout(function () 
     {
     	var curPointOHLC = datau[datau.length - 1]
     	var curPointVol = datab[datab.length - 1]
-
-        dataSim(curPointOHLC).done(function(both)
+		var curOHLC = new testOHLC([curPointOHLC.x, curPointOHLC.open, curPointOHLC.high, curPointOHLC.low, curPointOHLC.close])
+		var curVol = {y:curPointVol.y, x:curPointOHLC.x}
+		
+    	$.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
 		{
-		    var pastArr = both[0]
-		    var futureArr = both[1]
-
-			//if (!$.isEmptyObject(candle) && !$.isEmptyObject(vol))
-			if (pastArr.length)
-			{
-				var pastCandle = pastArr[0]
-				var pastVol = pastArr[1]
-
-				if (volSeries.data.length == datau.length)
-				{
-				    volSeries.data[volSeries.data.length -1].update(pastVol, false, true);
-				    ohlcSeries.data[ohlcSeries.data.length -1].update(pastCandle, true, true);
-				}
-				else
-				{
-				    datau.pop()
-				    datab.pop()
-				    datau.push(pastCandle)
-				    datab.push(pastVol)
-				    volSeries.setData(datab,false,true,true)
-				    ohlcSeries.setData(datau,true,true,true)
-				}
-			}
-
-			if (Number(sinceCount) - curPointOHLC.x >= mstep)
-			{
-				if (futureArr.length)
-				{
-					var futureCandle = futureArr[0]
-					var futureVol = futureArr[1]
-					ohlcSeries.addPoint(futureCandle, false, false);
-					volSeries.addPoint(futureVol, false, false);
-					chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max);
-				}
-				else
-				{
-					var emptyPoints = makeBothPoints(curPointOHLC, mstep)
-
-					ohlcSeries.addPoint(emptyPoints[0], false, false);						
-					volSeries.addPoint(emptyPoints[1], false, false);
-					chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max);
-				}
-			}
+			var tempFind = 0;
 			
 			sinceCount = String(Date.now())
-			updatePlotPos()
+			if (sinceCount-curPointOHLC.x >= mStep)
+			{
+				var nextDate = curPointOHLC.x+mStep
+				curOHLC = new testOHLC([nextDate, curOHLC.close, curOHLC.close, curOHLC.close, curOHLC.close])
+				curVol = {y:0, x:nextDate}
+				ohlcSeries.addPoint(curOHLC, false, false);						
+				volSeries.addPoint(curVol, false, false);
+			}
+			
+			for (var i = data.length-1; i > -1; --i)
+			{
+				var price = data[i]['price']
+				var amount = data[i]['amount']
+				var tid = data[i]['tid']
+				var index = datau.length -1
+				
+				if (tid < curOHLC.x)
+					index--
+					
+				datau[index] = updateOHLC(datau[index], price)
+				datab[index].y += amount 
+				tempFind = tempFind > data[i]['tid'] ? tempFind : data[i]['tid']
+			}
+		
+			latestTrade =  tempFind > 0 ? String(tempFind) : latestTrade
+		    ohlcSeries.setData(datau, false, true, true)
+		    volSeries.setData(datab, false, true, true)
+			chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max, true);
+			//if (!$.isEmptyObject(candle) && !$.isEmptyObject(vol))
 		    updateData();
 		})
 
     }, 3000);
-}
-
-
-function updatePlotPos()
-{
-    var chart = $('#mainChart').highcharts()
-
-	var curMax = chart.xAxis[0]['max']
-	var curMin = chart.xAxis[0]['min']
-	var dataMax = chart.xAxis[0]['dataMax']
-	var dataMin = chart.xAxis[0]['dataMin']
-	var oldDataMax = chart.xAxis[0]['dataMax']
-
-	if (curMax == oldDataMax || curMax == dataMax)
-	{
-		chart.xAxis[0].setExtremes(curMin, dataMax);
-	}
 }
 
 
@@ -663,6 +506,14 @@ function fifteenMinuteGrouping()
     clearTimeout(ohlcTimeout)
     makeChart("900")
 }
+
+$("#icoLog").on("click", function()
+{
+    var chart = $('#mainChart').highcharts()
+    chart.destroy()
+    clearTimeout(ohlcTimeout)
+    makeChart("900")
+})
 
 $(window).resize(function()
 {
@@ -718,5 +569,6 @@ $("#mainChart").on('mousewheel', function(event)
     }
 });
 
-
+	return IDEX;
+}(IDEX || {}, jQuery));
 

@@ -82,7 +82,7 @@
 					graphic.attr('shape-rendering', "crispEdges")
 				} 
             });
-            if (type === 'candlestick')
+            if (false)
             {
             	var prev = 0
 		        for ( var i = 0; i < candlePoints.length; ++i)
@@ -93,14 +93,6 @@
 						//var tn2 = sub[1] - points[i-1].graphic.d.split(" ")[7]
 						//console.log(String(i) + " " +String(nn))
 						//console.log(String(i) + ":  " +String(tn) )
-						if (prev != tn)
-						{
-
-						}
-						else
-						{
-							
-						}
 					}
 		        }
 		    }

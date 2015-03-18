@@ -1,4 +1,6 @@
 
+var IDEX = (function(IDEX, $, undefined) {
+
 var snURL = "http://127.0.0.1:7778";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 var isPollingOrderbook = false;
@@ -568,5 +570,6 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
     $form.find("input[name='total']").val(String(total))
 });
 
-
+	return IDEX;
+}(IDEX || {}, jQuery));
 

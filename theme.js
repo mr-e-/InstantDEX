@@ -41,7 +41,12 @@ Highcharts.theme = {
                 borderWidth: 1,
                 //plotBorderWidth: 1,
             },
-
+            
+            credits:
+            {
+                enabled:false
+            },
+            
             navigator:
             {
 				height:30,
