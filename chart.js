@@ -22,6 +22,16 @@ var statAttr=
 	zIndex: 10
 }
 
+var highLowAttr=
+{
+	'stroke-width': 0,
+	'font-family':'Consolas, Monospace',
+	'font-size':'10px',
+	fill: '#CCC',
+	zIndex: 10,
+	useHTML:true,
+}
+
 
 Highcharts.setOptions(Highcharts.theme);
 
@@ -194,10 +204,11 @@ var makeChart =  (function make(step)
                     align: 'center',
                     y:0
                 },
+                events:{afterSetExtremes: highLowPrice},
             	startOnTick:true,
             	endOnTick:true,
-                range: 100* 60 * 1000,
-				minRange: 15 * 60 * 1000,
+                range: 100 * mStep,
+				minRange: 15 * mStep,
             }],
 
             
@@ -230,6 +241,8 @@ var makeChart =  (function make(step)
            		chart.crossLinesY = chart.renderer.path().attr(statAttr).add();
 				chart.crossLabelX = chart.renderer.text().attr(statAttr).add();
 				chart.crossLabelY = chart.renderer.text().attr(statAttr).add();
+				chart.highestPrice = chart.renderer.text().attr(highLowAttr).add();
+				chart.lowestPrice = chart.renderer.text().attr(highLowAttr).add();
 				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
 				$(chart.container).on("mousemove",buildChartRenders)
 				
@@ -247,7 +260,6 @@ var prevIndex;
 
 function buildChartRenders(event)
 {
-    
 	if (isInsidePlot(event))
 	{
 		var chart = $('#mainChart').highcharts()
@@ -311,6 +323,32 @@ function buildChartRenders(event)
 		    text: yText
 		}).show()
 	}
+}
+
+
+function highLowPrice()
+{
+	var chart = $('#mainChart').highcharts()
+	var points = chart.series[0].points
+	var highestPrice = null;
+	var lowestPrice = null;
+
+	for (var i = 0; i < points.length; ++i)
+	{
+		if (highestPrice === null || points[i].high >= highestPrice.high)
+		{
+			highestPrice = points[i]
+		}
+		if (lowestPrice === null || points[i].low <= lowestPrice.low)
+		{
+			lowestPrice = points[i]
+		}
+	}
+	
+	chart.highestPrice.attr({'text':"←"+" "+String(highestPrice.high),'x':chart.xAxis[0].toPixels(highestPrice.x),'y':chart.yAxis[0].toPixels(highestPrice.high)})
+	chart.lowestPrice.attr({'text':"←"+" "+String(lowestPrice.low),'x':chart.xAxis[0].toPixels(lowestPrice.x),'y':chart.yAxis[0].toPixels(lowestPrice.low)+2})
+	//console.log(chart.yAxis[0])
+	//console.log(lowestPrice)
 }
 
 
@@ -562,6 +600,7 @@ function updateData()
 					chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max);
 				}
 			}
+			
 			sinceCount = String(Date.now())
 			updatePlotPos()
 		    updateData();
@@ -591,6 +630,7 @@ function updatePlotPos()
 function chartLoadHander()
 {
 	drawDivideLine()
+	highLowPrice()
 	updateData()
 }
 
