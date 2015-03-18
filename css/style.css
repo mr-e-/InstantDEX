@@ -586,3 +586,21 @@ Main Components - ORDER BOX
   text-align: left;
 }
 
+.stepButton > button {
+	height:20px;
+	color:silver;
+	background-color:black;
+	border-style:solid;
+	border-width: 1px;
+	padding:3px;
+	margin-left:5px;
+	border-color: #8F8F8F;
+}
+
+.stepButton > button:hover, .stepButton > button:active {
+	background-color:#424242 !important;
+}
+
+
+
+

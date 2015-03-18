@@ -3,8 +3,11 @@ var IDEX = (function(IDEX, $, undefined) {
 
 var datau = []
 var datab = []
-var ohlcTimeout;
+IDEX.ohlcTimeout;
 var latestTrade;
+var prevIndex;
+var btcwKeys = [3,5,6,4,7]
+var skynetKeys = [3,4,5,6,8]
 
 function testOHLC(obj) 
 {
@@ -22,7 +25,7 @@ var statAttr=
 {
 	'stroke-width': 1,
 	stroke: '#999',
-	zIndex: 10
+	zIndex: 7
 }
 
 var highLowAttr=
@@ -38,34 +41,39 @@ var highLowAttr=
 
 Highcharts.setOptions(Highcharts.theme);
 
-function getStepOHLC(data, mStep)
+function getStepOHLC(data, mStep, dataSite)
 {
     var ohlc = []
     var volume = []
     var dataLength = data.length
 	var diff = 0;
+	var keys = (dataSite == "skynet") ? skynetKeys : btcwKeys
 	
     for (var i = 0; i < dataLength; i++) 
     {
         var pointDate = data[i][0]*1000;
+		data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // skynet spike
 		
-        ohlc.push(new testOHLC([pointDate,data[i][3],data[i][5],data[i][6],data[i][4]]))
+        ohlc.push(new testOHLC([pointDate,data[i][keys[0]],data[i][keys[1]],data[i][keys[2]],data[i][keys[3]]]))
         volume.push({
             x:pointDate,
-            y:data[i][7]
+            y:data[i][keys[4]]
         });
         
-        var nextDate = (i == data.length-1) ? Date.now() : data[i+1][0]*1000
-		var diff = nextDate - pointDate
-		if (diff > mStep)
-		{
-			var cycles = diff/mStep
-			for (var j = 1; j < cycles; ++j)
+        if (dataSite != "skynet")
+        {
+		    var nextDate = (i == data.length-1) ? Date.now() : data[i+1][0]*1000
+			var diff = nextDate - pointDate
+			if (diff > mStep)
 			{
-				var cycleDate =  pointDate + mStep*j
-				var close = data[i][4]
-				ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
-				volume.push({x:cycleDate,y:0});
+				var cycles = diff/mStep
+				for (var j = 1; j < cycles; ++j)
+				{
+					var cycleDate =  pointDate + mStep*j
+					var close = data[i][keys[3]]
+					ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
+					volume.push({x:cycleDate,y:0});
+				}
 			}
 		}
     }
@@ -74,16 +82,23 @@ function getStepOHLC(data, mStep)
 }
 
 
-var makeChart =  (function make(step) 
+IDEX.makeChart =  (function make(siteOptions) 
 {
-	step = (typeof step === "undefined") ? "60" : step;
-    $.getJSON('https://s5.bitcoinwisdom.com/period?step='+step+'&symbol=bitfinexbtcusd&nonce=', function (data) 
-    //$.getJSON('http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair=12071612744977229797_NXT&type=tick&len=25&num=100', function (data) 
-	//ohlc.push([tempDate,data[i][3],data[i][5],data[i][6],data[i][4]])
-	//volume.push([cycleDate,data[i][7]])
+	siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
+	var step = ('step' in siteOptions) ? siteOptions.step : "60";
+	var dataSite = ('dataSite' in siteOptions) ? siteOptions.dataSite : "btcw";
+    var mStep = Number(step)*1000
+	
+	if (dataSite == "btcw")
+		var url = "https://s5.bitcoinwisdom.com/period?step="+step+"&symbol=bitfinexbtcusd&nonce="
+	else if (dataSite == "skynet")
+		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+siteOptions.baseid+"_"+"NXT"+"&type=tick&len="+"25"+"&num="+"100"
+
+    $.getJSON(url, function (data)
     {
-        var mStep = Number(step)*1000
-		var both = getStepOHLC(data, mStep)
+    	if (dataSite == "skynet")
+    		data = data.results.bars
+		var both = getStepOHLC(data, mStep, dataSite)
 		var ohlc = both[0]
 		var volume = both[1]
 		
@@ -95,45 +110,29 @@ var makeChart =  (function make(step)
         {
             chart:
             {
-            	renderTo:"mainChart",
+            	renderTo:"chartArea",
                 events:
                 {
 					load:chartLoadHander,
 				},
-				spacingLeft:0,
             },
-            
-            title: 
-            {
-                useHTML:true,
-				text:"&nbsp;",
-            },
-
-		    exporting: 
-			{
-				enabled:true,
-		        buttons: 
-				{
-		            a:{
-						onclick:fifteenMinuteGrouping,
-		            },
-		            b: {
-						onclick:fiveMinuteGrouping,
-		            },
-		            c: {
-						onclick:threeMinuteGrouping,
-		            },
-		            d: {
-						onclick:oneMinuteGrouping,
-		            },
-		        }
-		    },
 		    
             navigator:
             {
                 enabled:true,
                 adaptToUpdatedData:true,
 				baseSeries:1,
+            },
+            
+            title: 
+            {
+                useHTML:true,
+                style:
+                {
+                	color: '#CCC'
+                },
+				text:(('baseid' in siteOptions) ? (String(siteOptions.baseid)+" / NXT") : "Bitfinex"),
+				
             },
             
             rangeSelector: 
@@ -196,16 +195,16 @@ var makeChart =  (function make(step)
                 events:{afterSetExtremes: highLowPrice},
             	startOnTick:true,
             	endOnTick:true,
-                range: 100 * mStep,
+                range: ((dataSite == "btcw") ? (100 * mStep) : null),
 				minRange: 15 * mStep,
             }],
-
             
             series: [
             {
                 type: 'candlestick',
+                name: dataSite,
 				borderWidth:0,
-                turboThreshold:8000,
+                turboThreshold:10000,
                 data: ohlc,
                 dataGrouping: 
                 {
@@ -215,7 +214,7 @@ var makeChart =  (function make(step)
             {
                 type: 'column',
 				borderWidth:0,
-                turboThreshold:8000,
+                turboThreshold:10000,
                 data: volume,
                 yAxis: 1,
                 dataGrouping: 
@@ -234,7 +233,6 @@ var makeChart =  (function make(step)
 				chart.lowestPrice = chart.renderer.text().attr(highLowAttr).add();
 				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
 				$(chart.container).on("mousemove",buildChartRenders)
-				//console.log(IDEX.snURL)
            }
         );
     });
@@ -243,19 +241,15 @@ var makeChart =  (function make(step)
 })();
 
 
-//$("#mainChart").on("mousemove", buildChartRenders)
-
-var prevIndex;
-
 function buildChartRenders(event)
 {
+	var chart = $('#chartArea').highcharts()
+	var offset = $('#chartArea').offset();
+	var x = event.pageX - offset.left;
+	var y = event.pageY - offset.top	
 	
 	if (isInsidePlot(event))
 	{
-		var chart = $('#mainChart').highcharts()
-		var offset = $('#mainChart').offset();
-		var x = event.pageX - offset.left;
-		var y = event.pageY - offset.top
 		var pointRange = chart.series[0].pointRange
 		var closestTime = Number(chart.xAxis[0].toValue(x).toFixed())
 		var closestPoint = getPoint(0, closestTime)
@@ -266,7 +260,7 @@ function buildChartRenders(event)
 			var d = new Date(closestPoint.x)
 			var xPos = closestPoint.clientX
 			var crossPathX = [
-		    'M', xPos, chart.plotTop,
+		    'M', xPos, 0,
 		    'L', xPos, chart.plotTop + chart.plotHeight];
          
 			chart.crossLinesX.attr({d: crossPathX}).show()
@@ -283,8 +277,8 @@ function buildChartRenders(event)
 
 			chart.marketInfo.attr(
 			{
-				y: chart.plotBox.y-25,
-				x: chart.plotBox.x+2,
+				y: chart.plotBox.y-27,
+				x: chart.plotBox.x+5,
 				text: marketInfoText
 			}).show()
 		
@@ -293,7 +287,7 @@ function buildChartRenders(event)
 		
 		var crossPathY = [
 		'M', chart.plotLeft, y,
-        'L', chart.plotLeft + chart.plotWidth, y]
+        'L', chart.plotLeft + chart.chartWidth, y]
 
 		chart.crossLinesY.attr({d: crossPathY}).show()
 
@@ -313,13 +307,29 @@ function buildChartRenders(event)
 		    text: yText
 		}).show()
 	}
+	else
+	{
+		if (prevIndex != -2)
+			destroyChartRenders(0)
+		var crossPathX = [
+	    'M', x, 0,
+	    'L', x, chart.plotTop + chart.chartHeight];
+         
+		chart.crossLinesX.attr({d: crossPathX}).show()
+			
+		var crossPathY = [
+		'M', chart.plotLeft, y,
+        'L', chart.plotLeft + chart.chartWidth, y]
+
+		chart.crossLinesY.attr({d: crossPathY}).show()
+	}
 }
 
 
 function highLowPrice()
 {
 
-	var chart = $('#mainChart').highcharts()
+	var chart = $('#chartArea').highcharts()
 	var points = chart.series[0].points
 	var highestPrice = null;
 	var lowestPrice = null;
@@ -345,7 +355,7 @@ function getPoint(seriesIndex, value)
 {
 
     var val = null;
-	var chart = $('#mainChart').highcharts()
+	var chart = $('#chartArea').highcharts()
     var points = chart.series[seriesIndex].points;
 
 	if (value >= points[points.length-1].x)
@@ -382,11 +392,11 @@ function formatTime(d)
 }
 
 
-$("#mainChart").on("mouseleave", destroyChartRenders)
+$("#chartArea").on("mouseleave", destroyChartRenders)
 
 function destroyChartRenders(event)
 {
-	var chart = $('#mainChart').highcharts()
+	var chart = $('#chartArea').highcharts()
 	
 	if (!chart)
 		return
@@ -398,9 +408,6 @@ function destroyChartRenders(event)
 	chart.marketInfo.hide()
 	prevIndex = -2
 }
-
-var sinceCount;
-
 
 function updateOHLC(OHLC, price)
 {
@@ -414,15 +421,16 @@ function updateOHLC(OHLC, price)
 	return OHLC
 }
 
-
 function updateData()
 {
-    var chart = $('#mainChart').highcharts()
+    var chart = $('#chartArea').highcharts()
     var volSeries = chart.series[1];
     var ohlcSeries = chart.series[0];
+    if (ohlcSeries.name == "skynet")
+    	return
     var mStep = ohlcSeries.pointRange
     
-    ohlcTimeout = setTimeout(function () 
+    IDEX.ohlcTimeout = setTimeout(function () 
     {
     	var curPointOHLC = datau[datau.length - 1]
     	var curPointVol = datab[datab.length - 1]
@@ -433,7 +441,7 @@ function updateData()
 		{
 			var tempFind = 0;
 			
-			sinceCount = String(Date.now())
+			var sinceCount = String(Date.now())
 			if (sinceCount-curPointOHLC.x >= mStep)
 			{
 				var nextDate = curPointOHLC.x+mStep
@@ -469,75 +477,9 @@ function updateData()
     }, 3000);
 }
 
-
-function chartLoadHander()
-{
-	drawDivideLine()
-	highLowPrice()
-	updateData()
-}
-
-function oneMinuteGrouping()
-{
-    var chart = $('#mainChart').highcharts()
-    chart.destroy()
-    clearTimeout(ohlcTimeout)
-    makeChart("60")
-}
-
-function threeMinuteGrouping()
-{
-    var chart = $('#mainChart').highcharts()
-    chart.destroy()
-    clearTimeout(ohlcTimeout)
-    makeChart("180")
-}
-function fiveMinuteGrouping()
-{
-    var chart = $('#mainChart').highcharts()
-    chart.destroy()
-    clearTimeout(ohlcTimeout)
-    makeChart("300")
-}
-function fifteenMinuteGrouping()
-{
-    var chart = $('#mainChart').highcharts()
-    chart.destroy()
-    clearTimeout(ohlcTimeout)
-    makeChart("900")
-}
-
-$("#icoLog").on("click", function()
-{
-    var chart = $('#mainChart').highcharts()
-    chart.destroy()
-    clearTimeout(ohlcTimeout)
-    makeChart("900")
-})
-
-$(window).resize(function()
-{
-	drawDivideLine()
-})
-
-function drawDivideLine()
-{
-    var chart = $('#mainChart').highcharts()
-	var offset = $('#mainChart').offset();
-    var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top,
-    'L', 0 + $("#mainChart")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top]
-
-    chart.splitLine = chart.renderer.path(path).attr(
-    {
-        'stroke-width': 0.5,
-        stroke: '#999',
-    }).add();
- 
-}
-
 function isInsidePlot(event)
 {
-	var chart =  $('#mainChart').highcharts()
+	var chart =  $('#chartArea').highcharts()
     var container = $(chart.container);
     var offset = container.offset();
     var x = event.clientX - chart.plotLeft - offset.left;
@@ -546,10 +488,38 @@ function isInsidePlot(event)
     return chart.isInsidePlot(x, y);
 }
 
-$("#mainChart").on('mousewheel', function(event) 
+$(".stepButton > button").on("click", function(e)
+{
+	e.preventDefault() 
+	
+	var chart = $('#chartArea').highcharts()
+	if (chart)
+	{
+		var stepStr = $(this).text().match(/(\d+|[^\d]+)/g)
+		var num = Number(stepStr[0])
+		var mult = stepStr[1]
+
+		if (mult == 'd'){
+			num = num * 24 * 60 * 60
+		}
+		else if (mult == 'h'){
+			num = num * 60 * 60
+		}
+		else if (mult == 'm'){
+			num = num * 60
+		}
+	
+		chart.destroy()
+		clearTimeout(IDEX.ohlcTimeout)
+		IDEX.makeChart({'step':String(num),'dataSite':'btcw'})
+    }
+	
+})
+
+$("#chartArea").on('mousewheel', function(event) 
 {
 	event.preventDefault()
-	var chart =  $('#mainChart').highcharts()
+	var chart =  $('#chartArea').highcharts()
     if (isInsidePlot(event))
     {
         var curMax = chart.xAxis[0]['max']
@@ -568,6 +538,33 @@ $("#mainChart").on('mousewheel', function(event)
         }
     }
 });
+
+function drawDivideLine()
+{
+    var chart = $('#chartArea').highcharts()
+	var offset = $('#chartArea').offset();
+    var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2,
+    'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2]
+
+    chart.splitLine = chart.renderer.path(path).attr(
+    {
+        'stroke-width': 0.5,
+        stroke: '#999',
+    }).add();
+}
+
+function chartLoadHander()
+{
+	drawDivideLine()
+	highLowPrice()
+	updateData()
+}
+
+$(window).resize(function()
+{
+	drawDivideLine()
+})
+
 
 	return IDEX;
 }(IDEX || {}, jQuery));

@@ -198,6 +198,12 @@ $(".idex-submit").on("click", function()
 	else if (method == "orderbook")
 	{
 		params['allfields'] = 1
+		var chart = $('#chartArea').highcharts()
+		if (chart)
+			chart.destroy()
+		if (IDEX.ohlcTimeout)
+			clearTimeout(IDEX.ohlcTimeout)
+		IDEX.makeChart({'dataSite':'skynet','baseid':params['baseid']})
 	}
 
 	sendPost(params).done(function(data)
@@ -218,7 +224,7 @@ $(".idex-submit").on("click", function()
 		{
 			curBase = params['baseid']
 			curRel = params['relid']
-
+			
 			if (!isPollingOrderbook)
 			{
 				emptyOrderbook("Loading")

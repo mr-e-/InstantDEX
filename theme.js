@@ -39,14 +39,15 @@ Highcharts.theme = {
                 backgroundColor: '#000',
                 borderColor: '#424242',
                 borderWidth: 1,
+				spacingLeft:0,
                 //plotBorderWidth: 1,
             },
-            
+          
             credits:
             {
                 enabled:false
             },
-            
+
             navigator:
             {
 				height:30,
@@ -56,62 +57,12 @@ Highcharts.theme = {
 					borderColor: '#AAA'
 				},
             },
+            
 	
 		    exporting: 
 			{
-				enabled:true,
-		        buttons: 
-				{
-		            contextButton: 
-					{
-						enabled:false,
-					},
-		            a: 
-					{
-						y:-2,
-						x:-105,
-						align:"right",
-				        theme:buttonTheme,
-						symbol:null,
-						menuItems:null,
-						enabled:true,
-						text:"15m",
-		            },
-		            b: 
-					{
-						align:"right",
-						y:-2,
-						x:-70,
-				        theme:buttonTheme,
-						symbol:null,
-						menuItems:null,
-						enabled:true,
-						text:"5m",
-		            },
-		            c: 
-					{
-						align:"right",
-						y:-2,
-						x:-35,
-				        theme:buttonTheme,
-						symbol:null,
-						menuItems:null,
-						enabled:true,
-						text:"3m",
-		            },
-		            d: 
-					{
-						align:"right",
-						y:-2,
-						x:0,
-				        theme:buttonTheme,
-						symbol:null,
-						menuItems:null,
-						enabled:true,
-						text:"1m",
-		            },
-		        }
-		    },
+				enabled:false,
+			},
 
             yAxis: 
             {
