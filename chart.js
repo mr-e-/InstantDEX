@@ -92,7 +92,7 @@ IDEX.makeChart =  (function make(siteOptions)
 	if (dataSite == "btcw")
 		var url = "https://s5.bitcoinwisdom.com/period?step="+step+"&symbol=bitfinexbtcusd&nonce="
 	else if (dataSite == "skynet")
-		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+siteOptions.baseid+"_"+"NXT"+"&type=tick&len="+"25"+"&num="+"100"
+		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+siteOptions.baseid+"_"+"NXT"+"&type=tick&len="+"5"+"&num="+"100"
 
     $.getJSON(url, function (data)
     {
