@@ -1,46 +1,46 @@
 
 (function (H) {
-    'use strict';
-    var each = H.each;
-    var merge = H.merge;
+	'use strict';
+	var each = H.each;
+	var merge = H.merge;
 
-    H.wrap(H.Series.prototype, 'render', function (proceed) {
+	H.wrap(H.Series.prototype, 'render', function (proceed) {
 
-        // Run the original proceed method
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		// Run the original proceed method
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
-        var series = this;
-        var chart = series.chart;
-        var backgroundColor = chart.options.chart.backgroundColor || '#ffffff';
-        var points = series.points;
-        var options = series.options;
-        var type = options.type;
+		var series = this;
+		var chart = series.chart;
+		var backgroundColor = chart.options.chart.backgroundColor || '#ffffff';
+		var points = series.points;
+		var options = series.options;
+		var type = options.type;
 
-        if (type === 'candlestick' || type === 'column') 
-        {
-		    var candleSeries = chart.series[0]
-		    var candlePoints = candleSeries.points
+		if (type === 'candlestick' || type === 'column') 
+		{
+			var candleSeries = chart.series[0]
+			var candlePoints = candleSeries.points
 			var a = candlePoints[0].graphic.d.split(" ")[1]
 			var b = (candlePoints[candlePoints.length-1].graphic.d.split(" ")[7])
 			var c = ((b-a) / candlePoints.length)
 			var xAxis = chart.xAxis[0]			
 
-            each(points, function (point, i) 
-            {
-                var graphic = point.graphic
-                var attribute = point.pointAttr
-                var isOpenUp = candlePoints[i].open > candlePoints[i].close
+			each(points, function (point, i) 
+			{
+				var graphic = point.graphic
+				var attribute = point.pointAttr
+				var isOpenUp = candlePoints[i].open > candlePoints[i].close
 				var strokeColor = isOpenUp ? "#d00" : "#0c0";
 				var fillColor = isOpenUp ? '#a80808' : backgroundColor;
 
-            	point.pointAttr = merge(attribute, 
-                {
-                    '': 
-                    {
-                        stroke: strokeColor,
-                        fill: fillColor
-                    }
-                });
+				point.pointAttr = merge(attribute, 
+				{
+					'': 
+					{
+						stroke: strokeColor,
+						fill: fillColor
+					}
+				});
 
 				if (type === 'candlestick')
 				{
@@ -55,8 +55,8 @@
 
 					graphic.attr({d:sub.join(" ")})
 					graphic.attr('stroke-width', 1)
-			        graphic.attr('stroke', strokeColor);
-			        graphic.attr('fill', fillColor);
+					graphic.attr('stroke', strokeColor);
+					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
 				}
 				else if (type === 'column')
@@ -78,25 +78,25 @@
 					graphic.attr('stroke', strokeColor)
 					graphic.attr('stroke-width', 1)
 					graphic.attr('borderWidth', 1)
-			        graphic.attr('fill', fillColor);
+					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
 				} 
-            });
-            if (false)
-            {
-            	var prev = 0
-		        for ( var i = 0; i < candlePoints.length; ++i)
-		        {
-		        	if (i < candlePoints.length-1)
-		        	{
+			});
+			if (false)
+			{
+				var prev = 0
+				for ( var i = 0; i < candlePoints.length; ++i)
+				{
+					if (i < candlePoints.length-1)
+					{
 						var tn =  Number(candlePoints[i+1].graphic.d.split(" ")[7]) - Number(candlePoints[i].graphic.d.split(" ")[1])
 						//var tn2 = sub[1] - points[i-1].graphic.d.split(" ")[7]
 						//console.log(String(i) + " " +String(nn))
 						//console.log(String(i) + ":  " +String(tn) )
 					}
-		        }
-		    }
-        }
-    });
-    
+				}
+			}
+		}
+	});
+	
 }(Highcharts));

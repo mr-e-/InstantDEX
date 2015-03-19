@@ -11,14 +11,14 @@ var skynetKeys = [3,4,5,6,8]
 
 function testOHLC(obj) 
 {
-    var __construct = function(that) 
-    {
+	var __construct = function(that) 
+	{
 		that.x = obj[0]
 		that.open = obj[1]
 		that.high = obj[2]
 		that.low = obj[3]
 		that.close = obj[4]
-    }(this)
+	}(this)
 }
 
 var statAttr=
@@ -43,42 +43,42 @@ Highcharts.setOptions(Highcharts.theme);
 
 function getStepOHLC(data, mStep, dataSite)
 {
-    var ohlc = []
-    var volume = []
-    var dataLength = data.length
+	var ohlc = []
+	var volume = []
+	var dataLength = data.length
 	var diff = 0;
 	var keys = (dataSite == "skynet") ? skynetKeys : btcwKeys
 	
-    for (var i = 0; i < dataLength; i++) 
-    {
-        var pointDate = data[i][0]*1000;
+	for (var i = 0; i < dataLength; i++) 
+	{
+		var pointDate = data[i][0]*1000;
 		data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // skynet spike
 		
-        ohlc.push(new testOHLC([pointDate,data[i][keys[0]],data[i][keys[1]],data[i][keys[2]],data[i][keys[3]]]))
-        volume.push({
-            x:pointDate,
-            y:data[i][keys[4]]
-        });
-        
-        if (dataSite != "skynet")
-        {
-		    var nextDate = (i == data.length-1) ? Date.now() : data[i+1][0]*1000
+		ohlc.push(new testOHLC([pointDate,data[i][keys[0]],data[i][keys[1]],data[i][keys[2]],data[i][keys[3]]]))
+		volume.push({
+			x:pointDate,
+			y:data[i][keys[4]]
+		});
+		
+		if (dataSite != "skynet")
+		{
+			var nextDate = (i == data.length-1) ? Date.now() : data[i+1][0]*1000
 			var diff = nextDate - pointDate
 			if (diff > mStep)
 			{
 				var cycles = diff/mStep
 				for (var j = 1; j < cycles; ++j)
 				{
-					var cycleDate =  pointDate + mStep*j
+					var cycleDate =	 pointDate + mStep*j
 					var close = data[i][keys[3]]
 					ohlc.push(new testOHLC([cycleDate,close,close,close,close]))
 					volume.push({x:cycleDate,y:0});
 				}
 			}
 		}
-    }
+	}
 
-    return [ohlc, volume]
+	return [ohlc, volume]
 }
 
 
@@ -87,157 +87,158 @@ IDEX.makeChart =  (function make(siteOptions)
 	siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
 	var step = ('step' in siteOptions) ? siteOptions.step : "60";
 	var dataSite = ('dataSite' in siteOptions) ? siteOptions.dataSite : "btcw";
-    var mStep = Number(step)*1000
+	var mStep = Number(step)*1000
 	
 	if (dataSite == "btcw")
 		var url = "https://s5.bitcoinwisdom.com/period?step="+step+"&symbol=bitfinexbtcusd&nonce="
 	else if (dataSite == "skynet")
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+siteOptions.baseid+"_"+"NXT"+"&type=tick&len="+"5"+"&num="+"100"
 
-    $.getJSON(url, function (data)
-    {
-    	if (dataSite == "skynet")
-    		data = data.results.bars
+	$.getJSON(url, function (data)
+	{
+		if (dataSite == "skynet")
+			data = data.results.bars
 		var both = getStepOHLC(data, mStep, dataSite)
 		var ohlc = both[0]
 		var volume = both[1]
 		
 		latestTrade = String(data[data.length-1][2])
-        datau = ohlc
-        datab = volume
+		datau = ohlc
+		datab = volume
 
-        var chart1 = new Highcharts.StockChart(
-        {
-            chart:
-            {
-            	renderTo:"chartArea",
-                events:
-                {
+		var chart1 = new Highcharts.StockChart(
+		{
+			chart:
+			{
+				renderTo:"chartArea",
+				events:
+				{
 					load:chartLoadHander,
 				},
-            },
-		    
-            navigator:
-            {
-                enabled:true,
-                adaptToUpdatedData:true,
+			},
+			
+			navigator:
+			{
+				enabled:true,
+				adaptToUpdatedData:true,
 				baseSeries:1,
-            },
-            
-            title: 
-            {
-                useHTML:true,
-                style:
-                {
-                	color: '#CCC'
-                },
+			},
+			
+			title: 
+			{
+				useHTML:true,
+				style:
+				{
+					color: '#CCC'
+				},
 				text:(('baseid' in siteOptions) ? (String(siteOptions.baseid)+" / NXT") : "Bitfinex"),
 				
-            },
-            
-            rangeSelector: 
-            {
-                enabled:false,
-                inputEnabled:false,
-            },
-		    
-		    scrollbar:
-            {
-                enabled:false
-            },
-
-            tooltip:
-            {
+			},
+			
+			rangeSelector: 
+			{
 				enabled:false,
-                followPointer:false,    
-                shared:true,
-                crosshairs:[false,false],
-            },
+				inputEnabled:false,
+			},
+			
+			scrollbar:
+			{
+				enabled:false
+			},
 
-            yAxis: [
-            {
-                labels: 
-                {
-                    align: 'left',
+			tooltip:
+			{
+				enabled:false,
+				followPointer:false,	
+				shared:true,
+				crosshairs:[false,false],
+			},
+
+			yAxis: [
+			{
+				labels: 
+				{
+					align: 'left',
 					y:3.3,
-                },
+				},
 				top:"5%",
-                height: '60%',
+				height: '60%',
 				offset:10,
-                startOnTick:true,
-                //endOnTick:true,
+				startOnTick:true,
+				//endOnTick:true,
 				showFirstLabel:true,
 				showLastLabel:true,
-				minPadding:0.2,
-				maxPadding:0.2,
-            }, 
-            {
-                labels: 
-                {
-                    align: 'left',
+				minPadding:0.05,
+				maxPadding:0.05,
+			}, 
+			{
+				labels: 
+				{
+					align: 'left',
 					y:3.3,
-                },
-                top: '75%',
-                height: '20%',
-                offset: 10,
-                startOnTick:true,
-                //endOnTick:true,
+				},
+				top: '75%',
+				height: '20%',
+				offset: 10,
+				startOnTick:true,
+				//endOnTick:true,
 				showLastLabel:true,
-            }],
-            
-            xAxis: [
-            {
-                labels: 
-                {
-                    align: 'center',
-                    y:0
-                },
-                events:{afterSetExtremes: highLowPrice},
-            	startOnTick:true,
-            	endOnTick:true,
-                range: ((dataSite == "btcw") ? (100 * mStep) : null),
+			}],
+			
+			xAxis: [
+			{
+				labels: 
+				{
+					align: 'center',
+					y:0
+				},
+				events:{afterSetExtremes: highLowPrice},
+				startOnTick:true,
+				endOnTick:true,
+				range: ((dataSite == "btcw") ? (100 * mStep) : null),
 				minRange: 15 * mStep,
-            }],
-            
-            series: [
-            {
-                type: 'candlestick',
-                name: dataSite,
+			}],
+			
+			series: [
+			{
+				type: 'candlestick',
+				name: dataSite,
 				borderWidth:0,
-                turboThreshold:10000,
-                data: ohlc,
-                dataGrouping: 
-                {
-                    enabled:false,
-                }
-            }, 
-            {
-                type: 'column',
+				turboThreshold:10000,
+				data: ohlc,
+				dataGrouping: 
+				{
+					enabled:false,
+				}
+			}, 
+			{
+				type: 'column',
 				borderWidth:0,
-                turboThreshold:10000,
-                data: volume,
-                yAxis: 1,
-                dataGrouping: 
-                {
-                    enabled:false,
-                }
-            }]
+				turboThreshold:10000,
+				data: volume,
+				yAxis: 1,
+				dataGrouping: 
+				{
+					enabled:false,
+				}
+			}]
 
-        }, function(chart)
-           {
-           		chart.crossLinesX = chart.renderer.path().attr(statAttr).add();
-           		chart.crossLinesY = chart.renderer.path().attr(statAttr).add();
+		}, function(chart)
+		   {
+				chart.crossLinesX = chart.renderer.path().attr(statAttr).add();
+				chart.crossLinesY = chart.renderer.path().attr(statAttr).add();
 				chart.crossLabelX = chart.renderer.text().attr(statAttr).add();
 				chart.crossLabelY = chart.renderer.text().attr(statAttr).add();
 				chart.highestPrice = chart.renderer.text().attr(highLowAttr).add();
 				chart.lowestPrice = chart.renderer.text().attr(highLowAttr).add();
 				chart.marketInfo = chart.renderer.text().attr(statAttr).add();
+				chart.splitLine = chart.renderer.path().attr({'stroke-width': 0.5,stroke: '#999',}).add();
 				$(chart.container).on("mousemove",buildChartRenders)
-           }
-        );
-    });
-    
-    return make
+		   }
+		);
+	});
+	
+	return make
 })();
 
 
@@ -260,20 +261,20 @@ function buildChartRenders(event)
 			var d = new Date(closestPoint.x)
 			var xPos = closestPoint.clientX
 			var crossPathX = [
-		    'M', xPos, 0,
-		    'L', xPos, chart.plotTop + chart.plotHeight];
-         
+			'M', xPos, 0,
+			'L', xPos, chart.plotTop + chart.plotHeight];
+		 
 			chart.crossLinesX.attr({d: crossPathX}).show()
 			
 			chart.crossLabelX.attr(
 			{
-			    x: xPos-15,
-			    y: chart.plotTop+chart.plotHeight,
-			    text: formatTime(d)
+				x: xPos-15,
+				y: chart.plotTop+chart.plotHeight,
+				text: formatTime(d)
 			}).show()
 			
 			var vol = chart.series[1].data[index].y
-			var marketInfoText = "Open: "+closestPoint.open+"  High: "+closestPoint.high+"  Low: "+closestPoint.low+"  Close: "+closestPoint.close+"  Volume: "+vol+"<br>Date: "+String(d)
+			var marketInfoText = "Open: "+closestPoint.open+"  High: "+closestPoint.high+"	Low: "+closestPoint.low+"  Close: "+closestPoint.close+"  Volume: "+vol+"<br>Date: "+String(d)
 
 			chart.marketInfo.attr(
 			{
@@ -287,7 +288,7 @@ function buildChartRenders(event)
 		
 		var crossPathY = [
 		'M', chart.plotLeft, y,
-        'L', chart.plotLeft + chart.chartWidth, y]
+		'L', chart.plotLeft + chart.chartWidth, y]
 
 		chart.crossLinesY.attr({d: crossPathY}).show()
 
@@ -302,9 +303,9 @@ function buildChartRenders(event)
 		}
 
 		chart.crossLabelY.attr({
-		    y: y+6,
-		    x:chart.plotLeft+chart.plotWidth,
-		    text: yText
+			y: y+6,
+			x:chart.plotLeft+chart.plotWidth,
+			text: yText
 		}).show()
 	}
 	else
@@ -312,14 +313,14 @@ function buildChartRenders(event)
 		if (prevIndex != -2)
 			destroyChartRenders(0)
 		var crossPathX = [
-	    'M', x, 0,
-	    'L', x, chart.plotTop + chart.chartHeight];
-         
+		'M', x, 0,
+		'L', x, chart.plotTop + chart.chartHeight];
+		 
 		chart.crossLinesX.attr({d: crossPathX}).show()
 			
 		var crossPathY = [
 		'M', chart.plotLeft, y,
-        'L', chart.plotLeft + chart.chartWidth, y]
+		'L', chart.plotLeft + chart.chartWidth, y]
 
 		chart.crossLinesY.attr({d: crossPathY}).show()
 	}
@@ -354,9 +355,9 @@ function highLowPrice()
 function getPoint(seriesIndex, value) 
 {
 
-    var val = null;
+	var val = null;
 	var chart = $('#chartArea').highcharts()
-    var points = chart.series[seriesIndex].points;
+	var points = chart.series[seriesIndex].points;
 
 	if (value >= points[points.length-1].x)
 	{
@@ -370,7 +371,7 @@ function getPoint(seriesIndex, value)
 	{
 		for (var i = 0; i < points.length; i++) 
 		{
-		    if (points[i].x >= value) 
+			if (points[i].x >= value) 
 			{
 				val = points[i-1]
 				break;
@@ -378,7 +379,7 @@ function getPoint(seriesIndex, value)
 		}
 	}
 
-    return val;
+	return val;
 }
 
 function formatTime(d)
@@ -423,26 +424,25 @@ function updateOHLC(OHLC, price)
 
 function updateData()
 {
-    var chart = $('#chartArea').highcharts()
-    var volSeries = chart.series[1];
-    var ohlcSeries = chart.series[0];
-    if (ohlcSeries.name == "skynet")
-    	return
-    var mStep = ohlcSeries.pointRange
-    
-    IDEX.ohlcTimeout = setTimeout(function () 
-    {
-    	var curPointOHLC = datau[datau.length - 1]
-    	var curPointVol = datab[datab.length - 1]
+	var chart = $('#chartArea').highcharts()
+	var volSeries = chart.series[1];
+	var ohlcSeries = chart.series[0];
+	if (ohlcSeries.name == "skynet")
+		return
+	var mStep = ohlcSeries.pointRange
+	
+	IDEX.ohlcTimeout = setTimeout(function () 
+	{
+		var curPointOHLC = datau[datau.length - 1]
+		var curPointVol = datab[datab.length - 1]
 		var curOHLC = new testOHLC([curPointOHLC.x, curPointOHLC.open, curPointOHLC.high, curPointOHLC.low, curPointOHLC.close])
 		var curVol = {y:curPointVol.y, x:curPointOHLC.x}
 		
-    	$.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
+		$.getJSON('https://s5.bitcoinwisdom.com/trades?since='+latestTrade+'&symbol=bitfinexbtcusd&nonce=', function (data) 
 		{
 			var tempFind = 0;
 			
-			var sinceCount = String(Date.now())
-			if (sinceCount-curPointOHLC.x >= mStep)
+			if (Date.now()-curPointOHLC.x >= mStep)
 			{
 				var nextDate = curPointOHLC.x+mStep
 				curOHLC = new testOHLC([nextDate, curOHLC.close, curOHLC.close, curOHLC.close, curOHLC.close])
@@ -463,29 +463,29 @@ function updateData()
 					
 				datau[index] = updateOHLC(datau[index], price)
 				datab[index].y += amount 
-				tempFind = tempFind > data[i]['tid'] ? tempFind : data[i]['tid']
+				tempFind = tempFind > tid ? tempFind : tid
 			}
 		
 			latestTrade =  tempFind > 0 ? String(tempFind) : latestTrade
-		    ohlcSeries.setData(datau, false, true, true)
-		    volSeries.setData(datab, false, true, true)
+			ohlcSeries.setData(datau, false, true, true)
+			volSeries.setData(datab, false, true, true)
 			chart.xAxis[0].setExtremes(chart.xAxis[0].min, chart.xAxis[0].max, true);
 			//if (!$.isEmptyObject(candle) && !$.isEmptyObject(vol))
-		    updateData();
+			updateData();
 		})
 
-    }, 3000);
+	}, 3000);
 }
 
 function isInsidePlot(event)
 {
-	var chart =  $('#chartArea').highcharts()
-    var container = $(chart.container);
-    var offset = container.offset();
-    var x = event.clientX - chart.plotLeft - offset.left;
-    var y = event.clientY - chart.plotTop - offset.top;
-    
-    return chart.isInsidePlot(x, y);
+	var chart =	 $('#chartArea').highcharts()
+	var container = $(chart.container);
+	var offset = container.offset();
+	var x = event.clientX - chart.plotLeft - offset.left;
+	var y = event.clientY - chart.plotTop - offset.top;
+	
+	return chart.isInsidePlot(x, y);
 }
 
 $(".stepButton > button").on("click", function(e)
@@ -512,45 +512,42 @@ $(".stepButton > button").on("click", function(e)
 		chart.destroy()
 		clearTimeout(IDEX.ohlcTimeout)
 		IDEX.makeChart({'step':String(num),'dataSite':'btcw'})
-    }
+	}
 	
 })
 
 $("#chartArea").on('mousewheel', function(event) 
 {
 	event.preventDefault()
-	var chart =  $('#chartArea').highcharts()
-    if (isInsidePlot(event))
-    {
-        var curMax = chart.xAxis[0]['max']
-        var curMin = chart.xAxis[0]['min']
-        var dataMax = chart.xAxis[0]['dataMax']
-        var dataMin = chart.xAxis[0]['dataMin']
-        var diff = curMax - curMin
-        diff /= 10                 
-        if (event.originalEvent.wheelDeltaY < 0)
-        {
-            chart.xAxis[0].setExtremes((curMin-diff > dataMin) ? curMin-diff : dataMin, curMax, true, false);
-        }
-        else if (event.originalEvent.wheelDeltaY > 0)
-        {
-            chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
-        }
-    }
+	var chart =	 $('#chartArea').highcharts()
+	
+	if (isInsidePlot(event))
+	{
+		var curMax = chart.xAxis[0]['max']
+		var curMin = chart.xAxis[0]['min']
+		var dataMax = chart.xAxis[0]['dataMax']
+		var dataMin = chart.xAxis[0]['dataMin']
+		var diff = curMax - curMin
+		diff /= 10				   
+		if (event.originalEvent.wheelDeltaY < 0)
+		{
+			chart.xAxis[0].setExtremes((curMin-diff > dataMin) ? curMin-diff : dataMin, curMax, true, false);
+		}
+		else if (event.originalEvent.wheelDeltaY > 0)
+		{
+			chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
+		}
+	}
 });
 
 function drawDivideLine()
 {
-    var chart = $('#chartArea').highcharts()
+	var chart = $('#chartArea').highcharts()
 	var offset = $('#chartArea').offset();
-    var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2,
-    'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2]
+	var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2,
+	'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2]
 
-    chart.splitLine = chart.renderer.path(path).attr(
-    {
-        'stroke-width': 0.5,
-        stroke: '#999',
-    }).add();
+	chart.splitLine.attr({d:path})
 }
 
 function chartLoadHander()

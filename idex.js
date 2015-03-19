@@ -36,32 +36,32 @@ var postParams =
 
 function sendPost(params) 
 {
-    var dfd = new $.Deferred();
-    params = JSON.stringify(params);
-    
+	var dfd = new $.Deferred();
+	params = JSON.stringify(params);
+	
 	$.ajax
-    ({
+	({
 	  type: "POST",
 	  url: snURL,
 	  data: params,
-      contentType: 'application/json'
+	  contentType: 'application/json'
 	}).done(function(data)
-    {
+	{
 		data = $.parseJSON(data)
-        dfd.resolve(data);
-    }).fail(function(data)
-    {
-        dfd.reject(data);
-    })
+		dfd.resolve(data);
+	}).fail(function(data)
+	{
+		dfd.reject(data);
+	})
 
-    return dfd.promise()
+	return dfd.promise()
 }
 
 
 
 $("#openOrders table tbody").on("click", "tr td.cancelOrder", function(e)
 {
-    var quoteid = $(this).data("quoteid")
+	var quoteid = $(this).data("quoteid")
 
 	cancelOrder(quoteid).done(function(data)
 	{
@@ -97,7 +97,7 @@ $(".popupLoad").on("click", function(e)
 				tableData = formatPairName(tableData, "base", "rel")
 				//<td data-quoteid='"+quoteid+"' class='cancelOrder'>CANCEL</td>
 			}
-			else if (method ==  "allorderbooks")
+			else if (method ==	"allorderbooks")
 			{
 				tableData = formatPairName(tableData, "base", "rel")
 			}
@@ -571,9 +571,9 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 	var $form = $(this).closest("form")
 	var price = $form.find("input[name='price']").val()
 	var amount = $form.find("input[name='volume']").val()
-    var total = Number(price)*Number(amount)
+	var total = Number(price)*Number(amount)
 	
-    $form.find("input[name='total']").val(String(total))
+	$form.find("input[name='total']").val(String(total))
 });
 
 	return IDEX;
