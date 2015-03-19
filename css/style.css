@@ -569,12 +569,16 @@ Main Components - ORDER BOX
 	color:#D8D8D8;
 }
 
-#sellBook > table > tbody > tr.newrow {
+#sellBook > table > tbody > tr.newrow, #buyBook > table > tbody > tr.newrow {
 	background-color:#333;
 }
 
-#sellBook > table > tbody > tr.closed {
+#sellBook > table > tbody > tr.closed, #buyBook > table > tbody > tr.closed {
 	background-color:blue;
+}
+
+#sellBook > table > tbody > tr.virtual > td, #buyBook > table > tbody > tr.virtual >td {
+	color:#6E6E6E;
 }
 
 .table td {
@@ -586,7 +590,8 @@ Main Components - ORDER BOX
   text-align: left;
 }
 
-.stepButton > button {
+
+.stepButton  button {
 	height:20px;
 	color:silver;
 	background-color:black;
@@ -597,7 +602,7 @@ Main Components - ORDER BOX
 	border-color: #8F8F8F;
 }
 
-.stepButton > button:hover, .stepButton > button:active {
+.stepButton  button:hover, .stepButton > button:active {
 	background-color:#424242 !important;
 }
 

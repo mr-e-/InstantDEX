@@ -1,12 +1,12 @@
 
-(function (H) {
+(function (H) 
+{
 	'use strict';
 	var each = H.each;
 	var merge = H.merge;
 
-	H.wrap(H.Series.prototype, 'render', function (proceed) {
-
-		// Run the original proceed method
+	H.wrap(H.Series.prototype, 'render', function (proceed) 
+	{
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
 		var series = this;
@@ -82,6 +82,7 @@
 					graphic.attr('shape-rendering', "crispEdges")
 				} 
 			});
+			
 			if (false)
 			{
 				var prev = 0

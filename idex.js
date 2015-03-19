@@ -1,12 +1,12 @@
 
 var IDEX = (function(IDEX, $, undefined) {
 
+IDEX.curBase;
+IDEX.curRel;
 var snURL = "http://127.0.0.1:7778";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 var isPollingOrderbook = false;
 var SATOSHI = 10000000;
-var curBase = 0;
-var curRel = 0;
 var rs = "";
 var orderbookTimeout;
 
@@ -33,30 +33,189 @@ var postParams =
 };
 
 
-
-function sendPost(params) 
+function sendPost(params, url) 
 {
 	var dfd = new $.Deferred();
-	params = JSON.stringify(params);
-	
+	if (!url)
+	{
+		params = JSON.stringify(params);
+	}
+
 	$.ajax
 	({
 	  type: "POST",
-	  url: snURL,
+	  url: (typeof url === 'undefined') ? snURL : nxtURL,
 	  data: params,
-	  contentType: 'application/json'
+	  //contentType: 'application/json'
 	}).done(function(data)
 	{
 		data = $.parseJSON(data)
 		dfd.resolve(data);
 	}).fail(function(data)
 	{
-		dfd.reject(data);
+		dfd.resolve({'error':'error'});
 	})
 
 	return dfd.promise()
 }
 
+
+//$("#icoLog").on("click", getVirtualOrderbook)
+function getVirtualOrderbook()
+{
+	var d1 = new $.Deferred();
+    var d2 = new $.Deferred();
+	var dfd = new $.Deferred();
+	
+	$.when(d1, d2).done(function(baseOrderbook, relOrderbook)
+	{
+		var rHighestBid = relOrderbook.bids[0].priceNQT
+		var rLowestAsk = relOrderbook.asks[0].priceNQT 
+		var baseDecimals = IDEX.curBase.decimals
+		var relDecimals = IDEX.curRel.decimals
+		
+		toVirtual(baseOrderbook.asks, rHighestBid, baseDecimals)
+		toVirtual(baseOrderbook.bids, rLowestAsk, baseDecimals)
+
+		//console.log(String(bLowestAsk) + "   " + String(rLowestAsk))
+		//console.log(String(bHighestBid) + "   " + String(rHighestBid))
+		dfd.resolve(baseOrderbook)
+	})
+	
+	getOrderbook(IDEX.curBase.asset).done(function(baseData)
+	{
+		d1.resolve(baseData)
+	})
+	
+	getOrderbook(IDEX.curRel.asset).done(function(relData)
+	{
+		d2.resolve(relData)
+	})
+	
+	return dfd.promise()
+}
+
+
+function toVirtual(orders, relSafePrice, decimals)
+{
+	for (var i = 0; i < orders.length; ++i)
+	{
+		orders[i]['price'] = (orders[i].priceNQT)/relSafePrice
+		orders[i]['volume'] = (orders[i].quantityQNT/Math.pow(10,decimals))*orders[i]['price']
+		orders[i]['exchange'] = "nxtAE"
+		orders[i]['other'] = orders[i]['account']
+		//console.log(String(virtPrice) + "  " + String(virtAmount))
+	}
+}
+
+
+function getOrderbook(asset)
+{
+	var d1 = new $.Deferred();
+    var d2 = new $.Deferred();
+	var dfd = new $.Deferred();
+
+	$.when(d1, d2).done(function(bids, asks)
+	{
+		dfd.resolve({'bids':bids.bidOrders, 'asks':asks.askOrders})
+	})
+	
+	sendPost({"requestType":"getBidOrders","asset":String(asset)}, 1).done(function(bidData)
+	{
+		d1.resolve(bidData)
+	})
+	
+	sendPost({"requestType":"getAskOrders","asset":String(asset)}, 1).done(function(askData)
+	{
+		d2.resolve(askData)
+	})
+	
+	return dfd.promise()
+}
+
+
+function getRS()
+{
+    var dfd = new $.Deferred();
+    
+	var obj = {"requestType":"getpeers"}
+	sendPost(obj, 1).done(function(data)
+	{
+		rs = data['peers'][1]['RS']
+		dfd.resolve(rs)
+	})
+
+	return dfd.promise()
+}
+
+
+function getAccountAssets()
+{
+    var dfd = new $.Deferred();
+    
+	var obj = {"requestType":"getAccountAssets","account":rs}
+	sendPost(obj).done(function(data)
+	{
+		console.log(data)
+	})
+
+	return dfd.promise()
+}
+
+
+//$("#icoLog").on("click", function()
+
+function getAssetInfo(assets)
+{
+    var dfd = new $.Deferred();
+    var dataStr = "requestType=getAssets&"
+	
+	for (var i = 0; i < assets.length; ++i)
+	{
+		dataStr += "assets="+String(assets[i])+"&"
+	}
+
+	sendPost(dataStr, 1).done(function(data)
+	{
+		console.log(data)
+		dfd.resolve(data)
+	})
+
+	return dfd.promise()
+}
+
+
+/*var obj = {"requestType":"getAssets","assets":tableData[0]['assetA'],"assets":tableData[0]['assetB']}
+sendNXTRequest(obj).done(function(data)
+{
+	var assetList = parseAssetNames(data)
+	
+	for (var i = 0; i < tableData.length; ++i)
+	{
+		tableData[i]['base'] = assetList[tableData[i]['assetA']]
+		tableData[i]['rel'] = assetList[tableData[i]['assetB']]
+	}
+	
+	tableData = formatPairName(tableData, "base", "rel")
+	row = buildTableRows(objToList(tableData, keys))	
+	$modalTable.find("tbody").empty().append(row)
+})*/
+		
+					
+function parseAssetNames(data)
+{
+	var assetList = {}
+	
+	if ("assets" in data)
+	{
+		for (var i = 0; i < data.length; ++i)
+		{
+			assetList[data[i]['asset']] = data[i]['name']
+		}
+	}
+	
+	return assetList
+}
 
 
 $("#openOrders table tbody").on("click", "tr td.cancelOrder", function(e)
@@ -190,58 +349,56 @@ $(".idex-submit").on("click", function()
 	var params = extractPostPayload($(this))
 	var method = params['requestType']
 
-	if (method == "placebid" || method == "placeask")
-	{
-		params['baseid'] = curBase
-		params['relid'] = curRel
-	}
-	else if (method == "orderbook")
+	
+	if (method == "orderbook")
 	{
 		params['allfields'] = 1
-		var chart = $('#chartArea').highcharts()
-		if (chart)
-			chart.destroy()
-		if (IDEX.ohlcTimeout)
-			clearTimeout(IDEX.ohlcTimeout)
-		IDEX.makeChart({'dataSite':'skynet','baseid':params['baseid']})
+		getAssetInfo([params['baseid'], params['relid']]).done(function(data)
+		{
+			var assets = data['assets']
+			IDEX.curBase = assets[0]
+			IDEX.curRel = assets[1]
+			
+			IDEX.killChart()
+			IDEX.makeChart({'dataSite':'skynet','baseid':params['baseid']})
+			
+			if (isPollingOrderbook)
+			{
+				stopPollOrderbook()
+			}
+			
+			emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name)
+			pollOrderbook(1)
+		})
 	}
-
-	sendPost(params).done(function(data)
+	else if (method == "placebid" || method == "placeask")
 	{
-		if (method == "placebid" || method == "placeask")
+		params['baseid'] = IDEX.curBase.asset
+		params['relid'] = IDEX.curRel.asset
+		
+		sendPost(params).done(function(data)
 		{
 			if ('result' in data && data['result'])
 			{
-				// success popup?
-				// update orderbook bids/asks?
 			}
 			else
 			{
-				// fail popup?
 			}
-		}
-		else if (method == "orderbook")
-		{
-			curBase = params['baseid']
-			curRel = params['relid']
-			
-			if (!isPollingOrderbook)
-			{
-				emptyOrderbook("Loading")
-				pollOrderbook()
-			}
-			else
-			{
-				stopPollOrderbook()
-				pollOrderbook(1)
-			}
-		}
-		else if (method == "cancelorder")
+		})
+	}
+	else if (method == "cancelorder")
+	{
+		sendPost(params).done(function(data)
 		{
 			$("#modal-04").removeClass("md-show")
-		}
-	})
+		})
+	}
+	else
+	{
+		sendPost(params)
+	}
 
+	
 	$("#modal-04").removeClass("md-show")
 	if ($form)
 	{
@@ -256,14 +413,63 @@ function pollOrderbook(timeout)
 
 	orderbookTimeout = setTimeout(function() 
 	{
-		var params = {"requestType":"orderbook","baseid":curBase,"relid":curRel,"allfields":1}
+		var d1 = new $.Deferred();
+		var d2 = new $.Deferred();
+		var dfd = new $.Deferred();
+		var params = {"requestType":"orderbook","baseid":IDEX.curBase.asset,"relid":IDEX.curRel.asset,"allfields":1}
+		var orderbookData = {};
 
-		sendPost(params).done(function(orderbookData)
+		$.when(d1, d2).done(function(virtBook, idexBook)
 		{
+			if ('error' in idexBook)
+			{
+				orderbookData = virtBook;
+			}
+			else
+			{
+				orderbookData['bids'] = combineOrders(virtBook.bids, idexBook.bids)
+				orderbookData['asks'] = combineOrders(virtBook.asks, idexBook.asks)
+				orderbookData['bids'].reverse()
+			}
+			
+			console.log(orderbookData)
 			updateOrderbook(orderbookData);
 			pollOrderbook(3000)
 		})
+		getVirtualOrderbook().done(function(virtBook)
+		{
+			d1.resolve(virtBook)
+		})
+		
+		sendPost(params).done(function(idexBook)
+		{
+			d2.resolve(idexBook)
+		})
+
 	}, timeout)
+}
+
+
+function compare(a, b) 
+{
+	if (a.price < b.price)
+		return -1;
+	if (a.price > b.price)
+		return 1;
+	
+	return 0;
+}
+
+
+function combineOrders(virtOrders, idexOrders)
+{
+	var orders = virtOrders
+
+	orders.push.apply(orders, idexOrders)
+	console.log(orders)
+	orders.sort(compare);
+	
+	return orders;
 }
 
 
@@ -278,24 +484,21 @@ function stopPollOrderbook()
 
 function updateOrderbook(orderbookData)
 {
-	if (!('error' in orderbookData))
-	{
-		var lastPrice = orderbookData['bids'].length ? orderbookData['bids'][0]['price'] : 0
-		var bidData = groupOrders(orderbookData['bids'], currentOrderbook['bids'])
-		var askData = groupOrders(orderbookData['asks'], currentOrderbook['asks'])
-		askData['newOrders'].reverse()	
-		currentOrderbook = orderbookData
 
-		updateOrders($("#buyBook table"), bidData)
-		updateOrders($("#sellBook table"), askData)
-		animateOrderbook()
-		$("#currLast .order-text").empty().html(Number(lastPrice).toFixed(8));
-		$("#currPair .order-text").html(orderbookData.pair)
-	}
-	else
-	{
-		emptyOrderbook("No bids or asks")
-	}
+	var lastPrice = orderbookData['bids'].length ? orderbookData['bids'][0]['price'] : 0
+	var bidData = groupOrders(orderbookData['bids'], currentOrderbook['bids'])
+	var askData = groupOrders(orderbookData['asks'], currentOrderbook['asks'])
+	askData['newOrders'].reverse()	
+	currentOrderbook = orderbookData
+
+	updateOrders($("#buyBook table"), bidData)
+	updateOrders($("#sellBook table"), askData)
+	animateOrderbook()
+	$("#currLast .order-text").empty().html(Number(lastPrice).toFixed(8));
+	$("#currPair .order-text").html(orderbookData.pair)
+
+	//if (!orderbookData.bids
+		//emptyOrderbook("No bids or asks")
 }
 
 
@@ -378,7 +581,8 @@ function updateOrders($book, orderData)
 			var dataKeys = ['price','volume','other','exchange']
 			var dataVals = [String(price), String(volume), loopNewOrd['other'], loopNewOrd['exchange']]
 			var trString = buildTableRows([[price.toFixed(8)+"&nbsp;&nbsp;", volume.toFixed(8)]])
-			jqList.push(addTableProps($(trString), "", dataKeys , dataVals))
+			var trClasses = (loopNewOrd['exchange'] == "nxtAE") ? "virtual" : ""
+			jqList.push(addTableProps($(trString), trClasses, dataKeys , dataVals))
 		}
 
 		$book.find("tbody").empty()
@@ -460,7 +664,8 @@ function addNewOrders($row, orderData)
 		var dataKeys = ['price','volume','other','exchange']
 		var dataVals = [String(price), String(volume), loopNewOrd['other'], loopNewOrd['exchange']]
 		var trString = buildTableRows([[price.toFixed(8)+"&nbsp;&nbsp;", volume.toFixed(8)]])
-		var $trElement = addTableProps($(trString), "newrow", dataKeys , dataVals)
+		var trClasses = (loopNewOrd['exchange'] == "nxtAE") ? "newrow virtual" : "newrow"
+		var $trElement = addTableProps($(trString), trClasses, dataKeys , dataVals)
 		//class = order-row cbutton cbutton--effect-jelena
 		
 		if (price < Number($row.data('price')))
