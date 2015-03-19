@@ -156,7 +156,7 @@ function getAccountAssets()
 	var obj = {"requestType":"getAccountAssets","account":rs}
 	sendPost(obj).done(function(data)
 	{
-		console.log(data)
+		//console.log(data)
 	})
 
 	return dfd.promise()
@@ -177,7 +177,7 @@ function getAssetInfo(assets)
 
 	sendPost(dataStr, 1).done(function(data)
 	{
-		console.log(data)
+		//console.log(data)
 		dfd.resolve(data)
 	})
 
@@ -432,7 +432,7 @@ function pollOrderbook(timeout)
 				orderbookData['bids'].reverse()
 			}
 			
-			console.log(orderbookData)
+			//console.log(orderbookData)
 			updateOrderbook(orderbookData);
 			pollOrderbook(3000)
 		})
@@ -466,7 +466,7 @@ function combineOrders(virtOrders, idexOrders)
 	var orders = virtOrders
 
 	orders.push.apply(orders, idexOrders)
-	console.log(orders)
+	//console.log(orders)
 	orders.sort(compare);
 	
 	return orders;

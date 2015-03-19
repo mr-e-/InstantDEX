@@ -93,8 +93,8 @@ var IDEX = (function(IDEX, $, undefined)
 				baseData = baseData.results.bars
 				relData = relData.results.bars
 				
-				console.log(baseData[0])
-				console.log(relData[0])
+				//console.log(baseData[0])
+				//console.log(relData[0])
 				
 				for (var i = 0; i < baseData.length; ++i)
 				{
