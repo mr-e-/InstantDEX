@@ -69,10 +69,10 @@ function getVirtualOrderbook()
 	
 	$.when(d1, d2).done(function(baseOrderbook, relOrderbook)
 	{
-		var rHighestBid = relOrderbook.bids[0].priceNQT
-		var rLowestAsk = relOrderbook.asks[0].priceNQT 
 		var baseDecimals = IDEX.curBase.decimals
 		var relDecimals = IDEX.curRel.decimals
+		var rHighestBid = relOrderbook.bids[0].priceNQT / Math.pow(10,8-relDecimals)
+		var rLowestAsk = relOrderbook.asks[0].priceNQT / Math.pow(10,8-relDecimals)
 		
 		toVirtual(baseOrderbook.asks, rHighestBid, baseDecimals)
 		toVirtual(baseOrderbook.bids, rLowestAsk, baseDecimals)
@@ -96,12 +96,12 @@ function getVirtualOrderbook()
 }
 
 
-function toVirtual(orders, relSafePrice, decimals)
+function toVirtual(orders, relSafePrice, baseDecimals)
 {
 	for (var i = 0; i < orders.length; ++i)
 	{
-		orders[i]['price'] = (orders[i].priceNQT)/relSafePrice
-		orders[i]['volume'] = (orders[i].quantityQNT/Math.pow(10,decimals))*orders[i]['price']
+		orders[i]['price'] = (orders[i].priceNQT/Math.pow(10,8-baseDecimals))/relSafePrice
+		orders[i]['volume'] = (orders[i].quantityQNT/Math.pow(10,baseDecimals))*orders[i]['price']
 		orders[i]['exchange'] = "nxtAE"
 		orders[i]['other'] = orders[i]['account']
 		//console.log(String(virtPrice) + "  " + String(virtAmount))

@@ -151,6 +151,11 @@ var IDEX = (function(IDEX, $, undefined)
 		siteOptions.dataSite = ('dataSite' in siteOptions) ? siteOptions.dataSite : "btcw";
 		var mStep = Number(siteOptions.step)*1000
 		var dataSite = siteOptions.dataSite
+		var titleName = "Bitfinex"
+		if ('flip' in siteOptions)
+			titleName = IDEX.curRel.name+"/NXT"
+		else if ('baseid' in siteOptions)
+			titleName = IDEX.curBase.name+"/NXT"
 		
 		getData(siteOptions).done(function(data)
 		{
@@ -190,7 +195,7 @@ var IDEX = (function(IDEX, $, undefined)
 					{
 						color: '#CCC'
 					},
-					text:(('baseid' in siteOptions) ? (IDEX.curBase.name+"/NXT") : "Bitfinex"),
+					text:titleName,
 					
 				},
 				
@@ -227,8 +232,8 @@ var IDEX = (function(IDEX, $, undefined)
 					//endOnTick:true,
 					showFirstLabel:true,
 					showLastLabel:true,
-					minPadding:0.05,
-					maxPadding:0.05,
+					minPadding:0.00,
+					maxPadding:0.00,
 				}, 
 				{
 					labels: 
@@ -461,6 +466,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!chart)
 			return
 
+		//console.log(chart.crossLinesX)
 		chart.crossLinesX.hide()
 		chart.crossLinesY.hide()
 		chart.crossLabelX.hide()
@@ -599,13 +605,15 @@ var IDEX = (function(IDEX, $, undefined)
 			else if (text == "rel")
 			{
 				options.baseid = IDEX.curRel.asset
+				options.flip = true
 			}
 			else if (text == "virt")
 			{
+				return
 				options.baseid = IDEX.curBase.asset
 				options.relid = IDEX.curRel.asset
 				options.isVirtual = true
-				}
+			}
 			
 			chart.destroy()
 			if (IDEX.ohlcTimeout)

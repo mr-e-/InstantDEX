@@ -15,7 +15,6 @@
 		var points = series.points;
 		var options = series.options;
 		var type = options.type;
-
 		if (type === 'candlestick' || type === 'column') 
 		{
 			var candleSeries = chart.series[0]
@@ -73,6 +72,11 @@
 						graphic.attr('height', 1)
 						graphic.attr('y', series.yAxis.bottom - (series.yAxis.bottom - series.yAxis.height))
 					}
+					
+					//graphic.destroy()
+					//console.log(candlePoints[i].graphic.attr('d'))
+					//graphic = chart.renderer.path().attr({'d':candlePoints[i].graphic.attr('d')}).add();
+					
 					
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
