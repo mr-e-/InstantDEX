@@ -1,4 +1,5 @@
 
+
 var IDEX = (function(IDEX, $, undefined) {
 
 IDEX.curBase;
@@ -9,6 +10,106 @@ var isPollingOrderbook = false;
 var SATOSHI = 10000000;
 var rs = "";
 var orderbookTimeout;
+var allAssets;
+var auto = [];
+
+
+$(document).ready(function()
+{
+	initConstants()
+	
+})
+
+$(".assets").autocomplete({
+	/*source: function(request, response)
+	{
+		var mather
+	}*/
+	open:function()
+	{
+		var cssProps = {'z-index': 2001, 'height':'200px', 'overflow-y':'scroll', 'overflow-x':'hidden', 'font-size':'0.65rem'} 
+		//$(this).autocomplete('widget').css('z-index', 2001);
+		$('.ui-autocomplete').css(cssProps)
+	},
+	delay:0,
+	html:true,
+	source: function( request, response ) 
+			{
+				var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+				var a = $.grep(auto, function( item )
+				{
+					var both = item.label.split(" ")
+					var a = both[0]
+					var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
+
+					return (matcher.test(a) || matcher.test(b))
+				})
+
+				response(a);
+			},
+})
+
+//$(".assets").autocomplete("option", "source", auto);
+//auto[getIndexOfVal(auto, a[i])].value
+function getIndexOfVal(list, val)
+{
+	var index = -1;
+	for (var i = 0; i < list.length; ++i)
+	{
+		for (var prop in list[i])
+		{
+			if (list[i].prop == val)
+			{
+				return i;
+			}
+		}
+	}
+}
+
+function initConstants()
+{
+	var dfd = new $.Deferred()
+	
+	if (localStorage.allAssets)
+	{
+		allAssets = JSON.parse(localStorage.getItem("allAssets"))
+		console.log('done2')
+		
+		dfd.resolve(allAssets)
+	}
+	else
+	{
+		sendPost({"requestType":"getAllAssets"}, 1).done(function(data)
+		{
+			var parsed = []
+			
+			for (var i = 0; i < data.assets.length; ++i)
+			{
+				var obj = {}
+				
+				obj.assetid = data.assets[i].asset
+				obj.name = data.assets[i].name
+				obj.decimals = data.assets[i].decimals
+				parsed.push(obj)
+			}
+			
+			console.log('done')
+			localStorage.setItem('allAssets', JSON.stringify(parsed));
+			allAssets = parsed
+			dfd.resolve(allAssets)
+		})
+	}
+	
+	dfd.done(function(assets)
+	{
+		for (var i = 0; i < assets.length; ++i)
+		{
+			auto.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].assetid})
+		}
+
+	})
+}
+
 
 var currentOrderbook = 
 {
@@ -82,12 +183,12 @@ function getVirtualOrderbook()
 		dfd.resolve(baseOrderbook)
 	})
 	
-	getOrderbook(IDEX.curBase.asset).done(function(baseData)
+	getOrderbook(IDEX.curBase.asset, 10).done(function(baseData)
 	{
 		d1.resolve(baseData)
 	})
 	
-	getOrderbook(IDEX.curRel.asset).done(function(relData)
+	getOrderbook(IDEX.curRel.asset, 0).done(function(relData)
 	{
 		d2.resolve(relData)
 	})
@@ -109,23 +210,23 @@ function toVirtual(orders, relSafePrice, baseDecimals)
 }
 
 
-function getOrderbook(asset)
+function getOrderbook(asset, lastIndex)
 {
 	var d1 = new $.Deferred();
     var d2 = new $.Deferred();
 	var dfd = new $.Deferred();
-
+	
 	$.when(d1, d2).done(function(bids, asks)
 	{
 		dfd.resolve({'bids':bids.bidOrders, 'asks':asks.askOrders})
 	})
 	
-	sendPost({"requestType":"getBidOrders","asset":String(asset)}, 1).done(function(bidData)
+	sendPost({"requestType":"getBidOrders","asset":String(asset),"lastIndex":lastIndex}, 1).done(function(bidData)
 	{
 		d1.resolve(bidData)
 	})
 	
-	sendPost({"requestType":"getAskOrders","asset":String(asset)}, 1).done(function(askData)
+	sendPost({"requestType":"getAskOrders","asset":String(asset),"lastIndex":lastIndex}, 1).done(function(askData)
 	{
 		d2.resolve(askData)
 	})

@@ -260,7 +260,7 @@ var IDEX = (function(IDEX, $, undefined)
 					startOnTick:true,
 					endOnTick:true,
 					range: ((dataSite == "btcw") ? (100 * mStep) : null),
-					minRange: 15 * mStep,
+					minRange: ((dataSite == "btcw") ? (15 * mStep) : null),
 				}],
 				
 				series: [
