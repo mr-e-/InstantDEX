@@ -327,7 +327,7 @@ var IDEX = (function(IDEX, $, undefined)
 				minPrice = (data[i][6] < minPrice || minPrice == -1) ? data[i][6] : minPrice
 			}
 
-			var change = Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100
+			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
 			//var pair = "
 			$("#"+divid).prev().text(data[data.length-1][6]).prev().text(String(change)+"%")
 			//price = getStepOHLC(data, "60", "skynet")[1]
