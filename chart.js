@@ -306,6 +306,179 @@ var IDEX = (function(IDEX, $, undefined)
 	})();
 
 
+	function makeMiniChart(asset, divid)
+	{
+		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair="+asset+"_NXT&type=tick&len=5&num=100"
+			
+		$.getJSON(url, function(data)
+		{
+			var price = []
+			var minPrice = -1;
+			data = data.results.bars
+			for (var i = 0; i < data.length; ++i)
+			{
+				data[i] = ((i!= 0) && (data[i][6] > data[i-1][6]*5)) ? data[i-1] : data[i] // skynet spike
+
+				price.push({
+				x:data[i][0]*1000,
+				y:data[i][6]
+				});
+				
+				minPrice = (data[i][6] < minPrice || minPrice == -1) ? data[i][6] : minPrice
+			}
+
+			var change = Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100
+			//var pair = "
+			$("#"+divid).prev().text(data[data.length-1][6]).prev().text(String(change)+"%")
+			//price = getStepOHLC(data, "60", "skynet")[1]
+			var chart2 = new Highcharts.StockChart(
+			{
+				chart:
+				{
+					renderTo:divid,
+					className:"test2",
+					events:
+					{
+						load:function(){this.reflow()},
+					},
+					spacingBottom:0,
+					borderWidth:0,
+					//height:"100%"
+					
+				},
+				
+				navigator:
+				{
+					enabled:false,
+					adaptToUpdatedData:true,
+					baseSeries:0,
+					height:1,
+				},
+				
+				title: 
+				{
+					useHTML:true,
+					style:
+					{
+						color: '#CCC'
+					},
+					text:"",
+					enabled:false,
+					
+				},
+				
+				rangeSelector: 
+				{
+					enabled:false,
+					inputEnabled:false,
+				},
+				
+				scrollbar:
+				{
+					enabled:false
+				},
+
+				tooltip:
+				{
+					enabled:true,
+					backgroundColor:'black',
+					followPointer:false,	
+					shared:true,
+					crosshairs:[false,false],
+					borderWidth:0,
+					shadow:false,
+			        /*positioner: function () 
+					{
+						return { x: 0, y: 0 };
+					},*/
+					headerFormat:"",
+					pointFormat:"<b>{point.y}</b>",
+					style:{"height":"100px","padding":"0px","color":"#D8D8D8"},
+					/*formatter: function () {
+						var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
+
+						$.each(this.points, function () 
+						{
+							s += this.y;
+						});
+
+						return s;
+					}*/
+				},
+
+				yAxis: [
+				{
+					labels: 
+					{
+						enabled:false,
+					},
+					//height:"100%",
+					maxPadding:0.05,
+					//minPadding:0.2,
+					min:minPrice
+					//showLastLabel:true,
+				}],
+				
+				xAxis: [
+				{
+					labels: 
+					{
+						enabled:true,
+						align: 'center',
+						y:0,
+						style:{color:"#D8D8D8"}
+						/*formatterr: function () 
+						{
+							var s = ""
+							console.log(this)
+							return Highcharts.dateFormat(this.dateTimeLabelFormat,this.value)
+						}*/
+					},
+					tickLength:5,
+					//ordinal:false,
+					//showLastLabel:false,
+					//endOnTick:false,
+
+				}],
+				
+			plotOptions: 
+			{
+				series:
+				{
+					//events:{mouseOut:destroyChartRenders, mouseOver:buildChartRenders},
+					minPointLength:0.0,
+					pointPadding: 0.0,
+					states:
+					{
+						hover:{enabled:true},
+						select:{enabled:true}
+					},
+					lineWidth: 0,
+					animation:false,
+				}
+			},	 
+				series: [
+				{
+					type: 'areaspline',
+					name: "price",
+					borderWidth:0,
+					turboThreshold:10000,
+					data: price,
+					dataGrouping: 
+					{
+						enabled:false,
+					}
+				}]
+
+			}, function(chart)
+			   {
+			   }
+			)	
+		})
+		
+	}
+	
+	
 	function buildChartRenders(event)
 	{
 		var chart = $('#chartArea').highcharts()
@@ -683,6 +856,19 @@ var IDEX = (function(IDEX, $, undefined)
 	$(window).resize(function()
 	{
 		drawDivideLine()
+	})
+	
+	$(document).ready(function()
+	{
+		var divids = ["mCN1D", "mCN2D", "mCN3D", "mCN4D"]
+		//supernet/instantdex/jl777hold/NXTcoinsco
+		var assets = ["12071612744977229797", "15344649963748848799", "6932037131189568014", "17571711292785902558"]
+		for (var i = 0; i < 4; ++i)
+		{
+			makeMiniChart(assets[i], divids[i])
+			
+		}
+		
 	})
 
 

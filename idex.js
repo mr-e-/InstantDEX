@@ -17,7 +17,6 @@ var auto = [];
 $(document).ready(function()
 {
 	initConstants()
-	
 })
 
 $(".assets").autocomplete({
@@ -73,8 +72,6 @@ function initConstants()
 	if (localStorage.allAssets)
 	{
 		allAssets = JSON.parse(localStorage.getItem("allAssets"))
-		console.log('done2')
-		
 		dfd.resolve(allAssets)
 	}
 	else
@@ -93,7 +90,6 @@ function initConstants()
 				parsed.push(obj)
 			}
 			
-			console.log('done')
 			localStorage.setItem('allAssets', JSON.stringify(parsed));
 			allAssets = parsed
 			dfd.resolve(allAssets)
