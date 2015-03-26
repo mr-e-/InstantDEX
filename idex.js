@@ -7,7 +7,7 @@ IDEX.curRel;
 var snURL = "http://127.0.0.1:7778";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 var isPollingOrderbook = false;
-var SATOSHI = 10000000;
+var SATOSHI = 100000000;
 var rs = "";
 var orderbookTimeout;
 var allAssets;
@@ -50,7 +50,7 @@ var postParams =
 	"makeoffer3":["baseid","relid","frombase","fromrel","tobase","torel","flip"]
 };
 
-var orderCompKeys = ['price','volume','other','exchange','quoteid']
+var orderCompKeys = ['price','volume','exchange']
 
 
 $(".assets").autocomplete({
@@ -212,7 +212,6 @@ function getNewAssetInfo(assets)
 
 	sendPost(dataStr, 1).done(function(data)
 	{
-		//console.log(data)
 		dfd.resolve(data)
 	})
 	
@@ -353,13 +352,12 @@ function tableHandler(params, keys, $modalTable)
 	else if (method == "getAccountAssets")
 	{
 		params['account'] = rs;
-		console.log(rs)
 		type=1;
 	}
 	sendPost(params, type).done(function(data)
 	{
 		var row = ""
-		console.log(data)
+
 		if (keys[0] in data)
 		{
 			var tableData = data[keys[0]]
@@ -691,7 +689,8 @@ function groupOrders(orders, currentOrders)
 			
 			if ( i == 0 )
 				loopCurOrd['index'] = j
-			
+			//console.log(loopOrd)
+			//console.log(loopCurOrd)
 			if (compObjs(loopOrd, loopCurOrd, orderCompKeys))
 			{
 				oldOrders.push(loopOrd)
@@ -700,12 +699,12 @@ function groupOrders(orders, currentOrders)
 				break
 			}
 		}
-		//
+
 		if (isNew)
 		{
-			loopOrd.price = toSatoshi(loopOrd.price)
-			loopOrd.volume = toSatoshi(loopOrd.volume)
-			var trString = buildTableRows([[loopOrd.price.toFixed(8)+"&nbsp;&nbsp;", loopOrd.volume.toFixed(8)]])
+			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8)
+			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(8)
+			var trString = buildTableRows([[loopOrd.price+"&nbsp;&nbsp;", loopOrd.volume]])
 			var trClasses = (loopOrd['exchange'] == "nxtae") ? "virtual" : ""
 			newOrdersRow += addRowClass(trString, trClasses)
 			
@@ -721,13 +720,10 @@ function groupOrders(orders, currentOrders)
 
 function updateOrderbook(orderbookData)
 {
-	//console.log(currentOrderbook)
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0
-	var bidData = groupOrders(orderbookData.bids, currentOrderbook.bids)
-	var askData = groupOrders(orderbookData.asks, currentOrderbook.asks)
+	var bidData = groupOrders(orderbookData.bids.slice(), currentOrderbook.bids.slice())
+	var askData = groupOrders(orderbookData.asks.slice(), currentOrderbook.asks.slice())
 	askData.newOrders.reverse()	
-	console.log(bidData)
-	//console.log(currentOrderbook)
 	updateOrders($("#buyBook table"), bidData)
 	updateOrders($("#sellBook table"), askData)
 	animateOrderbook()
@@ -761,14 +757,14 @@ function updateOrders($book, orderData)
 {
 	if (!($book.find("tr").length))
 	{
-		$book.find("tbody").empty().append(orderData.newOrderRows)
+		$book.find("tbody").empty().append(orderData.newOrdersRows)
 	}
 	else
 	{
 		$book.find("tr").each(function(index, element)
 		{
 			var rowData = getRowData($(this))
-			
+
 			addNewOrders($(this), orderData, rowData)
 			showClosed($(this), orderData, rowData)
 			removeOrders($(this), orderData)
@@ -803,15 +799,16 @@ function removeOrders($row, orderData)
 
 function addNewOrders($row, orderData, rowData)
 {
+	var trRows = $(orderData.newOrdersRows).toArray()
+	
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
 		var loopNewOrd = orderData.newOrders[i]
 		var trClasses = (loopNewOrd.exchange == "nxtAE") ? "newrow virtual" : "newrow"
-		console.log($(orderData.newOrdersRow)[0])
-		console.log($(orderData.newOrdersRow)[0][i])
-		var trString = addRowClass($(orderData.newOrdersRow)[0][i], trClasses)
+		var trString = addRowClass($(trRows)[i], trClasses)
+		//console.log(String(i) + " " + trString)
 		//class = order-row cbutton cbutton--effect-jelena
-		
+
 		if (loopNewOrd.price < Number(rowData.price))
 		{
 			var $sib = $row.next()
@@ -823,6 +820,7 @@ function addNewOrders($row, orderData, rowData)
 				{
 					$row.after($(trString))
 					orderData['newOrders'].splice(i,1)
+					trRows.splice(i, 1)
 					--i
 				}
 				else
@@ -834,6 +832,8 @@ function addNewOrders($row, orderData, rowData)
 			{
 				$row.after($(trString))
 				orderData['newOrders'].splice(i,1)
+				trRows.splice(i, 1)
+
 				--i
 			}
 		}
@@ -841,6 +841,8 @@ function addNewOrders($row, orderData, rowData)
 		{
 			$row.before($(trString))
 			orderData['newOrders'].splice(i,1)
+			trRows.splice(i, 1)
+
 			--i
 		}
 	}
@@ -856,12 +858,12 @@ function triggerMakeoffer(orderData)
 	{
 		params[postParams.makeoffer3[i]] = orderData[postParams.makeoffer3[i]]
 	}
-		console.log(orderData)
-		console.log(params)
+	//console.log(orderData)
+	//console.log(params)
 
 	sendPost(params).done(function(data)
 	{
-		console.log(data);
+		//console.log(data);
 	})
 	
 }
@@ -882,7 +884,7 @@ $("#sellBook table tbody").on("click", "tr", function(e)
 {
 	var index = this.rowIndex
 	var order = currentOrderbook.asks[currentOrderbook.asks.length-1-index]
-	console.log(order)
+	//console.log(order)
 	
 	$("#placeBidPrice").val(order.price);
 	$("#placeBidAmount").val(order.volume).trigger("keyup");
@@ -899,7 +901,7 @@ $("#buyBook table tbody").on("click", "tr", function(e)
 	$("#placeAskPrice").val(order.price);
 	$("#placeAskAmount").val(order.volume).trigger("keyup");
 	$("#tab2").trigger("click");
-	triggerMakeoffer(order)
+	//triggerMakeoffer(order)
 })
 
 
