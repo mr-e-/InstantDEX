@@ -662,6 +662,7 @@ function pollOrderbook(timeout)
 			orderbookData['bids'].sort(compare)
 			orderbookData['asks'].sort(compare)
 			orderbookData['bids'].reverse()
+			orderbookData['asks'].reverse()
 
 			updateOrderbook(orderbookData);
 			pollOrderbook(3000)
@@ -677,7 +678,7 @@ function groupOrders(orders, currentOrders)
 	var newOrders = []
 	var expiredOrders = []
 	var newOrdersRow = ""
-
+	
 	for (var i = 0; i < orders.length; i++)
 	{
 		var loopOrd = orders[i]
@@ -689,8 +690,7 @@ function groupOrders(orders, currentOrders)
 			
 			if ( i == 0 )
 				loopCurOrd['index'] = j
-			//console.log(loopOrd)
-			//console.log(loopCurOrd)
+
 			if (compObjs(loopOrd, loopCurOrd, orderCompKeys))
 			{
 				oldOrders.push(loopOrd)
@@ -705,7 +705,7 @@ function groupOrders(orders, currentOrders)
 			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8)
 			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(8)
 			var trString = buildTableRows([[loopOrd.price+"&nbsp;&nbsp;", loopOrd.volume]])
-			var trClasses = (loopOrd['exchange'] == "nxtae") ? "virtual" : ""
+			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae") ? "virtual" : ""
 			newOrdersRow += addRowClass(trString, trClasses)
 			
 			newOrders.push(loopOrd)
@@ -723,14 +723,20 @@ function updateOrderbook(orderbookData)
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0
 	var bidData = groupOrders(orderbookData.bids.slice(), currentOrderbook.bids.slice())
 	var askData = groupOrders(orderbookData.asks.slice(), currentOrderbook.asks.slice())
+	askData['orderbookData'] = orderbookData
+	bidData['orderbookData'] = orderbookData
 	askData.newOrders.reverse()	
+	//console.log(orderbookData)
+	//console.log(currentOrderbook)
+	//console.log(bidData)
+	//console.log(askData)
 	updateOrders($("#buyBook table"), bidData)
 	updateOrders($("#sellBook table"), askData)
 	animateOrderbook()
-	
+	currentOrderbook = new orderbookVar(orderbookData)
+
 	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
 	$("#currPair .order-text").html(orderbookData.pair)
-	currentOrderbook = new orderbookVar(orderbookData)
 	//if (!orderbookData.bids
 		//emptyOrderbook("No bids or asks")
 }
@@ -743,7 +749,7 @@ function animateOrderbook()
 		var $set = $(this)
 		$set.replaceWith($set.contents())
 	})
-	$(".expiredRow").find('td').wrapInner('<div style="display: block; color:#CCC;" />').parent().find('td > div').slideUp(700, function()
+	$(".expiredRow").find('td').wrapInner('<div style="display: block" />').parent().find('td > div').slideUp(700, function()
 	{
 		$(this).parent().parent().remove();
 	})
@@ -763,11 +769,12 @@ function updateOrders($book, orderData)
 	{
 		$book.find("tr").each(function(index, element)
 		{
-			var rowData = getRowData($(this))
+			var isAsk = ($(this).closest("div").attr('id') == "buyBook") ? false : true
+			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index]
 
-			addNewOrders($(this), orderData, rowData)
-			showClosed($(this), orderData, rowData)
-			removeOrders($(this), orderData)
+			addNewOrders($(this), orderData, rowData, index)
+			//showClosed($(this), orderData, rowData)
+			removeOrders($(this), orderData, index)
 		})
 	}
 }
@@ -785,26 +792,27 @@ function showClosed($row, orderData, rowData)
 }
 
 
-function removeOrders($row, orderData)
+function removeOrders($row, orderData, index)
 {
+	
 	for (var i = 0; i < orderData['expiredOrders'].length; i++)
 	{
-		if (i == orderData['expiredOrders']['index'])
+		if (index == orderData['expiredOrders'][i]['index'])
 		{
 			$row.addClass("expiredRow");
+			//console.log($row)
 		}
 	}
 }
 
 
-function addNewOrders($row, orderData, rowData)
+function addNewOrders($row, orderData, rowData, index)
 {
 	var trRows = $(orderData.newOrdersRows).toArray()
-	
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
 		var loopNewOrd = orderData.newOrders[i]
-		var trClasses = (loopNewOrd.exchange == "nxtAE") ? "newrow virtual" : "newrow"
+		var trClasses = (loopNewOrd.exchange == "nxtae_nxtae") ? "newrow virtual" : "newrow"
 		var trString = addRowClass($(trRows)[i], trClasses)
 		//console.log(String(i) + " " + trString)
 		//class = order-row cbutton cbutton--effect-jelena
@@ -814,8 +822,11 @@ function addNewOrders($row, orderData, rowData)
 			var $sib = $row.next()
 			if ($sib && $sib.length)
 			{
-				var sibData = getRowData($sib)
+				var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true
+				var sibData = isAsk ? currentOrderbook.asks[index+1] : currentOrderbook.bids[index+1]
 				
+				//console.log($sib)
+				//console.log(sibData)
 				if (loopNewOrd.price >= Number(sibData.price))
 				{
 					$row.after($(trString))
@@ -882,21 +893,19 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 
 $("#sellBook table tbody").on("click", "tr", function(e)
 {
-	var index = this.rowIndex
-	var order = currentOrderbook.asks[currentOrderbook.asks.length-1-index]
-	//console.log(order)
+	var order = getRowData($(this))
+	console.log(order)
 	
 	$("#placeBidPrice").val(order.price);
 	$("#placeBidAmount").val(order.volume).trigger("keyup");
 	$("#tab1").trigger("click");
-
 })
 
 
 $("#buyBook table tbody").on("click", "tr", function(e)
 {
-	var index = this.rowIndex
-	var order = currentOrderbook.bids[index]
+	var order = getRowData($(this))
+	console.log(order)
 	
 	$("#placeAskPrice").val(order.price);
 	$("#placeAskAmount").val(order.volume).trigger("keyup");
@@ -928,7 +937,7 @@ function getRowData($row)
 {
 	var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true
 	var index = $row[0].rowIndex
-	var rowData = isAsk ? currentOrderbook.asks[currentOrderbook.asks.length-1-index] : currentOrderbook.bids[index]
+	var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index]
 
 	return rowData
 }
