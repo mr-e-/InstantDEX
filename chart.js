@@ -52,7 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < dataLength; i++) 
 		{
 			var pointDate = data[i][0]*1000;
-			data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // skynet spike
+			data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // spike
 			
 			ohlc.push(new testOHLC([pointDate,data[i][keys[0]],data[i][keys[1]],data[i][keys[2]],data[i][keys[3]]]))
 			volume.push({
@@ -314,6 +314,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var price = []
 			var minPrice = -1;
+			var maxPrice = -1;
 			data = data.results.bars
 			for (var i = 0; i < data.length; ++i)
 			{
@@ -325,6 +326,8 @@ var IDEX = (function(IDEX, $, undefined)
 				});
 				
 				minPrice = (data[i][6] < minPrice || minPrice == -1) ? data[i][6] : minPrice
+				maxPrice = (data[i][6] > maxPrice || maxPrice == -1) ? data[i][6] : maxPrice
+
 			}
 
 			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
@@ -343,7 +346,7 @@ var IDEX = (function(IDEX, $, undefined)
 					},
 					spacingBottom:0,
 					borderWidth:0,
-					//height:"100%"
+					//width:"100%"
 					
 				},
 				
@@ -413,9 +416,10 @@ var IDEX = (function(IDEX, $, undefined)
 						enabled:false,
 					},
 					//height:"100%",
-					maxPadding:0.05,
+					maxPadding:0.15,
 					//minPadding:0.2,
-					min:minPrice
+					min:minPrice,
+					max:maxPrice
 					//showLastLabel:true,
 				}],
 				
@@ -826,8 +830,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var chart = $('#chartArea').highcharts()
 		var offset = $('#chartArea').offset();
-		var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2,
-		'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2]
+		var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40,
+		'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40]
 
 		chart.splitLine.attr({d:path})
 	}

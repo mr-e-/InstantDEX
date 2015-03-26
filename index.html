@@ -11,29 +11,26 @@
 	<link rel="stylesheet" type="text/css" href="css/jelena.css" />
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
 	<link rel="stylesheet" type="text/css" href="css/minichart/graph.css" />
-	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.min.css" />
-	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.structure.min.css" />
-	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.theme.min.css" />
-	<!--<link rel="stylesheet" href="css/modal/component.css">-->
 	<link rel="icon" href="img/snicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.min.css" />
     
 	<script src="js/modernizr.js"></script> <!-- Modernizr -->
     <script src="js/jquery-2.1.1.js"></script>
 	<script src="js/jquery.tooltipster.min.js"></script>
 	<script src="js/jquery.tablesorter.min.js"></script> 
 	<script src="js/modal/classie.js"></script>
-	<script src="js/d3.v3.min.js"></script>
-	<script src="js/minichart/graph.js"></script>
-	<script src="jquery-ui/jquery-ui.min.js"></script>
+	<!--<script src="js/d3.v3.min.js"></script>-->
+	<!--<script src="js/minichart/graph.js"></script>-->
+    <script src="js/sorttable.js"></script>
 	<script src="js/lib.js"></script>
 	<script src="js/main.js"></script> <!-- Resource jQuery -->
-	
-	<title>instantDEX GUI prototype v2.16</title>
+	<script src="jquery-ui/jquery-ui.min.js"></script>
+	<title>instantDEX GUI prototype v2.21</title>
 	<!--TOOLTIP SETTINGS-->
     <script>
         $(document).ready(function() {
             $('.tooltip').tooltipster({
-				delay: 1800,
+				delay: 1200,
 				position: 'bottom'
 			});
         });
@@ -43,32 +40,40 @@
 
 <body>
 
-	<div id="header">
+	<div id="header" class="unselectable">
 		<div id="topLogoWrap">
 			<img id="topLogo" src="img/logo-hor.svg"></img>
 		</div>
+        
 		<div id="headerAreaIco">
         	<img id="icoCharts" src="img/ico_top_charts.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-04" title="Click to configure your chart settings."></img>
-            <img id="icoLog" src="img/ico_top_logout.svg" class="header-ico fadeSlow tooltip" title="Click to go back to superNET."></img>
-            <img id="icoHam" src="img/ico_top_ham.svg" class="header-ico fadeSlow tooltip" title="Opens the Options menu."></img>
+            <img id="icoLog" src="img/ico_top_logout.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-06" title="Click to go back to superNET."></img>
+            <img id="icoHam" src="img/ico_top_ham.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-05" title="Opens the Options menu."></img>
         </div>
         
 		<div id="miniChartsTop2">
 			<div id="miniTopNum5" class="chart-box-2">
-																		<!-- testing -->
             	<div id="mTN5A" class="chart-sub-box-2">
-					<span class="chart-text fadeSlow idex-submit" data-method="orderbook" data-baseid="6854596569382794790" data-relid="6932037131189568014">SkyNET/jl777hodl</span>
+					<span class="chart-text fadeSlow">
+                        <span id="chart-curr-51">BTC</span>/<span id="chart-curr-52">XPR</span>
+                    </span>
 				</div>
-                <div id="mTN5B" class="chart-sub-box-2"> 
-					<span class="chart-text fadeSlow idex-submit" data-method="orderbook" data-baseid="11060861818140490423" data-relid="12071612744977229797">mgwBTCD/SuperNET</span>
+                <div id="mTN5B" class="chart-sub-box-2">
+					<span class="chart-text fadeSlow">
+                        <span id="chart-curr-61">BTC</span>/<span id="chart-curr-62">OPAL</span>
+                    </span>
 				</div>
             </div>
             <div id="miniTopNum6" class="chart-box-2">
             	<div id="mTN6A" class="chart-sub-box-2">
-					<span class="chart-text fadeSlow idex-submit" data-method="orderbook" data-baseid="15344649963748848799" data-relid="17554243582654188572">InstantDEX/mgwBTC</span>
+					<span class="chart-text fadeSlow">
+                        <span id="chart-curr-71">BTC</span>/<span id="chart-curr-72">NXT</span>
+                    </span>
 				</div>
                 <div id="mTN6B" class="chart-sub-box-2">
-					<span class="chart-text fadeSlow idex-submit" data-method="orderbook" data-baseid="4630752101777892988" data-relid="3061160746493230502">LIQUID/Jinn</span>
+					<span class="chart-text fadeSlow">
+                        <span id="chart-curr-81">BTC</span>/<span id="chart-curr-82">BITS</span>
+                    </span>
 				</div>
             </div>
 		</div>
@@ -76,7 +81,9 @@
 		<div id="miniChartsTop">
         	<div id="miniTopNum1" class="chart-box fadeSlow">
             	<div id="mTN1A" class="chart-sub-box">
-					<span class="chart-text-top ">USD/BTC</span>
+					<span class="chart-text-top">
+                        <span id="chart-curr-11">USD</span>/<span id="chart-curr-12">BTC</span>
+                    </span>
 				</div>
                 <div id="mTN1B" class="chart-sub-box">
 					<span class="chart-text-bottom text-red">273.12</span>
@@ -84,7 +91,9 @@
             </div>
             <div id="miniTopNum2" class="chart-box fadeSlow">
             	<div id="mTN2A" class="chart-sub-box">
-					<span class="chart-text-top">BTC/sNET</span>
+					<span class="chart-text-top">
+                        <span id="chart-curr-21">BTC</span>/<span id="chart-curr-22">sNET</span>
+                    </span>
 				</div>
                 <div id="mTN2B" class="chart-sub-box">
 					<span class="chart-text-bottom text-green">0.01125436</span>
@@ -92,7 +101,9 @@
             </div>
             <div id="miniTopNum3" class="chart-box fadeSlow">
             	<div id="mTN3A" class="chart-sub-box">
-					<span class="chart-text-top">BTC/BTCD</span>
+					<span class="chart-text-top">
+                        <span id="chart-curr-31">BTC</span>/<span id="chart-curr-32">BTCD</span>
+                    </span>
 				</div>
                 <div id="mTN3B" class="chart-sub-box">
 					<span class="chart-text-bottom text-green">0.00445786</span>
@@ -100,7 +111,9 @@
             </div>
             <div id="miniTopNum4" class="chart-box fadeSlow">
             	<div id="mTN4A" class="chart-sub-box">
-					<span class="chart-text-top">BTC/FIBRE</span>
+					<span class="chart-text-top">
+                        <span id="chart-curr-41">BTC</span>/<span id="chart-curr-42">FIBRE</span>
+                    </span>
 				</div>
                 <div id="mTN4B" class="chart-sub-box">
 					<span class="chart-text-bottom text-red">0.00068215</span>
@@ -109,14 +122,16 @@
         </div>
         
         <div id="headerAreaIco2">
-            <img id="icoMarkets" src="img/ico_top_markets.svg" class="header-ico fadeSlow tooltip md-trigger popupLoad" data-modal="modal-01" data-method="allorderbooks" title="Click to access to the Markets panel."></img>        
-        	<img id="icoOrders" src="img/ico_top_orders.svg" class="header-ico fadeSlow tooltip md-trigger popupLoad" data-modal="modal-02" data-method="openorders" title="Click to access to the Orders information panel."></img>
-            <img id="icoFolio" src="img/ico_top_folio.svg" class="header-ico fadeSlow tooltip md-trigger popupLoad" data-modal="modal-03" data-method="tradehistory" title="Click to access to your Portfolio information panel."></img>
+            <img id="icoMarkets" src="img/ico_top_markets.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
+        	<img id="icoOrders" src="img/ico_top_orders.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
+            <img id="icoFolio" src="img/ico_top_folio.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
         </div>
         
 	</div><!--
-
--->	<div id="mainChart" >
+    
+--- MAIN CHART AREA --------------------------------------------------    
+    
+ --><div id="mainChart" class="unselectable" style="z-index:1">
 		<div id="mainChartTop" style="height:40px; border-bottom:inset 1px rgb(45,45,45);padding-top:5px;padding-left:5px">
 			<div class="stepButton">
 				<div class="step" style="display:inline-block">
@@ -140,43 +155,28 @@
 			</div>
 		</div>
 		
-		<div id="chartArea" style="height:539px;cursor:none;">
+		<div id="chartArea" style="height:calc(100% - 40px);cursor:none">
 		</div>
-	</div>
-	<div id="orderBook">
-		<div id="currPair" class="order-big">
-			<span class="order-text">No orderbook loaded</span>
-		</div>
-		<!-- TABLES FOR ORDERBOOK, USING BTCW FONT FOR TESTING -->
-		<!-- ALSO NEEDS FIXED WIDTH/HEIGHT -->
-        <div id="sellBook" style="position:relative;overflow:hidden;">
-			<table style="position:absolute;bottom:0px">
-				<tbody style="font-family:Consolas, Monospace">
-				</tbody>
-			</table>
-        </div>
-        <div id="currLast" class="order-big">
-			<span class="order-text text-green">0</span>
-		</div>
-        <div id="buyBook" style="position:relative;overflow:hidden;">
-			<table style="position:absolute;top:0px">
-				<tbody style="font-family:Consolas, Monospace">
-				</tbody>
-			</table>
-		</div></div><!--
+	</div><!--
     
--->	<div id="miniChartsC">
+--- MINICHARTS + ORDER BOX AREA --------------------------------------
+    
+ --><div id="miniChartsC" class="unselectable">
 		<div id="miniCNum1" class="mini-chart">
-			<div id="mCN1A" class="mini-chart-area-1">SN/NXT</div>
+			<div id="mCN1A" class="mini-chart-area-1">
+                <span id="chart-curr-91">BTC</span>/<span id="chart-curr-92">VRC</span>
+            </div>
             <div id="mCN1B" class="mini-chart-area-2">32%</div>
             <div id="mCN1C" class="mini-chart-area-3 text-green">0.000341</div>
-            <div id="mCN1D" class="mini-chart-area-4" style="height:77px">chart</div>
+            <div id="mCN1D" class="mini-chart-area-4">chart</div>
         </div>
         <div id="miniCNum2" class="mini-chart">
-        	<div id="mCN2A" class="mini-chart-area-1">iDEX/NXT</div>
+        	<div id="mCN2A" class="mini-chart-area-1">
+                <span id="chart-curr-101">BTC</span>/<span id="chart-curr-102">VRC</span>
+            </div>
             <div id="mCN2B" class="mini-chart-area-2">32%</div>
-            <div id="mCN2C" class="mini-chart-area-3 text-green">0.000341</div>
-            <div id="mCN2D" class="mini-chart-area-4" style="height:77px">chart</div>        
+            <div id="mCN2C" class="mini-chart-area-3 text-red">0.000341</div>
+            <div id="mCN2D" class="mini-chart-area-4">chart</div>        
         </div>
         <div id="orderBox">
         	<ul class="tabs">
@@ -184,6 +184,13 @@
 					<input type="radio" name="tabs" id="tab1" checked></input>
 					<label for="tab1" class="fadeSlow">BUY</label>
 					<div id="tab-content1" class="tab-content">
+                        <div id="balanceBuy">
+                            <span>BTC</span>
+                            <span class="bal-value">
+                                <span class="bal-num">12</span>
+                                <span class="bal-dec">.225415</span>
+                            </span>
+                        </div>
 						<form role="form" id="placeBidForm" autocomplete="off">
 							<div class="form-group">
 								<label for="placeBidPrice">Price</label>
@@ -195,7 +202,7 @@
 							</div>
 							<div class="form-group">
 								<label for="placeBidFee">Fee</label>
-								<input disabled type="text" class="form-control" name="fee" id="placeBidFee" placeholder="2.5 NXT"></input>
+								<input disabled type="text" class="form-control" name="fee" id="placeBidFee" placeholder=""></input>
 							</div>
 							<div class="form-group">
 								<label for="placeBidTotal">Total</label>
@@ -210,128 +217,425 @@
     			<li>
         			<input type="radio" name="tabs" id="tab2" />
         			<label for="tab2" class="fadeSlow">SELL</label>
-    				<div id="tab-content2" class="tab-content">
+					<div id="tab-content2" class="tab-content">
+                        <div id="balanceSell">
+                            <span>VRC</span>
+                            <span class="bal-value">
+                                <span class="bal-num">2351</span>
+                                <span class="bal-dec">.1225</span>
+                            </span>
+                        </div>
 						<form role="form" id="placeAskForm" autocomplete="off">
 							<div class="form-group">
-							    <label for="placeAskPrice">Price</label>
-							    <input type="text" class="form-control" name="price" id="placeAskPrice" placeholder=""></input>
+								<label for="placeAskPrice">Price</label>
+								<input type="text" class="form-control" name="price" id="placeAskPrice" placeholder=""></input>
 							</div>
 							<div class="form-group">
-							    <label for="placeAskAmount">Amount (BASE)</label>
-							    <input type="text" class="form-control" name="volume" id="placeAskAmount" placeholder=""></input>
+								<label for="placeAskAmount">Amount</label>
+								<input type="text" class="form-control" name="volume" id="placeAskAmount" placeholder=""></input>
 							</div>
 							<div class="form-group">
-							    <label for="placeAskFee">Fee</label>
-							    <input disabled type="text" class="form-control" name="fee" id="placeAskFee" placeholder="2.5 NXT"></input>
+								<label for="placeAskFee">Fee</label>
+								<input disabled type="text" class="form-control" name="fee" id="placeAskFee" placeholder=""></input>
 							</div>
 							<div class="form-group">
-							    <label for="placeAskTotal">Total (REL)</label>
-							    <input disabled type="text" class="form-control" name="total" id="placeAskTotal" placeholder=""></input>
+								<label for="placeAskTotal">Total</label>
+								<input disabled type="text" class="form-control" name="total" id="placeAskTotal" placeholder=""></input>
 							</div>
 						</form>
 						<div class="order-button">
 							<button class="idex-submit" data-method="placeask" data-form="placeAskForm" data-loading-text="none">P<br>L<br>A<br>C<br>E</button>
 						</div>
-    				</div>
+					</div>
     			</li>
 			</ul>
         </div>
         <div id="miniCNum3" class="mini-chart">
-        	<div id="mCN3A" class="mini-chart-area-1">JLH/NXT</div>
+        	<div id="mCN3A" class="mini-chart-area-1">
+                <span id="chart-curr-111">BTC</span>/<span id="chart-curr-112">VRC</span>
+            </div>
             <div id="mCN3B" class="mini-chart-area-2">32%</div>
             <div id="mCN3C" class="mini-chart-area-3 text-green">0.000341</div>
-            <div id="mCN3D" class="mini-chart-area-4" style="height:77px">chart</div>        
+            <div id="mCN3D" class="mini-chart-area-4">chart</div>        
         </div>
         <div id="miniCNum4" class="mini-chart">
-        	<div id="mCN4A" class="mini-chart-area-1">coinsco/NXT</div>
+        	<div id="mCN4A" class="mini-chart-area-1">
+                <span id="chart-curr-121">BTC</span>/<span id="chart-curr-122">VRC</span>
+            </div>
             <div id="mCN4B" class="mini-chart-area-2">32%</div>
             <div id="mCN4C" class="mini-chart-area-3 text-green">0.000341</div>
-            <div id="mCN4D" class="mini-chart-area-4" style="height:77px">chart</div>        
+            <div id="mCN4D" class="mini-chart-area-4">chart</div>        
         </div>
-	</div>
+	</div><!--
+    
+--- ORDER BOOK AREA --------------------------------------------------
+    
+ --><div id="orderBook">
+		<div id="currPair" class="order-big">
+			<span class="order-text">BTC/USD</span>
+		</div>
+        <div id="sellBook" style="position:relative;overflow:hidden;">
+			<table style="position:absolute;bottom:0px">
+				<tbody>
+				</tbody>
+			</table>
+        </div>
+        <div id="currLast" class="order-big">
+			<span class="order-text text-green">234.11</span>
+		</div>
+        <div id="buyBook" style="position:relative;overflow:hidden;">
+			<table style="position:absolute;top:0px">
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+    </div>
 	
 	<!-- Modal Windows -->
+    
+    <!-- MARKETS PANEL ----------------------------------------------->
+    
 	<div class="md-modal md-effect" id="modal-01">
 		<div class="md-content">
-			<div id="tabs1" class="tabs-container">
-				<ul>
-				  <li><a href="#tabs-1">Tab 1</a></li>
-				  <li><a href="#tabs-2">Tab 2</a></li>
-				  <li><a href="#tabs-3">Tab 3</a></li>
-				</ul>
-				<div id="tabs-1">
-					<div>
-						<table id="marketTable" class="tablesorter table"> 
-							<thead data-keys="orderbooks market numquotes exchange">
-								<tr><th>Market</th><th>Num Quotes</th><th>Exchange</th><th>Volume</th><th>Change</th><th>Last Trade</th></tr>
-							</thead>
-							<tbody> 
-							</tbody> 
-						</table>
-					</div>
+            <div class="tabs-nav">
+                <div class="nav active" tab-index="tabs-1" align="center"><p>MARKETS</p></div>
+                <div class="nav" tab-index="tabs-2" align="center"><p>CUSTOM MARKETS</p></div>
+                <!--<div class="nav" tab-index="tabs-3" align="center">Tab 3</div>-->
+            </div>
+			<div class="tabs-container">
+				<div id="tabs-1" class="active">
+					<table id="marketTable" class="table sortable" data-method="allorderbooks" cellspacing=0> 
+						<thead data-keys="orderbooks base rel last high low volume exchange"> 
+						<tr> 
+							<th>BASE</th> 
+							<th>QUOTE</th> 
+							<th>LAST</th>
+							<th>24 HIGH</th>
+							<th>24 LOW</th>
+							<th>VOLUME</th>
+							<th>EXCHANGE</th>
+						</tr> 
+						</thead> 
+						<tbody> 
+
+						</tbody> 
+					</table>
 					
 					<div class="table-footer">
-						<button class="table-button">Button 1</button>
+						<!--<button class="table-button">Button 1</button>-->
+                        <button class="buttSearch fadeSlow">SEARCH</button>
 						<input type="search" class="table-searchbox">
-						<span class="pagination">
-							<button>FIRST</button>
-							<button><</button>
-							<button>1</button>
-							<button>2</button>
-							<button>3</button>
-							<button>4</button>
-							<button>5</button>
-							<button>></button>
-							<button>LAST</button>
+						<span class="buttPage">
+							<button class="fadeSlow">FIRST</button>
+							<button class="fadeSlow buttPageS"><</button>
+							<button class="fadeSlow buttPageS">1</button>
+							<button class="fadeSlow buttPageS">2</button>
+							<button class="fadeSlow buttPageS">3</button>
+							<button class="fadeSlow buttPageS">4</button>
+							<button class="fadeSlow buttPageS">5</button>
+							<button class="fadeSlow buttPageS">></button>
+							<button class="fadeSlow">LAST</button>
 						</span>
 					</div>
 				</div>
 				<div id="tabs-2">
-					Tab 2 Content
-				</div>
-				<div id="tabs-3">
+					<h1 align="center">CUSTOM MARKETS PANEL</h1>
+            		<p align="center">< UNDER CONSTRUCTION ><p>				</div>
+<!--				<div id="tabs-3">
 					Tab 3 Content
-				</div>
+				</div>-->
 			</div>
 		</div>
 	</div>
 	
+ <!-- ORDERS PANEL ----------------------------------------------->
+ 
 	<div class="md-modal md-effect" id="modal-02">
-		<div class="md-content" style="overflow:auto">
-			<h1 id="test_getOpenOrders">Open Orders</h1>
-		    <div id="openOrders" style="position:relative;">
-				<table class="table">
-					<thead data-keys="openorders requestType market price volume relamount quoteid age">
-					<tr><th>Type</th><th>Market</th><th>Price</th><th>Base Amount</th><th>Rel Amount</th><th>Quote ID</th><th>Age</th><th></th></tr>
-					</thead>
-					<tbody style="font-family:Consolas, Monospace">
-					</tbody>
-				</table>
-		    </div>
+		<div class="md-content">
+            <div class="tabs-nav tab-tables">
+                <div class="nav active" tab-index="tabs-5" align="center"><p>ORDERS</p></div>
+                <div class="nav" tab-index="tabs-6" align="center"><p>HISTORY</p></div>
+                <!--<div class="nav" tab-index="tabs-3" align="center">Tab 3</div>-->
+            </div>
+			<div class="tabs-container">
+				<div id="tabs-5" class="active">
+					<table id="openOrdersTable" class="table sortable" data-method="openorders" cellspacing=0> 
+						<thead data-keys="openorders requestType market price volume relamount quoteid age"> 
+						<tr> 
+							<th>TYPE</th> 
+							<th>MARKET</th> 
+							<th>PRICE</th>
+							<th>AMOUNT</th>
+							<th>TOTAL</th>
+							<th>QUOTE ID</th>
+							<th>AGE</th>
+                            <th>STATUS</th>
+						</tr> 
+						</thead> 
+						<tbody> 
+
+						</tbody> 
+					</table>
+					
+					<div class="table-footer">
+						<!--<button class="table-button">Button 1</button>-->
+                        <button class="buttSearch fadeSlow">SEARCH</button>
+						<input type="search" class="table-searchbox">
+						<span class="buttPage">
+							<button class="fadeSlow">FIRST</button>
+							<button class="fadeSlow buttPageS"><</button>
+							<button class="fadeSlow buttPageS">1</button>
+							<button class="fadeSlow buttPageS">2</button>
+							<button class="fadeSlow buttPageS">3</button>
+							<button class="fadeSlow buttPageS">4</button>
+							<button class="fadeSlow buttPageS">5</button>
+							<button class="fadeSlow buttPageS">></button>
+							<button class="fadeSlow">LAST</button>
+						</span>
+					</div>
+				</div>
+				<div id="tabs-6">
+					<table id="tradeHistoryTable" class="table sortable" data-method="tradehistory" cellspacing=0> 
+						<thead data-keys="tradehistory market priceNQTA priceNQTB NXT triggerhash"> 
+						<tr> 
+							<th>MARKET</th> 
+							<th>BASE AMOUNT</th> 
+							<th>REL AMOUNT</th>
+							<th>OTHER</th>
+							<th>TX</th>
+						</tr> 
+						</thead> 
+						<tbody> 
+
+						</tbody> 
+					</table>
+					
+					<div class="table-footer">
+                        <button class="buttSearch fadeSlow">SEARCH</button>
+						<input type="search" class="table-searchbox">
+						<span class="buttPage">
+							<button class="fadeSlow">FIRST</button>
+							<button class="fadeSlow buttPageS"><</button>
+							<button class="fadeSlow buttPageS">1</button>
+							<button class="fadeSlow buttPageS">2</button>
+							<button class="fadeSlow buttPageS">3</button>
+							<button class="fadeSlow buttPageS">4</button>
+							<button class="fadeSlow buttPageS">5</button>
+							<button class="fadeSlow buttPageS">></button>
+							<button class="fadeSlow">LAST</button>
+						</span>
+					</div>
+				</div>
+<!--				<div id="tabs-3">
+					Tab 3 Content
+				</div>-->
+			</div>
 		</div>
 	</div>
 	
+ <!-- PORTFOLIO PANEL ----------------------------------------------->
+ 	
 	<div class="md-modal md-effect" id="modal-03">
-		<div class="md-content" style="overflow:auto">
-			<h1 id="test_tradeHistory">Trade History</h1>
-		    <div id="tradeHistory" style="position:relative;">
-				<table class="table">
-					<thead data-keys="tradehistory market amountA amountB NXT triggerhash">
-					<tr><th>Market</th><th>Base Amount</th><th>Rel Amount</th><th>NXT</th><th>Trigger Hash</th</tr>
-					</thead>
-					<tbody style="font-family:Consolas, Monospace">
-					</tbody>
-				</table>
-		    </div>
+		<div class="md-content">
+            <div class="tabs-nav">
+                <div class="nav active" tab-index="tabs-3" align="center"><p>BALANCES</p></div>
+                <div class="nav" tab-index="tabs-4" align="center"><p>??</p></div>
+            </div>
+			<div class="tabs-container">
+				<div id="tabs-3" class="active">
+					<table id="balancesTable" class="table sortable" data-method="getAccountAssets" cellspacing=0> 
+						<thead data-keys="accountAssets name asset quantityQNT unconfirmedQuantityQNT change"> 
+						<tr> 
+							<th>Name</th> 
+							<th>Asset ID</th> 
+							<th>Available Balance</th>
+							<th>Unconfirmed Balance</th>
+							<th>% Change</th>
+						</tr> 
+						</thead> 
+						<tbody> 
+
+						</tbody> 
+					</table>
+					
+					<div class="table-footer">
+                        <button class="buttSearch fadeSlow">SEARCH</button>
+						<input type="search" class="table-searchbox">
+						<span class="buttPage">
+							<button class="fadeSlow">FIRST</button>
+							<button class="fadeSlow buttPageS"><</button>
+							<button class="fadeSlow buttPageS">1</button>
+							<button class="fadeSlow buttPageS">2</button>
+							<button class="fadeSlow buttPageS">3</button>
+							<button class="fadeSlow buttPageS">4</button>
+							<button class="fadeSlow buttPageS">5</button>
+							<button class="fadeSlow buttPageS">></button>
+							<button class="fadeSlow">LAST</button>
+						</span>
+					</div>
+				</div>
+				<div id="tabs-4">
+					<h1 align="center">CUSTOM MARKETS PANEL</h1>
+            		<p align="center">< UNDER CONSTRUCTION ><p>
+				</div>
+			</div>
 		</div>
 	</div>
 
+ <!-- QUICK CHARTS PANEL ----------------------------------------------->
+	
+	<div class="md-modal-2 md-effect-2 md-chart" id="modal-04">
+		<div class="md-content">
+            <div class="chart-panel-title">
+                <img src="img/charts_areas_title2.svg">
+            </div>
+            <div class="chart-panel-pair" chart-number="1">
+                <div class="chart-panel-number fadeSlow" chart-number="1">1</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="11" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="12" list="curr-list" type="text">
+                </div>
+            </div>
+			<div class="chart-panel-pair" chart-number="2">
+                <div class="chart-panel-number fadeSlow" chart-number="2">2</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="21" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="22" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="3">
+                <div class="chart-panel-number fadeSlow" chart-number="3">3</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="31" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="32" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="4">
+                <div class="chart-panel-number fadeSlow" chart-number="4">4</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="41" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="42" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="5">
+                <div class="chart-panel-number fadeSlow" chart-number="5">5</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="51" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="52" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="6">
+                <div class="chart-panel-number fadeSlow" chart-number="6">6</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="61" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="62" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="7">
+                <div class="chart-panel-number fadeSlow" chart-number="7">7</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="71" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="72" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="8">
+                <div class="chart-panel-number fadeSlow" chart-number="8">8</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="81" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="82" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="9">
+                <div class="chart-panel-number fadeSlow" chart-number="9">9</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="91" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="92" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="10">
+                <div class="chart-panel-number fadeSlow" chart-number="10">10</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="101" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="102" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="11">
+                <div class="chart-panel-number fadeSlow" chart-number="11">11</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="111" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="112" list="curr-list" type="text">
+                </div>
+            </div>
+            <div class="chart-panel-pair" chart-number="12">
+                <div class="chart-panel-number fadeSlow" chart-number="12">12</div>
+                <div class="chart-panel-input">
+                    <input class="chart-control" chart-id="121" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="122" list="curr-list" type="text">
+                </div>
+            </div>
+		</div>
+	</div>
 
+ <!-- OPTIONS PANEL ----------------------------------------------->
+	
+	<div class="md-modal-2 md-effect-2" id="modal-05">
+		<div class="md-content">
+			<div class="option-panel-title">
+                <img src="img/options_panel_title.svg">
+            </div>
+            <div class="option-row">
+                <div class="option-label">LANGUAGE</div>
+                <input class="option-input" type="text" list="option1">
+            </div>
+            <div class="option-row">
+                <div class="option-label">GUI THEME</div>
+                <input class="option-input" type="text" list="option2">
+            </div>
+            <div class="option-row">
+                <div class="option-label"></div>
+                <input class="option-input" type="text" list="option3">
+            </div>
+            <div class="option-row">
+                <div class="option-label"></div>
+                <input class="option-input" type="text" list="option3">
+            </div>
+            <div class="option-row">
+                <div class="option-label"></div>
+                <input class="option-input" type="text" list="option3">
+            </div>
+            <div class="option-row">
+                <div class="option-label"></div>
+                <input class="option-input" type="text" list="option3">
+            </div>
+            <div class="option-row">
+                <div class="option-label"></div>
+                <input class="option-input" type="text" list="option3">
+            </div>
+            <div class="option-row">
+                <div class="option-label"></div>
+                <input class="option-input" type="text" list="option3">
+            </div>
+		</div>
+	</div>
+    
+    <datalist id="option1">
+        <option value="ENGLISH">
+        <option value="CHINESE">
+        <option value="SPANISH">
+        <option value="RUSSIAN">
+    </datalist>
+    
+    <datalist id="option2">
+        <option value="DAY">
+        <option value="NIGHT">
+    </datalist>
+    
 	<!-- TESTING FOR MANUALLY SUBMITTING BASE/REL -->
-	<div class="md-modal md-effect" id="modal-04">
+
+	<div class="md-modal md-effect" id="modal-06">
 		<div class="md-content" style="overflow:auto">
 			<h1 id="test_findOrderbook">Open Orderbook</h1>
-		    <div id="findOrderbookWrap" style="position:relative;margin-top:20px">
+		    <div id="findOrderbookWrap" style="position:relative;margin-top:20px;z-index:2222">
 				<form role="form" id="findOrderbook" autocomplete="off">
 					<div class="form-group">
 						<label for="findBaseID">Base ID</label>
@@ -349,25 +653,49 @@
 		</div>
 	</div>
 	
-	<div class="md-modal-2 md-effect-2" id="modal-05">
-		<div class="md-content">
-			<h1>OPTIONS PANEL</h1><br>
-            - UNDER CONSTRUCTION -
-		</div>
-	</div>
+    <!-- Chart Number -->
+    <span class="chart-number fadeSlow" chart-number=1>1</span>
+    <span class="chart-number fadeSlow" chart-number=2>2</span>
+    <span class="chart-number fadeSlow" chart-number=3>3</span>
+    <span class="chart-number fadeSlow" chart-number=4>4</span>
+    <span class="chart-number fadeSlow" chart-number=5>5</span>
+    <span class="chart-number fadeSlow" chart-number=6>6</span>
+    <span class="chart-number fadeSlow" chart-number=7>7</span>
+    <span class="chart-number fadeSlow" chart-number=8>8</span>
+    <span class="chart-number fadeSlow" chart-number=9>9</span>
+    <span class="chart-number fadeSlow" chart-number=10>10</span>
+    <span class="chart-number fadeSlow" chart-number=11>11</span>
+    <span class="chart-number fadeSlow" chart-number=12>12</span>
+    
 	
 	<div class="md-overlay"></div><!-- the overlay element -->
 	
+    <!-- Currency List -->
+    <datalist id="curr-list">
+        <option value="USD">
+        <option value="BTC">
+        <option value="VRC">
+        <option value="sNET">
+        <option value="FIBRE">
+        <option value="NuBits">
+        <option value="BITS">
+        <option value="Opal">
+        <option value="NXT">
+        <option value="Tether">
+        <option value="VPN">
+        <option value="BTCD">
+    </datalist>
+
+ <!--   ----------------------------------------------->   
+ 
 	<script src="js/modal/modalEffects.js"></script>
 	<script src="jquery.ui.autocomplete.html.js"></script>
-
 	<script src="Highstock-2.1.3/js/highstock.js"></script>
 	<script src="Highstock-2.1.3/js/modules/exporting.js"></script>
 	<script src="formatpoints.js" type="text/javascript"></script>	
 	<script src="idex.js" type="text/javascript"></script>	
 	<script src="theme.js" type="text/javascript"></script>	
 	<script src="chart.js" type="text/javascript"></script>	
-
 </body>
 
 </html>

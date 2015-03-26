@@ -23,7 +23,7 @@ var ModalEffects = (function() {
 			
 			function removeModal( hasPerspective ) {
 				classie.remove( modal, 'md-show' );
-				
+				setTimeout(function(){$(modal).trigger("idexHide")}, 500)
 				if( hasPerspective ) {
 					classie.remove( document.documentElement, 'md-perspective' );
 				}
@@ -31,6 +31,8 @@ var ModalEffects = (function() {
 				$(".cd-3d-nav li").removeClass('cd-selected');
 				$(".cd-3d-nav li:first").addClass('cd-selected');
 				$(".cd-marker").css('left',0);
+                
+                $(".chart-number").removeClass("show");
 			}
 
 			function removeModalHandler() {
@@ -39,17 +41,22 @@ var ModalEffects = (function() {
 
 			el.addEventListener( 'click', function( ev ) {
 				classie.add( modal, 'md-show' );
+				$(modal).trigger("idexShow")
 				overlay.removeEventListener( 'click', removeModalHandler );
 				overlay.addEventListener( 'click', removeModalHandler );
 				
-				var windowHeight = $(window).innerHeight();
-				$('.md-content-inner').css('height', (windowHeight - 140)+'px');
+				//var windowHeight = $(window).innerHeight();
+				//$('.md-content').css('height', (windowHeight - 140)+'px');
 
 				if( classie.has( el, 'md-setperspective' ) ) {
 					setTimeout( function() {
 						classie.add( document.documentElement, 'md-perspective' );
 					}, 25 );
 				}
+                
+                if( classie.has( modal, 'md-chart' ) ) {
+                    $(".chart-number").addClass("show");
+                }
 			});
 			
 			if (close) {

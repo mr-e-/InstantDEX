@@ -969,7 +969,7 @@ tbody tr:nth-child(odd) {
 
 
 #sellBook, #buyBook {
-	margin-left:20px;
+	margin-left:60px;
 }
 
 #sellBook > table > tbody > tr, #buyBook > table > tbody > tr {
@@ -992,7 +992,6 @@ tbody tr:nth-child(odd) {
 	color:#6E6E6E;
 }
 
-/*
 .table td {
   border-right:solid 20px transparent;
 }
@@ -1001,7 +1000,7 @@ tbody tr:nth-child(odd) {
   border-right:solid 20px transparent;
   text-align: left;
 }
-*/
+
 
 .stepButton  button {
 	height:20px;

@@ -10,7 +10,7 @@ Highcharts.theme = {
 			{
 				backgroundColor: '#000',
 				borderColor: '#424242',
-				borderWidth: 1,
+				borderWidth: 0,
 				spacingLeft:0,
 				//plotBorderWidth: 1,
 			},

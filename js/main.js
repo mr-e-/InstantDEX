@@ -87,7 +87,47 @@ jQuery(document).ready(function($){
 		} );
 	} );
 	
-	// jQuery UI
-	$( "#tabs1" ).tabs();
-	$( "#marketTable" ).tablesorter(); 
+	// Tabs
+    $(".tabs-nav .nav").click(function() {
+        var el = $(this);
+        var parent = el.closest(".md-content");
+		
+        // Remove All Active Class from Navigation
+        parent.find(".tabs-nav .nav").removeClass("active");
+
+        // Remove All Active Class from Container
+        parent.find(".tabs-container > div").removeClass("active");
+        
+        // Set Active Navigation
+        el.addClass("active");
+		
+        // Set Active Container
+        $("#"+el.attr("tab-index")).addClass("active");
+    });
+    
+    // Chart Control
+    $(".chart-control").each(function() {
+        var chartId = $(this).attr("chart-id");
+        $(this).val($("#chart-curr-"+chartId).html());
+    });
+    
+    function chartControl(obj) {
+        var chartId = obj.attr("chart-id");
+        $("#chart-curr-"+chartId).html(obj.val());
+    }
+    
+    $(".chart-control").on('input',function() { chartControl($(this)); });
+    
+    // Chart Number Highlight
+    $(".chart-panel-pair").mouseover(function() {
+        var num = $(this).attr('chart-number');
+        $(".chart-panel-number[chart-number='"+num+"']").css("color","#37ED00");
+        $(".chart-number[chart-number='"+num+"']").css("color","#37ED00");
+    });
+    
+    $(".chart-panel-pair").mouseout(function() {
+        var num = $(this).attr('chart-number');
+        $(".chart-panel-number[chart-number='"+num+"']").css("color","white");
+        $(".chart-number[chart-number='"+num+"']").css("color","white");
+    });
 });
