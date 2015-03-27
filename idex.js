@@ -12,6 +12,7 @@ var rs = "";
 var orderbookTimeout;
 var allAssets;
 var auto = [];
+var favorites = [];
 
 
 function orderbookVar(obj) 
@@ -35,6 +36,7 @@ function orderbookVar(obj)
 		}
 	}(this)
 }
+
 
 var currentOrderbook = new orderbookVar()
 
@@ -126,21 +128,48 @@ function initConstants()
 	{
 		var temp = []
 		assets.sort(compareName)
+		
 		for (var i = 0; i < assets.length; ++i)
 		{
 			auto.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].assetid})
 			temp.push("<option value='"+assets[i].name+"'>")
 		}
+		
 		$("#curr-list").empty().append(temp)
 		getRS();
 	})
+	
+	if (localStorage.chartFavorites)
+	{
+		favorites = JSON.parse(localStorage.getItem("chartFavorites"))
+		console.log(favorites)
+		for (var i = 0; i < favorites.length; ++i)
+		{	
+			var name = favorites[i].name
+			var id = favorites[i].id
+			var asset = favorites[i].asset
+			
+			$(".chart-control[chart-id='"+id+"']").val(name).attr("data-asset", asset)
+			$("#chart-curr-"+id).html(name).attr("data-asset", asset)
+		}
+	}
 }
 
 
-function saveFavourites()
+function saveChartFavorites()
 {
+	var parsed = []
 	
+    $(".chart-control").each(function() 
+	{
+		var name = $(this).val()
+		var id = $(this).attr("chart-id")
+		var asset = $(this).data("asset")
+		parsed.push({"name":name,"id":id,"asset":asset})
+    });
 	
+	localStorage.setItem('chartFavorites', JSON.stringify(parsed));
+	favorites = parsed
 }
 
 
@@ -219,30 +248,24 @@ function getNewAssetInfo(assets)
 }
 
 
-function getAssetInfo(assets)
+function getAssetInfo(asset)
 {
 	var assetInfo = {}
-	var counter = 0
 
 	for (var i = 0; i < allAssets.length; ++i)
 	{
-		for (var j = 0; j < assets.length; ++j)
+		if (allAssets[i].assetid == asset)
 		{
-			var type = j == 0 ? "base" : "rel"
-			if (allAssets[i].assetid == Number(assets[j]))
-			{
-				allAssets[i].asset = allAssets[i].assetid
-				assetInfo[type] = allAssets[i]
-				counter++
-				break
-			}
-			else if (assets[j] == 5527630)
-			{
-				assetInfo[type] = {"name":"NXT","assetid":"5527630", "asset":"5527630","decimals":8}
-				counter++
-				break
-			}
+			allAssets[i].asset = allAssets[i].assetid
+			assetInfo = allAssets[i]
+			break
 		}
+		else if (asset == 5527630)
+		{
+			assetInfo = {"name":"NXT","assetid":"5527630", "asset":"5527630","decimals":8}
+			break
+		}
+		
 	}
 
 	return assetInfo
@@ -290,6 +313,47 @@ function parseBalance(balances, assetName)
 	
 	return [whole, dec]
 }
+
+
+$("#miniChartsC .mini-chart .mini-chart-area-1").on("click", function()
+{
+	hotkeyHandler($(this))
+})
+$("#miniChartsTop .chart-box, #miniChartsTop2 .chart-box-2 .chart-sub-box-2").on("click", function()
+{
+	hotkeyHandler($(this).find("span").first())
+})
+function hotkeyHandler($div)
+{
+	var baseid = $div.find("span").eq(0).data("asset")
+	var relid = $div.find("span").eq(1).data("asset")
+	console.log(baseid)
+	console.log(relid)
+
+	if (baseid && relid && baseid.length && relid.length)
+	{
+		loadOrderbook(baseid, relid)
+	}	
+}
+
+$(".md-modal-2").on("idexShow", function()
+{
+	
+})
+
+
+$(".md-modal-2").on("idexHide", function()
+{
+    $(".chart-control").each(function() 
+	{
+		var id = $(this).attr("chart-id")
+		var asset = getAssetID($(this).val())
+		$(this).attr("data-asset", asset)
+		$("#chart-curr-"+id).attr("data-asset", asset)
+    });
+	
+	saveChartFavorites()
+})
 
 
 $(".md-modal").on("idexHide", function()
@@ -477,18 +541,35 @@ function getAssetName(assetid)
 function getAssetID(name)
 {
 	var assetid = -1
+	var arr = []
+	var counter = 0;
+	
 	for (var i = 0; i < allAssets.length; ++i)
 	{
 		if (allAssets[i].name == name)
 		{
-			assetid = allAssets[i].assetid
-			break
+			arr.push(allAssets[i])
+			counter++
 		}
 		else if (name == "NXT")
 		{
 			assetid = "5527630"
 			break
 		}
+	}
+	if (arr.length)
+	{
+		var numTrades = 0;
+		var index = 0;
+		for (var i = 0; i < arr.length; ++i)
+		{
+			if (arr[i].numberOfTrades > numTrades)
+			{
+				numTrade = arr[i].numberOfTrades
+				index = i
+			}
+		}
+		assetid = arr[index].assetid
 	}
 	
 	return assetid
@@ -551,20 +632,6 @@ function buildPostPayload(method, data)
 }
 
 
-$("#miniChartsTop .chart-box").on("click", function()
-{
-	var $div = $(this).find("span").first()
-	var base = $div.find("span").eq(0).text()
-	var rel = $div.find("span").eq(1).text()
-	//console.log(base)
-	//console.log(rel)
-	var baseid = String(getAssetID(base))
-	var relid = String(getAssetID(rel))
-	
-	loadOrderbook(baseid, relid)
-})
-
-
 $(".idex-submit").on("click", function()
 {
 	var $form = $("#" + $(this).data("form"))
@@ -579,7 +646,15 @@ $(".idex-submit").on("click", function()
 	{
 		params['baseid'] = IDEX.curBase.asset
 		params['relid'] = IDEX.curRel.asset
-		
+		if (method == "placeask")
+		{
+			var total = params['price']*params['volume']
+			var price = params['volume']/total
+			var volume = total
+			params['volume'] = volume
+			params['price'] = price
+		}
+
 		sendPost(params).done(function(data)
 		{
 			if ('result' in data && data['result'])
@@ -612,19 +687,18 @@ $(".idex-submit").on("click", function()
 
 function loadOrderbook(baseid, relid)
 {
-	var assets = getAssetInfo([Number(baseid), Number(relid)])
-	IDEX.curBase = assets.base
-	IDEX.curRel = assets.rel
+	IDEX.curBase = getAssetInfo(Number(baseid))
+	IDEX.curRel = getAssetInfo(Number(relid))
 	
 	updateCurrentBalance()
 	IDEX.killChart()
-	IDEX.makeChart({'dataSite':'skynet','baseid':baseid})
+	IDEX.makeChart({'dataSite':'skynet','baseid':(baseid==5527630) ? relid : baseid})
 	
 	if (isPollingOrderbook)
 	{
 		stopPollOrderbook()
 	}
-	
+
 	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name)
 	pollOrderbook(1)
 }
@@ -659,12 +733,15 @@ function pollOrderbook(timeout)
 
 		sendPost(params).done(function(orderbookData)
 		{
-			orderbookData['bids'].sort(compare)
-			orderbookData['asks'].sort(compare)
-			orderbookData['bids'].reverse()
-			orderbookData['asks'].reverse()
+			if (!("error" in orderbookData))
+			{
+				orderbookData['bids'].sort(compare)
+				orderbookData['asks'].sort(compare)
+				orderbookData['bids'].reverse()
+				orderbookData['asks'].reverse()
 
-			updateOrderbook(orderbookData);
+				updateOrderbook(orderbookData);
+			}
 			pollOrderbook(3000)
 		})
 
@@ -736,7 +813,8 @@ function updateOrderbook(orderbookData)
 	currentOrderbook = new orderbookVar(orderbookData)
 
 	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
-	$("#currPair .order-text").html(orderbookData.pair)
+	console.log(orderbookData)
+	//$("#currPair .order-text").html(IDEX.curBase.name+"/"+IDEX.curRel.name)
 	//if (!orderbookData.bids
 		//emptyOrderbook("No bids or asks")
 }
@@ -812,9 +890,8 @@ function addNewOrders($row, orderData, rowData, index)
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
 		var loopNewOrd = orderData.newOrders[i]
-		var trClasses = (loopNewOrd.exchange == "nxtae_nxtae") ? "newrow virtual" : "newrow"
+		var trClasses = "newrow"
 		var trString = addRowClass($(trRows)[i], trClasses)
-		//console.log(String(i) + " " + trString)
 		//class = order-row cbutton cbutton--effect-jelena
 
 		if (loopNewOrd.price < Number(rowData.price))
