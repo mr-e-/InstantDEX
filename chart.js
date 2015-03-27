@@ -155,7 +155,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if ('flip' in siteOptions)
 			titleName = IDEX.curRel.name+"/NXT"
 		else if ('baseid' in siteOptions)
-			titleName = IDEX.curBase.name+"/NXT"
+			titleName = ((IDEX.curBase.name == "NXT") ? IDEX.curRel.name : IDEX.curBase.name)+"/NXT"
 		
 		getData(siteOptions).done(function(data)
 		{
@@ -164,7 +164,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var both = getStepOHLC(data, mStep, dataSite)
 			var ohlc = both[0]
 			var volume = both[1]
-			
+
 			latestTrade = String(data[data.length-1][2])
 			datau = ohlc
 			datab = volume
@@ -331,7 +331,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 
 			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
-			//var pair = "
+			//$("#"+divid).parent().find("span").first().text(
 			$("#"+divid).prev().text(data[data.length-1][6]).prev().text(String(change)+"%")
 			//price = getStepOHLC(data, "60", "skynet")[1]
 			var chart2 = new Highcharts.StockChart(
