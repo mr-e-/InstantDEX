@@ -366,10 +366,13 @@ $(".md-modal").on("idexHide", function()
 $(".tab-tables .nav").on("click", function()
 {
 	var $table = $("#"+$(this).attr('tab-index')).find("table")
-	var keys = $table.find("thead").data("keys").split(" ")
-	var method = $table.data("method")
+	if ($table.length)
+	{
+		var keys = $table.find("thead").data("keys").split(" ")
+		var method = $table.data("method")
 	
-	tableHandler({"requestType":method}, keys, $table)
+		tableHandler({"requestType":method}, keys, $table)
+	}
 })
 $(".md-modal").on("idexShow", function()
 {
@@ -677,11 +680,11 @@ $(".idex-submit").on("click", function()
 		sendPost(params)
 	}
 
-	$("#modal-06").removeClass("md-show")
 	if ($form)
 	{
 		$form.trigger("reset")
 	}
+	$(".md-overlay").trigger("click")
 })
 
 

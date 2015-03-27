@@ -47,7 +47,7 @@
         
 		<div id="headerAreaIco">
         	<img id="icoCharts" src="img/ico_top_charts.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-04" title="Click to configure your chart settings."></img>
-            <img id="icoLog" src="img/ico_top_logout.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-06" title="Click to go back to superNET."></img>
+            <img id="icoLog" src="img/ico_top_logout.svg" class="header-ico fadeSlow tooltip" title="Click to go back to superNET."></img>
             <img id="icoHam" src="img/ico_top_ham.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-05" title="Opens the Options menu."></img>
         </div>
         
@@ -297,9 +297,9 @@
     
 	<div class="md-modal md-effect" id="modal-01">
 		<div class="md-content">
-            <div class="tabs-nav">
+            <div class="tabs-nav tab-tables">
                 <div class="nav active" tab-index="tabs-1" align="center"><p>MARKETS</p></div>
-                <div class="nav" tab-index="tabs-2" align="center"><p>CUSTOM MARKETS</p></div>
+                <div class="nav" tab-index="tabs-2" align="center"><p>OPEN ORDERBOOK</p></div>
                 <!--<div class="nav" tab-index="tabs-3" align="center">Tab 3</div>-->
             </div>
 			<div class="tabs-container">
@@ -339,8 +339,23 @@
 					</div>
 				</div>
 				<div id="tabs-2">
-					<h1 align="center">CUSTOM MARKETS PANEL</h1>
-            		<p align="center">< UNDER CONSTRUCTION ><p>				</div>
+					<h2 id="test_findOrderbook">Open Orderbook</h1>
+					<div id="findOrderbookWrap" style="">
+						<form role="form" id="findOrderbook" autocomplete="off">
+							<div class="form-group">
+								<label for="findBaseID">Base ID</label>
+								<input type="text" class="form-control assets" name="baseid" id="findBaseID" placeholder=""></input>
+							</div>
+							<div class="form-group">
+								<label for="findRelID">Rel ID</label>
+								<input type="text" class="form-control assets" name="relid" id="findRelID" placeholder=""></input>
+							</div>
+						</form>
+						<div class="" style="position:relative;margin-top:20px">
+							<button class="idex-submit" data-method="orderbook" data-form="findOrderbook" style="width:100px;height:20px">Find</button>
+						</div>
+					</div>		
+				</div>
 <!--				<div id="tabs-3">
 					Tab 3 Content
 				</div>-->
