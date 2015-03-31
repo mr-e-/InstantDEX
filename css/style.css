@@ -298,7 +298,7 @@ form {
 }
 
 #sellBook, #buyBook:hover {
-	cursor: pointer;
+	/*cursor: pointer;*/
 }
 
 .order-big {
@@ -968,12 +968,18 @@ tbody tr:nth-child(odd) {
 }
 
 
-#sellBook, #buyBook {
+#sellBook > table, #buyBook > table{
 	margin-left:20px;
+	border-collapse: collapse;
 }
 
 #sellBook > table > tbody > tr, #buyBook > table > tbody > tr {
 	background-color:transparent;
+}
+
+#sellBook > table > tbody > tr:hover, #buyBook > table > tbody > tr:hover{
+	cursor:pointer;
+	background-color:rgba(107, 233, 255, 0.16)
 }
 
 #sellBook > table > tbody > tr > td, #buyBook > table > tbody > tr > td {
@@ -989,7 +995,7 @@ tbody tr:nth-child(odd) {
 }
 
 #sellBook > table > tbody > tr.virtual > td, #buyBook > table > tbody > tr.virtual >td {
-	color:#6E6E6E;
+	color:#D8D8D8;
 }
 
 /*	color:#6E6E6E;*/

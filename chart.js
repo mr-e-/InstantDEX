@@ -20,6 +20,34 @@ var IDEX = (function(IDEX, $, undefined)
 			that.close = obj[4]
 		}(this)
 	}
+	
+	function chartVar(obj) 
+	{
+		this.baseid = "6854596569382794790"
+		this.relid = "6932037131189568014"
+		this.basename = "SkyNET"
+		this.relname = "jl777hodl"
+		this.numticks = "5"
+		this.numbars = "100"
+		this.isvirtual = false
+		this.dataSite = "skynet"
+		this.flip = false
+
+		
+		var __construct = function(that) 
+		{
+			if (obj)
+			{
+				for (var key in obj)
+				{
+					that[key] = obj[key]
+				}
+			}
+		}(this)
+	}
+	
+	var currentChart = new chartVar()
+
 
 	var statAttr=
 	{
@@ -117,12 +145,13 @@ var IDEX = (function(IDEX, $, undefined)
 	function getData(options)
 	{
 		var dfd = new $.Deferred();
+		var id = options.flip ? options.relid : options.baseid
 	
 		if ('isVirtual' in options && options.dataSite == "skynet")
 		{
 			var virtData = []
-			var baseURL = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+options.baseid+"_"+"NXT"+"&type=tick&len="+"5"+"&num="+"100"
-			var	relURL = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+options.relid+"_"+"NXT"+"&type=tick&len="+"5"+"&num="+"100"
+			var baseURL = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+options.baseid+"_"+"NXT"+"&type=tick&len="+options.numticks+"&num="+options.numbars
+			var	relURL = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+options.relid+"_"+"NXT"+"&type=tick&len="+options.numticks+"&num="+options.numbars
 			getVirtual(baseURL, relURL).done(function(data)
 			{
 				dfd.resolve(data)
@@ -133,7 +162,7 @@ var IDEX = (function(IDEX, $, undefined)
 			if (options.dataSite == "btcw")
 				var url = "https://s5.bitcoinwisdom.com/period?step="+options.step+"&symbol=bitfinexbtcusd&nonce="
 			else if (options.dataSite == "skynet")
-				var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+options.baseid+"_"+"NXT"+"&type=tick&len="+"5"+"&num="+"100"
+				var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+id+"_"+"NXT"+"&type=tick&len="+options.numticks+"&num="+options.numbars
 			
 			$.getJSON(url, function(data)
 			{
@@ -147,21 +176,23 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.makeChart =  (function make(siteOptions) 
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
-		siteOptions.step = ('step' in siteOptions) ? siteOptions.step : "60";
-		siteOptions.dataSite = ('dataSite' in siteOptions) ? siteOptions.dataSite : "btcw";
-		var mStep = Number(siteOptions.step)*1000
-		var dataSite = siteOptions.dataSite
+		currentChart = new chartVar(siteOptions)
+		var mStep = 60
 		var titleName = "Bitfinex"
-		if ('flip' in siteOptions)
-			titleName = IDEX.curRel.name+"/NXT"
-		else if ('baseid' in siteOptions)
-			titleName = ((IDEX.curBase.name == "NXT") ? IDEX.curRel.name : IDEX.curBase.name)+"/NXT"
-		
-		getData(siteOptions).done(function(data)
+		if (currentChart.flip)
+			titleName = currentChart.relname+"/NXT"
+		else ('baseid' in currentChart)
+			titleName = currentChart.basename+"/NXT"
+
+			//titleName = ((currentChart.basename == "NXT") ? currentChart.relname : currentChart.basename)+"/NXT"
+		getData(currentChart).done(function(data)
 		{
-			if (dataSite == "skynet")
+			console.log(data)
+			if (currentChart.dataSite == "skynet")
 				data = data.results.bars
-			var both = getStepOHLC(data, mStep, dataSite)
+			if (!data.length)
+				return
+			var both = getStepOHLC(data, mStep, currentChart.dataSite)
 			var ohlc = both[0]
 			var volume = both[1]
 
@@ -178,6 +209,7 @@ var IDEX = (function(IDEX, $, undefined)
 					events:
 					{
 						load:chartLoadHander,
+						redraw:drawDivideLine
 					},
 				},
 				
@@ -259,14 +291,14 @@ var IDEX = (function(IDEX, $, undefined)
 					events:{afterSetExtremes: highLowPrice},
 					startOnTick:true,
 					endOnTick:true,
-					range: ((dataSite == "btcw") ? (100 * mStep) : null),
-					minRange: ((dataSite == "btcw") ? (15 * mStep) : null),
+					range: ((currentChart.dataSite == "btcw") ? (100 * mStep) : null),
+					minRange: ((currentChart.dataSite == "btcw") ? (15 * mStep) : null),
 				}],
 				
 				series: [
 				{
 					type: 'candlestick',
-					name: dataSite,
+					name: currentChart.dataSite,
 					borderWidth:0,
 					turboThreshold:10000,
 					data: ohlc,
@@ -735,30 +767,45 @@ var IDEX = (function(IDEX, $, undefined)
 		return chart.isInsidePlot(x, y);
 	}
 
-	$(".stepButton > .step > button").on("click", function(e)
+	$(".stepButton > .numbars > button").on("click", function(e)
 	{
 		e.preventDefault() 
 		
 		var chart = $('#chartArea').highcharts()
 		if (chart)
 		{
-			var stepStr = $(this).text().match(/(\d+|[^\d]+)/g)
-			var num = Number(stepStr[0])
-			var mult = stepStr[1]
+			var options = {'dataSite':'skynet'}
+			options.numbars = $(this).text()
+			options.numticks = currentChart.numticks
+			options.baseid = currentChart.baseid
+			options.basename = currentChart.basename
+			options.relname = currentChart.relname
 
-			if (mult == 'd'){
-				num = num * 24 * 60 * 60
-			}
-			else if (mult == 'h'){
-				num = num * 60 * 60
-			}
-			else if (mult == 'm'){
-				num = num * 60
-			}
-		
 			chart.destroy()
-			clearTimeout(IDEX.ohlcTimeout)
-			IDEX.makeChart({'step':String(num),'dataSite':'btcw'})
+			if (IDEX.ohlcTimeout)
+				clearTimeout(IDEX.ohlcTimeout)
+			IDEX.makeChart(options)
+		}
+		
+	})
+	
+	$(".stepButton > .numticks > button").on("click", function(e)
+	{
+		e.preventDefault() 
+		
+		var chart = $('#chartArea').highcharts()
+		if (chart)
+		{
+			var options = {'dataSite':'skynet'}
+			options.numticks = $(this).text()
+			options.numbars = currentChart.numbars
+			options.baseid = currentChart.baseid
+			options.basename = currentChart.basename
+			options.relname = currentChart.relname
+			chart.destroy()
+			if (IDEX.ohlcTimeout)
+				clearTimeout(IDEX.ohlcTimeout)
+			IDEX.makeChart(options)
 		}
 		
 	})
@@ -774,22 +821,25 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var text = $(this).text();
 			var nextBase;
-			
+				options.baseid = currentChart.relid
+				options.relid = currentChart.baseid
+				options.basename = currentChart.relname
+				options.relname = currentChart.basename
 			if (text == "base")
 			{
-				options.baseid = IDEX.curBase.asset
+				options.baseid = currentChart.baseid
+				options.relid = currentChart.relid
+				options.basename = currentChart.basename
+				options.relname = currentChart.relname
 			}
-			else if (text == "rel")
+			else if (text == "reel")
 			{
-				options.baseid = IDEX.curRel.asset
+
 				options.flip = true
 			}
 			else if (text == "virt")
 			{
 				return
-				options.baseid = IDEX.curBase.asset
-				options.relid = IDEX.curRel.asset
-				options.isVirtual = true
 			}
 			
 			chart.destroy()

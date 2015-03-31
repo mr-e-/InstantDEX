@@ -134,19 +134,24 @@
  --><div id="mainChart" class="unselectable" style="z-index:1">
 		<div id="mainChartTop" style="height:40px; border-bottom:inset 1px rgb(45,45,45);padding-top:5px;padding-left:5px">
 			<div class="stepButton">
-				<div class="step" style="display:inline-block">
-					<button>1d</button>
-					<button>12h</button>
-					<button>6h</button>
-					<button>4h</button>
-					<button>2h</button>
-					<button>1h</button>
-					<button>30m</button>
-					<button>15m</button>
-					<button>5m</button>
-					<button>3m</button>
-					<button>1m</button>
+				<span>Number of bars: </span>
+				<div class="numbars" style="display:inline-block">
+					<button>500</button>
+					<button>400</button>
+					<button>300</button>
+					<button>200</button>
+					<button>100</button>
 				</div>
+				<span style="margin-left:10px">Number of ticks/bar: </span>
+				<div class="numticks" style="display:inline-block">
+					<button>300</button>
+					<button>100</button>
+					<button>50</button>
+					<button>25</button>
+					<button>10</button>
+					<button>5</button>
+				</div>
+				<span style="margin-left:10px">Market: </span>
 				<div class="flip" style="display:inline-block">
 					<button>base</button>
 					<button>rel</button>
@@ -272,7 +277,7 @@
     
  --><div id="orderBook">
 		<div id="currPair" class="order-big">
-			<span class="order-text">BTC/USD</span>
+			<span class="order-text">---/---</span>
 		</div>
         <div id="sellBook" style="position:relative;overflow:hidden;">
 			<table style="position:absolute;bottom:0px">
@@ -281,7 +286,7 @@
 			</table>
         </div>
         <div id="currLast" class="order-big">
-			<span class="order-text text-green">234.11</span>
+			<span class="order-text text-green">0.00</span>
 		</div>
         <div id="buyBook" style="position:relative;overflow:hidden;">
 			<table style="position:absolute;top:0px">
@@ -375,7 +380,7 @@
 			<div class="tabs-container">
 				<div id="tabs-5" class="active">
 					<table id="openOrdersTable" class="table sortable" data-method="openorders" cellspacing=0> 
-						<thead data-keys="openorders requestType market price volume relamount quoteid age"> 
+						<thead data-keys="openorders askoffer market price volume total quoteid age"> 
 						<tr> 
 							<th>TYPE</th> 
 							<th>MARKET</th> 
