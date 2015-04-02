@@ -176,18 +176,22 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.makeChart =  (function make(siteOptions) 
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
+		if ('flip' in siteOptions && siteOptions.flip && siteOptions.relname == "NXT")
+		{
+			siteOptions.flip = false
+		}
 		currentChart = new chartVar(siteOptions)
 		var mStep = 60
 		var titleName = "Bitfinex"
 		if (currentChart.flip)
 			titleName = currentChart.relname+"/NXT"
-		else ('baseid' in currentChart)
+		else
 			titleName = currentChart.basename+"/NXT"
 
 			//titleName = ((currentChart.basename == "NXT") ? currentChart.relname : currentChart.basename)+"/NXT"
 		getData(currentChart).done(function(data)
 		{
-			console.log(data)
+			//console.log(data)
 			if (currentChart.dataSite == "skynet")
 				data = data.results.bars
 			if (!data.length)
@@ -815,24 +819,21 @@ var IDEX = (function(IDEX, $, undefined)
 		e.preventDefault() 
 		
 		var chart = $('#chartArea').highcharts()
-		var options = {'dataSite':'skynet'}
+		var options = {}
 
 		if (chart && chart.series[0].name == "skynet")
 		{
 			var text = $(this).text();
-			var nextBase;
-				options.baseid = currentChart.relid
-				options.relid = currentChart.baseid
-				options.basename = currentChart.relname
-				options.relname = currentChart.basename
+
+			options.baseid = currentChart.baseid
+			options.relid = currentChart.relid
+			options.basename = currentChart.basename
+			options.relname = currentChart.relname
 			if (text == "base")
 			{
-				options.baseid = currentChart.baseid
-				options.relid = currentChart.relid
-				options.basename = currentChart.basename
-				options.relname = currentChart.relname
+
 			}
-			else if (text == "reel")
+			else if (text == "rel")
 			{
 
 				options.flip = true

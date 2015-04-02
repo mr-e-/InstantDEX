@@ -6,13 +6,14 @@ IDEX.curBase;
 IDEX.curRel;
 var snURL = "http://127.0.0.1:7777";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
-var isPollingOrderbook = false;
 var SATOSHI = 100000000;
 var rs = "";
 var orderbookTimeout;
 var allAssets;
 var auto = [];
 var favorites = [];
+var isStoppingOrderbook = false
+var orderbookAsync = false
 
 
 function orderbookVar(obj) 
@@ -142,7 +143,7 @@ function initConstants()
 	if (localStorage.chartFavorites)
 	{
 		favorites = JSON.parse(localStorage.getItem("chartFavorites"))
-		console.log(favorites)
+
 		for (var i = 0; i < favorites.length; ++i)
 		{	
 			var name = favorites[i].name
@@ -209,8 +210,14 @@ function getRS()
 	var obj = {"requestType":"getpeers"}
 	sendPost(obj).done(function(data)
 	{
-		rs = data['peers'][1]['RS']
-		dfd.resolve(rs)
+		if ('peers' in data)
+		{
+			rs = data['peers'][1]['RS']
+		}
+		dfd.resolve(data)
+	}).fail(function(data)
+	{
+		dfd.resolve(data)
 	})
 
 	return dfd.promise()
@@ -220,8 +227,8 @@ function getRS()
 function getAccountAssets()
 {
     var dfd = new $.Deferred();
-    
 	var obj = {"requestType":"getAccountAssets","account":rs}
+	
 	sendPost(obj, 1).done(function(data)
 	{
 		dfd.resolve(data)
@@ -280,16 +287,16 @@ function updateCurrentBalance()
 	var $sell = $("#balanceSell")
 	var baseBal = ["0", ".0"]
 	var relBal = ["0", ".0"]
+	
 	$buy.find("span").first().text(IDEX.curRel.name)
 	$sell.find("span").first().text(IDEX.curBase.name)
 	
 	getAccountAssets().done(function(data)
 	{
-		
 		if (!("errorCode" in data))
 		{
 			var balances = data['accountAssets']
-			console.log(data)
+			//console.log(data)
 			baseBal = parseBalance(balances, IDEX.curBase.name)
 			relBal = parseBalance(balances, IDEX.curRel.name)
 
@@ -334,8 +341,6 @@ function hotkeyHandler($div)
 {
 	var baseid = $div.find("span").eq(0).data("asset")
 	var relid = $div.find("span").eq(1).data("asset")
-	console.log(baseid)
-	console.log(relid)
 
 	if (baseid && relid && baseid.length && relid.length)
 	{
@@ -355,6 +360,7 @@ $(".md-modal-2").on("idexHide", function()
 	{
 		var id = $(this).attr("chart-id")
 		var asset = getAssetID($(this).val())
+		
 		$(this).attr("data-asset", asset)
 		$("#chart-curr-"+id).attr("data-asset", asset)
     });
@@ -436,6 +442,7 @@ function tableHandler(params, keys, $modalTable)
 		if (keys[0] in data)
 		{
 			var tableData = data[keys[0]]
+			
 			keys.splice(0,1)
 
 			if (method == "openorders")
@@ -448,11 +455,9 @@ function tableHandler(params, keys, $modalTable)
 					$(this).find('td:last').after("<td class='cancelOrder'>CANCEL</td>")
 				})
 				row = addRowAttr(row, tableData, ["quoteid"])
-				//<td data-quoteid='"+quoteid+"' class='cancelOrder'>CANCEL</td>
 			}
 			else if (method ==	"allorderbooks")
 			{
-				//tableData = formatPairName(tableData)
 				addEmptyMarketData(tableData)
 				row = buildTableRows(objToList(tableData, keys))
 				row = addRowAttr(row, tableData, ["baseid","relid"])
@@ -462,14 +467,14 @@ function tableHandler(params, keys, $modalTable)
 				if ("rawtrades" in tableData ) 
 				{
 					tableData = tableData['rawtrades']
-					for (var i = 0; i < tableData.length; ++i)
+					/*for (var i = 0; i < tableData.length; ++i)
 					{
-						//if ("assetA" in tableData[i])
-						//{
-						//	tableData.splice(i, 1)
-						//	--i
-						//}
-					}
+						if ("assetA" in tableData[i])
+						{
+							tableData.splice(i, 1)
+							--i
+						}
+					}*/
 					addAssetNames(tableData, "baseid", "relid")
 					tableData = formatPairName(tableData)
 				}
@@ -479,6 +484,7 @@ function tableHandler(params, keys, $modalTable)
 				for (var i = 0; i < tableData.length; ++i)
 				{
 					var decimals = tableData[i].decimals
+					
 					tableData[i].quantityQNT = tableData[i].quantityQNT / Math.pow(10, decimals)
 					tableData[i].unconfirmedQuantityQNT = tableData[i].unconfirmedQuantityQNT / Math.pow(10, decimals)
 				}
@@ -487,6 +493,7 @@ function tableHandler(params, keys, $modalTable)
 			if (!row.length)
 				row = buildTableRows(objToList(tableData, keys))	
 		}
+		
 		$modalTable.find("tbody").empty().append(row)
 	})
 }
@@ -670,14 +677,6 @@ $(".idex-submit").on("click", function()
 	{
 		params['baseid'] = IDEX.curBase.asset
 		params['relid'] = IDEX.curRel.asset
-		/*if (method == "placeask")
-		{
-			var total = params['price']*params['volume']
-			var price = total/params['volume']
-			var volume = price
-			//params['volume'] = volume
-			//params['price'] = price
-		}*/
 
 		sendPost(params).done(function(data)
 		{
@@ -704,44 +703,46 @@ $(".idex-submit").on("click", function()
 function cancelOrder(quoteid)
 {
 	var dfd = new $.Deferred()
-
 	var params = {"requestType":"cancelquote","quoteid":quoteid}
+	
 	sendPost(params).done(function(data)
 	{
 		dfd.resolve(data)
-		//$("#modal-04").removeClass("md-show")
 	})
 	
 	return dfd.promise()
 }
 
-function loadOrderbook(baseid, relid, init)
+function loadOrderbook(baseid, relid)
 {
-	IDEX.curBase = getAssetInfo(Number(baseid))
-	IDEX.curRel = getAssetInfo(Number(relid))
-	
-	updateCurrentBalance()
-	if (!init)
+	if (!isStoppingOrderbook)
 	{
-	IDEX.killChart()
-	IDEX.makeChart({'dataSite':'skynet','baseid':(baseid==5527630) ? relid : baseid,'relid':(relid==5527630) ? baseid : relid,'basename':IDEX.curBase.name,'relname':IDEX.curRel.name})
-	}
-	if (isPollingOrderbook)
-	{
+		IDEX.curBase = getAssetInfo(Number(baseid))
+		IDEX.curRel = getAssetInfo(Number(relid))
+		
+		updateCurrentBalance()
 		stopPollOrderbook()
 	}
-
-	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name)
-	pollOrderbook(1)
 }
 
 
 function stopPollOrderbook()
 {
+	if (orderbookAsync) 
+	{
+		isStoppingOrderbook = true
+        setTimeout(stopPollOrderbook, 100);
+		return false
+    }
+	isStoppingOrderbook = false
 	clearTimeout(orderbookTimeout)
-	emptyOrderbook(" ")	
+	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name)	
 	currentOrderbook = new orderbookVar();
-	isPollingOrderbook = false
+	IDEX.killChart()
+	IDEX.makeChart({'baseid':IDEX.curBase.asset,'relid':IDEX.curRel.asset,'basename':IDEX.curBase.name,'relname':IDEX.curRel.name})
+	//console.log('switching')
+	pollOrderbook(1)
+
 }
 
 
@@ -756,15 +757,18 @@ function emptyOrderbook(currPair)
 
 function pollOrderbook(timeout)
 {
-	isPollingOrderbook = true
-
 	orderbookTimeout = setTimeout(function() 
 	{
 		var dfd = new $.Deferred();
 		var params = {"requestType":"orderbook","baseid":IDEX.curBase.asset,"relid":IDEX.curRel.asset,"allfields":1,"maxdepth":20}
 
+		orderbookAsync = true
+		//console.log(orderbookAsync)
 		sendPost(params).done(function(orderbookData)
 		{
+			orderbookAsync = false
+			//console.log(orderbookAsync)
+
 			if (!("error" in orderbookData))
 			{
 				orderbookData['bids'].sort(compare)
@@ -774,6 +778,7 @@ function pollOrderbook(timeout)
 
 				updateOrderbook(orderbookData);
 			}
+
 			pollOrderbook(3000)
 		})
 
@@ -847,8 +852,7 @@ function updateOrderbook(orderbookData)
 	currentOrderbook = new orderbookVar(orderbookData)
 
 	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
-	console.log(orderbookData)
-	//$("#currPair .order-text").html(IDEX.curBase.name+"/"+IDEX.curRel.name)
+	//console.log(orderbookData)
 	//if (!orderbookData.bids
 		//emptyOrderbook("No bids or asks")
 }
@@ -887,14 +891,9 @@ function updateOrders($book, orderData)
 		{
 			var isAsk = ($(this).closest("div").attr('id') == "buyBook") ? false : true
 			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index]
-			/*if (isAsk)
-			{
-				console.log(index)
-				console.log(rowData)
-			}*/
+
 			addNewOrders($(this), orderData, rowData, index)
 			//showClosed($(this), orderData, rowData)
-			//removeOrders($(this), orderData, index)
 		})
 	}
 }
@@ -920,7 +919,6 @@ function removeOrders($row, orderData, index)
 		if (index == orderData['expiredOrders'][i]['index'])
 		{
 			$row.addClass("expiredRow");
-			//console.log($row)
 		}
 	}
 }
@@ -944,8 +942,6 @@ function addNewOrders($row, orderData, rowData, index)
 				var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true
 				var sibData = isAsk ? currentOrderbook.asks[index+1] : currentOrderbook.bids[index+1]
 				
-				//console.log($sib)
-				//console.log(sibData)
 				if (loopNewOrd.price >= Number(sibData.price))
 				{
 					$row.after($(trString))
@@ -981,21 +977,18 @@ function addNewOrders($row, orderData, rowData, index)
 
 function triggerMakeoffer(orderData)
 {
-	var params = {}
-	params['requestType'] = "makeoffer3"
-	params['srcqty'] = 1000
+	var params = {"requestType":"makeoffer3","srcqty":1000}
+
 	for (var i = 0; i < postParams.makeoffer3.length; ++i)
 	{
 		params[postParams.makeoffer3[i]] = orderData[postParams.makeoffer3[i]]
 	}
-	//console.log(orderData)
-	console.log(params)
+	//console.log(params)
 
 	sendPost(params).done(function(data)
 	{
-		console.log(data);
+		//console.log(data);
 	})
-	
 }
 
 
@@ -1017,7 +1010,8 @@ $("#sellBook table tbody").on("click", "tr", function(e)
 	
 	$("#placeBidPrice").val(order.price);
 	$("#placeBidAmount").val(order.volume).trigger("keyup");
-	$("#tab1").trigger("click");
+	$("#tab1").trigger("click")
+
 	//triggerMakeoffer(order)
 })
 
@@ -1030,6 +1024,7 @@ $("#buyBook table tbody").on("click", "tr", function(e)
 	$("#placeAskPrice").val(order.price);
 	$("#placeAskAmount").val(order.volume).trigger("keyup");
 	$("#tab2").trigger("click");
+	
 	//triggerMakeoffer(order)
 })
 
@@ -1187,13 +1182,11 @@ function toSatoshi(number)
 }
 
 
+
 $(document).ready(function()
 {
 	initConstants()
 })
-
-
-
 
 	return IDEX;
 	
