@@ -14,7 +14,19 @@ var auto = [];
 var favorites = [];
 var isStoppingOrderbook = false
 var orderbookAsync = false
+var orderCompKeys = ['price','volume','exchange']
 
+var postParams = 
+{
+	"orderbook":["baseid","relid","allfields"],
+	"allorderbooks":[],
+	"placebid":["baseid","relid","price","volume"],
+	"placeask":["baseid","relid","price","volume"],
+	"openorders":[],
+	"tradehistory":["timestamp"],
+	"cancelorder":["quoteid"],
+	"makeoffer3":["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","flip"]
+};
 
 function orderbookVar(obj) 
 {
@@ -36,25 +48,10 @@ function orderbookVar(obj)
 			}
 		}
 	}(this)
+	
 }
 
-
 var currentOrderbook = new orderbookVar()
-
-var postParams = 
-{
-	"orderbook":["baseid","relid","allfields"],
-	"allorderbooks":[],
-	"placebid":["baseid","relid","price","volume"],
-	"placeask":["baseid","relid","price","volume"],
-	"openorders":[],
-	"tradehistory":["timestamp"],
-	"cancelorder":["quoteid"],
-	"makeoffer3":["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","flip"]
-};
-
-var orderCompKeys = ['price','volume','exchange']
-
 
 $(".assets").autocomplete({
 	open:function()
@@ -66,22 +63,21 @@ $(".assets").autocomplete({
 	delay:0,
 	html:true,
 	source: function( request, response ) 
-			{
-				var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-				var a = $.grep(auto, function( item )
-				{
-					var both = item.label.split(" ")
-					var a = both[0]
-					var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
+	{
+		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+		var a = $.grep(auto, function( item )
+		{
+			var both = item.label.split(" ")
+			var a = both[0]
+			var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
 
-					return (matcher.test(a) || matcher.test(b))
-				})
+			return (matcher.test(a) || matcher.test(b))
+		})
 
-				response(a);
-			},
+		response(a);
+	},
 })
 //$(".assets").autocomplete("option", "source", auto);
-//auto[getIndexOfVal(auto, a[i])].value
 
 
 function initConstants()
@@ -118,7 +114,7 @@ function initConstants()
 
 				parsed.push(obj)
 			}
-			
+			parsed.push({"name":"NXT","assetid":"5527630", "asset":"5527630","decimals":8})
 			localStorage.setItem('allAssets', JSON.stringify(parsed));
 			allAssets = parsed
 			dfd.resolve(allAssets)
@@ -137,7 +133,6 @@ function initConstants()
 		}
 		
 		$("#curr-list").empty().append(temp)
-		getRS();
 	})
 	
 	if (localStorage.chartFavorites)
@@ -153,7 +148,25 @@ function initConstants()
 			$(".chart-control[chart-id='"+id+"']").val(name).attr("data-asset", asset)
 			$("#chart-curr-"+id).html(name).attr("data-asset", asset)
 		}
+		$(".mini-chart").each(function()
+		{
+			var assetid = $(this).find(".mini-chart-area-1 span").first().attr("data-asset")
+			var divid = $(this).find(".mini-chart-area-4").attr('id')
+
+			if (assetid != "-1")
+			{
+				IDEX.makeMiniChart(assetid, divid)
+			}
+		})
 	}
+
+	sendPost({"requestType":"getpeers"}).done(function(data)
+	{
+		if ('peers' in data)
+		{
+			rs = data['peers'][1]['RS']
+		}
+	})
 	
 	//loadOrderbook("6932037131189568014", "6854596569382794790", true)
 }
@@ -167,7 +180,7 @@ function saveChartFavorites()
 	{
 		var name = $(this).val()
 		var id = $(this).attr("chart-id")
-		var asset = $(this).data("asset")
+		var asset = $(this).attr("data-asset")
 		parsed.push({"name":name,"id":id,"asset":asset})
     });
 	
@@ -179,6 +192,7 @@ function saveChartFavorites()
 function sendPost(params, url) 
 {
 	var dfd = new $.Deferred();
+	
 	if (!url)
 	{
 		params = JSON.stringify(params);
@@ -203,80 +217,33 @@ function sendPost(params, url)
 }
 
 
-function getRS()
+function getAssetInfo(key, val)
 {
-    var dfd = new $.Deferred();
-    
-	var obj = {"requestType":"getpeers"}
-	sendPost(obj).done(function(data)
-	{
-		if ('peers' in data)
-		{
-			rs = data['peers'][1]['RS']
-		}
-		dfd.resolve(data)
-	}).fail(function(data)
-	{
-		dfd.resolve(data)
-	})
-
-	return dfd.promise()
-}
-
-
-function getAccountAssets()
-{
-    var dfd = new $.Deferred();
-	var obj = {"requestType":"getAccountAssets","account":rs}
-	
-	sendPost(obj, 1).done(function(data)
-	{
-		dfd.resolve(data)
-	})
-
-	return dfd.promise()
-}
-
-
-function getNewAssetInfo(assets)
-{
-	var dfd = new $.Deferred();
-    var dataStr = "requestType=getAssets&"
-	
-	for (var i = 0; i < assets.length; ++i)
-	{
-		dataStr += "assets="+String(assets[i])+"&"
-	}
-
-	sendPost(dataStr, 1).done(function(data)
-	{
-		dfd.resolve(data)
-	})
-	
-	return dfd.promise()
-}
-
-
-function getAssetInfo(asset)
-{
+	var arr = []
 	var assetInfo = {}
-
 	for (var i = 0; i < allAssets.length; ++i)
 	{
-		if (allAssets[i].assetid == asset)
+		if (allAssets[i][key] == val)
 		{
-			allAssets[i].asset = allAssets[i].assetid
-			assetInfo = allAssets[i]
-			break
+			arr.push(allAssets[i])
 		}
-		else if (asset == 5527630)
+	}
+	if (arr.length)
+	{
+		var numTrades = -1;
+		var index = 0;
+		
+		for (var i = 0; i < arr.length; ++i)
 		{
-			assetInfo = {"name":"NXT","assetid":"5527630", "asset":"5527630","decimals":8}
-			break
+			if (arr[i].numberOfTrades > numTrades)
+			{
+				numTrades = arr[i].numberOfTrades
+				index = i
+			}
 		}
 		
+		assetInfo = arr[index]
 	}
-
 	return assetInfo
 }
 
@@ -291,7 +258,7 @@ function updateCurrentBalance()
 	$buy.find("span").first().text(IDEX.curRel.name)
 	$sell.find("span").first().text(IDEX.curBase.name)
 	
-	getAccountAssets().done(function(data)
+	sendPost({"requestType":"getAccountAssets","account":rs}, 1).done(function(data)
 	{
 		if (!("errorCode" in data))
 		{
@@ -354,13 +321,24 @@ $(".md-modal-2").on("idexShow", function()
 })
 
 
-$(".md-modal-2").on("idexHide", function()
+$("#modal-04").on("idexHide", function()
 {
     $(".chart-control").each(function() 
 	{
 		var id = $(this).attr("chart-id")
-		var asset = getAssetID($(this).val())
-		
+		var asset = getAssetInfo("name", $(this).val())
+		asset = "asset" in asset ? asset['asset'] : "-1"
+		if ((id == "91" || id == "101" || id == "111" || id == "121") && asset != "-1")
+		{
+			for (var i = 0; i < favorites.length; ++i)
+			{
+				if (favorites[i]['id'] == id && favorites[i]['asset'] != asset)
+				{
+					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id")
+					IDEX.makeMiniChart(asset, divid)
+				}
+			}
+		}
 		$(this).attr("data-asset", asset)
 		$("#chart-curr-"+id).attr("data-asset", asset)
     });
@@ -379,24 +357,12 @@ $(".md-modal").on("idexHide", function()
 $(".tab-tables .nav").on("click", function()
 {
 	var $table = $("#"+$(this).attr('tab-index')).find("table")
-	if ($table.length)
-	{
-		var keys = $table.find("thead").data("keys").split(" ")
-		var method = $table.data("method")
-	
-		tableHandler({"requestType":method}, keys, $table)
-	}
+	if ($table.length) {tableHandler($table)}
 })
 $(".md-modal").on("idexShow", function()
 {
 	var $table = $("#"+$(this).find(".nav.active").attr('tab-index')).find("table")
-	if ($table.length)
-	{
-		var keys = $table.find("thead").data("keys").split(" ")
-		var method = $table.data("method")
-		//	params['requestType'] = $table.attr('id').split("Table")[0].toLowerCase()
-		tableHandler({"requestType":method}, keys, $table)
-	}
+	if ($table.length) {tableHandler($table)}
 })
 
 
@@ -405,7 +371,7 @@ $("#openOrdersTable tbody").on("click", "tr", function(e)
 	var quoteid = $(this).data("quoteid")
 	var $thisScope = $(this)
 	
-	cancelOrder(quoteid).done(function(data)
+	sendPost({"requestType":"cancelquote","quoteid":quoteid}).done(function(data)
 	{
 		$thisScope.closest(".md-content").find(".tab-tables .nav.active").trigger("click")
 	})
@@ -421,9 +387,11 @@ $("#marketTable tbody").on("click", "tr", function()
 })
 
 
-function tableHandler(params, keys, $modalTable)
+function tableHandler($modalTable)
 {
-	var method = params['requestType']
+	var keys = $modalTable.find("thead").data("keys").split(" ")
+	var method = $modalTable.data("method")
+	var params = {"requestType":method}
 	var type = 0;
 	
 	if (method == "tradehistory")
@@ -503,7 +471,7 @@ function formatOpenOrders(tableData)
 	for (var i = 0; i < tableData.length; ++i)
 	{
 		tableData[i]['askoffer'] = tableData[i]['askoffer'] == 1 ? "Bid" : "Ask"
-		tableData[i]['total'] = tableData[i]['relamount'] /SATOSHI
+		tableData[i]['total'] = tableData[i]['relamount']/SATOSHI
 	}
 }
 function convertQNT(data)
@@ -542,69 +510,11 @@ function addAssetNames(tableData, baseName, relName)
 {
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['base'] = getAssetName([tableData[i][baseName]])
-		tableData[i]['rel'] = getAssetName([tableData[i][relName]])
+		tableData[i]['base'] = getAssetInfo("name", [tableData[i][baseName]])['name']
+		tableData[i]['rel'] = getAssetInfo("name", [tableData[i][relName]])['name']
 	}	
 }
 
-
-function getAssetName(assetid)
-{
-	var assetName = ""
-	for (var i = 0; i < allAssets.length; ++i)
-	{
-		if (allAssets[i].assetid == assetid)
-		{
-			assetName = allAssets[i].name
-			break
-		}
-		else if (assetid == "5527630")
-		{
-			assetName = "NXT"
-			break
-		}
-	}
-	
-	return assetName
-}
-
-
-function getAssetID(name)
-{
-	var assetid = -1
-	var arr = []
-	var counter = 0;
-	
-	for (var i = 0; i < allAssets.length; ++i)
-	{
-		if (allAssets[i].name == name)
-		{
-			arr.push(allAssets[i])
-			counter++
-		}
-		else if (name == "NXT")
-		{
-			assetid = "5527630"
-			break
-		}
-	}
-	if (arr.length)
-	{
-		var numTrades = 0;
-		var index = 0;
-		for (var i = 0; i < arr.length; ++i)
-		{
-			if (arr[i].numberOfTrades > numTrades)
-			{
-				numTrade = arr[i].numberOfTrades
-				index = i
-			}
-		}
-		assetid = arr[index].assetid
-	}
-	
-	return assetid
-}
 
 
 function getFormData($form) 
@@ -635,10 +545,30 @@ function extractPostPayload($element)
 		params = $element.data()
 	}
 
-	params = buildPostPayload($element.data("method"), params)
-
 	return params
 }
+
+/*
+function handlePost(method, params)
+{
+	var isSNPost = 1
+	var obj = {}
+	
+	for (var i = 0; i < nxtMethods.length; ++i)
+	{
+		if (method == nxtMethods[i])
+		{
+			isSNPost = 0;
+		}
+	}
+	
+	obj = buildPostPayload(method, data)
+	
+	sendPost(obj, isSNPost).done(function(data)
+	{
+		dfd.resolve(data)
+	})	
+}*/
 
 
 function buildPostPayload(method, data)
@@ -666,8 +596,9 @@ function buildPostPayload(method, data)
 $(".idex-submit").on("click", function()
 {
 	var $form = $("#" + $(this).data("form"))
+	var method = $(this).data("method")
 	var params = extractPostPayload($(this))
-	var method = params['requestType']
+	params = buildPostPayload(method, params)
 
 	if (method == "orderbook")
 	{
@@ -700,25 +631,13 @@ $(".idex-submit").on("click", function()
 	$(".md-overlay").trigger("click")
 })
 
-function cancelOrder(quoteid)
-{
-	var dfd = new $.Deferred()
-	var params = {"requestType":"cancelquote","quoteid":quoteid}
-	
-	sendPost(params).done(function(data)
-	{
-		dfd.resolve(data)
-	})
-	
-	return dfd.promise()
-}
 
 function loadOrderbook(baseid, relid)
 {
 	if (!isStoppingOrderbook)
 	{
-		IDEX.curBase = getAssetInfo(Number(baseid))
-		IDEX.curRel = getAssetInfo(Number(relid))
+		IDEX.curBase = getAssetInfo("asset", Number(baseid))
+		IDEX.curRel = getAssetInfo("asset", Number(relid))
 		
 		updateCurrentBalance()
 		stopPollOrderbook()
@@ -759,15 +678,12 @@ function pollOrderbook(timeout)
 {
 	orderbookTimeout = setTimeout(function() 
 	{
-		var dfd = new $.Deferred();
 		var params = {"requestType":"orderbook","baseid":IDEX.curBase.asset,"relid":IDEX.curRel.asset,"allfields":1,"maxdepth":20}
 
 		orderbookAsync = true
-		//console.log(orderbookAsync)
 		sendPost(params).done(function(orderbookData)
 		{
 			orderbookAsync = false
-			//console.log(orderbookAsync)
 
 			if (!("error" in orderbookData))
 			{
@@ -795,7 +711,7 @@ function groupOrders(orders, currentOrders)
 	
 	for (var i = 0; i < currentOrders.length; ++i)
 	{
-			currentOrders[i]['index'] = i
+		currentOrders[i]['index'] = i
 	}
 	
 	for (var i = 0; i < orders.length; i++)
@@ -853,8 +769,6 @@ function updateOrderbook(orderbookData)
 
 	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
 	//console.log(orderbookData)
-	//if (!orderbookData.bids
-		//emptyOrderbook("No bids or asks")
 }
 
 
@@ -891,29 +805,14 @@ function updateOrders($book, orderData)
 		{
 			var isAsk = ($(this).closest("div").attr('id') == "buyBook") ? false : true
 			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index]
-
 			addNewOrders($(this), orderData, rowData, index)
-			//showClosed($(this), orderData, rowData)
 		})
-	}
-}
-
-
-function showClosed($row, orderData, rowData)
-{
-	for (var i = 0; i < orderData['oldOrders'].length; i++)
-	{
-		if (compObjs(rowData, orderData['oldOrders'][i], orderCompKeys) && orderData['oldOrders'][i]['closed'])
-		{
-			$row.addClass("closed")
-		}
 	}
 }
 
 
 function removeOrders($row, orderData, index)
 {
-	
 	for (var i = 0; i < orderData['expiredOrders'].length; i++)
 	{
 		if (index == orderData['expiredOrders'][i]['index'])
@@ -927,11 +826,11 @@ function removeOrders($row, orderData, index)
 function addNewOrders($row, orderData, rowData, index)
 {
 	var trRows = $(orderData.newOrdersRows).toArray()
+	
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
 		var loopNewOrd = orderData.newOrders[i]
-		var trClasses = "newrow"
-		var trString = addRowClass($(trRows)[i], trClasses)
+		var trString = addRowClass($(trRows)[i], "newrow")
 		//class = order-row cbutton cbutton--effect-jelena
 
 		if (loopNewOrd.price < Number(rowData.price))
@@ -945,9 +844,6 @@ function addNewOrders($row, orderData, rowData, index)
 				if (loopNewOrd.price >= Number(sibData.price))
 				{
 					$row.after($(trString))
-					orderData['newOrders'].splice(i,1)
-					trRows.splice(i, 1)
-					--i
 				}
 				else
 				{
@@ -957,20 +853,16 @@ function addNewOrders($row, orderData, rowData, index)
 			else
 			{
 				$row.after($(trString))
-				orderData['newOrders'].splice(i,1)
-				trRows.splice(i, 1)
-
-				--i
 			}
 		}
 		else
 		{
 			$row.before($(trString))
-			orderData['newOrders'].splice(i,1)
-			trRows.splice(i, 1)
-
-			--i
 		}
+		
+		orderData['newOrders'].splice(i,1)
+		trRows.splice(i, 1)
+		--i
 	}
 }
 
@@ -1029,7 +921,7 @@ $("#buyBook table tbody").on("click", "tr", function(e)
 })
 
 
-function buildTableRows(data, rowClass)
+function buildTableRows(data)
 {
 	var row = ""
 	//var rowWrap = typeof rowClass !== "undefined" ? "<tr class='"+rowClass+"'>" : "<tr>";
@@ -1091,22 +983,6 @@ function addRowAttr(row, data, keys)
 }
 
 
-function getIndexOfVal(list, val)
-{
-	var index = -1;
-	for (var i = 0; i < list.length; ++i)
-	{
-		for (var prop in list[i])
-		{
-			if (list[i].prop == val)
-			{
-				return i;
-			}
-		}
-	}
-}
-
-
 function objToList(data, keys)
 {
 	var arr = []
@@ -1141,20 +1017,6 @@ function compObjs(aObj, bObj, keys)
 	return ((compCount == keys.length) ? true : false)
 }
 
-function cloneObject(obj)
-{
-    if(obj == null || typeof(obj) != 'object')
-        return obj;
-
-    var temp = new obj.constructor(); 
-	
-    for(var key in obj)
-	{
-        temp[key] = clone(obj[key]);
-	}
-
-    return temp;
-}
 
 function compare(a, b) 
 {
@@ -1182,11 +1044,12 @@ function toSatoshi(number)
 }
 
 
-
-$(document).ready(function()
+$(window).load(function()
 {
 	initConstants()
 })
+
+
 
 	return IDEX;
 	
