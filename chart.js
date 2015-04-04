@@ -337,14 +337,15 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					labels: 
 					{
-						enabled:true,
+						enabled:false,
 					},
 					//height:"100%",
 					maxPadding:0.0,
-					//minPadding:0.1,
-					min:minPrice - (minPrice/20),
+					minPadding:0.0,
+					//min:minPrice - ((maxPrice-minPrice)/10),
 					//max:maxPrice,
 					endOnTick:false,
+					startOnTick:false
 					//showLastLabel:true,
 				}],
 				
@@ -353,21 +354,45 @@ var IDEX = (function(IDEX, $, undefined)
 					labels: 
 					{
 						enabled:true,
-						align: 'center',
+						useHTML:true,
+						align: 'left',
 						y:0,
-						style:{color:"#D8D8D8","whiteSpace":"nowrap"},
+						style:{color:"#D8D8D8","whiteSpace":"nowrap","padding-right":"35px"},
 						autoRotation:false,
-						step:1
+						formatter: function () 
+						{
+							b = Highcharts.dateFormat('<span style="float:right">%b %d</span>',this.value)
+							return b
+						}
+						//step:1
 					},
-					tickLength:5,
-					ordinal:true,
-					//tickPixelInterval:75,
-					//showLastLabel:false,
-					tickInterval: (range/5)*24 * 3600 * 1000,
+					tickLength:10,
+					ordinal:false,
+					//tickPixelInterval:60,
+					showLastLabel:false,
+					//showFirstLabel:true,
+
+					//tickInterval: (range*24 * 3600 * 1000)/5,
 					endOnTick:false,
 					range: range*24*3600*1000,
-					minRange: (range/5)*24 * 3600 * 1000,
-					//startOnTick:true
+					minRange: (range*24 * 3600 * 1000)/5,
+					startOnTick:false,
+					tickPositioner: function (a, b) 
+					{
+						var positions = []						
+						var tick = b
+						var increment = (a - b) / 3.05;
+						var i = 0
+						for (tick; tick - increment >= a; tick += increment) 
+						{
+							if (i == 4) {break};
+							positions.push(tick);
+							++i;
+						}
+						
+						//positions.push({"info":this.tickPositions.info})
+						return positions;
+					}
 				}],
 				
 				plotOptions: 
@@ -388,6 +413,7 @@ var IDEX = (function(IDEX, $, undefined)
 				series: [
 				{
 					type: 'areaspline',
+					name:"test",
 					borderWidth:0,
 					turboThreshold:10000,
 					data: price,

@@ -102,6 +102,12 @@
 				}
 			}
 		}
+		else if (type == "areaspline" && series.name == "test")
+		{
+			var min = series.dataMin
+			var max = series.dataMax
+			chart.yAxis[0].setExtremes(min-((max-min)/5), max, true, false)
+		}
 	});
 	
 }(Highcharts));
