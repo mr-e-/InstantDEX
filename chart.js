@@ -707,10 +707,24 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 
-	$("#chartArea").on('mousewheel', function(event) 
+	$("#chartArea").on('mousewheel DOMMouseScroll', function(event) 
 	{
 		event.preventDefault()
+		
 		var chart =	 $('#chartArea').highcharts()
+		if ("type" in event && event.type == "DOMMouseScroll")
+		{
+			event = event['originalEvent']
+			event['originalEvent'] = {}
+			if (event['detail'] > 0 )
+			{
+				event['originalEvent']['wheelDeltaY'] = -1
+			}
+			else
+			{
+				event['originalEvent']['wheelDeltaY'] = 1
+			}
+		}
 		
 		if (isInsidePlot(event))
 		{
