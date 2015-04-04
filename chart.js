@@ -357,22 +357,23 @@ var IDEX = (function(IDEX, $, undefined)
 						useHTML:true,
 						align: 'left',
 						y:0,
-						style:{color:"#D8D8D8","whiteSpace":"nowrap","padding-right":"35px"},
+						style:{color:"#D8D8D8","whiteSpace":"nowrap"},
 						autoRotation:false,
 						formatter: function () 
 						{
-							b = Highcharts.dateFormat('<span style="float:right">%b %d</span>',this.value)
+							if (this.isLast)
+								b = Highcharts.dateFormat('<span style="float:right;margin-right:50px">%b %d</span>',this.value)
+							else if (this.isFirst)
+								b = Highcharts.dateFormat('<span style="float:right;padding-right:0px">%b %d</span>',this.value)
+							else
+								b = Highcharts.dateFormat('<span style="float:right;padding-right:25px">%b %d</span>',this.value)
+
 							return b
 						}
 						//step:1
 					},
-					tickLength:10,
-					ordinal:false,
-					//tickPixelInterval:60,
-					showLastLabel:false,
-					//showFirstLabel:true,
-
-					//tickInterval: (range*24 * 3600 * 1000)/5,
+					tickLength:5,
+					ordinal:true,
 					endOnTick:false,
 					range: range*24*3600*1000,
 					minRange: (range*24 * 3600 * 1000)/5,
@@ -380,17 +381,9 @@ var IDEX = (function(IDEX, $, undefined)
 					tickPositioner: function (a, b) 
 					{
 						var positions = []						
-						var tick = b
-						var increment = (a - b) / 3.05;
-						var i = 0
-						for (tick; tick - increment >= a; tick += increment) 
-						{
-							if (i == 4) {break};
-							positions.push(tick);
-							++i;
-						}
-						
-						//positions.push({"info":this.tickPositions.info})
+						positions.push(a)
+						positions.push(Math.floor(a+((b-a)/2)))
+						positions.push(b)
 						return positions;
 					}
 				}],
