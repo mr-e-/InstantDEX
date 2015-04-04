@@ -277,6 +277,9 @@ var IDEX = (function(IDEX, $, undefined)
 			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
 			priceAddClass = change >= 0 ? "text-green" : "text-red"
 			priceRemoveClass = priceAddClass == "text-green" ? "text-red" : "text-green"
+			var ss = data[0][0]
+			var ee = data[data.length-1][0]
+			var range = ((((ee-ss)/60)/60)/24)/2
 			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev().text(String(change)+"%")
 			var chart2 = new Highcharts.StockChart(
 			{
@@ -285,6 +288,8 @@ var IDEX = (function(IDEX, $, undefined)
 					renderTo:divid,
 					spacingBottom:0,
 					borderWidth:0,
+					panning:true,
+					zoomType:"",
 					//width:"100%"
 				},
 				
@@ -298,7 +303,6 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				title: 
 				{
-					
 					text:"",
 					enabled:false,
 				},
@@ -313,6 +317,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					enabled:false
 				},
+				
 
 				tooltip:
 				{
@@ -335,10 +340,11 @@ var IDEX = (function(IDEX, $, undefined)
 						enabled:false,
 					},
 					//height:"100%",
-					maxPadding:0.15,
-					//minPadding:0.2,
+					maxPadding:0.0,
+					minPadding:0.0,
 					min:minPrice,
-					max:maxPrice
+					max:maxPrice,
+					endOnTick:false,
 					//showLastLabel:true,
 				}],
 				
@@ -349,20 +355,26 @@ var IDEX = (function(IDEX, $, undefined)
 						enabled:true,
 						align: 'center',
 						y:0,
-						style:{color:"#D8D8D8"}
+						style:{color:"#D8D8D8","whiteSpace":"nowrap"},
+						autoRotation:false,
+						step:2
 					},
 					tickLength:5,
-					//ordinal:false,
+					ordinal:false,
+					//tickPixelInterval:75,
 					//showLastLabel:false,
-					//endOnTick:false,
+					tickInterval: (range/5)*24 * 3600 * 1000 ,
+					endOnTick:false,
+					range: range*24*3600*1000,
+					//startOnTick:true
 				}],
 				
 				plotOptions: 
 				{
 					series:
 					{
-						minPointLength:0.0,
-						pointPadding: 0.0,
+						minPointLength:1,
+						pointPadding:1,
 						states:
 						{
 							hover:{enabled:true},

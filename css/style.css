@@ -515,19 +515,19 @@ form {
 	font-weight: 200;
 	padding-left: 5px; 	
 }
-
+/*
 #placeBidPrice, #placeBidAmount {
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-weight: 600;
 	color: black;	
 }
-	
+
 #placeBidFee, #placeBidTotal {
 	background: rgb(240,240,240);
 	border: none;
 	color: grey;
 }
-
+*/
 .order-input {
 	width: 100%;
 }

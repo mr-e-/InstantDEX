@@ -53,6 +53,8 @@ function orderbookVar(obj)
 
 var currentOrderbook = new orderbookVar()
 
+
+
 $(".assets").autocomplete({
 	open:function()
 	{
@@ -78,6 +80,12 @@ $(".assets").autocomplete({
 	},
 })
 //$(".assets").autocomplete("option", "source", auto);
+
+
+$(window).load(function()
+{
+	initConstants()
+})
 
 
 function initConstants()
@@ -1044,10 +1052,16 @@ function toSatoshi(number)
 }
 
 
-$(window).load(function()
+$(".order-button").on("mouseover", function()
 {
-	initConstants()
+	var text = $(this).find("button").attr("data-method") == "placebid" ? "B<br>U<br>Y" : "S<br>E<br>L<br>L"
+	$(this).find("button").html(text)
 })
+$(".order-button").on("mouseout", function()
+{
+	$(this).find("button").html("P<br>L<br>A<br>C<br>E")
+})
+
 
 
 
