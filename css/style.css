@@ -898,9 +898,9 @@ tbody tr:nth-child(odd) {
 @media (max-width: 1230px) {
     #headerAreaIco2 {
         position: absolute;
-        left: 0;
+        left: calc(100vw - 401px - 110px);
         top: 50px;
-        width: calc(100vw - 401px);
+        width: 130px;
         height: 41px;
         border-bottom: inset 1px rgb(45,45,45);
     }
@@ -963,7 +963,8 @@ tbody tr:nth-child(odd) {
     }
     
     #headerAreaIco2 {
-        width: 575px;
+        width: 120px;
+		left:calc(585px - 135px);
     }
 }
 
