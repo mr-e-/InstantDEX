@@ -258,7 +258,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.makeMiniChart = function(asset, divid)
 	{
-		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair="+asset+"_NXT&type=tick&len=5&num=100"
+		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair="+asset+"_NXT&type=tick&len=10&num=300"
 			
 		$.getJSON(url, function(data)
 		{
@@ -337,13 +337,13 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					labels: 
 					{
-						enabled:false,
+						enabled:true,
 					},
 					//height:"100%",
 					maxPadding:0.0,
-					minPadding:0.0,
-					min:minPrice,
-					max:maxPrice,
+					//minPadding:0.1,
+					min:minPrice - (minPrice/20),
+					//max:maxPrice,
 					endOnTick:false,
 					//showLastLabel:true,
 				}],
@@ -357,15 +357,16 @@ var IDEX = (function(IDEX, $, undefined)
 						y:0,
 						style:{color:"#D8D8D8","whiteSpace":"nowrap"},
 						autoRotation:false,
-						step:2
+						step:1
 					},
 					tickLength:5,
-					ordinal:false,
+					ordinal:true,
 					//tickPixelInterval:75,
 					//showLastLabel:false,
-					tickInterval: (range/5)*24 * 3600 * 1000 ,
+					tickInterval: (range/5)*24 * 3600 * 1000,
 					endOnTick:false,
 					range: range*24*3600*1000,
+					minRange: (range/5)*24 * 3600 * 1000,
 					//startOnTick:true
 				}],
 				
@@ -644,9 +645,13 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
-	function isInsidePlot(event)
+	function isInsidePlot(event, chart2)
 	{
 		var chart =	 $('#chartArea').highcharts()
+		if (typeof chart2 !== "undefined")
+		{
+			chart = chart2
+		}
 		var container = $(chart.container);
 		var offset = container.offset();
 		var x = event.clientX - chart.plotLeft - offset.left;
@@ -707,11 +712,14 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 
-	$("#chartArea").on('mousewheel DOMMouseScroll', function(event) 
+	$("#chartArea, .mini-chart-area-4").on('mousewheel DOMMouseScroll', function(event) 
 	{
 		event.preventDefault()
-		
 		var chart =	 $('#chartArea').highcharts()
+		chart = $(this).highcharts()
+		if (!chart)
+			return
+		
 		if ("type" in event && event.type == "DOMMouseScroll")
 		{
 			event = event['originalEvent']
@@ -726,7 +734,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		}
 		
-		if (isInsidePlot(event))
+		if (isInsidePlot(event, chart))
 		{
 			var curMax = chart.xAxis[0]['max']
 			var curMin = chart.xAxis[0]['min']
