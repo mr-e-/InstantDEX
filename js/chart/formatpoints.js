@@ -45,7 +45,7 @@
 				{
 					var sub = graphic.d.split(" ")
 					var pairwidth = Number(sub[7]) - Number(sub[4])
-					var diff = points.length > 700 ? 0.6 : 0.5
+					var diff = points.length >= 700 ? 0.6 : 0.5
 	
 					sub[1] = String((Number(sub[1])) + (diff))
 					sub[4] = String((Number(sub[4])) + (diff))

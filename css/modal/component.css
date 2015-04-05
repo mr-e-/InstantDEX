@@ -34,6 +34,22 @@
 	transform: translateX(-50%) translateY(-50%);*/
 }
 
+.md-modal-3 {
+	position: fixed;
+	top: 50px;
+	width: 50vw;
+    min-width: 575px;
+	z-index: 2000;
+	visibility: hidden;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-transform: translateX(50%);
+	-moz-transform: translateX(50%);
+	-ms-transform: translateX(50%);
+	transform: translateX(50%);
+}
+
 .md-content-inner {
 	overflow: auto;
 }
@@ -172,10 +188,10 @@
 	}
 }
 
-.md-close {
+/*.md-close {
 	position: absolute;
     left: 35px;
-}
+}*/
 
 .md-submit {
 	position: absolute;
@@ -245,9 +261,10 @@
 	background: black;
 	color: white;
 	width: 80px;
-	height: 35px;
+	height: 30px;
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-size: .65rem !important;
+	border: none;
 		
 }
 
@@ -255,10 +272,12 @@
 	background: rgb(255,255,255);
 	color: rgb(0,0,0);
 	cursor: pointer;
+	border: 1.5px solid black;
+	font-weight: 600;
 }
 
 .buttSearch:active {
-	background: #f58500;
+	background: #FF9B00;
 	top: 2px;
 }
 
@@ -284,9 +303,11 @@
 	background: black;
 	color: white;
 	width: 60px;
-	height: 35px;
+	height: 30px;
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-size: .65rem !important;
+	border: none;
+	margin-left: 2px;
 		
 }
 
@@ -294,10 +315,12 @@
 	background: rgb(255,255,255);
 	color: rgb(0,0,0);
 	cursor: pointer;
+	border: solid 1.5px black;
+	font-weight: 600;
 }
 
 .buttPage button:active {
-	background: #f58500;
+	background: #FF9B00;
 	top: 2px;
 }
 

@@ -69,6 +69,10 @@ form {
 	text-align: right;
 }
 
+.bold {
+    font-weight: bold;
+}
+
 /* ------------------------- HEADER AREA ------------------------- */
 
 #header {
@@ -190,7 +194,7 @@ form {
 .chart-text { /* INDIVIDUAL BOXED PAIRS */
 	opacity: 0.75;
 	font-size: .65rem;
-	margin-top: 2px;
+	margin-top: 5px;
 	display: block;
 	cursor: pointer;	
 }
@@ -205,14 +209,14 @@ form {
 
 .chart-text-top { /* INDIVIDUAL PRICED PAIRS TOP */
 	font-size: 0.65rem;
-	margin-top: 5px;
+	margin-top: 7px;
 	display: block;
 	cursor: pointer;
 }
 
 .chart-text-bottom { /* INDIVIDUAL PRICED PAIRS BOTTOM */
 	font-size: 0.85rem;
-	margin-top: -4px;
+	margin-top: -2px;
 	display: block;
 	cursor: pointer;
 }
@@ -266,7 +270,7 @@ form {
 	font-size: 1.2rem;
 	color: white;
 	background: black;
-	padding-top: 5px;
+	padding-top: 8px;
 	border-bottom: inset 1px rgb(45,45,45);
 }
 
@@ -286,6 +290,7 @@ form {
 	height: 40px;
 	border-top: inset 1px rgb(115,115,115);
 	border-bottom: inset 1px rgb(45,45,45);
+	padding-top: 6px;
 	font-size: 1.2rem;
 	font-weight: 600;
 }
@@ -356,7 +361,7 @@ form {
 
 #miniCNum1, #miniCNum2, #miniCNum3, #miniCNum4  {
 	width: 100%;
-	height: calc(25vh - 40px);
+	height: calc(25vh - 50px);
 	border-bottom: inset 1px white;	
 	overflow: hidden;	
 }
@@ -440,6 +445,7 @@ form {
 	height: 20px;
 	font-size: 0.65rem;
 	font-weight: 400;
+	padding-top: 2px;
 }
       
 .tabs label:hover {
@@ -515,19 +521,19 @@ form {
 	font-weight: 200;
 	padding-left: 5px; 	
 }
-/*
+
 #placeBidPrice, #placeBidAmount {
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-weight: 600;
 	color: black;	
 }
-
+	
 #placeBidFee, #placeBidTotal {
 	background: rgb(240,240,240);
 	border: none;
 	color: grey;
 }
-*/
+
 .order-input {
 	width: 100%;
 }
@@ -583,12 +589,12 @@ form {
     height: 30px;
 }
 
-.tabs-nav .nav {
+.tabs-nav .nav { /* Non active table tab */
     width: 20%;
     height: 30px;
     float: left;
     border: solid 1px;
-    padding: 5px 8px;
+    padding: 11px 8px;
     cursor: pointer;
     background: #e0e0e0;
 }
@@ -596,6 +602,7 @@ form {
 .tabs-nav .nav.active {
     cursor: auto;
     background: transparent;
+	border-bottom: none;
 }
 
 .tabs-container {
@@ -628,7 +635,7 @@ form {
 }
 
 .nav p {
-	margin-top: -3px;
+	margin-top: -5px;
 	color: black;
 }
 
@@ -652,9 +659,11 @@ tbody tr:nth-child(odd) {
 	color: white;
 }
 
+
 .table tbody tr:hover {
 	cursor: pointer;
-	background: rgb(240,230,210);
+	background: #FF9B00;
+    /*background: rgb(240,230,210);*/
 }
 
 
@@ -679,7 +688,7 @@ tbody tr:nth-child(odd) {
 
 .table-searchbox {
     width:150px;
-	height: 35px;
+	height: 30px;
 	padding: 3px 5px;
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-weight: 200;
@@ -874,6 +883,81 @@ tbody tr:nth-child(odd) {
     width: 50%;
 }
 
+/* ------------------------- CONFIRMATION BOOK ------------------------- */
+.conf-title {
+    padding: 10px;
+    font-size: 20px;
+    border-bottom: solid 1px;
+}
+
+.conf-row {
+    font-size: 16px;
+    padding: 5px 10px;
+    clear: both;
+    height: 30px;
+}
+
+.conf-form {
+    margin: 20px 30px;
+}
+
+.conf-col-25 {
+    float: left;
+    width: 24.97%;
+}
+
+.conf-col-33 {
+    float: left;
+    width: 33.31%;
+}
+
+.conf-col-66 {
+    float: left;
+    width: 66.64%;
+}
+
+.conf-input {
+    width: 90%;
+    height: 25px;
+}
+
+.conf-input-addon {
+    width: 9.97%;
+    border: inset 1px;
+    padding: 2px;
+    margin-left: -4px;
+    font-size: 12px;
+}
+
+.conf-jumbotron {
+    margin: 20px;
+    padding: 20px;
+    border-left: solid 5px #ff8040;
+    background: rgba(255,128,64,0.1);
+}
+
+.conf-jumbotron div {
+    font-size: 16px;
+    color: #ff8040;
+}
+
+.conf-jumbotron p {
+    font-size: 14px;
+}
+
+.conf-footer {
+    border-top: solid 1px;
+    padding: 20px;
+    height: 60px;
+}
+
+.conf-footer button {
+    font-size: 16px;
+    padding: 5px 7px;
+    float: right;
+    margin-left: 10px;
+}
+
 /* ------------------------- TEMPORARY !! ------------------------- */
 
 #tabs-2 h1, #tabs-6 h1, #modal-03 h1 {
@@ -964,9 +1048,11 @@ tbody tr:nth-child(odd) {
     
     #headerAreaIco2 {
         width: 120px;
-		left:calc(585px - 135px);
+        left:calc(585px - 135px);
     }
 }
+
+
 
 
 #sellBook > table, #buyBook > table{
@@ -1026,4 +1112,3 @@ tbody tr:nth-child(odd) {
 .stepButton  button:hover, .stepButton > button:active {
 	background-color:#424242 !important;
 }
-

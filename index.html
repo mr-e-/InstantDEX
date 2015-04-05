@@ -8,23 +8,20 @@
 	<!--<link rel="stylesheet" href="css/reset.css">--> <!-- CSS reset -->
 	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
 	<link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
-	<link rel="stylesheet" type="text/css" href="css/jelena.css" />
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
 	<link rel="stylesheet" type="text/css" href="css/minichart/graph.css" />
 	<link rel="icon" href="img/snicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
     
 	<script src="js/modernizr.js"></script> <!-- Modernizr -->
     <script src="js/jquery-2.1.1.js"></script>
 	<script src="js/jquery.tooltipster.min.js"></script>
 	<script src="js/jquery.tablesorter.min.js"></script> 
 	<script src="js/modal/classie.js"></script>
-	<!--<script src="js/d3.v3.min.js"></script>-->
-	<!--<script src="js/minichart/graph.js"></script>-->
     <script src="js/sorttable.js"></script>
 	<script src="js/lib.js"></script>
 	<script src="js/main.js"></script> <!-- Resource jQuery -->
-	<script src="jquery-ui/jquery-ui.min.js"></script>
+	<script src="js/jquery-ui/jquery-ui.min.js"></script>
 	<title>instantDEX GUI prototype v2.21</title>
 	<!--TOOLTIP SETTINGS-->
     <script>
@@ -40,6 +37,7 @@
 
 <body>
 
+    <!----------------------------------------------- HEADER AREA -->
 	<div id="header" class="unselectable">
 		<div id="topLogoWrap">
 			<img id="topLogo" src="img/logo-hor.svg"></img>
@@ -276,7 +274,7 @@
 --- ORDER BOOK AREA --------------------------------------------------
     
  --><div id="orderBook">
-		<div id="currPair" class="order-big">
+		<div id="currPair" class="order-big md-trigger" data-modal="modal-conf-01">
 			<span class="order-text">---/---</span>
 		</div>
         <div id="sellBook" style="position:relative;overflow:hidden;">
@@ -296,6 +294,12 @@
 		</div>
     </div>
 	
+<!--           <span id="activePair1">BTC</span>^M
+                /^M
+                <span id="activePair2">VRC</span>^M
+            </span>
+<div class="order-row md-trigger" data-modal="modal-conf-01">
+-->
 	<!-- Modal Windows -->
     
     <!-- MARKETS PANEL ----------------------------------------------->
@@ -637,6 +641,76 @@
             </div>
 		</div>
 	</div>
+
+
+    <!-- CONFIRMATION SELL BOOK -->
+    <div class="md-modal-3 md-effect-2" id="modal-conf-01">
+        <div class="md-content">
+            <div class="conf-title">Confirm Sell Order</div>
+            <div class=conf-form>
+                <div class="conf-row">
+                    <div class="conf-col-25 bold">Type:</div>
+                    <div class="conf-col-25">Limit Sell</div>
+                    <div class="conf-col-25 bold">Market:</div>
+                    <div class="conf-col-25">BTC/VRC</div>
+                </div>
+                <div class="conf-row">
+                    <div class="conf-col-33 bold">Time In Force:</div>
+                    <div class="conf-col-66 bold">Good 'Til Cancelled(Default)</div>
+                </div>
+                <div class="conf-row">
+                    <div class="conf-col-33">Quantity</div>
+                    <div class="conf-col-66">
+                        <input type="text" class="conf-input">
+                        <span class="conf-input-addon">VRC</span>
+                    </div>
+                </div>
+                <div class="conf-row">
+                    <div class="conf-col-33">Price</div>
+                    <div class="conf-col-66">
+                        <input type="text" class="conf-input">
+                        <span class="conf-input-addon">BTC</span>
+                    </div>
+                </div>
+                <div class="conf-row">
+                    <div class="conf-col-33">Subtotal</div>
+                    <div class="conf-col-66">
+                        <input type="text" class="conf-input">
+                        <span class="conf-input-addon">BTC</span>
+                    </div>
+                </div>
+                <div class="conf-row">
+                    <div class="conf-col-33">Commision</div>
+                    <div class="conf-col-66">
+                        <input type="text" class="conf-input">
+                        <span class="conf-input-addon">BTC</span>
+                    </div>
+                </div>
+                <div class="conf-row">
+                    <div class="conf-col-33">Total</div>
+                    <div class="conf-col-66">
+                        <input type="text" class="conf-input">
+                        <span class="conf-input-addon">BTC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="conf-jumbotron">
+                <div>Disclaimer</div>
+                <p>Test Space</p>
+            </div>
+            <div class="conf-footer">
+                <button class="conf-confirm">Confirm</button>
+                <button class="conf-cancel md-close">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- CONFIRMATION BUY BOOK -->
+    <div class="md-modal-3 md-effect-2" id="modal-conf-02">
+        <div class="md-content">
+            Conf
+        </div>
+    </div>
     
     <datalist id="option1">
         <option value="ENGLISH">
@@ -709,13 +783,12 @@
  <!--   ----------------------------------------------->   
  
 	<script src="js/modal/modalEffects.js"></script>
-	<script src="jquery.ui.autocomplete.html.js"></script>
-	<script src="Highstock-2.1.3/js/highstock.js"></script>
-	<script src="Highstock-2.1.3/js/modules/exporting.js"></script>
-	<script src="formatpoints.js" type="text/javascript"></script>	
-	<script src="idex.js" type="text/javascript"></script>	
-	<script src="theme.js" type="text/javascript"></script>	
-	<script src="chart.js" type="text/javascript"></script>	
+	<script src="js/jquery-ui/jquery.ui.autocomplete.html.js"></script>
+	<script src="js/Highstock-2.1.3/highstock.js"></script>
+	<script src="js/chart/formatpoints.js" type="text/javascript"></script>	
+	<script src="js/idex.js" type="text/javascript"></script>	
+	<script src="js/chart/theme.js" type="text/javascript"></script>	
+	<script src="js/chart/chart.js" type="text/javascript"></script>	
 </body>
 
 </html>

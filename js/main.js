@@ -121,13 +121,19 @@ jQuery(document).ready(function($){
     // Chart Number Highlight
     $(".chart-panel-pair").mouseover(function() {
         var num = $(this).attr('chart-number');
-        $(".chart-panel-number[chart-number='"+num+"']").css("color","#37ED00");
-        $(".chart-number[chart-number='"+num+"']").css("color","#37ED00");
+        $(".chart-panel-number[chart-number='"+num+"']").css("color","#FF9B00");
+        $(".chart-number[chart-number='"+num+"']").css("color","#FF9B00");
     });
     
     $(".chart-panel-pair").mouseout(function() {
         var num = $(this).attr('chart-number');
         $(".chart-panel-number[chart-number='"+num+"']").css("color","white");
         $(".chart-number[chart-number='"+num+"']").css("color","white");
+    });
+
+    /** Number Format (comma separated) */
+    $(".bal-num").each(function() {
+        var val = $(this).html();
+        $(this).html(z.numberFormat(val));
     });
 });
