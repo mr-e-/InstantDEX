@@ -1071,6 +1071,7 @@ tbody tr:nth-child(odd) {
 
 #sellBook > table > tbody > tr > td, #buyBook > table > tbody > tr > td {
 	color:#D8D8D8;
+    padding-right:8px;
 }
 
 #sellBook > table > tbody > tr.newrow, #buyBook > table > tbody > tr.newrow {
@@ -1111,4 +1112,9 @@ tbody tr:nth-child(odd) {
 
 .stepButton  button:hover, .stepButton > button:active {
 	background-color:#424242 !important;
+}
+
+.ui-state-hover, .ui-state-active, .ui-state-highlight, .ui-state-focus, .ui-state-default {
+    background-color: rgba(200,200,200,1) !important;
+    background-image: none !important;
 }

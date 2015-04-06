@@ -23,7 +23,7 @@ var ModalEffects = (function() {
 			
 			function removeModal( hasPerspective ) {
 				classie.remove( modal, 'md-show' );
-				setTimeout(function(){$(modal).trigger("idexHide")}, 500)
+				setTimeout(function(){$(modal).trigger("idexHide")}, 300)
 				if( hasPerspective ) {
 					classie.remove( document.documentElement, 'md-perspective' );
 				}

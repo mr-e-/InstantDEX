@@ -11,10 +11,12 @@ var rs = "";
 var orderbookTimeout;
 var allAssets;
 var auto = [];
+var auto2 = [];
 var favorites = [];
 var isStoppingOrderbook = false
 var orderbookAsync = false
-var orderCompKeys = ['price','volume','exchange']
+var orderCompKeys = ['price','quoteid']
+var pendingOrder = {}
 
 var postParams = 
 {
@@ -25,7 +27,7 @@ var postParams =
 	"openorders":[],
 	"tradehistory":["timestamp"],
 	"cancelorder":["quoteid"],
-	"makeoffer3":["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","flip"]
+	"makeoffer3":["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset"]
 };
 
 function orderbookVar(obj) 
@@ -58,9 +60,35 @@ var currentOrderbook = new orderbookVar()
 $(".assets").autocomplete({
 	open:function()
 	{
-		var cssProps = {'z-index': 2003,'height':'200px','overflow-y':'scroll', 'overflow-x':'hidden', 'font-size':'0.65rem'} 
+		var cssProps = {'z-index': 2003,'background-image':'none','background-color':'white','height':'200px','overflow-y':'scroll', 'overflow-x':'hidden', 'font-size':'0.65rem'} 
 		//$(this).autocomplete('widget').css('z-index', 9999);
 		$('.ui-autocomplete').css(cssProps)
+		$('.ui-autocomplete > li > a').css('color', 'black')
+	},
+	delay:0,
+	html:true,
+	source: function( request, response ) 
+	{
+		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
+		var a = $.grep(auto2, function( item )
+		{
+			var both = item.label.split(" ")
+			var a = both[0]
+			var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
+
+			return (matcher.test(a) || matcher.test(b))
+		})
+		response(a);
+	},
+})
+
+$(".asset-test input").autocomplete({
+	open:function()
+	{
+		var cssProps = {'z-index': 2003,'width':'137px','background-image':'none','background-color':'white','height':'200px','overflow-y':'scroll', 'overflow-x':'hidden', 'font-size':'0.6rem'} 
+		//$(this).autocomplete('widget').css('color', 'black');
+		$('.ui-autocomplete').css(cssProps)
+		$('.ui-autocomplete > li > a').css('color', 'black')
 	},
 	delay:0,
 	html:true,
@@ -78,6 +106,27 @@ $(".assets").autocomplete({
 
 		response(a);
 	},
+	change: function(e, ui)
+	{
+		if (!ui.item)
+		{
+			$(this).attr("data-asset", "-1")
+		}
+		else
+		{
+			var both = ui.item.label.split(" ")
+
+			var a = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
+			$(this).attr("data-asset", a)
+		}
+	},
+	select: function(e, ui)
+	{
+		var both = ui.item.label.split(" ")
+
+		var a = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
+		$(this).attr("data-asset", a)
+	}
 })
 //$(".assets").autocomplete("option", "source", auto);
 
@@ -131,16 +180,12 @@ function initConstants()
 	
 	dfd.done(function(assets)
 	{
-		var temp = []
 		assets.sort(compareName)
-		
 		for (var i = 0; i < assets.length; ++i)
 		{
-			auto.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].assetid})
-			temp.push("<option value='"+assets[i].name+"'>")
+			auto.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].name})
+			auto2.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].asset})
 		}
-		
-		$("#curr-list").empty().append(temp)
 	})
 	
 	if (localStorage.chartFavorites)
@@ -314,9 +359,10 @@ $("#miniChartsTop .chart-box, #miniChartsTop2 .chart-box-2 .chart-sub-box-2").on
 })
 function hotkeyHandler($div)
 {
-	var baseid = $div.find("span").eq(0).data("asset")
-	var relid = $div.find("span").eq(1).data("asset")
-
+	
+	var baseid = $div.find("span").eq(0).attr("data-asset")
+	var relid = $div.find("span").eq(1).attr("data-asset")
+	
 	if (baseid && relid && baseid.length && relid.length)
 	{
 		loadOrderbook(baseid, relid)
@@ -334,8 +380,8 @@ $("#modal-04").on("idexHide", function()
     $(".chart-control").each(function() 
 	{
 		var id = $(this).attr("chart-id")
-		var asset = getAssetInfo("name", $(this).val())
-		asset = "asset" in asset ? asset['asset'] : "-1"
+		//var asset = getAssetInfo("name", $(this).val())
+		asset = $(this).attr("data-asset")
 		if ((id == "91" || id == "101" || id == "111" || id == "121") && asset != "-1")
 		{
 			for (var i = 0; i < favorites.length; ++i)
@@ -347,8 +393,8 @@ $("#modal-04").on("idexHide", function()
 				}
 			}
 		}
-		$(this).attr("data-asset", asset)
 		$("#chart-curr-"+id).attr("data-asset", asset)
+		$("#chart-curr-"+id).text($(this).val())
     });
 	
 	saveChartFavorites()
@@ -376,7 +422,7 @@ $(".md-modal").on("idexShow", function()
 
 $("#openOrdersTable tbody").on("click", "tr", function(e)
 {
-	var quoteid = $(this).data("quoteid")
+	var quoteid = $(this).attr("data-quoteid")
 	var $thisScope = $(this)
 	
 	sendPost({"requestType":"cancelquote","quoteid":quoteid}).done(function(data)
@@ -390,15 +436,15 @@ $("#marketTable tbody").on("click", "tr", function()
 {
 	//var base = $(this).find("td:first").text()
 	//var rel = $(this).find("td:first").next().text()
-	loadOrderbook($(this).data("baseid"), $(this).data("relid"))
+	loadOrderbook($(this).attr("data-baseid"), $(this).attr("data-relid"))
 	$(".md-overlay").trigger("click")
 })
 
 
 function tableHandler($modalTable)
 {
-	var keys = $modalTable.find("thead").data("keys").split(" ")
-	var method = $modalTable.data("method")
+	var keys = $modalTable.find("thead").attr("data-keys").split(" ")
+	var method = $modalTable.attr("data-method")
 	var params = {"requestType":method}
 	var type = 0;
 	
@@ -478,7 +524,7 @@ function formatOpenOrders(tableData)
 {
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['askoffer'] = tableData[i]['askoffer'] == 1 ? "Bid" : "Ask"
+		tableData[i]['askoffer'] = tableData[i]['askoffer'] == 1 ? "Ask" : "Bid"
 		tableData[i]['total'] = tableData[i]['relamount']/SATOSHI
 	}
 }
@@ -545,7 +591,7 @@ function extractPostPayload($element)
 
 	if ($element.is("button"))
 	{
-		var $form = $("#" + $element.data("form"))
+		var $form = $("#" + $element.attr("data-form"))
 		params = getFormData($form)
 	}
 	else
@@ -555,28 +601,6 @@ function extractPostPayload($element)
 
 	return params
 }
-
-/*
-function handlePost(method, params)
-{
-	var isSNPost = 1
-	var obj = {}
-	
-	for (var i = 0; i < nxtMethods.length; ++i)
-	{
-		if (method == nxtMethods[i])
-		{
-			isSNPost = 0;
-		}
-	}
-	
-	obj = buildPostPayload(method, data)
-	
-	sendPost(obj, isSNPost).done(function(data)
-	{
-		dfd.resolve(data)
-	})	
-}*/
 
 
 function buildPostPayload(method, data)
@@ -603,9 +627,10 @@ function buildPostPayload(method, data)
 
 $(".idex-submit").on("click", function()
 {
-	var $form = $("#" + $(this).data("form"))
-	var method = $(this).data("method")
+	var $form = $("#" + $(this).attr("data-form"))
+	var method = $(this).attr("data-method")
 	var params = extractPostPayload($(this))
+
 	params = buildPostPayload(method, params)
 
 	if (method == "orderbook")
@@ -744,7 +769,7 @@ function groupOrders(orders, currentOrders)
 		{
 			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8)
 			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(8)
-			var trString = buildTableRows([[loopOrd.price+"&nbsp;&nbsp;", loopOrd.volume]])
+			var trString = buildTableRows([[loopOrd.price, loopOrd.volume]])
 			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae") ? "virtual" : ""
 			newOrdersRow += addRowClass(trString, trClasses)
 			
@@ -875,22 +900,6 @@ function addNewOrders($row, orderData, rowData, index)
 }
 
 
-function triggerMakeoffer(orderData)
-{
-	var params = {"requestType":"makeoffer3","srcqty":1000}
-
-	for (var i = 0; i < postParams.makeoffer3.length; ++i)
-	{
-		params[postParams.makeoffer3[i]] = orderData[postParams.makeoffer3[i]]
-	}
-	//console.log(params)
-
-	sendPost(params).done(function(data)
-	{
-		//console.log(data);
-	})
-}
-
 
 $("input[name='price'], input[name='volume']").on("keyup", function() 
 {
@@ -906,28 +915,76 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 $("#sellBook table tbody").on("click", "tr", function(e)
 {
 	var order = getRowData($(this))
+	pendingOrder = order
 	console.log(order)
 	
+	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order)
+	$("#tempBuyClick").trigger("click")
+
 	$("#placeBidPrice").val(order.price);
 	$("#placeBidAmount").val(order.volume).trigger("keyup");
 	$("#tab1").trigger("click")
-
-	//triggerMakeoffer(order)
 })
 
 
 $("#buyBook table tbody").on("click", "tr", function(e)
 {
 	var order = getRowData($(this))
+	pendingOrder = order
 	console.log(order)
+	
+	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order)
+	$("#tempBuyClick").trigger("click")
 	
 	$("#placeAskPrice").val(order.price);
 	$("#placeAskAmount").val(order.volume).trigger("keyup");
 	$("#tab2").trigger("click");
-	
-	//triggerMakeoffer(order)
 })
 
+$(".conf-input").css("width","80%")
+
+function confirmPopup($modal, order)
+{
+	var type = order.askoffer == 1 ? "sell" : "buy"
+	//$modal.find(".conf-temphide").hide()
+	$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order")
+	$modal.find(".conf-pair").text(currentOrderbook.pair)
+	$modal.find(".conf-amount").val(order.volume)
+	$modal.find(".conf-price").val(order.price)
+	$modal.find(".conf-total").val((order.price*order.volume).toFixed(8))
+	$modal.find(".conf-type").text("makeoffer3")
+	$modal.find(".conf-base").text(order.base)
+	$modal.find(".conf-rel").text(order.rel)
+}
+
+$(".conf-confirm").on("click", triggerMakeoffer)
+
+function triggerMakeoffer()
+{
+	var params = {"requestType":"makeoffer3"}
+	params["srcqty"] = 10
+
+	for (var i = 0; i < postParams.makeoffer3.length; ++i)
+	{
+		params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]]
+	}
+	//params['askoffer'] = params['askoffer'] == 1 ? 0 : 1
+	console.log(params)
+
+	sendPost(params).done(function(data)
+	{
+		console.log(data);
+		if ("error" in data && error.length)
+		{
+			console.log("error")
+		}
+		else
+		{
+			console.log("success")
+			$(".md-overlay").trigger("click")
+		}
+	})
+}
 
 function buildTableRows(data)
 {

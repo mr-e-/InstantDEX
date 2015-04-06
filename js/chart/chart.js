@@ -280,7 +280,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var ss = data[0][0]
 			var ee = data[data.length-1][0]
 			var range = ((((ee-ss)/60)/60)/24)/2
-			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev().text(String(change)+"%")
+			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev().text(change.toFixed(2)+"%")
 			var chart2 = new Highcharts.StockChart(
 			{
 				chart:

@@ -273,8 +273,11 @@
     
 --- ORDER BOOK AREA --------------------------------------------------
     
- --><div id="orderBook">
-		<div id="currPair" class="order-big md-trigger" data-modal="modal-conf-01">
+ -->
+	<div id="tempBuyClick" style="display:none" class="md-trigger" data-modal="modal-conf-01"></div>
+	<div id="tempSellClick" style="display:none" class="md-trigger" data-modal="modal-conf-02"></div>
+	<div id="orderBook">
+		<div id="currPair" class="order-big">
 			<span class="order-text">---/---</span>
 		</div>
         <div id="sellBook" style="position:relative;overflow:hidden;">
@@ -298,7 +301,6 @@
                 /^M
                 <span id="activePair2">VRC</span>^M
             </span>
-<div class="order-row md-trigger" data-modal="modal-conf-01">
 -->
 	<!-- Modal Windows -->
     
@@ -509,92 +511,92 @@
  <!-- QUICK CHARTS PANEL ----------------------------------------------->
 	
 	<div class="md-modal-2 md-effect-2 md-chart" id="modal-04">
-		<div class="md-content">
+		<div class="md-content asset-test">
             <div class="chart-panel-title">
                 <img src="img/charts_areas_title2.svg">
             </div>
             <div class="chart-panel-pair" chart-number="1">
                 <div class="chart-panel-number fadeSlow" chart-number="1">1</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="11" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="12" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="11" type="text">
+                    <input class="chart-control" chart-id="12" type="text">
                 </div>
             </div>
 			<div class="chart-panel-pair" chart-number="2">
                 <div class="chart-panel-number fadeSlow" chart-number="2">2</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="21" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="22" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="21" type="text">
+                    <input class="chart-control" chart-id="22" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="3">
                 <div class="chart-panel-number fadeSlow" chart-number="3">3</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="31" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="32" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="31" type="text">
+                    <input class="chart-control" chart-id="32" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="4">
                 <div class="chart-panel-number fadeSlow" chart-number="4">4</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="41" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="42" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="41" type="text">
+                    <input class="chart-control" chart-id="42" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="5">
                 <div class="chart-panel-number fadeSlow" chart-number="5">5</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="51" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="52" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="51" type="text">
+                    <input class="chart-control" chart-id="52" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="6">
                 <div class="chart-panel-number fadeSlow" chart-number="6">6</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="61" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="62" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="61" type="text">
+                    <input class="chart-control" chart-id="62" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="7">
                 <div class="chart-panel-number fadeSlow" chart-number="7">7</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="71" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="72" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="71" type="text">
+                    <input class="chart-control" chart-id="72" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="8">
                 <div class="chart-panel-number fadeSlow" chart-number="8">8</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="81" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="82" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="81" type="text">
+                    <input class="chart-control" chart-id="82" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="9">
                 <div class="chart-panel-number fadeSlow" chart-number="9">9</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="91" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="92" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="91" type="text">
+                    <input class="chart-control" chart-id="92" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="10">
                 <div class="chart-panel-number fadeSlow" chart-number="10">10</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="101" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="102" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="101" type="text">
+                    <input class="chart-control" chart-id="102" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="11">
                 <div class="chart-panel-number fadeSlow" chart-number="11">11</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="111" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="112" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="111" type="text">
+                    <input class="chart-control" chart-id="112" type="text">
                 </div>
             </div>
             <div class="chart-panel-pair" chart-number="12">
                 <div class="chart-panel-number fadeSlow" chart-number="12">12</div>
                 <div class="chart-panel-input">
-                    <input class="chart-control" chart-id="121" list="curr-list" type="text">
-                    <input class="chart-control" chart-id="122" list="curr-list" type="text">
+                    <input class="chart-control" chart-id="121" type="text">
+                    <input class="chart-control" chart-id="122" type="text">
                 </div>
             </div>
 		</div>
@@ -650,47 +652,47 @@
             <div class=conf-form>
                 <div class="conf-row">
                     <div class="conf-col-25 bold">Type:</div>
-                    <div class="conf-col-25">Limit Sell</div>
+                    <div class="conf-col-25 conf-type">Limit Sell</div>
                     <div class="conf-col-25 bold">Market:</div>
-                    <div class="conf-col-25">BTC/VRC</div>
+                    <div class="conf-col-25 conf-pair">BTC/VRC</div>
                 </div>
-                <div class="conf-row">
+                <div class="conf-row conf-temphide">
                     <div class="conf-col-33 bold">Time In Force:</div>
                     <div class="conf-col-66 bold">Good 'Til Cancelled(Default)</div>
                 </div>
                 <div class="conf-row">
                     <div class="conf-col-33">Quantity</div>
                     <div class="conf-col-66">
-                        <input type="text" class="conf-input">
-                        <span class="conf-input-addon">VRC</span>
+                        <input disabled type="text" class="conf-input conf-amount">
+                        <span class="conf-input-addon conf-base">VRC</span>
                     </div>
                 </div>
                 <div class="conf-row">
                     <div class="conf-col-33">Price</div>
                     <div class="conf-col-66">
-                        <input type="text" class="conf-input">
-                        <span class="conf-input-addon">BTC</span>
+                        <input disabled type="text" class="conf-input conf-price">
+                        <span class="conf-input-addon conf-rel">BTC</span>
                     </div>
                 </div>
                 <div class="conf-row">
                     <div class="conf-col-33">Subtotal</div>
                     <div class="conf-col-66">
-                        <input type="text" class="conf-input">
-                        <span class="conf-input-addon">BTC</span>
+                        <input disabled type="text" class="conf-input">
+                        <span class="conf-input-addon conf-rel">BTC</span>
                     </div>
                 </div>
                 <div class="conf-row">
                     <div class="conf-col-33">Commision</div>
                     <div class="conf-col-66">
-                        <input type="text" class="conf-input">
-                        <span class="conf-input-addon">BTC</span>
+                        <input disabled type="text" class="conf-input" placeholder="2.5">
+                        <span class="conf-input-addon">NXT</span>
                     </div>
                 </div>
                 <div class="conf-row">
                     <div class="conf-col-33">Total</div>
                     <div class="conf-col-66">
-                        <input type="text" class="conf-input">
-                        <span class="conf-input-addon">BTC</span>
+                        <input disabled type="text" class="conf-input conf-total">
+                        <span class="conf-input-addon conf-rel">BTC</span>
                     </div>
                 </div>
             </div>
@@ -766,18 +768,6 @@
 	
     <!-- Currency List -->
     <datalist id="curr-list">
-        <option value="USD">
-        <option value="BTC">
-        <option value="VRC">
-        <option value="sNET">
-        <option value="FIBRE">
-        <option value="NuBits">
-        <option value="BITS">
-        <option value="Opal">
-        <option value="NXT">
-        <option value="Tether">
-        <option value="VPN">
-        <option value="BTCD">
     </datalist>
 
  <!--   ----------------------------------------------->   
