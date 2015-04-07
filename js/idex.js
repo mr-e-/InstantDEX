@@ -2,6 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined) {
 
+
 IDEX.curBase;
 IDEX.curRel;
 var snURL = "http://127.0.0.1:7777";
@@ -12,33 +13,32 @@ var orderbookTimeout;
 var allAssets;
 var auto = [];
 var auto2 = [];
-var favorites = [];
-var isStoppingOrderbook = false
-var orderbookAsync = false
-var orderCompKeys = ['price','quoteid']
-var pendingOrder = {}
-
-var postParams = 
-{
-	"orderbook":["baseid","relid","allfields"],
-	"allorderbooks":[],
-	"placebid":["baseid","relid","price","volume"],
-	"placeask":["baseid","relid","price","volume"],
-	"openorders":[],
-	"tradehistory":["timestamp"],
-	"cancelorder":["quoteid"],
-	"makeoffer3":["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset"]
+var chartFavs = [];
+var isStoppingOrderbook = false;
+var orderbookAsync = false;
+var orderCompKeys = ['price','quoteid'];
+var pendingOrder = {};
+var currentOrderbook = new orderbookVar();
+var postParams = {
+	'orderbook':["baseid","relid","allfields"],
+	'allorderbooks':[],
+	'placebid':["baseid","relid","price","volume"],
+	'placeask':["baseid","relid","price","volume"],
+	'openorders':[],
+	'tradehistory':["timestamp"],
+	'cancelorder':["quoteid"],
+	'makeoffer3':["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset"]
 };
 
 function orderbookVar(obj) 
 {
-	this.nxt = ""
-	this.asks = []
-	this.baseid = ""
-	this.bids = []
-	this.obookid = ""
-	this.pair = ""
-	this.relid = ""
+	this.nxt = "";
+	this.asks = [];
+	this.baseid = "";
+	this.bids = [];
+	this.obookid = "";
+	this.pair = "";
+	this.relid = "";
 	
 	var __construct = function(that) 
 	{
@@ -46,182 +46,195 @@ function orderbookVar(obj)
 		{
 			for (var key in obj)
 			{
-				that[key] = obj[key]
+				that[key] = obj[key];
 			}
 		}
-	}(this)
-	
-}
-
-var currentOrderbook = new orderbookVar()
+	}(this);
+};
 
 
 
-$(".assets").autocomplete({
-	open:function()
-	{
-		var cssProps = {'z-index': 2003,'background-image':'none','background-color':'white','height':'200px','overflow-y':'scroll', 'overflow-x':'hidden', 'font-size':'0.65rem'} 
-		//$(this).autocomplete('widget').css('z-index', 9999);
-		$('.ui-autocomplete').css(cssProps)
-		$('.ui-autocomplete > li > a').css('color', 'black')
-	},
+$('.assets-search').autocomplete({
 	delay:0,
 	html:true,
-	source: function( request, response ) 
-	{
-		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-		var a = $.grep(auto2, function( item )
-		{
-			var both = item.label.split(" ")
-			var a = both[0]
-			var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
+	source: function(request,response) { autocompleteMatcher(request, response, auto2) }
+});
 
-			return (matcher.test(a) || matcher.test(b))
-		})
-		response(a);
-	},
-})
+$('.assets-fav input').autocomplete({
+	delay: 0,
+	html: true,
+	create: function(e, ui) { },
+	open: function(e, ui) { },
+	source: function(request,response) { autocompleteMatcher(request, response, auto) },
+	change: function(e, ui) { autocompleteSelection($(this), e, ui) },
+	select: function(e, ui) { autocompleteSelection($(this), e, ui) }
+});
 
-$(".asset-test input").autocomplete({
-	open:function()
-	{
-		var cssProps = {'z-index': 2003,'width':'137px','background-image':'none','background-color':'white','height':'200px','overflow-y':'scroll', 'overflow-x':'hidden', 'font-size':'0.6rem'} 
-		//$(this).autocomplete('widget').css('color', 'black');
-		$('.ui-autocomplete').css(cssProps)
-		$('.ui-autocomplete > li > a').css('color', 'black')
-	},
-	delay:0,
-	html:true,
-	source: function( request, response ) 
-	{
-		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), "i" );
-		var a = $.grep(auto, function( item )
-		{
-			var both = item.label.split(" ")
-			var a = both[0]
-			var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
-
-			return (matcher.test(a) || matcher.test(b))
-		})
-
-		response(a);
-	},
-	change: function(e, ui)
-	{
-		if (!ui.item)
-		{
-			$(this).attr("data-asset", "-1")
-		}
-		else
-		{
-			var both = ui.item.label.split(" ")
-
-			var a = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
-			$(this).attr("data-asset", a)
-		}
-	},
-	select: function(e, ui)
-	{
-		var both = ui.item.label.split(" ")
-
-		var a = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"))
-		$(this).attr("data-asset", a)
-	}
-})
-//$(".assets").autocomplete("option", "source", auto);
-
-
-$(window).load(function()
+function autocompleteSelection($thisScope, e, ui)
 {
-	initConstants()
-})
-
-
-function initConstants()
-{
-	var dfd = new $.Deferred()
-	
-	if (localStorage.allAssets)
+	if (!ui.item)
 	{
-		allAssets = JSON.parse(localStorage.getItem("allAssets"))
-		dfd.resolve(allAssets)
+		$thisScope.attr('data-asset', "-1");
 	}
 	else
 	{
-		sendPost({"requestType":"getAllAssets"}, 1).done(function(data)
+		var both = ui.item.label.split(' ');
+		var a = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"));
+		
+		$thisScope.attr('data-asset', a);
+	}
+}
+
+
+function autocompleteMatcher(request, response, auto)
+{
+	var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
+	var a = $.grep(auto, function( item )
+	{
+		var both = item.label.split(' ');
+		var a = both[0];
+		var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"));
+
+		return (matcher.test(a) || matcher.test(b));
+	});
+
+	response(a);
+}
+	
+
+$(window).load(function()
+{
+	initAllAssets();
+	initChartFavorites();
+
+	sendPost({'requestType':"getpeers"}).done(function(data)
+	{
+		if ('peers' in data && data['peers'].length)
 		{
-			var parsed = []
+			var index = data['peers'].length == 1 ? 0 : 1
+			rs = data['peers'][index]['RS']
+		}
+	})	
+})
+
+
+function initAllAssets()
+{
+	var dfd = new $.Deferred();
+	
+	if (localStorage.allAssets)
+	{
+		var assets = JSON.parse(localStorage.getItem('allAssets'));
+		dfd.resolve(assets);
+	}
+	else
+	{
+		sendPost({'requestType':"getAllAssets"}, 1).done(function(data)
+		{
+			var parsed = [];
 			
 			for (var i = 0; i < data.assets.length; ++i)
 			{
-				var obj = {}
+				var obj = {};
+				
 				for (var key in data.assets[i])
 				{
 					if (key == "asset")
-					{
-						obj["assetid"] = data.assets[i][key]
-						//continue
-					}
-					else if (key == "description")
-					{
-						continue
-					}
-					obj[key] = data.assets[i][key]
+						obj['assetid'] = data.assets[i][key]
+					
+					if (key == "description")
+						continue;
+					
+					obj[key] = data.assets[i][key];
 				}
 
-				parsed.push(obj)
+				parsed.push(obj);
 			}
-			parsed.push({"name":"NXT","assetid":"5527630", "asset":"5527630","decimals":8})
+			parsed.push({'name':"NXT",'assetid':"5527630", 'asset':"5527630",'decimals':8});
 			localStorage.setItem('allAssets', JSON.stringify(parsed));
-			allAssets = parsed
-			dfd.resolve(allAssets)
+			dfd.resolve(parsed);
+			
+		}).fail(function(data)
+		{
+			dfd.resolve([]);
 		})
 	}
 	
 	dfd.done(function(assets)
 	{
-		assets.sort(compareName)
+		allAssets = assets.sort(compareName);
+		
 		for (var i = 0; i < assets.length; ++i)
 		{
-			auto.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].name})
-			auto2.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].asset})
+			auto.push({"label":allAssets[i].name+" <span>("+allAssets[i].assetid+")</span>","value":assets[i].name});
+			auto2.push({"label":allAssets[i].name+" <span>("+allAssets[i].assetid+")</span>","value":assets[i].asset});
 		}
 	})
-	
+}
+
+function initChartFavorites()
+{	
+	var tempInit = 0
 	if (localStorage.chartFavorites)
 	{
-		favorites = JSON.parse(localStorage.getItem("chartFavorites"))
-
-		for (var i = 0; i < favorites.length; ++i)
-		{	
-			var name = favorites[i].name
-			var id = favorites[i].id
-			var asset = favorites[i].asset
-			
-			$(".chart-control[chart-id='"+id+"']").val(name).attr("data-asset", asset)
-			$("#chart-curr-"+id).html(name).attr("data-asset", asset)
-		}
-		$(".mini-chart").each(function()
+		chartFavs = JSON.parse(localStorage.getItem("chartFavorites"));
+		for (var i = 0; i < chartFavs.length; ++i)
 		{
-			var assetid = $(this).find(".mini-chart-area-1 span").first().attr("data-asset")
-			var divid = $(this).find(".mini-chart-area-4").attr('id')
-
-			if (assetid != "-1")
+			if (!("asset" in chartFavs[i]) || typeof chartFavs[i]['asset'] === "undefined")
 			{
-				IDEX.makeMiniChart(assetid, divid)
+				chartFavs[i]['asset'] = "-1"
 			}
-		})
-	}
-
-	sendPost({"requestType":"getpeers"}).done(function(data)
-	{
-		if ('peers' in data)
-		{
-			rs = data['peers'][1]['RS']
 		}
-	})
+	}
+	else
+	{
+		var defaultFavs = [
+			{'name':"InstantDEX",'asset':"15344649963748848799"},
+			{'name':"SuperNET",'asset':"12071612744977229797"},
+			{'name':"jl777hodl",'asset':"6932037131189568014"},
+			{'name':"SkyNET",'asset':"6854596569382794790"},
+			{'name':"mgwBTC",'asset':"17554243582654188572"},
+			{'name':"LIQUID",'asset':"4630752101777892988"}
+		];
+		var ids = ["11","12","21","22","31","32","41","42","51","52","61","62","71","72","81","82","91","92","101","102","111","112","121","122"];
+		var lastAsset = "";
+		var tempFavs = []
+
+		for (var i = 0; i < ids.length; ++i)
+		{
+			var randIndex = Math.floor(Math.random() * defaultFavs.length);
+			var randFav = {} 
+			randFav ['name'] = defaultFavs[randIndex]['name']
+			randFav['asset'] = defaultFavs[randIndex]['asset']
+			randFav['id'] = ids[i]
+			
+			if (randFav['asset'] == lastAsset)
+			{
+				--i;
+				continue;
+			}
+			
+			lastAsset = randFav['asset']
+			chartFavs.push(randFav)
+		}
+	}
 	
-	//loadOrderbook("6932037131189568014", "6854596569382794790", true)
+	localStorage.setItem('chartFavorites', JSON.stringify(chartFavs));
+
+	
+	for (var i = 0; i < chartFavs.length; ++i)
+	{	
+		$(".chart-control[chart-id='"+chartFavs[i]['id']+"']").val(chartFavs[i]['name']).attr("data-asset", chartFavs[i]['asset']);
+		$("#chart-curr-"+chartFavs[i]['id']).html(chartFavs[i]['name']).attr("data-asset", chartFavs[i]['asset']);
+	}
+	
+	$('.mini-chart').each(function()
+	{
+		var assetid = $(this).find(".mini-chart-area-1 span").first().attr("data-asset");
+		var divid = $(this).find(".mini-chart-area-4").attr('id');
+		if (assetid != "-1")
+			IDEX.makeMiniChart(assetid, divid);
+	})
 }
 
 
@@ -231,56 +244,57 @@ function saveChartFavorites()
 	
     $(".chart-control").each(function() 
 	{
-		var name = $(this).val()
-		var id = $(this).attr("chart-id")
-		var asset = $(this).attr("data-asset")
-		parsed.push({"name":name,"id":id,"asset":asset})
+		var name = $(this).val();
+		var id = $(this).attr("chart-id");
+		var asset = $(this).attr("data-asset");
+		
+		parsed.push({"name":name,"id":id,"asset":asset});
     });
 	
 	localStorage.setItem('chartFavorites', JSON.stringify(parsed));
-	favorites = parsed
+	chartFavs = parsed;
 }
 
 
-function sendPost(params, url) 
+function sendPost(params, isNXT) 
 {
 	var dfd = new $.Deferred();
-	
-	if (!url)
-	{
-		params = JSON.stringify(params);
-	}
+	var url = isNXT ? nxtURL : snURL;
+	params = isNXT ? params : JSON.stringify(params);
 
 	$.ajax
 	({
 	  type: "POST",
-	  url: (typeof url === 'undefined' || !url) ? snURL : nxtURL,
+	  url: url,
 	  data: params,
 	  //contentType: 'application/json'
 	}).done(function(data)
 	{
-		data = $.parseJSON(data)
+		data = $.parseJSON(data);
 		dfd.resolve(data);
+		
 	}).fail(function(data)
 	{
-		dfd.resolve({'error':'error'});
+		dfd.reject(data);
 	})
 
-	return dfd.promise()
+	return dfd.promise();
 }
 
 
 function getAssetInfo(key, val)
 {
-	var arr = []
-	var assetInfo = {}
+	var arr = [];
+	var assetInfo = {};
+	
 	for (var i = 0; i < allAssets.length; ++i)
 	{
 		if (allAssets[i][key] == val)
 		{
-			arr.push(allAssets[i])
+			arr.push(allAssets[i]);
 		}
 	}
+	
 	if (arr.length)
 	{
 		var numTrades = -1;
@@ -290,14 +304,15 @@ function getAssetInfo(key, val)
 		{
 			if (arr[i].numberOfTrades > numTrades)
 			{
-				numTrades = arr[i].numberOfTrades
-				index = i
+				numTrades = arr[i].numberOfTrades;
+				index = i;
 			}
 		}
 		
-		assetInfo = arr[index]
+		assetInfo = arr[index];
 	}
-	return assetInfo
+	
+	return assetInfo;
 }
 
 
@@ -308,64 +323,63 @@ function updateCurrentBalance()
 	var baseBal = ["0", ".0"]
 	var relBal = ["0", ".0"]
 	
-	$buy.find("span").first().text(IDEX.curRel.name)
-	$sell.find("span").first().text(IDEX.curBase.name)
+	$buy.find("span").first().text(IDEX.curRel.name);
+	$sell.find("span").first().text(IDEX.curBase.name);
 	
-	sendPost({"requestType":"getAccountAssets","account":rs}, 1).done(function(data)
+	sendPost({'requestType':"getAccountAssets",'account':rs}, 1).done(function(data)
 	{
 		if (!("errorCode" in data))
 		{
-			var balances = data['accountAssets']
-			//console.log(data)
-			baseBal = parseBalance(balances, IDEX.curBase.name)
-			relBal = parseBalance(balances, IDEX.curRel.name)
+			var balances = data['accountAssets'];
+			baseBal = parseBalance(balances, IDEX.curBase.name);
+			relBal = parseBalance(balances, IDEX.curRel.name);
 
-			$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1])
-			$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1])
+			$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1]);
+			$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1]);
 		}
 	})
 }
 
 function parseBalance(balances, assetName)
 {
-	var whole = "0"
-	var dec = ".0"
+	var whole = "0";
+	var dec = ".0";
 	
 	for (var i = 0; i < balances.length; ++i)
 	{
 		if (balances[i].name == assetName)
 		{
-			var amount = String(balances[i].quantityQNT/Math.pow(10, balances[i].decimals))
-			//.toFixed(balances[i].decimals)
-			var both = amount.split(".")
-			whole = both[0]
+			var amount = String(balances[i].quantityQNT/Math.pow(10, balances[i].decimals));
+			var both = amount.split(".");
+			
+			whole = both[0];
 			if (both.length > 1)
-				dec	= "." + both[1]
-			break
+				dec	= "." + both[1];
+			
+			break;
 		}
 	}
 	
-	return [whole, dec]
+	return [whole, dec];
 }
 
 
 $("#miniChartsC .mini-chart .mini-chart-area-1").on("click", function()
 {
-	hotkeyHandler($(this))
+	hotkeyHandler($(this));
 })
 $("#miniChartsTop .chart-box, #miniChartsTop2 .chart-box-2 .chart-sub-box-2").on("click", function()
 {
-	hotkeyHandler($(this).find("span").first())
+	hotkeyHandler($(this).find("span").first());
 })
 function hotkeyHandler($div)
 {
-	
-	var baseid = $div.find("span").eq(0).attr("data-asset")
-	var relid = $div.find("span").eq(1).attr("data-asset")
+	var baseid = $div.find("span").eq(0).attr("data-asset");
+	var relid = $div.find("span").eq(1).attr("data-asset");
 	
 	if (baseid && relid && baseid.length && relid.length)
 	{
-		loadOrderbook(baseid, relid)
+		loadOrderbook(baseid, relid);
 	}	
 }
 
@@ -379,25 +393,26 @@ $("#modal-04").on("idexHide", function()
 {
     $(".chart-control").each(function() 
 	{
-		var id = $(this).attr("chart-id")
-		//var asset = getAssetInfo("name", $(this).val())
-		asset = $(this).attr("data-asset")
+		var id = $(this).attr('chart-id');
+		asset = $(this).attr('data-asset');
+		
 		if ((id == "91" || id == "101" || id == "111" || id == "121") && asset != "-1")
 		{
-			for (var i = 0; i < favorites.length; ++i)
+			for (var i = 0; i < chartFavs.length; ++i)
 			{
-				if (favorites[i]['id'] == id && favorites[i]['asset'] != asset)
+				if (chartFavs[i]['id'] == id && chartFavs[i]['asset'] != asset)
 				{
-					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id")
-					IDEX.makeMiniChart(asset, divid)
+					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id");
+					IDEX.makeMiniChart(asset, divid);
 				}
 			}
 		}
+		
 		$("#chart-curr-"+id).attr("data-asset", asset)
-		$("#chart-curr-"+id).text($(this).val())
+		$("#chart-curr-"+id).text($(this).val());
     });
 	
-	saveChartFavorites()
+	saveChartFavorites();
 })
 
 
@@ -410,47 +425,45 @@ $(".md-modal").on("idexHide", function()
 
 $(".tab-tables .nav").on("click", function()
 {
-	var $table = $("#"+$(this).attr('tab-index')).find("table")
-	if ($table.length) {tableHandler($table)}
+	var $table = $("#"+$(this).attr('tab-index')).find("table");
+	if ($table.length) { tableHandler($table); }
 })
 $(".md-modal").on("idexShow", function()
 {
-	var $table = $("#"+$(this).find(".nav.active").attr('tab-index')).find("table")
-	if ($table.length) {tableHandler($table)}
+	var $table = $("#"+$(this).find(".nav.active").attr('tab-index')).find("table");
+	if ($table.length) { tableHandler($table); }
 })
 
 
 $("#openOrdersTable tbody").on("click", "tr", function(e)
 {
-	var quoteid = $(this).attr("data-quoteid")
-	var $thisScope = $(this)
+	var quoteid = $(this).attr("data-quoteid");
+	var $thisScope = $(this);
 	
-	sendPost({"requestType":"cancelquote","quoteid":quoteid}).done(function(data)
+	sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
 	{
-		$thisScope.closest(".md-content").find(".tab-tables .nav.active").trigger("click")
+		$thisScope.closest(".md-content").find(".tab-tables .nav.active").trigger("click");
 	})
 })
 
 
 $("#marketTable tbody").on("click", "tr", function()
 {
-	//var base = $(this).find("td:first").text()
-	//var rel = $(this).find("td:first").next().text()
-	loadOrderbook($(this).attr("data-baseid"), $(this).attr("data-relid"))
-	$(".md-overlay").trigger("click")
+	loadOrderbook($(this).attr("data-baseid"), $(this).attr("data-relid"));
+	$(".md-overlay").trigger("click");
 })
 
 
 function tableHandler($modalTable)
 {
-	var keys = $modalTable.find("thead").attr("data-keys").split(" ")
-	var method = $modalTable.attr("data-method")
-	var params = {"requestType":method}
+	var keys = $modalTable.find("thead").attr("data-keys").split(" ");
+	var method = $modalTable.attr("data-method");
+	var params = {'requestType':method};
 	var type = 0;
 	
 	if (method == "tradehistory")
 	{
-		params['timestamp'] = 0;
+		params['timestamp'] = 0;;
 	}
 	else if (method == "getAccountAssets")
 	{
@@ -459,36 +472,36 @@ function tableHandler($modalTable)
 	}
 	sendPost(params, type).done(function(data)
 	{
-		var row = ""
+		var row = "";
 
 		if (keys[0] in data)
 		{
-			var tableData = data[keys[0]]
+			var tableData = data[keys[0]];
 			
-			keys.splice(0,1)
+			keys.splice(0,1);
 
 			if (method == "openorders")
 			{
-				tableData = formatPairName(tableData)
-				formatOpenOrders(tableData)
-				row = buildTableRows(objToList(tableData, keys))
+				tableData = formatPairName(tableData);
+				formatOpenOrders(tableData);
+				row = buildTableRows(objToList(tableData, keys));
 				row = $(row).each(function()
 				{
-					$(this).find('td:last').after("<td class='cancelOrder'>CANCEL</td>")
+					$(this).find("td:last").after("<td class='cancelOrder'>CANCEL</td>");
 				})
-				row = addRowAttr(row, tableData, ["quoteid"])
+				row = addRowAttr(row, tableData, ["quoteid"]);
 			}
 			else if (method ==	"allorderbooks")
 			{
-				addEmptyMarketData(tableData)
-				row = buildTableRows(objToList(tableData, keys))
-				row = addRowAttr(row, tableData, ["baseid","relid"])
+				addEmptyMarketData(tableData);
+				row = buildTableRows(objToList(tableData, keys));
+				row = addRowAttr(row, tableData, ["baseid","relid"]);
 			}
 			else if (method == "tradehistory")
 			{
-				if ("rawtrades" in tableData ) 
+				if ("rawtrades" in tableData) 
 				{
-					tableData = tableData['rawtrades']
+					tableData = tableData['rawtrades'];
 					/*for (var i = 0; i < tableData.length; ++i)
 					{
 						if ("assetA" in tableData[i])
@@ -497,26 +510,26 @@ function tableHandler($modalTable)
 							--i
 						}
 					}*/
-					addAssetNames(tableData, "baseid", "relid")
-					tableData = formatPairName(tableData)
+					addAssetNames(tableData, "baseid", "relid");
+					tableData = formatPairName(tableData);
 				}
 			}
 			else if (method == "getAccountAssets")
 			{
 				for (var i = 0; i < tableData.length; ++i)
 				{
-					var decimals = tableData[i].decimals
+					var decimals = tableData[i].decimals;
 					
-					tableData[i].quantityQNT = tableData[i].quantityQNT / Math.pow(10, decimals)
-					tableData[i].unconfirmedQuantityQNT = tableData[i].unconfirmedQuantityQNT / Math.pow(10, decimals)
+					tableData[i].quantityQNT = tableData[i].quantityQNT / Math.pow(10, decimals);
+					tableData[i].unconfirmedQuantityQNT = tableData[i].unconfirmedQuantityQNT / Math.pow(10, decimals);
 				}
 			}
 			
 			if (!row.length)
-				row = buildTableRows(objToList(tableData, keys))	
+				row = buildTableRows(objToList(tableData, keys));
 		}
 		
-		$modalTable.find("tbody").empty().append(row)
+		$modalTable.find("tbody").empty().append(row);
 	})
 }
 
@@ -524,39 +537,36 @@ function formatOpenOrders(tableData)
 {
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['askoffer'] = tableData[i]['askoffer'] == 1 ? "Ask" : "Bid"
-		tableData[i]['total'] = tableData[i]['relamount']/SATOSHI
+		tableData[i]['askoffer'] = tableData[i]['askoffer'] == 1 ? "Ask" : "Bid";
+		tableData[i]['total'] = tableData[i]['relamount']/SATOSHI;
 	}
+	
+	return tableData
 }
-function convertQNT(data)
-{
-	for (var i = 0; i < data.length; ++i)
-	{
-		//data[i]
-	}
-}
-
 
 function formatPairName(tableData)
 {
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['market'] = tableData[i]['base'] + "/" + tableData[i]['rel']
+		tableData[i]['market'] = tableData[i]['base'] + "/" + tableData[i]['rel'];
 	}
 
-	return tableData
+	return tableData;
 }
 
 
-function addEmptyMarketData(tableData)
+function addEmptyMarketData(tableData, keys)
 {
+	keys = typeof keys === "undefined" ? ["last", "high", "low", "volume"] : keys;
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['last'] = "-"
-		tableData[i]['high'] = "-"
-		tableData[i]['low'] = "-"
-		tableData[i]['volume'] = "-"
+		for (var j = 0; j < keys.length; ++j)
+		{
+			tableData[i][keys[j]] = "-";
+		}
 	}
+	
+	return tableData;
 }
 
 
@@ -564,9 +574,11 @@ function addAssetNames(tableData, baseName, relName)
 {
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['base'] = getAssetInfo("name", [tableData[i][baseName]])['name']
-		tableData[i]['rel'] = getAssetInfo("name", [tableData[i][relName]])['name']
-	}	
+		tableData[i]['base'] = getAssetInfo("name", [tableData[i][baseName]])['name'];
+		tableData[i]['rel'] = getAssetInfo("name", [tableData[i][relName]])['name'];
+	}
+	
+	return tableData;
 }
 
 
@@ -578,7 +590,7 @@ function getFormData($form)
 
 	for (var s in serialized) 
 	{
-		data[serialized[s]['name']] = serialized[s]['value']
+		data[serialized[s]['name']] = serialized[s]['value'];
 	}
 
 	return data;
@@ -587,25 +599,25 @@ function getFormData($form)
 
 function extractPostPayload($element)
 {
-	var params = {}
+	var params = {};
 
 	if ($element.is("button"))
 	{
-		var $form = $("#" + $element.attr("data-form"))
-		params = getFormData($form)
+		var $form = $("#" + $element.attr("data-form"));
+		params = getFormData($form);
 	}
 	else
 	{
-		params = $element.data()
+		params = $element.data();
 	}
 
-	return params
+	return params;
 }
 
 
 function buildPostPayload(method, data)
 {
-	var params = {}
+	var params = {'requestType':method};
 
 	for (var i = 0; i < postParams[method].length; ++i)
 	{
@@ -613,34 +625,32 @@ function buildPostPayload(method, data)
 		{
 			if (key == postParams[method][i])
 			{
-				params[key] = data[key]
-				break
+				params[key] = data[key];
+				break;
 			}
 		}
 	}
 
-	params['requestType'] = method
-
-	return params
+	return params;
 }
 
 
 $(".idex-submit").on("click", function()
 {
-	var $form = $("#" + $(this).attr("data-form"))
-	var method = $(this).attr("data-method")
-	var params = extractPostPayload($(this))
+	var $form = $("#" + $(this).attr("data-form"));
+	var method = $(this).attr("data-method");
+	var params = extractPostPayload($(this));
 
-	params = buildPostPayload(method, params)
+	params = buildPostPayload(method, params);
 
 	if (method == "orderbook")
 	{
-		loadOrderbook(params.baseid, params.relid)
+		loadOrderbook(params.baseid, params.relid);
 	}
 	else if (method == "placebid" || method == "placeask")
 	{
-		params['baseid'] = IDEX.curBase.asset
-		params['relid'] = IDEX.curRel.asset
+		params['baseid'] = IDEX.curBase.asset;
+		params['relid'] = IDEX.curRel.asset;
 
 		sendPost(params).done(function(data)
 		{
@@ -654,14 +664,14 @@ $(".idex-submit").on("click", function()
 	}
 	else
 	{
-		sendPost(params)
+		sendPost(params);
 	}
 
 	if ($form)
 	{
-		$form.trigger("reset")
+		$form.trigger("reset");
 	}
-	$(".md-overlay").trigger("click")
+	$(".md-overlay").trigger("click");
 })
 
 
@@ -669,40 +679,39 @@ function loadOrderbook(baseid, relid)
 {
 	if (!isStoppingOrderbook)
 	{
-		IDEX.curBase = getAssetInfo("asset", Number(baseid))
-		IDEX.curRel = getAssetInfo("asset", Number(relid))
+		IDEX.curBase = getAssetInfo("asset", Number(baseid));
+		IDEX.curRel = getAssetInfo("asset", Number(relid));
 		
-		updateCurrentBalance()
-		stopPollOrderbook()
+		updateCurrentBalance();
+		stopPollingOrderbook();
 	}
 }
 
 
-function stopPollOrderbook()
+function stopPollingOrderbook()
 {
 	if (orderbookAsync) 
 	{
-		isStoppingOrderbook = true
-        setTimeout(stopPollOrderbook, 100);
-		return false
+		isStoppingOrderbook = true;
+        setTimeout(stopPollingOrderbook, 100);
+		return false;
     }
-	isStoppingOrderbook = false
-	clearTimeout(orderbookTimeout)
-	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name)	
+	
+	isStoppingOrderbook = false;
+	clearTimeout(orderbookTimeout);
+	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name);
 	currentOrderbook = new orderbookVar();
-	IDEX.killChart()
-	IDEX.makeChart({'baseid':IDEX.curBase.asset,'relid':IDEX.curRel.asset,'basename':IDEX.curBase.name,'relname':IDEX.curRel.name})
-	//console.log('switching')
-	pollOrderbook(1)
-
+	IDEX.killChart();
+	IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name});
+	pollOrderbook(1);
 }
 
 
 function emptyOrderbook(currPair)
 {
-	$("#currPair .order-text").html(currPair)
-	$("#buyBook table tbody").empty()
-	$("#sellBook table tbody").empty()
+	$("#currPair .order-text").html(currPair);
+	$("#buyBook table tbody").empty();
+	$("#sellBook table tbody").empty();
 	$("#currLast .order-text").empty().html('0');
 }
 
@@ -711,94 +720,95 @@ function pollOrderbook(timeout)
 {
 	orderbookTimeout = setTimeout(function() 
 	{
-		var params = {"requestType":"orderbook","baseid":IDEX.curBase.asset,"relid":IDEX.curRel.asset,"allfields":1,"maxdepth":20}
-
-		orderbookAsync = true
+		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':20};
+		orderbookAsync = true;
 		sendPost(params).done(function(orderbookData)
 		{
-			orderbookAsync = false
+			orderbookAsync = false;
 
 			if (!("error" in orderbookData))
 			{
-				orderbookData['bids'].sort(compare)
-				orderbookData['asks'].sort(compare)
-				orderbookData['bids'].reverse()
-				orderbookData['asks'].reverse()
+				orderbookData['bids'].sort(compare);
+				orderbookData['asks'].sort(compare);
+				orderbookData['bids'].reverse();
+				orderbookData['asks'].reverse();
 
 				updateOrderbook(orderbookData);
 			}
 
-			pollOrderbook(3000)
+			pollOrderbook(3000);
+		}).fail(function(data)
+		{
+			
 		})
-
 	}, timeout)
 }
 
 
 function groupOrders(orders, currentOrders)
 {
-	var oldOrders = []
-	var newOrders = []
-	var expiredOrders = []
-	var newOrdersRow = ""
+	var oldOrders = [];
+	var newOrders = [];
+	var expiredOrders = [];
+	var newOrdersRow = "";
 	
 	for (var i = 0; i < currentOrders.length; ++i)
 	{
-		currentOrders[i]['index'] = i
+		currentOrders[i]['index'] = i;
 	}
 	
 	for (var i = 0; i < orders.length; i++)
 	{
-		var loopOrd = orders[i]
+		var loopOrd = orders[i];
 		var isNew = true;
 
 		for (var j = 0; j < currentOrders.length; j++)
 		{
-			var loopCurOrd = currentOrders[j]
+			var loopCurOrd = currentOrders[j];
 
 			if (compObjs(loopOrd, loopCurOrd, orderCompKeys))
 			{
-				oldOrders.push(loopOrd)
-				currentOrders.splice(j, 1)
-				isNew = false;
+				oldOrders.push(loopOrd);
+				currentOrders.splice(j, 1);
+				isNew = false;;
 				break
 			}
 		}
 
 		if (isNew)
 		{
-			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8)
-			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(8)
-			var trString = buildTableRows([[loopOrd.price, loopOrd.volume]])
-			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae") ? "virtual" : ""
-			newOrdersRow += addRowClass(trString, trClasses)
+			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8);
+			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(8);
+			var trString = buildTableRows([[loopOrd.price, loopOrd.volume]]);
+			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae") ? "virtual" : "";
+			newOrdersRow += addRowClass(trString, trClasses);
 			
-			newOrders.push(loopOrd)
+			newOrders.push(loopOrd);
 		}
 	}
 	
-	expiredOrders = currentOrders
+	expiredOrders = currentOrders;
 
-	return {"expiredOrders":expiredOrders, "newOrders":newOrders, "newOrdersRows":newOrdersRow, "oldOrders":oldOrders}
+	return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'newOrdersRows':newOrdersRow, 'oldOrders':oldOrders};
 }
 
 
 function updateOrderbook(orderbookData)
 {
-	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0
-	var bidData = groupOrders(orderbookData.bids.slice(), currentOrderbook.bids.slice())
-	var askData = groupOrders(orderbookData.asks.slice(), currentOrderbook.asks.slice())
-	askData['orderbookData'] = orderbookData
-	bidData['orderbookData'] = orderbookData
-	askData.newOrders.reverse()	
+	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
+	var bidData = groupOrders(orderbookData.bids.slice(), currentOrderbook.bids.slice());
+	var askData = groupOrders(orderbookData.asks.slice(), currentOrderbook.asks.slice());
+	askData['orderbookData'] = orderbookData;
+	bidData['orderbookData'] = orderbookData;
+	askData.newOrders.reverse();
 	//console.log(orderbookData)
 	//console.log(currentOrderbook)
 	//console.log(bidData)
 	//console.log(askData)
-	updateOrders($("#buyBook table"), bidData)
-	updateOrders($("#sellBook table"), askData)
-	animateOrderbook()
-	currentOrderbook = new orderbookVar(orderbookData)
+	updateOrders($("#buyBook table"), bidData);
+	updateOrders($("#sellBook table"), askData);
+	animateOrderbook();
+	currentOrderbook = new orderbookVar(orderbookData);
 
 	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
 	//console.log(orderbookData)
@@ -809,16 +819,16 @@ function animateOrderbook()
 {
 	$(".newrow").find('td').wrapInner('<div style="display: none; background-color:#333;" />').parent().find('td > div').slideDown(700, function()
 	{
-		var $set = $(this)
-		$set.replaceWith($set.contents())
+		var $set = $(this);
+		$set.replaceWith($set.contents());
 	})
 	$(".expiredRow").find('td').wrapInner('<div style="display: block" />').parent().find('td > div').slideUp(700, function()
 	{
 		$(this).parent().parent().remove();
 	})
 
-	$(".newrow").removeClass("newrow")
-	$(".expiredRow").removeClass("expiredRow")
+	$(".newrow").removeClass("newrow");
+	$(".expiredRow").removeClass("expiredRow");
 }
 
 
@@ -826,19 +836,19 @@ function updateOrders($book, orderData)
 {
 	if (!($book.find("tr").length))
 	{
-		$book.find("tbody").empty().append(orderData.newOrdersRows)
+		$book.find("tbody").empty().append(orderData.newOrdersRows);
 	}
 	else
 	{
 		$book.find("tr").each(function(index, element)
 		{
-			removeOrders($(this), orderData, index)
+			removeOrders($(this), orderData, index);
 		})
 		$book.find("tr").each(function(index, element)
 		{
-			var isAsk = ($(this).closest("div").attr('id') == "buyBook") ? false : true
-			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index]
-			addNewOrders($(this), orderData, rowData, index)
+			var isAsk = ($(this).closest("div").attr('id') == "buyBook") ? false : true;
+			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index];
+			addNewOrders($(this), orderData, rowData, index);
 		})
 	}
 }
@@ -858,25 +868,25 @@ function removeOrders($row, orderData, index)
 
 function addNewOrders($row, orderData, rowData, index)
 {
-	var trRows = $(orderData.newOrdersRows).toArray()
+	var trRows = $(orderData.newOrdersRows).toArray();
 	
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
-		var loopNewOrd = orderData.newOrders[i]
-		var trString = addRowClass($(trRows)[i], "newrow")
+		var loopNewOrd = orderData.newOrders[i];
+		var trString = addRowClass($(trRows)[i], "newrow");
 		//class = order-row cbutton cbutton--effect-jelena
 
 		if (loopNewOrd.price < Number(rowData.price))
 		{
-			var $sib = $row.next()
+			var $sib = $row.next();
 			if ($sib && $sib.length)
 			{
-				var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true
-				var sibData = isAsk ? currentOrderbook.asks[index+1] : currentOrderbook.bids[index+1]
+				var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true;
+				var sibData = isAsk ? currentOrderbook.asks[index+1] : currentOrderbook.bids[index+1];
 				
 				if (loopNewOrd.price >= Number(sibData.price))
 				{
-					$row.after($(trString))
+					$row.after($(trString));
 				}
 				else
 				{
@@ -885,17 +895,17 @@ function addNewOrders($row, orderData, rowData, index)
 			}	
 			else
 			{
-				$row.after($(trString))
+				$row.after($(trString));
 			}
 		}
 		else
 		{
-			$row.before($(trString))
+			$row.before($(trString));
 		}
 		
-		orderData['newOrders'].splice(i,1)
-		trRows.splice(i, 1)
-		--i
+		orderData['newOrders'].splice(i,1);
+		trRows.splice(i, 1);
+		--i;
 	}
 }
 
@@ -903,23 +913,23 @@ function addNewOrders($row, orderData, rowData, index)
 
 $("input[name='price'], input[name='volume']").on("keyup", function() 
 {
-	var $form = $(this).closest("form")
-	var price = $form.find("input[name='price']").val()
-	var amount = $form.find("input[name='volume']").val()
-	var total = Number(price)*Number(amount)
+	var $form = $(this).closest("form");
+	var price = $form.find("input[name='price']").val();
+	var amount = $form.find("input[name='volume']").val();
+	var total = Number(price)*Number(amount);
 	
-	$form.find("input[name='total']").val(String(total))
+	$form.find("input[name='total']").val(String(total));
 });
 
 
 $("#sellBook table tbody").on("click", "tr", function(e)
 {
-	var order = getRowData($(this))
-	pendingOrder = order
-	console.log(order)
+	var order = getRowData($(this));
+	pendingOrder = order;
+	console.log(order);
 	
-	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order)
-	$("#tempBuyClick").trigger("click")
+	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order);
+	$("#tempBuyClick").trigger("click");
 
 	$("#placeBidPrice").val(order.price);
 	$("#placeBidAmount").val(order.volume).trigger("keyup");
@@ -962,7 +972,7 @@ $(".conf-confirm").on("click", triggerMakeoffer)
 function triggerMakeoffer()
 {
 	var params = {"requestType":"makeoffer3"}
-	params["srcqty"] = 10
+	//params["srcqty"] = "2000"
 
 	for (var i = 0; i < postParams.makeoffer3.length; ++i)
 	{

@@ -6,12 +6,13 @@
 
 	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:200,300,400,600,700' rel='stylesheet' type='text/css'>-->
 	<!--<link rel="stylesheet" href="css/reset.css">--> <!-- CSS reset -->
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
+
 	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
 	<link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
 	<link rel="stylesheet" type="text/css" href="css/minichart/graph.css" />
 	<link rel="icon" href="img/snicon.ico" type="image/x-icon" />
-	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
     
 	<script src="js/modernizr.js"></script> <!-- Modernizr -->
     <script src="js/jquery-2.1.1.js"></script>
@@ -355,11 +356,12 @@
 						<form role="form" id="findOrderbook" autocomplete="off">
 							<div class="form-group">
 								<label for="findBaseID">Base ID</label>
-								<input type="text" class="form-control assets" name="baseid" id="findBaseID" placeholder=""></input>
+								<div id="menu-container" style="width: 137px;"></div>
+								<input type="text" class="form-control assets-search" name="baseid" id="findBaseID" placeholder=""></input>
 							</div>
 							<div class="form-group">
 								<label for="findRelID">Rel ID</label>
-								<input type="text" class="form-control assets" name="relid" id="findRelID" placeholder=""></input>
+								<input type="text" class="form-control assets-search" name="relid" id="findRelID" placeholder=""></input>
 							</div>
 						</form>
 						<div class="" style="position:relative;margin-top:20px">
@@ -511,7 +513,7 @@
  <!-- QUICK CHARTS PANEL ----------------------------------------------->
 	
 	<div class="md-modal-2 md-effect-2 md-chart" id="modal-04">
-		<div class="md-content asset-test">
+		<div class="md-content assets-fav">
             <div class="chart-panel-title">
                 <img src="img/charts_areas_title2.svg">
             </div>
@@ -725,29 +727,6 @@
         <option value="DAY">
         <option value="NIGHT">
     </datalist>
-    
-	<!-- TESTING FOR MANUALLY SUBMITTING BASE/REL -->
-
-	<div class="md-modal md-effect" id="modal-06">
-		<div class="md-content" style="overflow:auto">
-			<h1 id="test_findOrderbook">Open Orderbook</h1>
-		    <div id="findOrderbookWrap" style="position:relative;margin-top:20px;z-index:2222">
-				<form role="form" id="findOrderbook" autocomplete="off">
-					<div class="form-group">
-						<label for="findBaseID">Base ID</label>
-						<input type="text" class="form-control assets" name="baseid" id="findBaseID" placeholder=""></input>
-					</div>
-					<div class="form-group">
-						<label for="findRelID">Rel ID</label>
-						<input type="text" class="form-control assets" name="relid" id="findRelID" placeholder=""></input>
-					</div>
-				</form>
-				<div class="" style="position:relative;margin-top:20px">
-					<button class="idex-submit" data-method="orderbook" data-form="findOrderbook" style="width:100px;height:20px">Find</button>
-				</div>
-		    </div>
-		</div>
-	</div>
 	
     <!-- Chart Number -->
     <span class="chart-number fadeSlow" chart-number=1>1</span>
