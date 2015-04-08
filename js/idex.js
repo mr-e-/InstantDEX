@@ -65,7 +65,7 @@ $('.assets-fav input').autocomplete({
 	delay: 0,
 	html: true,
 	create: function(e, ui) { },
-	open: function(e, ui) { },
+	open: function(e, ui) { $(this).autocomplete('widget').css({'width':"153px"})},
 	source: function(request,response) { autocompleteMatcher(request, response, auto) },
 	change: function(e, ui) { autocompleteSelection($(this), e, ui) },
 	select: function(e, ui) { autocompleteSelection($(this), e, ui) }
@@ -234,9 +234,15 @@ function initChartFavorites()
 	$('.mini-chart').each(function()
 	{
 		var assetid = $(this).find(".mini-chart-area-1 span").first().attr("data-asset");
+		var baseNXT = false
+		if (assetid == "5527630")
+		{
+			assetid = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset")
+			baseNXT = true
+		}
 		var divid = $(this).find(".mini-chart-area-4").attr('id');
 		if (assetid != "-1")
-			IDEX.makeMiniChart(assetid, divid);
+			IDEX.makeMiniChart(assetid, divid, baseNXT);
 	})
 }
 
@@ -398,7 +404,7 @@ $("#modal-04").on("idexHide", function()
     $(".chart-control").each(function() 
 	{
 		var id = $(this).attr('chart-id');
-		asset = $(this).attr('data-asset');
+		var asset = $(this).attr('data-asset');
 		
 		if ((id == "91" || id == "101" || id == "111" || id == "121") && asset != "-1")
 		{
@@ -407,7 +413,14 @@ $("#modal-04").on("idexHide", function()
 				if (chartFavs[i]['id'] == id && chartFavs[i]['asset'] != asset)
 				{
 					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id");
-					IDEX.makeMiniChart(asset, divid);
+					var miniAsset = asset;
+					var baseNXT = false;
+					if (miniAsset == "5527630") 
+					{
+						miniAsset = $(this).next().attr('data-asset');
+						baseNXT = true;
+					}
+					IDEX.makeMiniChart(miniAsset, divid, baseNXT);
 				}
 			}
 		}

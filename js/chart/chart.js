@@ -75,7 +75,6 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < dataLength; i++) 
 		{
 			var pointDate = data[i][0]*1000;
-			//data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // spike
 			if (baseNXT)
 			{
 				var close = data[i][keys[3]]
@@ -86,6 +85,10 @@ var IDEX = (function(IDEX, $, undefined)
 					else
 						data[i][keys[j]] = Number((1 / data[i][keys[j]]).toFixed(6))
 				}
+			}
+			else
+			{
+				data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // spike
 			}
 			ohlc.push(new testOHLC([pointDate,data[i][keys[0]],data[i][keys[1]],data[i][keys[2]],data[i][keys[3]]]))
 			volume.push({x:pointDate, y:data[i][keys[4]]});
@@ -271,7 +274,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})();
 
 
-	IDEX.makeMiniChart = function(asset, divid)
+	IDEX.makeMiniChart = function(asset, divid, baseNXT)
 	{
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair="+asset+"_NXT&type=tick&len=10&num=300"
 			
@@ -283,9 +286,17 @@ var IDEX = (function(IDEX, $, undefined)
 			data = data.results.bars
 			for (var i = 0; i < data.length; ++i)
 			{
-				data[i] = ((i!= 0) && (data[i][6] > data[i-1][6]*5)) ? data[i-1] : data[i] // spike
-				price.push({x:data[i][0]*1000, y:data[i][6]});
-				
+				if (baseNXT)
+				{
+					data[i][6] = (1 / data[i][6]).toFixed(6)
+					data[i] = ((i!= 0) && (data[i][6] < data[i-1][6]/5)) ? data[i-1] : data[i] // spike
+				}
+				else
+				{
+					data[i] = ((i!= 0) && (data[i][6] > data[i-1][6]*5)) ? data[i-1] : data[i] // spike
+				}
+				price.push({x:data[i][0]*1000, y:Number(data[i][6])});
+
 				minPrice = (data[i][6] < minPrice || minPrice == -1) ? data[i][6] : minPrice
 				maxPrice = (data[i][6] > maxPrice || maxPrice == -1) ? data[i][6] : maxPrice
 			}
