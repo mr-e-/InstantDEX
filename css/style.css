@@ -1067,7 +1067,6 @@ tbody tr:nth-child(odd) {
 
 #sellBook > table > tbody > tr:hover, #buyBook > table > tbody > tr:hover{
 	cursor:pointer;
-	background-color:rgba(107, 233, 255, 0.16)
 }
 
 #sellBook > table > tbody > tr > td, #buyBook > table > tbody > tr > td {
@@ -1085,6 +1084,17 @@ tbody tr:nth-child(odd) {
 
 #sellBook > table > tbody > tr.virtual > td, #buyBook > table > tbody > tr.virtual >td {
 	color:#A4A4A4;
+}
+
+#sellBook > table > tbody > tr.own-order, #buyBook > table > tbody > tr.own-order {
+	background-color:rgba(107, 233, 255, 0.36);
+}
+
+.sell-hover {
+	color: rgb(0,210,0) !important;
+}
+.buy-hover{
+	color: rgb(255,0,0) !important
 }
 
 /*	color:#6E6E6E;*/

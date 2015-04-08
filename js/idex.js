@@ -805,6 +805,7 @@ function groupOrders(orders, currentOrders)
 			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(8);
 			var trString = buildTableRows([[loopOrd.price, loopOrd.volume]]);
 			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae") ? "virtual" : "";
+			trClasses += (loopOrd['offerNXT'] == rsid) ? " own-order" : ""
 			newOrdersRow += addRowClass(trString, trClasses);
 			
 			newOrders.push(loopOrd);
@@ -991,37 +992,75 @@ function confirmPopup($modal, order)
 	$modal.find(".conf-total").val((order.price*order.volume).toFixed(8))
 	$modal.find(".conf-type").text("makeoffer3")
 	$modal.find(".conf-base").text(order.base)
+	$modal.find(".conf-exchange").text(order.exchange)
 	$modal.find(".conf-rel").text(order.rel)
+	$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"))
+	$(".conf-jumbotron").find("p").empty()
 }
 
-$(".conf-confirm").on("click", triggerMakeoffer)
+$(".conf-confirm").on("click", function(){ triggerMakeoffer($(this)); })
 
-function triggerMakeoffer()
+function triggerMakeoffer($button)
 {
 	var params = {"requestType":"makeoffer3"}
-	//params["srcqty"] = "2000"
+	var price = $(".conf-price").val();
+	var amount = $(".conf-amount").val();
+	var isnum = !isNaN(amount)
 
-	for (var i = 0; i < postParams.makeoffer3.length; ++i)
+	if (isnum && amount <= pendingOrder['volume'])
 	{
-		params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]]
+		$button.attr('disabled', "disabled")
+		if (amount != pendingOrder['volume'])
+		{
+			var perc = ((Number(amount)/Number(pendingOrder['volume']))*100).toFixed(0)
+			console.log(perc)
+			params['perc'] = perc
+		}
+		for (var i = 0; i < postParams.makeoffer3.length; ++i)
+		{
+			params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]]
+		}
+		console.log(params)
+
+		sendPost(params).done(function(data)
+		{
+			console.log(data);
+			$button.removeAttr('disabled')
+			if ("error" in data && data.error.length)
+			{
+				console.log('error')
+				$(".conf-jumbotron").find("p").text(data['error'])
+			}
+			else
+			{
+				console.log("success")
+				$(".md-overlay").trigger("click")
+			}
+		})
+
 	}
-	//params['askoffer'] = params['askoffer'] == 1 ? 0 : 1
-	console.log(params)
-
-	sendPost(params).done(function(data)
+	else
 	{
-		console.log(data);
-		if ("error" in data && error.length)
-		{
-			console.log("error")
-		}
+		var text = ""
+		if (isnum)
+			text = "Quantity higher than order's quantity ("+String(pendingOrder['volume'])+")"
 		else
-		{
-			console.log("success")
-			$(".md-overlay").trigger("click")
-		}
-	})
+			text = "Not a number"
+		$(".conf-jumbotron").find("p").text(text)
+	}
 }
+
+$("input.conf-amount").on("keyup", function() 
+{
+	var $form = $(this).closest(".conf-form");
+	var amount = $(this).val();
+	var price = pendingOrder['price'];
+	var total = Number(price)*Number(amount);
+	$form.find(".conf-total").val(total.toFixed(8))
+
+});
+
+
 
 function buildTableRows(data)
 {
@@ -1157,6 +1196,25 @@ $(".order-button").on("mouseout", function()
 })
 
 
+$("#sellBook").on("mouseover", "tr", function()
+{
+	$(this).find("td").addClass("sell-hover")
+})
+
+$("#sellBook").on("mouseleave", "tr", function()
+{
+	$(this).find("td").removeClass("sell-hover")
+})
+
+$("#buyBook").on("mouseover", "tr", function()
+{
+	$(this).find("td").addClass("buy-hover")
+})
+
+$("#buyBook").on("mouseleave", "tr", function()
+{
+	$(this).find("td").removeClass("buy-hover")
+})
 
 
 	return IDEX;
