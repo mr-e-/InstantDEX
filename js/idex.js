@@ -18,7 +18,7 @@ var auto2 = [];
 var chartFavs = [];
 var isStoppingOrderbook = false;
 var orderbookAsync = false;
-var orderCompKeys = ['price','quoteid'];
+var orderCompKeys = ['quoteid'];
 var pendingOrder = {};
 var currentOrderbook = new orderbookVar();
 var postParams = {
@@ -906,9 +906,12 @@ function addNewOrders($row, orderData, rowData, index)
 			if ($sib && $sib.length)
 			{
 				var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true;
-				var sibData = isAsk ? currentOrderbook.asks[index+1] : currentOrderbook.bids[index+1];
-				
-				if (loopNewOrd.price >= Number(sibData.price))
+				var sibData = isAsk ? currentOrderbook.asks[index + 1] : currentOrderbook.bids[index+1];
+				//console.log($sib)
+				//console.log(index)
+				//console.log(currentOrderbook.asks)
+				//console.log(sibData)
+				if (!sibData || (loopNewOrd.price >= Number(sibData.price)))
 				{
 					$row.after($(trString));
 				}
