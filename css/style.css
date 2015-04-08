@@ -1062,6 +1062,7 @@ tbody tr:nth-child(odd) {
 
 #sellBook > table > tbody > tr, #buyBook > table > tbody > tr {
 	background-color:transparent;
+	font-family:Consolas, Monospace;
 }
 
 #sellBook > table > tbody > tr:hover, #buyBook > table > tbody > tr:hover{
@@ -1083,7 +1084,7 @@ tbody tr:nth-child(odd) {
 }
 
 #sellBook > table > tbody > tr.virtual > td, #buyBook > table > tbody > tr.virtual >td {
-	color:#D8D8D8;
+	color:#A4A4A4;
 }
 
 /*	color:#6E6E6E;*/

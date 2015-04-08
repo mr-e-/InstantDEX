@@ -846,7 +846,7 @@ function animateOrderbook()
 		var $set = $(this);
 		$set.replaceWith($set.contents());
 	})
-	$(".expiredRow").find('td').wrapInner('<div style="display: block" />').parent().find('td > div').slideUp(700, function()
+	$(".expiredRow").find('td').wrapInner('<div style="display: block; background-color:#333;" />').parent().find('td > div').slideUp(700, function()
 	{
 		$(this).parent().parent().remove();
 	})
