@@ -984,81 +984,122 @@ $(".conf-input").css("width","80%")
 function confirmPopup($modal, order)
 {
 	var type = order.askoffer == 1 ? "sell" : "buy"
-	//$modal.find(".conf-temphide").hide()
 	$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order")
 	$modal.find(".conf-pair").text(currentOrderbook.pair)
+	$modal.find(".conf-exchange").text(order.exchange)
 	$modal.find(".conf-amount").val(order.volume)
 	$modal.find(".conf-price").val(order.price)
 	$modal.find(".conf-total").val((order.price*order.volume).toFixed(8))
-	$modal.find(".conf-type").text("makeoffer3")
 	$modal.find(".conf-base").text(order.base)
-	$modal.find(".conf-exchange").text(order.exchange)
 	$modal.find(".conf-rel").text(order.rel)
+	$modal.find(".conf-minperc").val(order.minperc)
+	$modal.find(".conf-perc").val("100")
 	$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"))
-	$(".conf-jumbotron").find("p").empty()
+	$(".conf-confirm").prop('disabled', false)
+	$(".conf-jumbotron").hide().find("div").empty()
 }
 
 $(".conf-confirm").on("click", function(){ triggerMakeoffer($(this)); })
 
 function triggerMakeoffer($button)
 {
-	var params = {"requestType":"makeoffer3"}
-	var price = $(".conf-price").val();
-	var amount = $(".conf-amount").val();
-	var isnum = !isNaN(amount)
-
-	if (isnum && amount <= pendingOrder['volume'])
+	var params = {"requestType":"makeoffer3","perc":$(".conf-perc").val()}
+	$button.prop('disabled', true)
+	
+	for (var i = 0; i < postParams.makeoffer3.length; ++i)
 	{
-		$button.attr('disabled', "disabled")
-		if (amount != pendingOrder['volume'])
-		{
-			var perc = ((Number(amount)/Number(pendingOrder['volume']))*100).toFixed(0)
-			console.log(perc)
-			params['perc'] = perc
-		}
-		for (var i = 0; i < postParams.makeoffer3.length; ++i)
-		{
-			params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]]
-		}
-		console.log(params)
+		params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]]
+	}
+	console.log(params)
 
-		sendPost(params).done(function(data)
+	sendPost(params).done(function(data)
+	{
+		console.log(data);
+		$button.prop('disabled', false)
+		if ("error" in data && data.error.length)
 		{
-			console.log(data);
-			$button.removeAttr('disabled')
-			if ("error" in data && data.error.length)
-			{
-				console.log('error')
-				$(".conf-jumbotron").find("p").text(data['error'])
-			}
-			else
-			{
-				console.log("success")
-				$(".md-overlay").trigger("click")
-			}
-		})
+			console.log('error')
+			$(".conf-jumbotron").show().find("div").text(data['error'])
+		}
+		else
+		{
+			console.log("success")
+			$(".md-overlay").trigger("click")
+		}
+	})
+}
 
+/*
+$("input.conf-amount").on("keyup", function() 
+{
+	var amount = $(this).val();
+	var price = pendingOrder['price'];
+	var perc = (Number(amount)/Number(price))*100
+	var total = Number(price)*Number(amount);
+	var check = checkPerc(String(perc), pendingOrder['minperc'])
+	
+	$(".conf-perc").val(perc);
+	$(".conf-total").val(total.toFixed(8))
+});
+*/
+
+$("input.conf-perc").on("keyup", function() 
+{
+	var perc = $(this).val();
+	var amount = (perc/100) * pendingOrder['volume'];
+	var total = Number(pendingOrder['price'])*Number(amount);
+	
+	$(".conf-amount").val(amount);
+	$(".conf-total").val(total.toFixed(8))
+	
+	var check = checkPerc(perc, pendingOrder['minperc'])
+	if (!check.length)
+	{
+		$("button.conf-confirm").prop('disabled', false);
+		$(".conf-jumbotron").hide().find("div").empty();
 	}
 	else
 	{
-		var text = ""
-		if (isnum)
-			text = "Quantity higher than order's quantity ("+String(pendingOrder['volume'])+")"
-		else
-			text = "Not a number"
-		$(".conf-jumbotron").find("p").text(text)
+		$("button.conf-confirm").prop('disabled', true);
+		$(".conf-jumbotron").show().find("div").text(check)
 	}
-}
-
-$("input.conf-amount").on("keyup", function() 
-{
-	var $form = $(this).closest(".conf-form");
-	var amount = $(this).val();
-	var price = pendingOrder['price'];
-	var total = Number(price)*Number(amount);
-	$form.find(".conf-total").val(total.toFixed(8))
-
 });
+
+function checkPerc(perc, minperc)
+{
+	var text = ""
+	var isnum = !isNaN(perc)
+	
+	if (isnum && perc.length)
+	{
+		if (perc.search("\\.") != -1)
+		{
+			text = "Perc must be a whole number."
+			
+		}
+		else
+		{
+			if (perc < minperc)
+			{
+				text = "Perc must be greater than the order's min perc."
+			}
+			else if (perc > 100)
+			{
+				text = "Perc must be less than 100."
+			}
+			else
+			{
+				
+			}
+		}
+	}
+	else
+	{
+		text = "Invalid perc."
+	}
+	
+	return text
+}
 
 
 
