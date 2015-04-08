@@ -410,7 +410,7 @@ $("#modal-04").on("idexHide", function()
 		{
 			for (var i = 0; i < chartFavs.length; ++i)
 			{
-				if (chartFavs[i]['id'] == id && chartFavs[i]['asset'] != asset)
+				if (chartFavs[i]['id'] == id && (chartFavs[i]['asset'] != asset || asset == "5527630"))
 				{
 					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id");
 					var miniAsset = asset;
