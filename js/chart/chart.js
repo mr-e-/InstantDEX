@@ -114,18 +114,20 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
 		if ('flip' in siteOptions && siteOptions.flip && siteOptions.relname == "NXT")
-		{
 			siteOptions.flip = false
-		}
 		currentChart = new chartVar(siteOptions)
-		var titleName = currentChart.flip ? currentChart.relname+"/"+currentChart.basename : currentChart.basename+"/"+currentChart.relname
+		
+		var baseNXT = (currentChart.basename == "NXT" && !currentChart.flip)
+		var titleName = currentChart.flip ? currentChart.relname+"/NXT" : currentChart.basename+"/NXT";
+		if (baseNXT)
+			titleName = currentChart.basename+"/"+currentChart.relname
 		
 		getData(currentChart).done(function(data)
 		{
 			data = data.results.bars
 			if (!data.length)
 				return
-			var both = getStepOHLC(data, (currentChart.basename == "NXT" && !currentChart.flip))
+			var both = getStepOHLC(data, baseNXT)
 			var ohlc = both[0]
 			var volume = both[1]
 
