@@ -8,6 +8,7 @@ IDEX.curRel;
 var snURL = "http://127.0.0.1:7777";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 var SATOSHI = 100000000;
+var NXT_ASSET = "5527630";
 var rs = "";
 var rsid = "";
 var orderbookTimeout;
@@ -152,7 +153,7 @@ function initAllAssets()
 
 				parsed.push(obj);
 			}
-			parsed.push({'name':"NXT",'assetid':"5527630", 'asset':"5527630",'decimals':8});
+			parsed.push({'name':"NXT",'assetid':NXT_ASSET, 'asset':NXT_ASSET,'decimals':8});
 			localStorage.setItem('allAssets', JSON.stringify(parsed));
 			dfd.resolve(parsed);
 			
@@ -235,7 +236,7 @@ function initChartFavorites()
 	{
 		var assetid = $(this).find(".mini-chart-area-1 span").first().attr("data-asset");
 		var baseNXT = false
-		if (assetid == "5527630")
+		if (assetid == NXT_ASSET)
 		{
 			assetid = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset")
 			baseNXT = true
@@ -405,26 +406,21 @@ $("#modal-04").on("idexHide", function()
 	{
 		var id = $(this).attr('chart-id');
 		var asset = $(this).attr('data-asset');
-		
 		if ((id == "91" || id == "101" || id == "111" || id == "121") && asset != "-1")
 		{
+			var nextAsset = $(this).next().attr('data-asset');
+			var baseNXT = asset == NXT_ASSET;
+			
 			for (var i = 0; i < chartFavs.length; ++i)
 			{
-				if (chartFavs[i]['id'] == id && (chartFavs[i]['asset'] != asset || asset == "5527630"))
+				if (chartFavs[i]['id'] == id && (chartFavs[i]['asset'] != asset || (baseNXT && chartFavs[i+1]['asset'] != nextAsset)))
 				{
 					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id");
-					var miniAsset = asset;
-					var baseNXT = false;
-					if (miniAsset == "5527630") 
-					{
-						miniAsset = $(this).next().attr('data-asset');
-						baseNXT = true;
-					}
+					var miniAsset = baseNXT ? nextAsset : asset
 					IDEX.makeMiniChart(miniAsset, divid, baseNXT);
 				}
 			}
 		}
-		
 		$("#chart-curr-"+id).attr("data-asset", asset)
 		$("#chart-curr-"+id).text($(this).val());
     });
@@ -535,7 +531,7 @@ function tableHandler($modalTable)
 			{
 				sendPost({'requestType':"getBalance", 'account':rsid}, 1).done(function(nxtBal)
 				{
-					tableData.push({'name':"NXT", 'asset':"5527630", 'quantityQNT': nxtBal['balanceNQT'], 'decimals':8})
+					tableData.push({'name':"NXT", 'asset':NXT_ASSET, 'quantityQNT': nxtBal['balanceNQT'], 'decimals':8})
 					for (var i = 0; i < tableData.length; ++i)
 					{
 						var decimals = tableData[i].decimals;
