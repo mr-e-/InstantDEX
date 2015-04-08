@@ -65,7 +65,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	Highcharts.setOptions(Highcharts.theme);
 
-	function getStepOHLC(data)
+	function getStepOHLC(data, baseNXT)
 	{
 		var ohlc = []
 		var volume = []
@@ -75,8 +75,18 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < dataLength; i++) 
 		{
 			var pointDate = data[i][0]*1000;
-			data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // spike
-			
+			//data[i] = ((i!= 0) && (data[i][keys[1]] > data[i-1][keys[1]]*5)) ? data[i-1] : data[i] // spike
+			if (baseNXT)
+			{
+				var close = data[i][keys[3]]
+				for (var j = 0; j < keys.length; ++j)
+				{
+					if (j == keys.length - 1)
+						data[i][keys[j]] = Number((close * data[i][keys[j]]).toFixed(2))
+					else
+						data[i][keys[j]] = Number((1 / data[i][keys[j]]).toFixed(6))
+				}
+			}
 			ohlc.push(new testOHLC([pointDate,data[i][keys[0]],data[i][keys[1]],data[i][keys[2]],data[i][keys[3]]]))
 			volume.push({x:pointDate, y:data[i][keys[4]]});
 		}
@@ -88,7 +98,8 @@ var IDEX = (function(IDEX, $, undefined)
 	function getData(options)
 	{
 		var dfd = new $.Deferred();
-		var id = options.flip ? options.relid : options.baseid
+		var id = (options.flip || options.baseid == "5527630") ? options.relid : options.baseid
+
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+id+"_"+"NXT"+"&type=tick&len="+options.numticks+"&num="+options.numbars
 			
 		$.getJSON(url, function(data)
@@ -107,14 +118,14 @@ var IDEX = (function(IDEX, $, undefined)
 			siteOptions.flip = false
 		}
 		currentChart = new chartVar(siteOptions)
-		var titleName = currentChart.flip ? currentChart.relname+"/NXT" : currentChart.basename+"/NXT"
+		var titleName = currentChart.flip ? currentChart.relname+"/"+currentChart.basename : currentChart.basename+"/"+currentChart.relname
 		
 		getData(currentChart).done(function(data)
 		{
 			data = data.results.bars
 			if (!data.length)
 				return
-			var both = getStepOHLC(data)
+			var both = getStepOHLC(data, (currentChart.basename == "NXT" && !currentChart.flip))
 			var ohlc = both[0]
 			var volume = both[1]
 
@@ -479,11 +490,13 @@ var IDEX = (function(IDEX, $, undefined)
 			var yText = ""
 			if (y >= chart.yAxis[1].top && y <= chart.yAxis[1].top + chart.yAxis[1].height)
 			{
-				yText = chart.yAxis[1].toValue(y).toFixed(2)
+				var val = properDecimals(chart.yAxis[1], y)
+				yText = val
 			}
 			else if (y >= chart.plotBox.y && y <= chart.yAxis[0].top + chart.yAxis[0].height)
 			{
-				yText = chart.yAxis[0].toValue(y).toFixed(2)
+				var val = properDecimals(chart.yAxis[0], y)
+				yText = val
 			}
 
 			chart.crossLabelY.attr({
@@ -508,6 +521,25 @@ var IDEX = (function(IDEX, $, undefined)
 
 			chart.crossLinesY.attr({d: crossPathY}).show()
 		}
+	}
+	
+	function properDecimals(axis, pos)
+	{
+		var price = String(axis.max).split(".")
+		var len = 0;
+		if (price.length == 1)
+			len = 1
+		else
+			len = price[1].length
+		var testcount = 0
+		var val = 0.0
+		while (val <= 0 || testcount < len+2)
+		{
+			val = axis.toValue(pos).toFixed(testcount)
+			testcount++;
+		}
+		
+		return val
 	}
 
 
