@@ -10,7 +10,7 @@ var nxtURL = "http://127.0.0.1:7876/nxt?";
 var SATOSHI = 100000000;
 var rs = "";
 var orderbookTimeout;
-var allAssets;
+var allAssets = [];
 var auto = [];
 var auto2 = [];
 var chartFavs = [];
@@ -111,8 +111,8 @@ $(window).load(function()
 	{
 		if ('peers' in data && data['peers'].length)
 		{
-			var index = data['peers'].length == 1 ? 0 : 1
-			rs = data['peers'][index]['RS']
+			var index = data['peers'].length == 1 ? 0 : 1;
+			rs = data['peers'][index]['RS'];
 		}
 	})	
 })
@@ -162,12 +162,13 @@ function initAllAssets()
 	
 	dfd.done(function(assets)
 	{
-		allAssets = assets.sort(compareName);
+		assets.sort(compareName);
+		allAssets = assets
 		
-		for (var i = 0; i < assets.length; ++i)
+		for (var i = 0; i < allAssets.length; ++i)
 		{
-			auto.push({"label":allAssets[i].name+" <span>("+allAssets[i].assetid+")</span>","value":assets[i].name});
-			auto2.push({"label":allAssets[i].name+" <span>("+allAssets[i].assetid+")</span>","value":assets[i].asset});
+			auto.push({"label":allAssets[i].name+" <span>("+allAssets[i].assetid+")</span>","value":allAssets[i].name});
+			auto2.push({"label":allAssets[i].name+" <span>("+allAssets[i].assetid+")</span>","value":allAssets[i].asset});
 		}
 	})
 }
@@ -286,8 +287,9 @@ function getAssetInfo(key, val)
 {
 	var arr = [];
 	var assetInfo = {};
+	var len = allAssets.length;
 	
-	for (var i = 0; i < allAssets.length; ++i)
+	for (var i = 0; i < len; ++i)
 	{
 		if (allAssets[i][key] == val)
 		{
@@ -725,7 +727,6 @@ function pollOrderbook(timeout)
 		sendPost(params).done(function(orderbookData)
 		{
 			orderbookAsync = false;
-
 			if (!("error" in orderbookData))
 			{
 				orderbookData['bids'].sort(compare);
@@ -739,7 +740,7 @@ function pollOrderbook(timeout)
 			pollOrderbook(3000);
 		}).fail(function(data)
 		{
-			
+			orderbookAsync = false;
 		})
 	}, timeout)
 }
@@ -1017,11 +1018,11 @@ function buildTableRows(data)
 
 function getRowData($row)
 {
-	var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true
-	var index = $row[0].rowIndex
-	var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index]
+	var isAsk = ($row.closest("div").attr('id') == "buyBook") ? false : true;
+	var index = $row[0].rowIndex;
+	var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index];
 
-	return rowData
+	return rowData;
 }
 
 function addRowClass(row, rowClass)
@@ -1030,50 +1031,50 @@ function addRowClass(row, rowClass)
 	
 	$(row).each(function(e, p)
 	{
-		$(p).addClass(rowClass)
-		s += $(p)[0].outerHTML
+		$(p).addClass(rowClass);
+		s += $(p)[0].outerHTML;
 	})
 	
-	return s
+	return s;
 }
 
 
 function addRowAttr(row, data, keys)
 {
 	var s = "";
-	var i = 0
+	var i = 0;
 	
 	$(row).each(function(e, p)
 	{
 		for (var j = 0; j < keys.length; ++j)
 		{
-			$(p).attr("data-"+keys[j], data[i][keys[j]])
+			$(p).attr("data-"+keys[j], data[i][keys[j]]);
 		}
 		
-		s += $(p)[0].outerHTML
-		++i
+		s += $(p)[0].outerHTML;
+		++i;
 	})
 	
-	return s
+	return s;
 }
 
 
 function objToList(data, keys)
 {
-	var arr = []
+	var arr = [];
 
 	for (var i = 0; i < data.length; ++i)
 	{
-		var loopArr = []
+		var loopArr = [];
 
 		for (var j = 0; j < keys.length; ++j)
 		{
-			loopArr.push(data[i][keys[j]])
+			loopArr.push(data[i][keys[j]]);
 		}
-		arr.push(loopArr)
+		arr.push(loopArr);
 	}
 
-	return arr
+	return arr;
 }
 
 
@@ -1085,11 +1086,11 @@ function compObjs(aObj, bObj, keys)
 	{
 		if (aObj[keys[i]] == bObj[keys[i]])
 		{
-			compCount++
+			compCount++;
 		}
 	}
 
-	return ((compCount == keys.length) ? true : false)
+	return ((compCount == keys.length) ? true : false);
 }
 
 
@@ -1115,18 +1116,18 @@ function compareName(a, b)
 
 function toSatoshi(number)
 {
-	return Math.round(Number(number) * SATOSHI) / SATOSHI 
+	return Math.round(Number(number) * SATOSHI) / SATOSHI;
 }
 
 
 $(".order-button").on("mouseover", function()
 {
-	var text = $(this).find("button").attr("data-method") == "placebid" ? "B<br>U<br>Y" : "S<br>E<br>L<br>L"
-	$(this).find("button").html(text)
+	var text = $(this).find("button").attr("data-method") == "placebid" ? "B<br>U<br>Y" : "S<br>E<br>L<br>L";
+	$(this).find("button").html(text);
 })
 $(".order-button").on("mouseout", function()
 {
-	$(this).find("button").html("P<br>L<br>A<br>C<br>E")
+	$(this).find("button").html("P<br>L<br>A<br>C<br>E");
 })
 
 
