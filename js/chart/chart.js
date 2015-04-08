@@ -113,11 +113,13 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.makeChart =  (function make(siteOptions) 
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
-		if ('flip' in siteOptions && siteOptions.flip && siteOptions.relname == "NXT")
-			siteOptions.flip = false
 		currentChart = new chartVar(siteOptions)
-		
 		var baseNXT = (currentChart.basename == "NXT" && !currentChart.flip)
+		if (currentChart.flip && currentChart.relname == "NXT")
+		{
+			currentChart.flip = false
+			baseNXT = true
+		}
 		var titleName = currentChart.flip ? currentChart.relname+"/NXT" : currentChart.basename+"/NXT";
 		if (baseNXT)
 			titleName = currentChart.basename+"/"+currentChart.relname

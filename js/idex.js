@@ -9,6 +9,7 @@ var snURL = "http://127.0.0.1:7777";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 var SATOSHI = 100000000;
 var rs = "";
+var rsid = "";
 var orderbookTimeout;
 var allAssets = [];
 var auto = [];
@@ -113,6 +114,7 @@ $(window).load(function()
 		{
 			var index = data['peers'].length == 1 ? 0 : 1;
 			rs = data['peers'][index]['RS'];
+			rsid = data['peers'][index]['srvNXT'];
 		}
 	})	
 })
@@ -518,21 +520,33 @@ function tableHandler($modalTable)
 			}
 			else if (method == "getAccountAssets")
 			{
-				for (var i = 0; i < tableData.length; ++i)
+				sendPost({'requestType':"getBalance", 'account':rsid}, 1).done(function(nxtBal)
 				{
-					var decimals = tableData[i].decimals;
-					
-					tableData[i].quantityQNT = tableData[i].quantityQNT / Math.pow(10, decimals);
-					tableData[i].unconfirmedQuantityQNT = tableData[i].unconfirmedQuantityQNT / Math.pow(10, decimals);
-				}
+					tableData.push({'name':"NXT", 'asset':"5527630", 'quantityQNT': nxtBal['balanceNQT'], 'decimals':8})
+					for (var i = 0; i < tableData.length; ++i)
+					{
+						var decimals = tableData[i].decimals;
+						
+						tableData[i].quantityQNT = tableData[i].quantityQNT / Math.pow(10, decimals);
+						tableData[i].unconfirmedQuantityQNT = "-"
+						tableData[i]['change'] = "-"
+					}
+					row = buildTableRows(objToList(tableData, keys));
+					$modalTable.find("tbody").empty().append(row);
+				})
 			}
 			
-			if (!row.length)
+			if (!row.length && method != "getAccountAssets")
 				row = buildTableRows(objToList(tableData, keys));
 		}
 		
 		$modalTable.find("tbody").empty().append(row);
 	})
+}
+
+function getNXTBal()
+{
+	
 }
 
 function formatOpenOrders(tableData)
