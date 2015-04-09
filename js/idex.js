@@ -793,7 +793,6 @@ function pollOrderbook(timeout)
 				orderbookData['asks'].sort(compare);
 				orderbookData['bids'].reverse();
 				orderbookData['asks'].reverse();
-
 				updateOrderbook(orderbookData);
 			}
 
@@ -936,7 +935,7 @@ function addNewOrders($row, orderData, rowData, index)
 	{
 		var loopNewOrd = orderData.newOrders[i];
 		var trString = addRowClass($(trRows)[i], "newrow");
-		//class = order-row cbutton cbutton--effect-jelena
+		
 		if (loopNewOrd.price < Number(rowData.price))
 		{
 			var $sib = $row.next();
@@ -944,10 +943,10 @@ function addNewOrders($row, orderData, rowData, index)
 			{
 				var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? false : true;
 				var sibData = isAsk ? currentOrderbook.asks[index + 1] : currentOrderbook.bids[index+1];
-				console.log($sib)
-				console.log(index)
-				console.log(currentOrderbook.asks)
-				console.log(sibData)
+				//console.log($sib)
+				//console.log(index)
+				//console.log(currentOrderbook.asks)
+				//console.log(sibData)
 				if (!sibData || (loopNewOrd.price >= Number(sibData.price)))
 				{
 					$row.after($(trString));
@@ -986,7 +985,7 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 });
 
 
-$("#sellBook").on("click", ".order-col", function(e)
+$("#sellBook").on("click", ".order-row", function(e)
 {
 	var order = getRowData($(this));
 	pendingOrder = order;
@@ -1001,7 +1000,7 @@ $("#sellBook").on("click", ".order-col", function(e)
 })
 
 
-$("#buyBook").on("click", ".order-col", function(e)
+$("#buyBook").on("click", ".order-row", function(e)
 {
 	var order = getRowData($(this))
 	pendingOrder = order
