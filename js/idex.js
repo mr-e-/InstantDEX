@@ -19,7 +19,7 @@ var chartFavs = [];
 var options = {};
 var isStoppingOrderbook = false;
 var orderbookAsync = false;
-var orderCompKeys = ['quoteid'];
+var orderCompKeys = ["quoteid"];
 var pendingOrder = {};
 var currentOrderbook = new orderbookVar();
 var postParams = {
@@ -810,7 +810,7 @@ function groupOrders(orders, currentOrders)
 	var oldOrders = [];
 	var newOrders = [];
 	var expiredOrders = [];
-	var newOrdersRow = "";
+	var newOrdersRows = [];
 	
 	for (var i = 0; i < currentOrders.length; ++i)
 	{
@@ -830,7 +830,7 @@ function groupOrders(orders, currentOrders)
 			{
 				oldOrders.push(loopOrd);
 				currentOrders.splice(j, 1);
-				isNew = false;;
+				isNew = false;
 				break
 			}
 		}
@@ -840,17 +840,16 @@ function groupOrders(orders, currentOrders)
 			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8);
 			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(6);
 			var trString = orderbookRows([[loopOrd.price, loopOrd.volume]]);
-			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae") ? "virtual" : "";
+			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae" || loopOrd['exchange'] == "nxtae") ? "virtual" : "";
 			trClasses += (loopOrd['offerNXT'] == rsid) ? " own-order" : ""
-			newOrdersRow += addRowClass(trString, trClasses);
-			
+			newOrdersRows.push(addRowClass(trString, trClasses))
 			newOrders.push(loopOrd);
 		}
 	}
-	
+
 	expiredOrders = currentOrders;
 
-	return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'newOrdersRows':newOrdersRow, 'oldOrders':oldOrders};
+	return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'newOrdersRows':newOrdersRows, 'oldOrders':oldOrders};
 }
 
 
@@ -859,20 +858,13 @@ function updateOrderbook(orderbookData)
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
 	var bidData = groupOrders(orderbookData.bids.slice(), currentOrderbook.bids.slice());
 	var askData = groupOrders(orderbookData.asks.slice(), currentOrderbook.asks.slice());
-	askData['orderbookData'] = orderbookData;
-	bidData['orderbookData'] = orderbookData;
-	askData.newOrders.reverse();
-	//console.log(orderbookData)
-	//console.log(currentOrderbook)
-	//console.log(bidData)
-	//console.log(askData)
+
 	updateOrders($("#buyBook .twrap"), bidData);
 	updateOrders($("#sellBook .twrap"), askData);
 	animateOrderbook();
 	currentOrderbook = new orderbookVar(orderbookData);
 
 	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
-	//console.log(orderbookData)
 }
 
 
@@ -892,12 +884,12 @@ function animateOrderbook()
 	$(".expiredRow").removeClass("expiredRow");
 }
 
-
+var onetime = false
 function updateOrders($book, orderData)
 {
 	if (!($book.find(".order-row").length))
 	{
-		$book.empty().append(orderData.newOrdersRows);
+		$book.empty().append(orderData.newOrdersRows.join(""));
 	}
 	else
 	{
@@ -905,11 +897,12 @@ function updateOrders($book, orderData)
 		{
 			removeOrders($(this), orderData, index);
 		})
+		onetime = true
 		$book.find(".order-row").each(function(index, element)
 		{
 			var isAsk = ($(this).closest(".bookname").attr('id') == "buyBook") ? false : true;
 			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index];
-			addNewOrders($(this), orderData, rowData, index);
+			addNewOrders($(element), orderData, rowData, index);
 		})
 	}
 }
@@ -929,31 +922,38 @@ function removeOrders($row, orderData, index)
 
 function addNewOrders($row, orderData, rowData, index)
 {
-	var trRows = $(orderData.newOrdersRows).toArray();
-	
+	var trRows = orderData.newOrdersRows
+
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
 		var loopNewOrd = orderData.newOrders[i];
-		var trString = addRowClass($(trRows)[i], "newrow");
+		var trString = addRowClass(trRows[i], "newrow");
 		
-		if (loopNewOrd.price < Number(rowData.price))
+		if (loopNewOrd.price < rowData.price)
 		{
 			var $sib = $row.next();
 			if ($sib && $sib.length)
 			{
 				var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? false : true;
 				var sibData = isAsk ? currentOrderbook.asks[index + 1] : currentOrderbook.bids[index+1];
-				//console.log($sib)
-				//console.log(index)
-				//console.log(currentOrderbook.asks)
-				//console.log(sibData)
-				if (!sibData || (loopNewOrd.price >= Number(sibData.price)))
+				
+				if (sibData)
 				{
-					$row.after($(trString));
+					if (loopNewOrd.price >= sibData.price)
+					{
+						if ($sib.hasClass("newrow"))
+							$sib.after($(trString));
+						else
+							$sib.before($(trString));
+					}
+					else
+					{
+						break
+					}
 				}
 				else
 				{
-					break
+					$sib.after($(trString));
 				}
 			}	
 			else

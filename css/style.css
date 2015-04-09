@@ -1092,7 +1092,7 @@ tbody tr:nth-child(odd) {
 }
 
 #sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
-	background-color:rgba(107, 233, 255, 0.36);
+	background-color:rgba(107, 233, 255, 0.3);
 }
 
 #sellBook > .twrap > .order-row:hover  > .order-col {
