@@ -366,11 +366,17 @@ function updateCurrentBalance()
 		if (!("errorCode" in data))
 		{
 			var balances = data['accountAssets'];
-			baseBal = parseBalance(balances, IDEX.curBase.name);
-			relBal = parseBalance(balances, IDEX.curRel.name);
 
-			$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1]);
-			$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1]);
+			sendPost({'requestType':"getBalance", 'account':rsid}, 1).done(function(nxtBal)
+			{
+				if (!("errorCode" in nxtBal))
+					balances.push({'name':"NXT", 'asset':NXT_ASSET, 'quantityQNT': nxtBal['balanceNQT'], 'decimals':8})
+				baseBal = parseBalance(balances, IDEX.curBase.name);
+				relBal = parseBalance(balances, IDEX.curRel.name);
+
+				$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1]);
+				$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1]);
+			})
 		}
 	})
 }
