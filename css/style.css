@@ -278,11 +278,6 @@ form {
 	cursor: default;
 }
 
-#sellBook {
-	float: left;
-	width: 100%;
-	height: calc(50vh - 20px - 40px - 25px);
-}
 
 #currLast {
 	float: left;
@@ -295,44 +290,10 @@ form {
 	font-weight: 600;
 }
 
-#buyBook {
-	float: left;
-	width: 100%;
-	height: calc(50vh - 20px - 25px);
-	border-bottom: inset 1px white;		
-}
-
-#sellBook, #buyBook:hover {
-	/*cursor: pointer;*/
-}
-
 .order-big {
 	text-align: center;
 	font-size: 30px;
 	padding-top: 3px;
-}
-
-.order-row {
-	display: block;
-	padding: 2%;
-	opacity: 0.75;
-	-webkit-transition: all 100ms ease-out;
-    -moz-transition: all 100ms ease-out;
-    -o-transition: all 100ms ease-out;
-    -ms-transition: all 100ms ease-out;
-    transition: all 100ms ease-out;	
-}
-
-.order-row:hover {
-	opacity: 1;
-
-}
-
-.order-col {
-	display: inline-block;
-	width: 23.2%;
-	font-size: .4rem;
-	font-weight: 200;
 }
 
 /* ------------------------- MINICHARTS AREA ------------------------- */
@@ -1053,47 +1014,92 @@ tbody tr:nth-child(odd) {
 }
 
 
+/*		ORDERBOOK		*/
 
-
-#sellBook > table, #buyBook > table{
-	margin-left:20px;
-	border-collapse: collapse;
+#sellBook {
+	height: calc(50vh - 20px - 40px - 25px);
 }
 
-#sellBook > table > tbody > tr, #buyBook > table > tbody > tr {
-	background-color:transparent;
+#buyBook {
+	height: calc(50vh - 20px - 25px);
+	border-bottom: inset 1px white;	
+}
+
+#sellBook, #buyBook {
+	float: left;
+	width: 100%;
+}
+
+#sellBook > .twrap, #buyBook > .twrap {
+	position:absolute;
+	width:100%;
+	padding-right:10px;
+	padding-left:10px;
+}
+
+#sellBook > .twrap {
+	bottom:0px;
+}
+
+#buyBook > .twrap {
+	top:0px;
+}
+
+.order-row {
+	display: block;
+}
+
+.order-col {
+	display: inline-block;
+	width: 44%;
+	font-size: .6rem;
+	text-align:right;
+
+	-webkit-transition: all 100ms ease-out;
+    -moz-transition: all 100ms ease-out;
+    -o-transition: all 100ms ease-out;
+    -ms-transition: all 100ms ease-out;
+    transition: all 100ms ease-out;	
+}
+
+.order-col:first-child {
+	margin-right:8px;
+}
+
+
+#sellBook > .twrap  > .order-row, #buyBook > .twrap  > .order-row {
 	font-family:Consolas, Monospace;
 }
 
-#sellBook > table > tbody > tr:hover, #buyBook > table > tbody > tr:hover{
+#sellBook > .twrap  > .order-row:hover, #buyBook > .twrap  > .order-row:hover{
 	cursor:pointer;
 }
 
-#sellBook > table > tbody > tr > td, #buyBook > table > tbody > tr > td {
+#sellBook > .twrap  > .order-row > .order-col, #buyBook > .twrap > .order-row > .order-col {
 	color:#D8D8D8;
-    padding-right:8px;
 }
 
-#sellBook > table > tbody > tr.newrow, #buyBook > table > tbody > tr.newrow {
-	background-color:#333;
+#sellBook > .twrap > .order-row.newrow, #buyBook > .twrap > .order-row.newrow {
+
 }
 
-#sellBook > table > tbody > tr.closed, #buyBook > table > tbody > tr.closed {
+#sellBook > .twrap  > .order-row.closed, #buyBook > .twrap  > .order-row.closed {
 	background-color:blue;
 }
 
-#sellBook > table > tbody > tr.virtual > td, #buyBook > table > tbody > tr.virtual >td {
+#sellBook > .twrap > .order-row.virtual > .order-col, #buyBook  > .twrap > .order-row.virtual > .order-col {
 	color:#A4A4A4;
 }
 
-#sellBook > table > tbody > tr.own-order, #buyBook > table > tbody > tr.own-order {
+#sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
 	background-color:rgba(107, 233, 255, 0.36);
 }
 
-.sell-hover {
+#sellBook > .twrap > .order-row:hover  > .order-col {
 	color: rgb(0,210,0) !important;
 }
-.buy-hover{
+
+#buyBook > .twrap > .order-row:hover  > .order-col {
 	color: rgb(255,0,0) !important
 }
 

@@ -823,10 +823,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var chart = $('#chartArea').highcharts()
 		var offset = $('#chartArea').offset();
-		var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40,
-		'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40]
-
-		chart.splitLine.attr({d:path})
+		if (chart)
+		{
+			var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40,
+			'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40]
+			chart.splitLine.attr({d:path})
+		}
 	}
 	
 	IDEX.killChart = function()
