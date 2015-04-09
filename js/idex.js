@@ -932,6 +932,7 @@ function addNewOrders($row, orderData, rowData, index)
 		if (loopNewOrd.price < rowData.price)
 		{
 			var $sib = $row.next();
+			
 			if ($sib && $sib.length)
 			{
 				var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? false : true;
@@ -985,7 +986,8 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 });
 
 
-$("#sellBook").on("click", ".order-row", function(e)
+
+$("#sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
 {
 	var order = getRowData($(this));
 	pendingOrder = order;
@@ -1000,7 +1002,7 @@ $("#sellBook").on("click", ".order-row", function(e)
 })
 
 
-$("#buyBook").on("click", ".order-row", function(e)
+$("#buyBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
 {
 	var order = getRowData($(this))
 	pendingOrder = order
@@ -1141,8 +1143,7 @@ function checkPerc(perc, minperc)
 function buildTableRows(data)
 {
 	var row = ""
-	//var rowWrap = typeof rowClass !== "undefined" ? "<tr class='"+rowClass+"'>" : "<tr>";
-
+	
 	for (var i = 0; i < data.length; ++i)
 	{
 		var td = ""
@@ -1288,8 +1289,6 @@ $(".order-button").on("mouseout", function()
 {
 	$(this).find("button").html("P<br>L<br>A<br>C<br>E");
 })
-
-
 
 
 	return IDEX;

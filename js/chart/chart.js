@@ -726,9 +726,14 @@ var IDEX = (function(IDEX, $, undefined)
 		return chart.isInsidePlot(x, y);
 	}
 
-	$(".stepButton > .numbars > button").on("click", function(e)
+	$(".dropdown-option").on("click", function(e)
 	{
-		e.preventDefault() 
+		$(this).closest("ul").find(".dropdown-option").removeClass("active")
+		$(this).addClass("active")		
+	})
+	
+	$("#numbars .dropdown-option").on("click", function(e)
+	{
 		var chart = $('#chartArea').highcharts()
 		
 		if (chart)
@@ -739,9 +744,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 	
-	$(".stepButton > .numticks > button").on("click", function(e)
+	$("#numticks .dropdown-option").on("click", function(e)
 	{
-		e.preventDefault() 
 		var chart = $('#chartArea').highcharts()
 		
 		if (chart)
@@ -752,23 +756,22 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 
-	$(".stepButton > .flip > button").on("click", function(e)
+	$("#flip .dropdown-option").on("click", function(e)
 	{
-		e.preventDefault() 
 		var chart = $('#chartArea').highcharts()
 
 		if (chart)
 		{
 			var text = $(this).text();
-			if (text == "base")
+			if (text == "Base")
 			{
 				currentChart.flip = false
 			}
-			else if (text == "rel")
+			else if (text == "Rel")
 			{
 				currentChart.flip = true
 			}
-			else if (text == "virt")
+			else if (text == "Virtual")
 			{
 				return
 			}

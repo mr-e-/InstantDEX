@@ -131,31 +131,35 @@
 --- MAIN CHART AREA --------------------------------------------------    
     
  --><div id="mainChart" class="unselectable" style="z-index:1">
-		<div id="mainChartTop" style="height:40px; border-bottom:inset 1px rgb(45,45,45);padding-top:5px;padding-left:5px">
-			<div class="stepButton" style="display:block; overflow:hidden">
-				<span>Number of bars: </span>
-				<div class="numbars" style="display:inline-block">
-					<button>500</button>
-					<button>400</button>
-					<button>300</button>
-					<button>200</button>
-					<button>100</button>
-				</div>
-				<span style="margin-left:10px">Number of ticks/bar: </span>
-				<div class="numticks" style="display:inline-block">
-					<button>300</button>
-					<button>100</button>
-					<button>50</button>
-					<button>25</button>
-					<button>10</button>
-					<button>5</button>
-				</div>
-				<span style="margin-left:10px">Market: </span>
-				<div class="flip" style="display:inline-block">
-					<button>base</button>
-					<button>rel</button>
-					<button>virt</button>
-				</div>
+		<div id="mainChartTop" style="height:40px; border-bottom:inset 1px rgb(45,45,45);padding-top:5px;padding-left:5px;overflow:visible">
+
+			<div id="numbars" class="dropdown-chart">
+				<span class="dropdown-title">Bars &#9662;</span>
+				<ul>
+					<li><span class="dropdown-option active">100</span></li>
+					<li><span class="dropdown-option">300</span></li>
+					<li><span class="dropdown-option">500</span></li>
+				</ul>
+			</div>
+			
+			<div id="numticks" class="dropdown-chart">
+				<span class="dropdown-title">Ticks &#9662;</span>
+				<ul>
+					<li><span class="dropdown-option active">5</span></li>
+					<li><span class="dropdown-option">10</span></li>
+					<li><span class="dropdown-option">25</span></li>
+					<li><span class="dropdown-option">100</span></li>
+					<li><span class="dropdown-option">300</span></li>
+				</ul>
+			</div>
+
+			<div id="flip" class="dropdown-chart">
+				<span class="dropdown-title">Market &#9662;</span>
+				<ul>
+					<li><span class="dropdown-option active">Base</span></li>
+					<li><span class="dropdown-option">Rel</span></li>
+					<li><span class="dropdown-option">Virtual</span></li>
+				</ul>
 			</div>
 		</div>
 		

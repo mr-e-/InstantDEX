@@ -1080,7 +1080,7 @@ tbody tr:nth-child(odd) {
 }
 
 #sellBook > .twrap > .order-row.newrow, #buyBook > .twrap > .order-row.newrow {
-
+	background-color:#333;
 }
 
 #sellBook > .twrap  > .order-row.closed, #buyBook > .twrap  > .order-row.closed {
@@ -1117,20 +1117,52 @@ tbody tr:nth-child(odd) {
 }
 */
 
-.stepButton  button {
-	height:20px;
-	color:silver;
+.dropdown-chart {
+	float: left;
+	width: 100px;
+	text-align: center;
 	background-color:black;
-	border-style:solid;
-	border-width: 1px;
-	padding:3px;
-	margin-left:5px;
-	border-color: #8F8F8F;
+}
+.dropdown-title, .dropdown-option {
+	display: block;
+	padding: 5px 10px;
+	color: white;
+}
+.dropdown-option:hover, .dropdown-title:hover  {
+	cursor:pointer;
 }
 
-.stepButton  button:hover, .stepButton > button:active {
-	background-color:#424242 !important;
+.dropdown-option:hover {
+	background-color: #333;
 }
+.dropdown-option.active {
+	background-color: #939393;
+}
+
+.dropdown-chart > ul {
+	background-color:black;
+	z-index:9999;
+	width:100px;
+	position:absolute;
+	display: none;
+}
+.dropdown-chart > ul > li{
+	float:none;
+}
+.dropdown-chart:hover > ul {
+	display: block;
+}
+
+
+
+	
+/*
+	border-style:solid;
+	border-width: 1px;
+	border-color: #8F8F8F;
+*/
+
+
 
 .ui-state-hover, .ui-state-active, .ui-state-highlight, .ui-state-focus, .ui-state-default {
     background-color: rgba(200,200,200,1) !important;
