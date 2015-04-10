@@ -1103,6 +1103,11 @@ tbody tr:nth-child(odd) {
 }
 
 
+.tooltipster-content {
+	background-color:black;
+}
+
+
 /*	color:#6E6E6E;*/
 
 .dropdown-chart {

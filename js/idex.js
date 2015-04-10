@@ -2,7 +2,6 @@
 
 var IDEX = (function(IDEX, $, undefined) {
 
-
 IDEX.curBase;
 IDEX.curRel;
 var snURL = "http://127.0.0.1:7777";
@@ -22,6 +21,7 @@ var orderbookAsync = false;
 var orderCompKeys = ["quoteid"];
 var pendingOrder = {};
 var currentOrderbook = new orderbookVar();
+
 var postParams = {
 	'orderbook':["baseid","relid","allfields"],
 	'allorderbooks':[],
@@ -54,7 +54,6 @@ function orderbookVar(obj)
 		}
 	}(this);
 };
-
 
 
 $('.assets-search').autocomplete({
@@ -149,7 +148,7 @@ function initAllAssets()
 				for (var key in data.assets[i])
 				{
 					if (key == "asset")
-						obj['assetid'] = data.assets[i][key]
+						obj['assetid'] = data.assets[i][key];
 					
 					if (key == "description")
 						continue;
@@ -165,13 +164,14 @@ function initAllAssets()
 			
 		}).fail(function(data)
 		{
+			localStorage.removeItem("allAssets");
 			dfd.resolve([]);
 		})
 	}
 	
 	dfd.done(function(assets)
 	{
-		assets.sort(compareName);
+		assets.sort(compareProp('name'));
 		allAssets = assets
 		
 		for (var i = 0; i < allAssets.length; ++i)
@@ -184,16 +184,13 @@ function initAllAssets()
 
 function initChartFavorites()
 {	
-	var tempInit = 0
 	if (localStorage.chartFavorites)
 	{
 		chartFavs = JSON.parse(localStorage.getItem("chartFavorites"));
 		for (var i = 0; i < chartFavs.length; ++i)
 		{
 			if (!("asset" in chartFavs[i]) || typeof chartFavs[i]['asset'] === "undefined")
-			{
-				chartFavs[i]['asset'] = "-1"
-			}
+				chartFavs[i]['asset'] = "-1";
 		}
 	}
 	else
@@ -208,15 +205,15 @@ function initChartFavorites()
 		];
 		var ids = ["11","12","21","22","31","32","41","42","51","52","61","62","71","72","81","82","91","92","101","102","111","112","121","122"];
 		var lastAsset = "";
-		var tempFavs = []
+		var tempFavs = [];
 
 		for (var i = 0; i < ids.length; ++i)
 		{
 			var randIndex = Math.floor(Math.random() * defaultFavs.length);
 			var randFav = {} 
-			randFav ['name'] = defaultFavs[randIndex]['name']
-			randFav['asset'] = defaultFavs[randIndex]['asset']
-			randFav['id'] = ids[i]
+			randFav ['name'] = defaultFavs[randIndex]['name'];
+			randFav['asset'] = defaultFavs[randIndex]['asset'];
+			randFav['id'] = ids[i];
 			
 			if (randFav['asset'] == lastAsset)
 			{
@@ -224,8 +221,8 @@ function initChartFavorites()
 				continue;
 			}
 			
-			lastAsset = randFav['asset']
-			chartFavs.push(randFav)
+			lastAsset = randFav['asset'];
+			chartFavs.push(randFav);
 		}
 	}
 	
@@ -241,11 +238,11 @@ function initChartFavorites()
 	$('.mini-chart').each(function()
 	{
 		var assetid = $(this).find(".mini-chart-area-1 span").first().attr("data-asset");
-		var baseNXT = false
+		var baseNXT = false;
 		if (assetid == NXT_ASSET)
 		{
 			assetid = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset")
-			baseNXT = true
+			baseNXT = true;
 		}
 		var divid = $(this).find(".mini-chart-area-4").attr('id');
 		if (assetid != "-1")
@@ -424,10 +421,6 @@ function hotkeyHandler($div)
 	}	
 }
 
-$(".md-modal-2").on("idexShow", function()
-{
-	
-})
 
 $("#modal-05").on("idexHide", function()
 {
@@ -457,12 +450,12 @@ $("#modal-04").on("idexHide", function()
 				if (chartFavs[i]['id'] == id && (chartFavs[i]['asset'] != asset || (baseNXT && chartFavs[i+1]['asset'] != nextAsset)))
 				{
 					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr("id");
-					var miniAsset = baseNXT ? nextAsset : asset
+					var miniAsset = baseNXT ? nextAsset : asset;
 					IDEX.makeMiniChart(miniAsset, divid, baseNXT);
 				}
 			}
 		}
-		$("#chart-curr-"+id).attr("data-asset", asset)
+		$("#chart-curr-"+id).attr("data-asset", asset);
 		$("#chart-curr-"+id).text($(this).val());
     });
 	
@@ -517,7 +510,7 @@ function tableHandler($modalTable)
 	
 	if (method == "tradehistory")
 	{
-		params['timestamp'] = 0;;
+		params['timestamp'] = 0;
 	}
 	else if (method == "getAccountAssets")
 	{
@@ -531,39 +524,30 @@ function tableHandler($modalTable)
 		if (keys[0] in data)
 		{
 			var tableData = data[keys[0]];
-			
 			keys.splice(0,1);
 
 			if (method == "openorders")
 			{
 				tableData = formatPairName(tableData);
-				formatOpenOrders(tableData);
-				row = buildTableRows(objToList(tableData, keys));
+				tableData = formatOpenOrders(tableData);
+				row = buildTableRows(objToList(tableData, keys), "table");
 				row = $(row).each(function()
 				{
 					$(this).find("td:last").after("<td class='cancelOrder'>CANCEL</td>");
 				})
-				row = addRowAttr(row, tableData, ["quoteid"]);
+				row = addElDataAttr(row, tableData, ["quoteid"]);
 			}
 			else if (method ==	"allorderbooks")
 			{
 				addEmptyMarketData(tableData);
-				row = buildTableRows(objToList(tableData, keys));
-				row = addRowAttr(row, tableData, ["baseid","relid"]);
+				row = buildTableRows(objToList(tableData, keys), "table");
+				row = addElDataAttr(row, tableData, ["baseid","relid"]);
 			}
 			else if (method == "tradehistory")
 			{
 				if ("rawtrades" in tableData) 
 				{
 					tableData = tableData['rawtrades'];
-					/*for (var i = 0; i < tableData.length; ++i)
-					{
-						if ("assetA" in tableData[i])
-						{
-							tableData.splice(i, 1)
-							--i
-						}
-					}*/
 					addAssetNames(tableData, "baseid", "relid");
 					tableData = formatPairName(tableData);
 				}
@@ -572,32 +556,28 @@ function tableHandler($modalTable)
 			{
 				sendPost({'requestType':"getBalance", 'account':rsid}, 1).done(function(nxtBal)
 				{
-					tableData.push({'name':"NXT", 'asset':NXT_ASSET, 'quantityQNT': nxtBal['balanceNQT'], 'decimals':8})
+					tableData.push({'name':"NXT", 'asset':NXT_ASSET, 'quantityQNT': nxtBal['balanceNQT'], 'decimals':8});
 					for (var i = 0; i < tableData.length; ++i)
 					{
 						var decimals = tableData[i].decimals;
 						
 						tableData[i].quantityQNT = tableData[i].quantityQNT / Math.pow(10, decimals);
-						tableData[i].unconfirmedQuantityQNT = "-"
-						tableData[i]['change'] = "-"
+						tableData[i].unconfirmedQuantityQNT = "-";
+						tableData[i]['change'] = "-";
 					}
-					row = buildTableRows(objToList(tableData, keys));
+					row = buildTableRows(objToList(tableData, keys), "table");
 					$modalTable.find("tbody").empty().append(row);
 				})
 			}
 			
 			if (!row.length && method != "getAccountAssets")
-				row = buildTableRows(objToList(tableData, keys));
+				row = buildTableRows(objToList(tableData, keys), "table");
 		}
 		
 		$modalTable.find("tbody").empty().append(row);
 	})
 }
 
-function getNXTBal()
-{
-	
-}
 
 function formatOpenOrders(tableData)
 {
@@ -607,15 +587,13 @@ function formatOpenOrders(tableData)
 		tableData[i]['total'] = tableData[i]['relamount']/SATOSHI;
 	}
 	
-	return tableData
+	return tableData;
 }
 
 function formatPairName(tableData)
 {
 	for (var i = 0; i < tableData.length; ++i)
-	{
 		tableData[i]['market'] = tableData[i]['base'] + "/" + tableData[i]['rel'];
-	}
 
 	return tableData;
 }
@@ -624,6 +602,7 @@ function formatPairName(tableData)
 function addEmptyMarketData(tableData, keys)
 {
 	keys = typeof keys === "undefined" ? ["last", "high", "low", "volume"] : keys;
+	
 	for (var i = 0; i < tableData.length; ++i)
 	{
 		for (var j = 0; j < keys.length; ++j)
@@ -640,8 +619,8 @@ function addAssetNames(tableData, baseName, relName)
 {
 	for (var i = 0; i < tableData.length; ++i)
 	{
-		tableData[i]['base'] = getAssetInfo("name", [tableData[i][baseName]])['name'];
-		tableData[i]['rel'] = getAssetInfo("name", [tableData[i][relName]])['name'];
+		tableData[i]['base'] = getAssetInfo("asset", tableData[i][baseName])['name'];
+		tableData[i]['rel'] = getAssetInfo("asset", tableData[i][relName])['name'];
 	}
 	
 	return tableData;
@@ -655,9 +634,7 @@ function getFormData($form)
 	var data = {};
 
 	for (var s in serialized) 
-	{
 		data[serialized[s]['name']] = serialized[s]['value'];
-	}
 
 	return data;
 }
@@ -721,7 +698,7 @@ $(".idex-submit").on("click", function()
 
 		sendPost(params).done(function(data)
 		{
-			console.log(data)
+			console.log(data);
 			if ('result' in data && data['result'])
 			{
 			}
@@ -736,9 +713,8 @@ $(".idex-submit").on("click", function()
 	}
 
 	if ($form)
-	{
 		$form.trigger("reset");
-	}
+	
 	$(".md-overlay").trigger("click");
 })
 
@@ -796,16 +772,16 @@ function pollOrderbook(timeout)
 		sendPost(params).done(function(orderbookData)
 		{
 			orderbookAsync = false;
-			if (!("error" in orderbookData))
+			if (!isStoppingOrderbook)
 			{
-				orderbookData['bids'].sort(compare);
-				orderbookData['asks'].sort(compare);
-				orderbookData['bids'].reverse();
-				orderbookData['asks'].reverse();
-				updateOrderbook(orderbookData);
+				if (!("error" in orderbookData))
+				{
+					orderbookData['bids'].sort(compareProp('price')).reverse();
+					orderbookData['asks'].sort(compareProp('price')).reverse();
+					updateOrderbook(orderbookData);
+				}
+				pollOrderbook(3000);
 			}
-
-			pollOrderbook(3000);
 		}).fail(function(data)
 		{
 			orderbookAsync = false;
@@ -819,46 +795,44 @@ function groupOrders(orders, currentOrders)
 	var oldOrders = [];
 	var newOrders = [];
 	var expiredOrders = [];
-	var newOrdersRows = [];
 	
 	for (var i = 0; i < currentOrders.length; ++i)
-	{
 		currentOrders[i]['index'] = i;
-	}
 	
 	for (var i = 0; i < orders.length; i++)
 	{
-		var loopOrd = orders[i];
+		var order = orders[i];
 		var isNew = true;
 
 		for (var j = 0; j < currentOrders.length; j++)
 		{
-			var loopCurOrd = currentOrders[j];
+			var currentOrder = currentOrders[j];
 
-			if (compObjs(loopOrd, loopCurOrd, orderCompKeys))
+			if (compObjs(order, currentOrder, orderCompKeys))
 			{
-				oldOrders.push(loopOrd);
+				oldOrders.push(order);
 				currentOrders.splice(j, 1);
 				isNew = false;
-				break
+				break;
 			}
 		}
 
 		if (isNew)
 		{
-			loopOrd.price = toSatoshi(loopOrd.price).toFixed(8);
-			loopOrd.volume = toSatoshi(loopOrd.volume).toFixed(6);
-			var trString = orderbookRows([[loopOrd.price, loopOrd.volume]]);
-			var trClasses = (loopOrd['exchange'] == "nxtae_nxtae" || loopOrd['exchange'] == "nxtae") ? "virtual" : "";
-			trClasses += (loopOrd['offerNXT'] == rsid) ? " own-order" : ""
-			newOrdersRows.push(addRowClass(trString, trClasses))
-			newOrders.push(loopOrd);
+			order.price = toSatoshi(order.price).toFixed(8);
+			order.volume = toSatoshi(order.volume).toFixed(6);
+			var trString = buildTableRows([[order.price, order.volume]], "span");
+			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
+			trClasses += (order['offerNXT'] == rsid) ? " own-order" : "";
+			trString = addElClass(trString, trClasses);
+			order['row'] = trString;
+			newOrders.push(order);
 		}
 	}
 
 	expiredOrders = currentOrders;
 
-	return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'newOrdersRows':newOrdersRows, 'oldOrders':oldOrders};
+	return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'oldOrders':oldOrders};
 }
 
 
@@ -867,13 +841,13 @@ function updateOrderbook(orderbookData)
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
 	var bidData = groupOrders(orderbookData.bids.slice(), currentOrderbook.bids.slice());
 	var askData = groupOrders(orderbookData.asks.slice(), currentOrderbook.asks.slice());
-
+	
 	updateOrders($("#buyBook .twrap"), bidData);
 	updateOrders($("#sellBook .twrap"), askData);
 	animateOrderbook();
 	currentOrderbook = new orderbookVar(orderbookData);
 
-	$("#currLast .order-text").html(Number(Number(lastPrice).toFixed(8)));
+	$("#currLast .order-text").text(Number(lastPrice).toFixed(8));
 }
 
 
@@ -881,8 +855,7 @@ function animateOrderbook()
 {
 	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(700, function()
 	{
-		var $set = $(this);
-		$set.replaceWith($set.contents());
+		$(this).replaceWith($(this).contents());
 	})
 	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(700, function()
 	{
@@ -893,25 +866,23 @@ function animateOrderbook()
 	$(".expiredRow").removeClass("expiredRow");
 }
 
-var onetime = false
+
 function updateOrders($book, orderData)
 {
 	if (!($book.find(".order-row").length))
 	{
-		$book.empty().append(orderData.newOrdersRows.join(""));
+		for (var i = 0; i < orderData.newOrders.length; ++i)
+		{
+			$book.append(orderTooltip(orderData.newOrders[i]['row'], orderData.newOrders[i]))
+		}
 	}
 	else
 	{
 		$book.find(".order-row").each(function(index, element)
 		{
+			var rowData = getRowData($(this), index)
 			removeOrders($(this), orderData, index);
-		})
-		onetime = true
-		$book.find(".order-row").each(function(index, element)
-		{
-			var isAsk = ($(this).closest(".bookname").attr('id') == "buyBook") ? false : true;
-			var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index];
-			addNewOrders($(element), orderData, rowData, index);
+			addNewOrders($(this), orderData, rowData, index);
 		})
 	}
 }
@@ -921,55 +892,35 @@ function removeOrders($row, orderData, index)
 {
 	for (var i = 0; i < orderData['expiredOrders'].length; i++)
 	{
-		if (index == orderData['expiredOrders'][i]['index'])
-		{
+		var expiredOrder = orderData['expiredOrders'][i];
+		
+		if (index == expiredOrder['index'])
 			$row.addClass("expiredRow");
-		}
 	}
 }
 
 
 function addNewOrders($row, orderData, rowData, index)
 {
-	var trRows = orderData.newOrdersRows
-
 	for (var i = 0; i < orderData.newOrders.length; i++)
 	{
-		var loopNewOrd = orderData.newOrders[i];
-		var trString = addRowClass(trRows[i], "newrow");
-		
-		if (loopNewOrd.price < rowData.price)
+		var newOrder = orderData.newOrders[i];
+		var trString = addElClass(orderData.newOrders[i]['row'], "newrow");
+		trString = orderTooltip(trString, newOrder)
+
+		if (newOrder.price < rowData.price)
 		{
-			var $sib = $row.next();
+			var $sib = $row;
 			
-			if ($sib && $sib.length)
-			{
-				var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? false : true;
-				var sibData = isAsk ? currentOrderbook.asks[index + 1] : currentOrderbook.bids[index+1];
-				
-				if (sibData)
-				{
-					if (loopNewOrd.price >= sibData.price)
-					{
-						if ($sib.hasClass("newrow"))
-							$sib.after($(trString));
-						else
-							$sib.before($(trString));
-					}
-					else
-					{
-						break
-					}
-				}
-				else
-				{
-					$sib.after($(trString));
-				}
-			}	
+			while ($sib.next() && $sib.next().hasClass("newrow"))
+				$sib = $sib.next();
+			
+			var sibData = getRowData($sib, index+1)
+			
+			if (!sibData || newOrder.price >= sibData.price)
+				$sib.after($(trString));
 			else
-			{
-				$row.after($(trString));
-			}
+				break;
 		}
 		else
 		{
@@ -977,9 +928,30 @@ function addNewOrders($row, orderData, rowData, index)
 		}
 		
 		orderData['newOrders'].splice(i,1);
-		trRows.splice(i, 1);
 		--i;
 	}
+}
+
+function orderTooltip(row, rowData)
+{
+	var nxt = "";
+	var exchange = rowData['exchange']
+	
+	if (exchange == "InstantDEX" || exchange == "nxtae")
+		nxt = toRS(rowData['NXT'])
+	else
+		return row
+	
+	return $(row).tooltipster({
+		'content':$("<span><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
+	})
+	
+	/*$(this).tooltipster({
+		'content':$("<span>"+ rowData['exchange'] +"</span>"),
+		'multiple':true,
+		'position':'bottom'
+	})*/
+
 }
 
 
@@ -996,81 +968,67 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 
 
 
-$("#sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
+$("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
 {
-	var order = getRowData($(this));
+	var order = getRowData($(this), $(this).index());
+	var isAsk = order.askoffer ? "Bid" : "Ask";
+	var tab = order.askoffer ? "1" : "2";
 	pendingOrder = order;
 	console.log(order);
 	
 	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order);
 	$("#tempBuyClick").trigger("click");
 
-	$("#placeBidPrice").val(order.price);
-	$("#placeBidAmount").val(order.volume).trigger("keyup");
-	$("#tab1").trigger("click")
-})
-
-
-$("#buyBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
-{
-	var order = getRowData($(this))
-	pendingOrder = order
-	console.log(order)
-	
-	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order)
-	$("#tempBuyClick").trigger("click")
-	
-	$("#placeAskPrice").val(order.price);
-	$("#placeAskAmount").val(order.volume).trigger("keyup");
-	$("#tab2").trigger("click");
+	$("#place"+isAsk+"Price").val(order.price);
+	$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");
+	$("#tab"+tab).trigger("click")
 })
 
 $(".conf-input").css("width","80%")
 
 function confirmPopup($modal, order)
 {
-	var type = order.askoffer == 1 ? "sell" : "buy"
-	$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order")
-	$modal.find(".conf-pair").text(currentOrderbook.pair)
-	$modal.find(".conf-exchange").text(order.exchange)
-	$modal.find(".conf-amount").val(order.volume)
-	$modal.find(".conf-price").val(order.price)
-	$modal.find(".conf-total").val((order.price*order.volume).toFixed(8))
-	$modal.find(".conf-base").text(order.base)
-	$modal.find(".conf-rel").text(order.rel)
-	$modal.find(".conf-minperc").val(order.minperc)
-	$modal.find(".conf-perc").val("100")
-	$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"))
-	$(".conf-confirm").prop('disabled', false)
-	$(".conf-jumbotron").hide().find("div").empty()
+	$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order");
+	$modal.find(".conf-pair").text(currentOrderbook.pair);
+	$modal.find(".conf-exchange").text(order.exchange);
+	$modal.find(".conf-amount").val(order.volume);
+	$modal.find(".conf-price").val(order.price);
+	$modal.find(".conf-total").val((order.price*order.volume).toFixed(8));
+	$modal.find(".conf-base").text(order.base);
+	$modal.find(".conf-rel").text(order.rel);
+	$modal.find(".conf-minperc").val(order.minperc);
+	$modal.find(".conf-perc").val("100");
+	$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"));
+	$(".conf-confirm").prop('disabled', false);
+	$(".conf-jumbotron").hide().find("div").empty();
 }
 
 $(".conf-confirm").on("click", function(){ triggerMakeoffer($(this)); })
 
 function triggerMakeoffer($button)
 {
-	var params = {"requestType":"makeoffer3","perc":$(".conf-perc").val()}
-	$button.prop('disabled', true)
+	var params = {"requestType":"makeoffer3","perc":$(".conf-perc").val()};
+	$button.prop('disabled', true);
 	
 	for (var i = 0; i < postParams.makeoffer3.length; ++i)
 	{
-		params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]]
+		params[postParams.makeoffer3[i]] = pendingOrder[postParams.makeoffer3[i]];
 	}
-	console.log(params)
+	console.log(params);
 
 	sendPost(params).done(function(data)
 	{
 		console.log(data);
-		$button.prop('disabled', false)
+		$button.prop('disabled', false);
 		if ("error" in data && data.error.length)
 		{
-			console.log('error')
-			$(".conf-jumbotron").show().find("div").text(data['error'])
+			console.log("error");
+			$(".conf-jumbotron").show().find("div").text(data['error']);
 		}
 		else
 		{
-			console.log("success")
-			$(".md-overlay").trigger("click")
+			console.log("success");
+			$(".md-overlay").trigger("click");
 		}
 	})
 }
@@ -1096,9 +1054,9 @@ $("input.conf-perc").on("keyup", function()
 	var total = Number(pendingOrder['price'])*Number(amount);
 	
 	$(".conf-amount").val(amount);
-	$(".conf-total").val(total.toFixed(8))
+	$(".conf-total").val(total.toFixed(8));
 	
-	var check = checkPerc(perc, pendingOrder['minperc'])
+	var check = checkPerc(perc, pendingOrder['minperc']);
 	if (!check.length)
 	{
 		$("button.conf-confirm").prop('disabled', false);
@@ -1107,31 +1065,30 @@ $("input.conf-perc").on("keyup", function()
 	else
 	{
 		$("button.conf-confirm").prop('disabled', true);
-		$(".conf-jumbotron").show().find("div").text(check)
+		$(".conf-jumbotron").show().find("div").text(check);
 	}
 });
 
 function checkPerc(perc, minperc)
 {
-	var text = ""
-	var isnum = !isNaN(perc)
+	var text = "";
+	var isnum = !isNaN(perc);
 	
 	if (isnum && perc.length)
 	{
 		if (perc.search("\\.") != -1)
 		{
-			text = "Perc must be a whole number."
-			
+			text = "Perc must be a whole number.";
 		}
 		else
 		{
 			if (perc < minperc)
 			{
-				text = "Perc must be greater than the order's min perc."
+				text = "Perc must be greater than the order's min perc.";
 			}
 			else if (perc > 100)
 			{
-				text = "Perc must be less than 100."
+				text = "Perc must be less than 100.";
 			}
 			else
 			{
@@ -1141,60 +1098,56 @@ function checkPerc(perc, minperc)
 	}
 	else
 	{
-		text = "Invalid perc."
+		text = "Invalid perc.";
 	}
 	
-	return text
+	return text;
 }
 
 
 
-function buildTableRows(data)
+function buildTableRows(data, tableType)
 {
-	var row = ""
+	var row = "";
+	var rowWrap = "";
+	var tdWrap = "";
+
+	if (tableType == "table")
+	{
+		rowWrap = "<tr></tr>"
+		tdWrap = "<td></td>";
+	}
+	else if (tableType == "span")
+	{
+		rowWrap = "<div class='order-row'></div>"
+		tdWrap = "<span class='order-col'></span>";
+	}
 	
 	for (var i = 0; i < data.length; ++i)
 	{
-		var td = ""
+		var td = "";
 
 		for (var j = 0; j < data[i].length; ++j)
 		{
-			td += "<td>"+data[i][j]+"</td>"
+			td += $(tdWrap).text(data[i][j])[0].outerHTML
 		}
-		row += "<tr>"+td+"</tr>"
+		
+		row += $(td).wrapAll(rowWrap).parent()[0].outerHTML
 	}
 
-	return row
+	return row;
 }
 
-function orderbookRows(data)
+
+function getRowData($row, index)
 {
-	var row = ""
-	
-	for (var i = 0; i < data.length; ++i)
-	{
-		var td = ""
-
-		for (var j = 0; j < data[i].length; ++j)
-		{
-			td += "<span class='order-col'>"+data[i][j]+"</span>"
-		}
-		row += "<div class='order-row'>"+td+"</div>"
-	}
-
-	return row
-}
-
-function getRowData($row)
-{
-	var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? false : true;
-	var index = $row.index()
-	var rowData = isAsk ? currentOrderbook.asks[index] : currentOrderbook.bids[index];
+	var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? "bids" : "asks";
+	var rowData = index >= currentOrderbook[isAsk].length ? null : currentOrderbook[isAsk][index];
 
 	return rowData;
 }
 
-function addRowClass(row, rowClass)
+function addElClass(row, rowClass)
 {
 	var s = "";
 	
@@ -1207,8 +1160,21 @@ function addRowClass(row, rowClass)
 	return s;
 }
 
+function addElAttr(row, data, rowAttr)
+{
+	var s = "";
+	
+	$(row).each(function(e, p)
+	{
+		$(p).attr(rowAttr, data);
+		s += $(p)[0].outerHTML;
+	})
+	
+	return s;
+}
 
-function addRowAttr(row, data, keys)
+
+function addElDataAttr(row, data, keys)
 {
 	var s = "";
 	var i = 0;
@@ -1263,25 +1229,21 @@ function compObjs(aObj, bObj, keys)
 }
 
 
-function compare(a, b) 
+function compareProp(prop)
 {
-	if (a.price < b.price)
-		return -1;
-	if (a.price > b.price)
-		return 1;
-	
-	return 0;
-}
-function compareName(a, b) 
-{
-	if (a.name < b.name)
-		return -1;
-	if (a.name > b.name)
-		return 1;
-	
-	return 0;
+	return function(a, b)
+	{
+		return a[prop] - b[prop];
+	}
 }
 
+
+function toRS(id)
+{
+	var s = new NxtAddress()
+	s.set(id)
+	return s.toString();
+}
 
 function toSatoshi(number)
 {
