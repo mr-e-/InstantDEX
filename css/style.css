@@ -260,7 +260,6 @@ form {
 	background: black;
 	border-left: inset 1px white;
 	overflow: hidden;
-
 }
 
 #currPair {
@@ -1106,17 +1105,6 @@ tbody tr:nth-child(odd) {
 
 /*	color:#6E6E6E;*/
 
-/*
-.table td {
-  border-right:solid 20px transparent;
-}
-
-.table th {
-  border-right:solid 20px transparent;
-  text-align: left;
-}
-*/
-
 .dropdown-chart {
 	float: left;
 	width: 100px;
@@ -1153,15 +1141,11 @@ tbody tr:nth-child(odd) {
 	display: block;
 }
 
-
-
-	
 /*
 	border-style:solid;
 	border-width: 1px;
 	border-color: #8F8F8F;
 */
-
 
 
 .ui-state-hover, .ui-state-active, .ui-state-highlight, .ui-state-focus, .ui-state-default {

@@ -31,6 +31,7 @@ var IDEX = (function(IDEX, $, undefined)
 		this.numbars = "100"
 		this.isvirtual = false
 		this.flip = false
+		this.isNew = false
 		
 		var __construct = function(that) 
 		{
@@ -77,14 +78,20 @@ var IDEX = (function(IDEX, $, undefined)
 			var pointDate = data[i][0]*1000;
 			if (baseNXT)
 			{
+
+				var open = data[i][keys[0]]
+				var high = data[i][keys[1]]
+				var low = data[i][keys[2]]
 				var close = data[i][keys[3]]
-				for (var j = 0; j < keys.length; ++j)
-				{
-					if (j == keys.length - 1)
-						data[i][keys[j]] = Number((close * data[i][keys[j]]).toFixed(2))
-					else
-						data[i][keys[j]] = Number((1 / data[i][keys[j]]).toFixed(6))
-				}
+				var volu = data[i][keys[4]]
+
+				data[i][keys[0]] =  Number((1 / close).toFixed(6))
+				data[i][keys[1]] =  Number((1 / low).toFixed(6))
+				data[i][keys[2]] =  Number((1 / high).toFixed(6))
+				data[i][keys[3]] =  Number((1 / open).toFixed(6))
+				data[i][keys[4]] =  Number((close * volu).toFixed(6))
+
+				data[i] = ((i!= 0) && (data[i][keys[2]] < data[i-1][keys[2]]/5)) ? data[i-1] : data[i] // spike
 			}
 			else
 			{
@@ -101,7 +108,7 @@ var IDEX = (function(IDEX, $, undefined)
 	function getData(options)
 	{
 		var dfd = new $.Deferred();
-		var id = (options.flip || options.baseid == "5527630") ? options.relid : options.baseid
+		var id = (options.baseid == "5527630") ? options.relid : options.baseid
 
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+id+"_"+"NXT"+"&type=tick&len="+options.numticks+"&num="+options.numbars
 			
@@ -117,16 +124,22 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
 		currentChart = new chartVar(siteOptions)
-		var baseNXT = (currentChart.basename == "NXT" && !currentChart.flip)
-		if (currentChart.flip && currentChart.relname == "NXT")
+		
+		if (currentChart.flip)
 		{
-			currentChart.flip = false
-			baseNXT = true
+			currentChart.basename = [currentChart.relname, currentChart.relname = currentChart.basename][0];
+			currentChart.baseid = [currentChart.relid, currentChart.relid = currentChart.baseid][0];			
 		}
-		var titleName = currentChart.flip ? currentChart.relname+"/NXT" : currentChart.basename+"/NXT";
+		if (currentChart.isNew)
+		{
+			resetDropdown();
+			currentChart.isNew = false;
+		}
+		var baseNXT = currentChart.basename == "NXT";
+		var titleName = currentChart.basename+"/NXT";
 		if (baseNXT)
 			titleName = currentChart.basename+"/"+currentChart.relname
-		
+
 		getData(currentChart).done(function(data)
 		{
 			data = data.results.bars
@@ -164,7 +177,7 @@ var IDEX = (function(IDEX, $, undefined)
 					useHTML:true,
 					style:
 					{
-						color: '#CCC'
+						color: '#CCC',
 					},
 					text:titleName,
 					
@@ -561,24 +574,27 @@ var IDEX = (function(IDEX, $, undefined)
 	function highLowPrice()
 	{
 		var chart = $('#chartArea').highcharts()
-		var points = chart.series[0].points
-		var highestPrice = null;
-		var lowestPrice = null;
-
-		for (var i = 0; i < points.length; ++i)
+		if (chart)
 		{
-			if (highestPrice === null || points[i].high >= highestPrice.high)
+			var points = chart.series[0].points
+			var highestPrice = null;
+			var lowestPrice = null;
+
+			for (var i = 0; i < points.length; ++i)
 			{
-				highestPrice = points[i]
+				if (highestPrice === null || points[i].high >= highestPrice.high)
+				{
+					highestPrice = points[i]
+				}
+				if (lowestPrice === null || points[i].low <= lowestPrice.low)
+				{
+					lowestPrice = points[i]
+				}
 			}
-			if (lowestPrice === null || points[i].low <= lowestPrice.low)
-			{
-				lowestPrice = points[i]
-			}
+			
+			chart.highestPrice.attr({'text':"←"+" "+String(highestPrice.high),'x':chart.xAxis[0].toPixels(highestPrice.x),'y':chart.yAxis[0].toPixels(highestPrice.high)})
+			chart.lowestPrice.attr({'text':"←"+" "+String(lowestPrice.low),'x':chart.xAxis[0].toPixels(lowestPrice.x),'y':chart.yAxis[0].toPixels(lowestPrice.low)+2})
 		}
-		
-		chart.highestPrice.attr({'text':"←"+" "+String(highestPrice.high),'x':chart.xAxis[0].toPixels(highestPrice.x),'y':chart.yAxis[0].toPixels(highestPrice.high)})
-		chart.lowestPrice.attr({'text':"←"+" "+String(lowestPrice.low),'x':chart.xAxis[0].toPixels(lowestPrice.x),'y':chart.yAxis[0].toPixels(lowestPrice.low)+2})
 	}
 
 
@@ -732,6 +748,14 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).addClass("active")		
 	})
 	
+	function resetDropdown()
+	{
+		$(".dropdown-option").removeClass("active")
+		$("#numbars .dropdown-option").first().addClass("active")	
+		$("#numticks .dropdown-option").first().addClass("active")			
+		$("#flip .dropdown-option").first().addClass("active")			
+	}
+	
 	$("#numbars .dropdown-option").on("click", function(e)
 	{
 		var chart = $('#chartArea').highcharts()
@@ -829,7 +853,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (chart)
 		{
 			var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40,
-			'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40]
+			'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+(offset.top/2)+40]
 			chart.splitLine.attr({d:path})
 		}
 	}
@@ -857,6 +881,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 	$(window).resize(function()
 	{
+		setTimeout(function()
+		{
+			highLowPrice()
+		},125)
 		drawDivideLine()
 	})
 	

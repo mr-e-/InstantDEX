@@ -770,7 +770,7 @@ function stopPollingOrderbook()
 	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name);
 	currentOrderbook = new orderbookVar();
 	IDEX.killChart();
-	IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name});
+	IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
 	pollOrderbook(1);
 }
 
