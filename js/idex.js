@@ -751,6 +751,9 @@ function loadOrderbook(baseid, relid)
 		IDEX.curRel = getAssetInfo("asset", Number(relid));
 		
 		updateCurrentBalance();
+		$("#placeBidForm").trigger("reset");
+		$("#placeAskForm").trigger("reset");
+
 		stopPollingOrderbook();
 	}
 }

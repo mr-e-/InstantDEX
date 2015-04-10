@@ -108,7 +108,8 @@ var IDEX = (function(IDEX, $, undefined)
 	function getData(options)
 	{
 		var dfd = new $.Deferred();
-		var id = options.baseid == "5527630" ? options.relid : options.baseid
+		var id = flipCheck("base", "id")
+		var id = id == "5527630" ? flipCheck("rel", "id") : flipCheck("base", "id")
 
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode="+"bars"+"&exchange=ex_nxtae&pair="+id+"_"+"NXT"+"&type=tick&len="+options.numticks+"&num="+options.numbars
 			
