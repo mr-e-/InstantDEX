@@ -482,6 +482,7 @@ form {
 	padding-left: 5px; 	
 }
 
+/*
 #placeBidPrice, #placeBidAmount {
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-weight: 600;
@@ -492,7 +493,7 @@ form {
 	background: rgb(240,240,240);
 	border: none;
 	color: grey;
-}
+}*/
 
 .order-input {
 	width: 100%;
@@ -1091,7 +1092,7 @@ tbody tr:nth-child(odd) {
 }
 
 #sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
-	background-color:rgba(107, 233, 255, 0.3);
+	background-color:rgba(222, 233, 255, 0.2);
 }
 
 #sellBook > .twrap > .order-row:hover  > .order-col {
@@ -1171,3 +1172,31 @@ tbody tr:nth-child(odd) {
 .ui-autocomplete > li > a {
 	color: black;
 }
+
+.growl.growl-notice {
+    color: black;
+	background:rgba(170, 233, 255, 1);
+	background-color:rgba(170, 233, 255, 1);
+}
+
+.growl.growl-error {
+	color: #FFF;
+	background:rgba(192, 57, 43, 1);
+	background-color:rgba(192, 57, 43, 1);
+}
+
+.growl.growl-warning {
+	color: black;
+	background: #F39C12;
+}
+
+.growl {
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+	position: relative;
+	border-radius: 0px;
+	-webkit-transition: all 0.4s ease-in-out;
+	-moz-transition: all 0.4s ease-in-out;
+	transition: all 0.4s ease-in-out; 
+}
+
