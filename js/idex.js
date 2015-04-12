@@ -311,7 +311,7 @@ function initChartFavorites()
 	
 	localStorage.setItem('chartFavorites', JSON.stringify(chartFavs));
 	IDEX.user.favorites = chartFavs;
-	
+
 	for (var id in chartFavs)
 	{	
 		$(".chart-control[chart-id='"+id+"']").val(chartFavs[id]['name']).attr("data-asset", chartFavs[id]['asset']);
@@ -325,8 +325,8 @@ IDEX.loadMiniCharts = function()
 {
 	$('.mini-chart').each(function()
 	{
-		var baseID = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset")
-		var relID = $(this).find(".mini-chart-area-1 span").first().attr("data-asset");
+		var baseID = $(this).find(".mini-chart-area-1 span").first().attr("data-asset")
+		var relID = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset");
 		var divid = $(this).find(".mini-chart-area-4").attr('id');
 		
 		if (baseID != "-1" && relID != "-1")
