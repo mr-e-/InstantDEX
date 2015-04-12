@@ -24,8 +24,8 @@ IDEX.updateBalanceBox = function()
 	
 	IDEX.account.updateBalances().done(function()
 	{
-		baseBal = parseBalance(IDEX.account.getBalance[IDEX.curBase.assetid]);
-		relBal = parseBalance(IDEX.account.getBalance[IDEX.curRel.assetid]);
+		baseBal = parseBalance(IDEX.account.getBalance(IDEX.curBase.assetid));
+		relBal = parseBalance(IDEX.account.getBalance(IDEX.curRel.assetid));
 
 		$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1]);
 		$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1]);
@@ -36,15 +36,15 @@ function parseBalance(balance)
 {
 	var whole = "0";
 	var dec = ".0";
-		if (!($.isEmptyObject(balance)))
-		{
-		var amount = String(balance.quantityQNT/Math.pow(10, balances.decimals));
+	if (!($.isEmptyObject(balance)))
+	{
+		var amount = String(balance.availableBalance);
 		var both = amount.split(".");
 		
 		whole = both[0];
 		if (both.length > 1)
 			dec	= "." + both[1];
-		}	
+	}	
 	return [whole, dec];
 }
 
@@ -62,3 +62,4 @@ $("input[name='price'], input[name='volume']").on("keyup", function()
 	return IDEX;
 	
 }(IDEX || {}, jQuery));
+

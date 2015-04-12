@@ -89,12 +89,15 @@ IDEX.Balance = function(constructorObj)
 			IDEX.constructFromObject(that, asset)
 			if (that.name == "NXT")
 			{
-				that.availableBalance = constructorObj['balanceNQT']
-				that.unconfirmedBalance = constructorObj['unconfirmedBalanceNQT']
+				that.availableBalance = Number(constructorObj['balanceNQT']) / Math.pow(10, asset.decimals);
+				that.unconfirmedBalance = Number(constructorObj['unconfirmedBalanceNQT']) / Math.pow(10, asset.decimals);
+			}
+			else
+			{
+				that.availableBalance = constructorObj['quantityQNT'] / Math.pow(10, asset.decimals);
+				that.unconfirmedBalance = constructorObj['unconfirmedQuantityQNT'] / Math.pow(10, asset.decimals);
 			}
 
-			that.availableBalance = constructorObj['quantityQNT']
-			that.unconfirmedBalance = constructorObj['unconfirmedQuantityQNT']
 		}
 	}(this, constructorObj)
 	//IDEX.constructFromObject(this, obj);
@@ -116,7 +119,7 @@ function Account(obj)
 Account.prototype.getBalance = function(assetID)
 {
 	var balance = {}
-	
+
 	if (assetID in this.balances)
 		balance = this.balances[assetID]
 		
@@ -152,7 +155,6 @@ Account.prototype.updateBalances = function()
 				
 				for (var i = 0; i < balances.length; i++)
 				{
-					
 					var balance = new IDEX.Balance(balances[i])
 					thisScope.balances[balance.asset] = balance
 				}
@@ -174,7 +176,7 @@ Account.prototype.updateBalances = function()
 		dfd.resolve();
 	})
 	
-	return dfd.promise()
+	return dfd.promise();
 }
 
 	
@@ -236,7 +238,7 @@ function initAllAssets()
 
 				parsed.push(obj);
 			}
-			parsed.push(snAssets['nxt']);
+			parsed.push(IDEX.snAssets['nxt']);
 			localStorage.setItem('allAssets', JSON.stringify(parsed));
 			dfd.resolve(parsed);
 			
