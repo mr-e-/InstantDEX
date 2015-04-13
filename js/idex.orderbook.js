@@ -6,7 +6,7 @@ var IDEX = (function(IDEX, $, undefined) {
 var isStoppingOrderbook = false;
 var orderbookAsync = false;
 var orderbookTimeout;
-	
+var orderbookInit = true;	
 
 
 function Order(obj) 
@@ -19,13 +19,15 @@ IDEX.loadOrderbook = function(baseid, relid)
 {
 	if (!isStoppingOrderbook)
 	{
-		IDEX.curBase = IDEX.getAssetInfo("asset", Number(baseid));
-		IDEX.curRel = IDEX.getAssetInfo("asset", Number(relid));
+		IDEX.curBase = IDEX.getAssetInfo("asset", baseid);
+		IDEX.curRel = IDEX.getAssetInfo("asset", relid);
 		
+		emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name, "Loading...");
 		IDEX.updateBalanceBox();
 		$("#placeBidForm").trigger("reset");
 		$("#placeAskForm").trigger("reset");
-
+		IDEX.killChart();
+		IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
 		IDEX.stopPollingOrderbook();
 	}
 }
@@ -42,20 +44,34 @@ IDEX.stopPollingOrderbook = function()
 	
 	isStoppingOrderbook = false;
 	clearTimeout(orderbookTimeout);
-	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name);
 	IDEX.currentOrderbook = new IDEX.Orderbook();
-	IDEX.killChart();
-	IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
 	pollOrderbook(1);
 }
 
 
-function emptyOrderbook(currPair)
+function emptyOrderbook(currPair, price)
 {
+	price = typeof price === "undefined" ? '0.0' : price
 	$("#currPair .order-text").html(currPair);
 	$("#buyBook .twrap").empty();
 	$("#sellBook .twrap").empty();
-	$("#currLast .order-text").empty().html('0.0');
+	$("#currLast .order-text").empty().html(price);
+}
+
+
+IDEX.displayBoth = function()
+{
+			IDEX.chartInit = new $.Deferred()
+		IDEX.orderbookInit = new $.Deferred()
+	$.when(IDEX.orderbookInit, IDEX.chartInit).always(function(a)
+	{
+		console.log(a)
+		$("#chartLoading").hide();
+		IDEX.orderbookInit = false;
+		IDEX.chartInit = false;
+	})
+					if (IDEX.orderbookInit && IDEX.orderbookInit.state() == "pending")
+						IDEX.orderbookInit.resolve();
 }
 
 
@@ -75,6 +91,7 @@ function pollOrderbook(timeout)
 					orderbookData['bids'].sort(IDEX.compareProp('price')).reverse();
 					orderbookData['asks'].sort(IDEX.compareProp('price')).reverse();
 					updateOrderbook(orderbookData);
+
 				}
 				pollOrderbook(3000);
 			}

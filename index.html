@@ -25,7 +25,7 @@
 	<script src="js/jquery-ui/jquery-ui.min.js"></script>
 	<script src="js/jquery.growl.js"></script>
 	
-	<title>instantDEX GUI prototype v2.21</title>
+	<title>instantDEX Beta</title>
 	<!--TOOLTIP SETTINGS-->
     <script>
         $(document).ready(function() {
@@ -40,7 +40,7 @@
 
 <body>
 
-    <!----------------------------------------------- HEADER AREA -->
+    <!--------------------------- HEADER AREA ---------------------->
 	<div id="header" class="unselectable">
 		<div id="topLogoWrap">
 			<img id="topLogo" src="img/logo-hor.svg"></img>
@@ -128,194 +128,223 @@
             <img id="icoFolio" src="img/ico_top_folio.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
         </div>
         
-	</div><!--
-    
---- MAIN CHART AREA --------------------------------------------------    
-    
- --><div id="mainChart" class="unselectable">
-		<div id="mainChartTop" style="height:40px; border-bottom:inset 1px rgb(45,45,45);overflow:hidden">
+	</div>
+	
+	<!------------------------- BODY WRAPPER -------------------------------->	
+	
+	<div id="mainWrap">
+	
+		<!------------------------- MAIN CHART AREA ------------------------------------->
+		
+		<div id="mainChart" class="unselectable">
+		
+			<div id="mainChartTop">
+			
+				<div id="numbars" class="dropdown-chart">
+					<span class="dropdown-title">Bars &#9662;</span>
+					<ul>
+						<li><span class="dropdown-option active">100</span></li>
+						<li><span class="dropdown-option">300</span></li>
+						<li><span class="dropdown-option">500</span></li>
+					</ul>
+				</div>
+				
+				<div id="numticks" class="dropdown-chart">
+					<span class="dropdown-title">Ticks &#9662;</span>
+					<ul>
+						<li><span class="dropdown-option active">5</span></li>
+						<li><span class="dropdown-option">10</span></li>
+						<li><span class="dropdown-option">25</span></li>
+						<li><span class="dropdown-option">100</span></li>
+						<li><span class="dropdown-option">300</span></li>
+					</ul>
+				</div>
 
-			<div id="numbars" class="dropdown-chart">
-				<span class="dropdown-title">Bars &#9662;</span>
-				<ul>
-					<li><span class="dropdown-option active">100</span></li>
-					<li><span class="dropdown-option">300</span></li>
-					<li><span class="dropdown-option">500</span></li>
-				</ul>
+				<div id="flip" class="dropdown-chart">
+					<span class="dropdown-title">Market &#9662;</span>
+					<ul>
+						<li><span class="dropdown-option active">Base</span></li>
+						<li><span class="dropdown-option">Rel</span></li>
+						<li><span class="dropdown-option">Virtual</span></li>
+					</ul>
+				</div>
+				
 			</div>
 			
-			<div id="numticks" class="dropdown-chart">
-				<span class="dropdown-title">Ticks &#9662;</span>
-				<ul>
-					<li><span class="dropdown-option active">5</span></li>
-					<li><span class="dropdown-option">10</span></li>
-					<li><span class="dropdown-option">25</span></li>
-					<li><span class="dropdown-option">100</span></li>
-					<li><span class="dropdown-option">300</span></li>
-				</ul>
+			<div id="chartLoading">
+				<span>Loading</span>
 			</div>
-
-			<div id="flip" class="dropdown-chart">
-				<span class="dropdown-title">Market &#9662;</span>
-				<ul>
-					<li><span class="dropdown-option active">Base</span></li>
-					<li><span class="dropdown-option">Rel</span></li>
-					<li><span class="dropdown-option">Virtual</span></li>
-				</ul>
+			
+			<div id="chartArea">
 			</div>
+			
 		</div>
-		
-		<div id="chartArea" style="height:calc(100% - 40px);cursor:none">
-		</div>
-	</div><!--
-    
---- MINICHARTS + ORDER BOX AREA --------------------------------------
-    
- --><div id="miniChartsC" class="unselectable">
-		<div id="miniCNum1" class="mini-chart">
-			<div id="mCN1A" class="mini-chart-area-1">
-                <span id="chart-curr-91">---</span>/<span id="chart-curr-92">---</span>
-            </div>
-            <div id="mCN1B" class="mini-chart-area-2">0%</div>
-            <div id="mCN1C" class="mini-chart-area-3 text-green">0.00</div>
-            <div id="mCN1D" class="mini-chart-area-4" style="height:calc(100% - 40px)"></div>
-        </div>
-        <div id="miniCNum2" class="mini-chart">
-        	<div id="mCN2A" class="mini-chart-area-1">
-                <span id="chart-curr-101">---</span>/<span id="chart-curr-102">---</span>
-            </div>
-            <div id="mCN2B" class="mini-chart-area-2">0%</div>
-            <div id="mCN2C" class="mini-chart-area-3 text-red">0.00</div>
-            <div id="mCN2D" class="mini-chart-area-4" style="height:calc(100% - 40px)">chart</div>        
-        </div>
-        <div id="orderBox">
-        	<ul class="tabs">
-    			<li>
-					<input type="radio" name="tabs" id="tab1" checked></input>
-					<label for="tab1" class="fadeSlow">BUY</label>
-					<div id="tab-content1" class="tab-content">
-                        <div id="balanceBuy">
-                            <span>---</span>
-                            <span class="bal-value">
-                                <span class="bal-num">0</span>
-                                <span class="bal-dec">.0</span>
-                            </span>
-                        </div>
-						<form role="form" id="placeBidForm" autocomplete="off">
-							<div class="form-group">
-								<label for="placeBidPrice">Price</label>
-								<input type="text" class="form-control" name="price" id="placeBidPrice" placeholder=""></input>
-							</div>
-							<div class="form-group">
-								<label for="placeBidAmount">Amount</label>
-								<input type="text" class="form-control" name="volume" id="placeBidAmount" placeholder=""></input>
-							</div>
-							<div class="form-group">
-								<label for="placeBidFee">Fee</label>
-								<input disabled type="text" class="form-control" name="fee" id="placeBidFee" placeholder="2.5 NXT"></input>
-							</div>
-							<div class="form-group">
-								<label for="placeBidTotal">Total</label>
-								<input disabled type="text" class="form-control" name="total" id="placeBidTotal" placeholder=""></input>
-							</div>
-						</form>
-						<div class="order-button">
-							<button class="idex-submit" data-method="placebid" data-form="placeBidForm" data-loading-text="none">P<br>L<br>A<br>C<br>E</button>
-						</div>
-					</div>
-				</li>
-    			<li>
-        			<input type="radio" name="tabs" id="tab2" />
-        			<label for="tab2" class="fadeSlow">SELL</label>
-					<div id="tab-content2" class="tab-content">
-                        <div id="balanceSell">
-                            <span>---</span>
-                            <span class="bal-value">
-                                <span class="bal-num">0</span>
-                                <span class="bal-dec">.0</span>
-                            </span>
-                        </div>
-						<form role="form" id="placeAskForm" autocomplete="off">
-							<div class="form-group">
-								<label for="placeAskPrice">Price</label>
-								<input type="text" class="form-control" name="price" id="placeAskPrice" placeholder=""></input>
-							</div>
-							<div class="form-group">
-								<label for="placeAskAmount">Amount</label>
-								<input type="text" class="form-control" name="volume" id="placeAskAmount" placeholder=""></input>
-							</div>
-							<div class="form-group">
-								<label for="placeAskFee">Fee</label>
-								<input disabled type="text" class="form-control" name="fee" id="placeAskFee" placeholder="2.5 NXT"></input>
-							</div>
-							<div class="form-group">
-								<label for="placeAskTotal">Total</label>
-								<input disabled type="text" class="form-control" name="total" id="placeAskTotal" placeholder=""></input>
-							</div>
-						</form>
-						<div class="order-button">
-							<button class="idex-submit" data-method="placeask" data-form="placeAskForm" data-loading-text="none">P<br>L<br>A<br>C<br>E</button>
-						</div>
-					</div>
-    			</li>
-			</ul>
-        </div>
-        <div id="miniCNum3" class="mini-chart">
-        	<div id="mCN3A" class="mini-chart-area-1">
-                <span id="chart-curr-111">---</span>/<span id="chart-curr-112">---</span>
-            </div>
-            <div id="mCN3B" class="mini-chart-area-2">0%</div>
-            <div id="mCN3C" class="mini-chart-area-3 text-green">0.00</div>
-            <div id="mCN3D" class="mini-chart-area-4" style="height:calc(100% - 40px)">chart</div>        
-        </div>
-        <div id="miniCNum4" class="mini-chart">
-        	<div id="mCN4A" class="mini-chart-area-1">
-                <span id="chart-curr-121">---</span>/<span id="chart-curr-122">---</span>
-            </div>
-            <div id="mCN4B" class="mini-chart-area-2">0%</div>
-            <div id="mCN4C" class="mini-chart-area-3 text-green">0.00</div>
-            <div id="mCN4D" class="mini-chart-area-4" style="height:calc(100% - 40px)">chart</div>        
-        </div>
-	</div><!--
-    
---- ORDER BOOK AREA --------------------------------------------------
-    
- -->
-	<div id="tempBuyClick" style="display:none" class="md-trigger" data-modal="modal-conf-01"></div>
-	<div id="tempSellClick" style="display:none" class="md-trigger" data-modal="modal-conf-02"></div>
-	<div id="orderBook">
-		<div id="currPair" class="order-big">
-			<span class="order-text">---/---</span>
-		</div>
-        <div id="sellBook" class ="bookname" style="position:relative;">
-			<div class="twrap"></div>
-        </div>
-        <div id="currLast" class="order-big">
-			<span class="order-text text-green">0.00</span>
-		</div>
-        <div id="buyBook" class ="bookname" style="position:relative;">
-			<div class="twrap"></div>
-		</div>
-    </div>
 	
-<!--           <span id="activePair1">BTC</span>^M
-                /^M
-                <span id="activePair2">VRC</span>^M
-            </span>
--->
+	<!----- MINICHARTS + ORDER BOX AREA ---------------------------------------->
+	
+		<div id="miniChartsC" class="unselectable">
+		
+			<div id="miniCNum1" class="mini-chart">
+				<div class="mini-wrap">
+					<div id="mCN1A" class="mini-chart-area-1">
+						<span id="chart-curr-91">---</span>/<span id="chart-curr-92">---</span>
+					</div>
+					<div id="mCN1B" class="mini-chart-area-2">0%</div>
+				</div>
+				<div id="mCN1C" class="mini-chart-area-3 text-green">0.00</div>
+				<div id="mCN1D" class="mini-chart-area-4" style="height:calc(100% - 40px)"></div>
+			</div>
+			
+			<div id="miniCNum2" class="mini-chart">
+				<div class="mini-wrap">
+					<div id="mCN2A" class="mini-chart-area-1">
+						<span id="chart-curr-101">---</span>/<span id="chart-curr-102">---</span>
+					</div>
+					<div id="mCN2B" class="mini-chart-area-2">0%</div>
+				</div>
+				<div id="mCN2C" class="mini-chart-area-3 text-red">0.00</div>
+				<div id="mCN2D" class="mini-chart-area-4" style="height:calc(100% - 40px)">chart</div>        
+			</div>
+			
+			<div id="orderBox">
+				<ul class="tabs">
+					<li>
+						<input type="radio" name="tabs" id="tab1" checked></input>
+						<label for="tab1" class="fadeSlow">BUY</label>
+						<div id="tab-content1" class="tab-content">
+							<div id="balanceBuy">
+								<span>---</span>
+								<span class="bal-value">
+									<span class="bal-num">0</span>
+									<span class="bal-dec">.0</span>
+								</span>
+							</div>
+							<form role="form" id="placeBidForm" autocomplete="off">
+								<div class="form-group">
+									<label for="placeBidPrice">Price</label>
+									<input type="text" class="form-control" name="price" id="placeBidPrice" placeholder=""></input>
+								</div>
+								<div class="form-group">
+									<label for="placeBidAmount">Amount</label>
+									<input type="text" class="form-control" name="volume" id="placeBidAmount" placeholder=""></input>
+								</div>
+								<div class="form-group">
+									<label for="placeBidFee">Fee</label>
+									<input disabled type="text" class="form-control" name="fee" id="placeBidFee" placeholder="2.5 NXT"></input>
+								</div>
+								<div class="form-group">
+									<label for="placeBidTotal">Total</label>
+									<input disabled type="text" class="form-control" name="total" id="placeBidTotal" placeholder=""></input>
+								</div>
+							</form>
+							<div class="order-button">
+								<button class="idex-submit" data-method="placebid" data-form="placeBidForm" data-loading-text="none">P<br>L<br>A<br>C<br>E</button>
+							</div>
+						</div>
+					</li>
+					<li>
+						<input type="radio" name="tabs" id="tab2" />
+						<label for="tab2" class="fadeSlow">SELL</label>
+						<div id="tab-content2" class="tab-content">
+							<div id="balanceSell">
+								<span>---</span>
+								<span class="bal-value">
+									<span class="bal-num">0</span>
+									<span class="bal-dec">.0</span>
+								</span>
+							</div>
+							<form role="form" id="placeAskForm" autocomplete="off">
+								<div class="form-group">
+									<label for="placeAskPrice">Price</label>
+									<input type="text" class="form-control" name="price" id="placeAskPrice" placeholder=""></input>
+								</div>
+								<div class="form-group">
+									<label for="placeAskAmount">Amount</label>
+									<input type="text" class="form-control" name="volume" id="placeAskAmount" placeholder=""></input>
+								</div>
+								<div class="form-group">
+									<label for="placeAskFee">Fee</label>
+									<input disabled type="text" class="form-control" name="fee" id="placeAskFee" placeholder="2.5 NXT"></input>
+								</div>
+								<div class="form-group">
+									<label for="placeAskTotal">Total</label>
+									<input disabled type="text" class="form-control" name="total" id="placeAskTotal" placeholder=""></input>
+								</div>
+							</form>
+							<div class="order-button">
+								<button class="idex-submit" data-method="placeask" data-form="placeAskForm" data-loading-text="none">P<br>L<br>A<br>C<br>E</button>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		
+			<div id="miniCNum3" class="mini-chart">
+				<div class="mini-wrap">
+					<div id="mCN3A" class="mini-chart-area-1">
+						<span id="chart-curr-111">---</span>/<span id="chart-curr-112">---</span>
+					</div>
+					<div id="mCN3B" class="mini-chart-area-2">0%</div>
+				</div>
+				<div id="mCN3C" class="mini-chart-area-3 text-green">0.00</div>
+				<div id="mCN3D" class="mini-chart-area-4" style="height:calc(100% - 40px)">chart</div>        
+			</div>
+			
+			<div id="miniCNum4" class="mini-chart">
+				<div class="mini-wrap">
+					<div id="mCN4A" class="mini-chart-area-1">
+						<span id="chart-curr-121">---</span>/<span id="chart-curr-122">---</span>
+					</div>
+					<div id="mCN4B" class="mini-chart-area-2">0%</div>
+				</div>
+				<div id="mCN4C" class="mini-chart-area-3 text-green">0.00</div>
+				<div id="mCN4D" class="mini-chart-area-4" style="height:calc(100% - 40px)">chart</div>        
+			</div>
+		</div>
+	
+	<!----- ORDER BOOK AREA ---------------------------------------------------->
+
+		<div id="tempBuyClick" style="display:none" class="md-trigger" data-modal="modal-conf-01"></div>
+		
+		<div id="orderBook">
+		
+			<div id="currPair" class="order-big">
+				<span class="order-text">---/---</span>
+				<!--<span id="activePair1">BTC</span>
+				<span id="activePair2">VRC</span>-->
+			</div>
+			
+			<div id="sellBook" class ="bookname">
+				<div class="twrap"></div>
+			</div>
+			
+			<div id="currLast" class="order-big">
+				<span class="order-text text-green">0.00</span>
+			</div>
+			
+			<div id="buyBook" class ="bookname">
+				<div class="twrap"></div>
+			</div>
+		</div>
+	</div>
 	<!-- Modal Windows -->
     
     <!-- MARKETS PANEL ----------------------------------------------->
     
 	<div class="md-modal md-effect" id="modal-01">
+	
 		<div class="md-content">
+		
             <div class="tabs-nav tab-tables">
                 <div class="nav active" tab-index="tabs-1" align="center"><p>MARKETS</p></div>
                 <div class="nav" tab-index="tabs-2" align="center"><p>SEARCH</p></div>
                 <!--<div class="nav" tab-index="tabs-3" align="center">Tab 3</div>-->
             </div>
+			
 			<div class="tabs-container">
+			
 				<div id="tabs-1" class="active">
+				
 					<table id="marketTable" class="table sortable" data-method="allorderbooks" cellspacing=0> 
 						<thead data-keys="orderbooks base rel last high low volume exchange"> 
 						<tr> 
@@ -329,7 +358,6 @@
 						</tr> 
 						</thead> 
 						<tbody> 
-
 						</tbody> 
 					</table>
 					
@@ -350,6 +378,7 @@
 						</span>
 					</div>
 				</div>
+				
 				<div id="tabs-2">
 					<h2 id="test_findOrderbook">Open Orderbook</h1>
 					<div id="findOrderbookWrap" style="">
@@ -367,11 +396,8 @@
 						<div class="" style="position:relative;margin-top:20px">
 							<button class="idex-submit" data-method="orderbook" data-form="findOrderbook" style="width:100px;height:20px">Find</button>
 						</div>
-					</div>		
+					</div>
 				</div>
-<!--				<div id="tabs-3">
-					Tab 3 Content
-				</div>-->
 			</div>
 		</div>
 	</div>
@@ -460,7 +486,7 @@
 			</div>
 		</div>
 	</div>
-	
+	</div>
  <!-- PORTFOLIO PANEL ----------------------------------------------->
  	
 	<div class="md-modal md-effect" id="modal-03">
@@ -748,9 +774,7 @@
 	
 	<div class="md-overlay"></div><!-- the overlay element -->
 	
-    <!-- Currency List -->
-    <datalist id="curr-list">
-    </datalist>
+
 
  <!--   ----------------------------------------------->   
  

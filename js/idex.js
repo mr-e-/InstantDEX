@@ -7,6 +7,8 @@ IDEX.allAssets = [];
 IDEX.curBase = {};
 IDEX.curRel = {};
 IDEX.pendingOrder = {};
+IDEX.orderbookInit = false;
+IDEX.chartInit = false;
 
 IDEX.snAssets = {
 	'nxt':{'name':"NXT", 'asset':"5527630", 'assetid':"5527630", 'decimals':8}
@@ -391,16 +393,18 @@ $(".idex-submit").on("click", function()
 		params['baseid'] = IDEX.curBase.asset;
 		params['relid'] = IDEX.curRel.asset;
 		params['duration'] = IDEX.user.options['duration'];
-
+		console.log(params)
 		IDEX.sendPost(params).done(function(data)
 		{
 			console.log(data);
-			$.growl.notice({'message':"Order placed"});
-			if ('result' in data && data['result'])
+
+			if ('error' in data && data['error'])
 			{
+				$.growl.error({'message':data['error'], 'location':"bl"});				
 			}
 			else
 			{
+				$.growl.notice({'message':"Order placed", 'location':"bl"});
 			}
 		})
 	}

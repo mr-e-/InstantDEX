@@ -174,6 +174,31 @@ var IDEX = (function(IDEX, $, undefined)
 					enabled:true,
 					adaptToUpdatedData:true,
 					baseSeries:1,
+					series:
+					{
+						type: 'areaspline',
+						borderWidth:0,
+					},
+					xAxis: 
+					{
+						/*labels: 
+						{
+							align: 'center',
+							y:0,
+							x:0
+						},*/
+						//top:"50%",
+						left:6
+					},
+				},
+				
+				plotOptions: 
+				{
+					areaspline:
+					{
+						color: '#a80808',
+						//fillColor:"black",
+					}
 				},
 				
 				title: 
@@ -195,7 +220,8 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				scrollbar:
 				{
-					enabled:false
+					enabled:false,
+					height:5,
 				},
 
 				tooltip:
@@ -282,6 +308,7 @@ var IDEX = (function(IDEX, $, undefined)
 					chart.lowestPrice = chart.renderer.text().attr(highLowAttr).add();
 					chart.marketInfo = chart.renderer.text().attr(statAttr).add();
 					chart.splitLine = chart.renderer.path().attr({'stroke-width': 0.5,stroke: '#999',}).add();
+					$("#chartLoading").hide();
 					$(chart.container).on("mousemove",buildChartRenders)
 			   }
 			);
@@ -637,6 +664,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (chart)
 		{
 			chart.destroy()
+			$("#chartLoading").show();
 		}
 		if (IDEX.ohlcTimeout)
 		{

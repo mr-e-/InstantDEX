@@ -114,6 +114,7 @@ form {
 }
 
 #headerAreaIco2 {  /* AREA : MARKETS / ORDERS / PORTFOLIO */
+	z-index:1;
 	display: inline-block;
 	float: right;
 	width: 170px;
@@ -232,14 +233,21 @@ form {
 /* ------------------------- MAIN CHART AREA ------------------------- */
 
 #mainChart {
+
+	/*							*/
+	/*height: calc(100vh - 54px);*/
+	height:100%;
+	position:relative;
+	z-index:0;
 	display: inline-block;
 	top: 0;
-	width: calc(100vw - 401px);
-	height: calc(100vh - 54px);
+	width: calc(100vw - 384px);
+	/*						*/
+
 	background: black;
+	overflow: hidden;
 	/*border-left: inset 1px white;
 	border-bottom: inset 1px white;*/
-	overflow: hidden;	
 }
 
 #mainChartTop {
@@ -253,17 +261,26 @@ form {
 /* ------------------------- ORDER BOOK AREA ------------------------- */
 
 #orderBook {
+
+	/*				*/
+	height:100%;
+	position:absolute;
+	/*height: calc(100vh - 50px);*/
+	/*				*/
+	
 	display: inline-block;
 	float: right;
 	width: 192px;
-	height: calc(100vh - 50px);
 	background: black;
 	border-left: inset 1px white;
 	overflow: hidden;
 }
 
 #currPair {
-	float: left;
+	/*float: left;*/
+	position:relative;
+	display:block;
+	
 	width: 100%;
 	height: 40px;
 	font-size: 1.2rem;
@@ -279,7 +296,10 @@ form {
 
 
 #currLast {
-	float: left;
+	/*float: left;*/
+	position:relative;
+	display:block;
+	
 	width: 100%;
 	height: 40px;
 	border-top: inset 1px rgb(115,115,115);
@@ -298,33 +318,44 @@ form {
 /* ------------------------- MINICHARTS AREA ------------------------- */
 
 #miniChartsC {
+
+	/*			*/
+	height:100%;
+	/*			*/
+
 	display: inline-block;
 	float: right;
 	width: 192px;
 	min-width: 192px !important;
-	height: calc(100vh - 50px);
-	/*min-height: 500px;*/
 	background: black;
 	border-left: inset 1px white;
 	border-right: inset 1px white;
-	border-bottom: inset 1px white;
+	/*border-bottom: inset 1px white;*/
+	overflow: hidden;
+	/*min-height: 500px;*/
+	/*height: calc(100vh - 50px);*/
+}
+
+.mini-chart {
+	/*float: left;*/
+	width: 100%;
+	height: calc(25% - 37.5px);
+	border-bottom: inset 1px white;	
 	overflow: hidden;
 }
 
-/*.mini-chart {
-	float: left;
-	width: 100%;
-	height: calc(50vh - 160px);
-	border-bottom: inset 1px white;	
-	overflow: hidden;
-}*/
+/*.mini-chart:last-child:after*/
+#miniCNum4 {
+	border-bottom: inset 0px white;	
+}
 
+/*
 #miniCNum1, #miniCNum2, #miniCNum3, #miniCNum4  {
 	width: 100%;
 	height: calc(25vh - 50px);
 	border-bottom: inset 1px white;	
 	overflow: hidden;	
-}
+}*/
 
 .mini-chart-area-1 {
 	padding: 4px;
@@ -359,7 +390,7 @@ form {
 
 .mini-chart-area-4 {
 	float: left;
-	padding-left: 4px;
+	padding-left: 0px;
 	width: 100%;
 	height: 57px;
 	margin-top: -8px;
@@ -947,7 +978,6 @@ tbody tr:nth-child(odd) {
         top: 50px;
         width: 130px;
         height: 41px;
-        border-bottom: inset 1px rgb(45,45,45);
     }
     
     .header-ico2 {
@@ -1017,17 +1047,21 @@ tbody tr:nth-child(odd) {
 /*		ORDERBOOK		*/
 
 #sellBook {
-	height: calc(50vh - 20px - 40px - 25px);
+	position:relative;
+	height: calc(50% - 40px);
+	/*height: calc(50vh - 20px - 40px - 25px);*/
 }
 
 #buyBook {
-	height: calc(50vh - 20px - 25px);
-	border-bottom: inset 1px white;	
+	position:relative;
+	height: calc(50% - 40px);
+	/*	height: calc(50vh - 20px - 25px);*/
+	/*border-bottom: inset 1px white;	*/
 }
 
 #sellBook, #buyBook {
-	float: left;
-	width: 100%;
+	/*float: left;
+	width: 100%;*/
 }
 
 #sellBook > .twrap, #buyBook > .twrap {
@@ -1175,8 +1209,8 @@ tbody tr:nth-child(odd) {
 
 .growl.growl-notice {
     color: black;
-	background:rgba(170, 233, 255, 1);
-	background-color:rgba(170, 233, 255, 1);
+	background:rgba(124, 201, 236, 1);
+	background-color:rgba(124, 201, 236, 1);
 }
 
 .growl.growl-error {
@@ -1200,3 +1234,42 @@ tbody tr:nth-child(odd) {
 	transition: all 0.4s ease-in-out; 
 }
 
+
+#chartLoading {
+	height: calc(100% - 50px);
+	width:100%;
+	position:absolute;
+	display:none;
+	z-index:99999;
+	float:left;
+	vertical-align:middle;
+}
+
+#chartLoading span {
+	text-align:center;
+	display:block;
+	font-size:1rem;
+	top:50%;
+	position:relative;
+}
+
+
+#chartArea {
+	height: calc(100% - 40px);
+	cursor:none;
+	width:100%;
+	position:absolute;
+}
+
+#mainWrap {
+	height: calc(100% - 52px);
+	width: 100%;
+	min-width: 960px;
+	position:absolute;
+	border-bottom: inset 1px white;	
+}
+
+.mini-wrap {
+	width:100%;
+	
+}

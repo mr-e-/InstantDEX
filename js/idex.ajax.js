@@ -35,6 +35,12 @@ IDEX.sendPost = function(params, isNXT)
 		
 	}).fail(function(data)
 	{
+		if (isNXT)
+			var message = "Could not connect to NXT"
+		else
+			var message = "Could not connect to SuperNET"
+		$.growl.error({'message':message, 'location':"bl"});
+
 		dfd.reject(data);
 	})
 

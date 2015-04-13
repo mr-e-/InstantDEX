@@ -18,7 +18,7 @@ IDEX.updateBalanceBox = function()
 	var $sell = $("#balanceSell")
 	var baseBal = ["0", ".0"]
 	var relBal = ["0", ".0"]
-	
+
 	$buy.find("span").first().text(IDEX.curRel.name);
 	$sell.find("span").first().text(IDEX.curBase.name);
 	

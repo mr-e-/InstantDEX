@@ -38,7 +38,10 @@ var IDEX = (function(IDEX, $, undefined) {
 			var ss = data[0][0]
 			var ee = data[data.length-1][0]
 			var range = ((((ee-ss)/60)/60)/24)/2
-			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev().text(change.toFixed(2)+"%")
+			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev()
+			var $parent = $(this).parent();
+			$parent.find(".mini-chart-area-2").text(change.toFixed(2)+"%")
+			
 			var chart2 = new Highcharts.StockChart(
 			{
 				chart:
@@ -120,11 +123,11 @@ var IDEX = (function(IDEX, $, undefined) {
 						formatter: function () 
 						{
 							if (this.isLast)
-								b = Highcharts.dateFormat('<span style="float:right;margin-right:50px">%b %d</span>',this.value)
+								b = Highcharts.dateFormat('<span style="float:right;padding-right:50px">%b %d</span>',this.value)
 							else if (this.isFirst)
 								b = Highcharts.dateFormat('<span style="float:right;padding-right:0px">%b %d</span>',this.value)
 							else
-								b = Highcharts.dateFormat('<span style="float:right;padding-right:25px">%b %d</span>',this.value)
+								b = Highcharts.dateFormat('<span style="float:right;padding-right:30px">%b %d</span>',this.value)
 
 							return b
 						}
@@ -138,9 +141,38 @@ var IDEX = (function(IDEX, $, undefined) {
 					startOnTick:false,
 					tickPositioner: function (a, b) 
 					{
-						var positions = []						
+						var positions = []	
+						var diff = 0;
+						var len = this.ordinalPositions.length;
+
+						for (var i = 0; i<len; ++i)
+							if (this.ordinalPositions[i] >= a)
+								break;
+						
+						for (var j = 0; j<len; ++j)
+							if (this.ordinalPositions[j] >= b)
+								break;
+						
+						//var zz = this.ordinalPositions[i] - a
+
+						var calc = i + ((j - i)/2)
+						if (calc % 1 != 0)
+						{
+							var highMid = this.ordinalPositions[Math.floor(calc)+1]
+							var lowMid = this.ordinalPositions[Math.floor(calc)]
+							var recalc = Math.floor(lowMid + ((highMid-lowMid)/2))
+							diff = recalc
+						}
+						else
+						{
+							diff = this.ordinalPositions[Math.floor(calc)]
+						}
+
+						//console.log("LEN:"+String(len)+"  CALC:"+String(i + ((j - i)/2)))
+						//console.log("I:"+String(i)+"  J:"+String(j))
+						//console.log("A:"+String(a)+"  B:"+String(diff)+"  C:"+String(b))					
 						positions.push(a)
-						positions.push(Math.floor(a+((b-a)/2)))
+						positions.push(diff)
 						positions.push(b)
 						return positions;
 					}
