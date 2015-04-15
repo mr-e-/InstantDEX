@@ -33,8 +33,8 @@ var IDEX = (function(IDEX, $, undefined) {
 				maxPrice = (data[i][6] > maxPrice || maxPrice == -1) ? data[i][6] : maxPrice
 			}
 			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
-			priceAddClass = change >= 0 ? "text-green" : "text-red"
-			priceRemoveClass = priceAddClass == "text-green" ? "text-red" : "text-green"
+			priceAddClass = change >= 0 ? "ok-green" : "ok-red"
+			priceRemoveClass = priceAddClass == "ok-green" ? "ok-red" : "ok-green"
 			var ss = data[0][0]
 			var ee = data[data.length-1][0]
 			var range = ((((ee-ss)/60)/60)/24)/2
@@ -49,6 +49,7 @@ var IDEX = (function(IDEX, $, undefined) {
 					renderTo:divid,
 					spacingBottom:0,
 					borderWidth:0,
+					spacingRight:4,
 					panning:true,
 					zoomType:"",
 					//width:"100%"
@@ -103,6 +104,8 @@ var IDEX = (function(IDEX, $, undefined) {
 					//height:"100%",
 					maxPadding:0.0,
 					minPadding:0.0,
+					width:0,
+					tickWidth:0,
 					//min:minPrice - ((maxPrice-minPrice)/10),
 					//max:maxPrice,
 					endOnTick:false,
@@ -117,13 +120,13 @@ var IDEX = (function(IDEX, $, undefined) {
 						enabled:true,
 						useHTML:true,
 						align: 'left',
-						y:0,
+						y:-1,
 						style:{color:"#D8D8D8","whiteSpace":"nowrap"},
 						autoRotation:false,
 						formatter: function () 
 						{
 							if (this.isLast)
-								b = Highcharts.dateFormat('<span style="float:right;padding-right:50px">%b %d</span>',this.value)
+								b = Highcharts.dateFormat('<span style="float:right;padding-right:73px">%b %d</span>',this.value)
 							else if (this.isFirst)
 								b = Highcharts.dateFormat('<span style="float:right;padding-right:0px">%b %d</span>',this.value)
 							else
@@ -187,10 +190,14 @@ var IDEX = (function(IDEX, $, undefined) {
 						states:
 						{
 							hover:{enabled:true},
-							select:{enabled:true}
+							//select:{enabled:true}
+
 						},
-						lineWidth: 0,
+						lineWidth: 2,
 						animation:false,
+						fillOpacity:0.45,
+						shadow:true,
+
 					}
 				},	 
 				series: [

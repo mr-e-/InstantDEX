@@ -392,7 +392,8 @@ $(".idex-submit").on("click", function()
 	{
 		params['baseid'] = IDEX.curBase.asset;
 		params['relid'] = IDEX.curRel.asset;
-		params['duration'] = IDEX.user.options['duration'];
+		params['duration'] = Number(IDEX.user.options['duration'])
+
 		console.log(params)
 		IDEX.sendPost(params).done(function(data)
 		{
@@ -400,11 +401,13 @@ $(".idex-submit").on("click", function()
 
 			if ('error' in data && data['error'])
 			{
-				$.growl.error({'message':data['error'], 'location':"bl"});				
+				$.growl.error({'message':data['error'], 'location':"tl"});				
 			}
 			else
 			{
-				$.growl.notice({'message':"Order placed", 'location':"bl"});
+				IDEX.currentOpenOrders();
+				IDEX.refreshOrderbook();
+				$.growl.notice({'message':"Order placed", 'location':"tl"});
 			}
 		})
 	}
@@ -422,6 +425,8 @@ $(".idex-submit").on("click", function()
 
 
 
+
+
 $("#icoLog").on("click", function()
 {
 	$.growl.error({'message':"Order placed", 'location':"bl"});
@@ -431,9 +436,46 @@ $("#icoLog").on("click", function()
 })
 
 
+$(".idex-tabs li").on("mouseup", function()
+{
+	if (!($(this).hasClass("active")))
+	{
+		$(this).parent().find("li").removeClass("active");
+		$(this).removeClass("idex-mousedown");
+		$(this).addClass("active");
+
+		var tab = $(this).attr('data-tab');
+		var $parent = $(this).closest(".idex-tabs-wrapper").next();
+		$parent.find(".tab-content-wrap").hide()
+		$parent.find(".tab-content-wrap[data-tab='"+tab+"']").show();
+	}
+})
+
+
+$(".idex-tabs li:not(.active)").on("mousedown", function()
+{
+	$(this).addClass("idex-mousedown");
+})
+$(".idex-tabs li:not(.active)").on("mouseleave", function()
+{
+	$(this).removeClass("idex-mousedown");
+})
 
 
 
+$(".tab-order-button button").on("mousedown", function()
+{
+	$(this).addClass("order-button-mousedown")
+})
+
+$(".tab-order-button button").on("mouseup", function()
+{
+	$(this).removeClass("order-button-mousedown")
+})
+$(".tab-order-button button").on("mouseleave", function()
+{
+	$(this).removeClass("order-button-mousedown")
+})
 
 	return IDEX;
 	

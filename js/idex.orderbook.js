@@ -17,17 +17,17 @@ function Order(obj)
 
 IDEX.loadOrderbook = function(baseid, relid)
 {
+	IDEX.curBase = IDEX.getAssetInfo("asset", baseid);
+	IDEX.curRel = IDEX.getAssetInfo("asset", relid);
+	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name, "Loading...");
+	IDEX.currentOpenOrders();
+	IDEX.updateBalanceBox();
+	$("#placeBidForm").trigger("reset");
+	$("#placeAskForm").trigger("reset");
+	IDEX.killChart();
+	IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
 	if (!isStoppingOrderbook)
 	{
-		IDEX.curBase = IDEX.getAssetInfo("asset", baseid);
-		IDEX.curRel = IDEX.getAssetInfo("asset", relid);
-		
-		emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name, "Loading...");
-		IDEX.updateBalanceBox();
-		$("#placeBidForm").trigger("reset");
-		$("#placeAskForm").trigger("reset");
-		IDEX.killChart();
-		IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
 		IDEX.stopPollingOrderbook();
 	}
 }
@@ -44,6 +44,7 @@ IDEX.stopPollingOrderbook = function()
 	
 	isStoppingOrderbook = false;
 	clearTimeout(orderbookTimeout);
+	console.log('1')
 	IDEX.currentOrderbook = new IDEX.Orderbook();
 	pollOrderbook(1);
 }
@@ -58,11 +59,11 @@ function emptyOrderbook(currPair, price)
 	$("#currLast .order-text").empty().html(price);
 }
 
-
+/*
 IDEX.displayBoth = function()
 {
-			IDEX.chartInit = new $.Deferred()
-		IDEX.orderbookInit = new $.Deferred()
+	IDEX.chartInit = new $.Deferred()
+	IDEX.orderbookInit = new $.Deferred()
 	$.when(IDEX.orderbookInit, IDEX.chartInit).always(function(a)
 	{
 		console.log(a)
@@ -70,20 +71,35 @@ IDEX.displayBoth = function()
 		IDEX.orderbookInit = false;
 		IDEX.chartInit = false;
 	})
-					if (IDEX.orderbookInit && IDEX.orderbookInit.state() == "pending")
-						IDEX.orderbookInit.resolve();
-}
+	if (IDEX.orderbookInit && IDEX.orderbookInit.state() == "pending")
+		IDEX.orderbookInit.resolve();
+}*/
 
+
+IDEX.refreshOrderbook = function()
+{
+	console.log(orderbookTimeout);
+	if (!orderbookAsync)
+	{
+		clearTimeout(orderbookTimeout);
+		pollOrderbook(1);
+	}
+}
 
 function pollOrderbook(timeout)
 {
 	orderbookTimeout = setTimeout(function() 
 	{
-		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':20};
+		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':25};
+		params['showall'] = 0
 		orderbookAsync = true;
+		console.log('Waiting for orderbook');
 		IDEX.sendPost(params).done(function(orderbookData)
 		{
+			console.log(orderbookData)
+			console.log('Finished waiting for orderbook');
 			orderbookAsync = false;
+			IDEX.currentOpenOrders();
 			if (!isStoppingOrderbook)
 			{
 				if (!("error" in orderbookData))
@@ -97,6 +113,7 @@ function pollOrderbook(timeout)
 			}
 		}).fail(function(data)
 		{
+			emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name, "Error loading orderbook");
 			orderbookAsync = false;
 		})
 	}, timeout)

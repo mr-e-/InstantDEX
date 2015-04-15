@@ -27,11 +27,12 @@ $("#openOrdersTable tbody").on("click", "tr", function(e)
 	var quoteid = $(this).attr("data-quoteid");
 	var $thisScope = $(this);
 	
-	sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
+	IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
 	{
 		$thisScope.closest(".md-content").find(".tab-tables .nav.active").trigger("click");
 	})
 })
+
 
 
 $("#marketTable tbody").on("click", "tr", function()
@@ -107,6 +108,54 @@ function tableHandler($modalTable)
 		})
 	}
 }
+
+$(".info-tabs li").on("click", IDEX.currentOpenOrders)
+
+IDEX.currentOpenOrders = function()
+{
+	var $modalTable = $(".current-open-orders-table");
+	var params = {'requestType':"openorders"}
+	IDEX.sendPost(params, 0).done(function(data)
+	{
+		var row = "";
+		if ("openorders" in data)
+		{
+			var tableData = data['openorders']
+			var keys = ["askoffer", "price", "volume", "total", "quoteid", "age"]
+			var temp = []
+			for (var i=0; i <tableData.length; ++i)
+				if (tableData[i].baseid == IDEX.curBase.asset && tableData[i].relid == IDEX.curRel.asset)
+					temp.push(tableData[i])
+			tableData = temp;
+			tableData = formatPairName(tableData);
+			tableData = formatOpenOrders(tableData);
+			row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
+			row = $(row).each(function(e, i)
+			{
+				var bidAsk = $(this).find("td:first").text()
+				if (bidAsk == "Bid")
+					var addClass = "text-green";
+				else
+					var addClass = "text-red";
+				$(this).find("td:first").addClass(addClass);
+				$(this).find("td:last").after("<td class='cancelOrder'>CANCEL</td>");
+			})
+			row = IDEX.addElDataAttr(row, tableData, ["quoteid"]);
+		}
+		$modalTable.find("tbody").empty().append(row);
+	})
+}
+
+$(".current-open-orders-table tbody").on("click", "tr td.cancelOrder", function(e)
+{
+	var quoteid = $(this).parent().attr("data-quoteid");
+	var $thisScope = $(this);
+
+	IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
+	{
+		IDEX.currentOpenOrders();
+	})
+})
 
 
 function balancesTable(keys, $modalTable)

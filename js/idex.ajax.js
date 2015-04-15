@@ -21,7 +21,6 @@ IDEX.sendPost = function(params, isNXT)
 	var dfd = new $.Deferred();
 	var url = isNXT ? nxtURL : snURL;
 	params = isNXT ? params : JSON.stringify(params);
-
 	$.ajax
 	({
 	  type: "POST",
@@ -31,6 +30,9 @@ IDEX.sendPost = function(params, isNXT)
 	}).done(function(data)
 	{
 		data = $.parseJSON(data);
+		//console.log(params)
+		//console.log(JSON.stringify(data))
+		//$.parseJSON(params)['requestType'].toUpperCase() + ":   " + 
 		dfd.resolve(data);
 		
 	}).fail(function(data)
@@ -39,7 +41,7 @@ IDEX.sendPost = function(params, isNXT)
 			var message = "Could not connect to NXT"
 		else
 			var message = "Could not connect to SuperNET"
-		$.growl.error({'message':message, 'location':"bl"});
+		$.growl.error({'message':message, 'location':"tl"});
 
 		dfd.reject(data);
 	})

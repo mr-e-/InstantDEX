@@ -17,7 +17,7 @@ $('.assets-fav input').autocomplete({
 	delay: 0,
 	html: true,
 	create: function(e, ui) { },
-	open: function(e, ui) { $(this).autocomplete('widget').css({'width':"153px"})},
+	open: function(e, ui) { $(this).autocomplete('widget').css({'width':"180px"})},
 	source: function(request,response) { autocompleteMatcher(request, response, IDEX.auto) },
 	change: function(e, ui) { autocompleteSelection($(this), e, ui) },
 	select: function(e, ui) { autocompleteSelection($(this), e, ui) }

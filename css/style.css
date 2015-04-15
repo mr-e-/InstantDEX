@@ -24,6 +24,7 @@
 html {
 	width: 100%;
 	height: 100%;
+
 }
 
 body {
@@ -57,6 +58,15 @@ form {
     transition: all .3s ease;
 }
 
+.fadeSlowIndy {
+	-webkit-transition: background .3s ease;
+    -moz-transition: background .3s ease;
+    -o-transition: background .3s ease;
+    -ms-transition: background .3s ease;
+    transition: background .3s ease;
+}
+
+
 .unselectable {
     -moz-user-select: -moz-none;
     -khtml-user-select: none;
@@ -75,16 +85,7 @@ form {
 
 /* ------------------------- HEADER AREA ------------------------- */
 
-#header {
-	top: 0;
-	width: 100%;
-	height: 50px;
-	background: black;
-	overflow: hidden;
-	border-bottom: inset 1px white;
-/*	border-right: inset 1px white;
-	border-left: inset 1px white;*/
-}
+
 
 #topLogoWrap {
 	display: inline-block;
@@ -100,9 +101,10 @@ form {
 #headerAreaIco {  /* AREA : CHARTS / LOG OUT / OPTIONS */
 	display: inline-block;
 	float: right;
-	width: 192px;
+	width: 252px;
 	height: 50px;
 	border-left: inset 1px white;	
+	padding-left:30px;
 }
 
 .header-ico {
@@ -110,7 +112,7 @@ form {
 	width: 28px;
 	height: 28px;
 	margin-left: 25px;
-	opacity: .75;
+	opacity: 0.8;
 }
 
 #headerAreaIco2 {  /* AREA : MARKETS / ORDERS / PORTFOLIO */
@@ -119,8 +121,30 @@ form {
 	float: right;
 	width: 170px;
 	height: 50px;
+	overflow:hidden;
 /*	border-right: thin solid red;
 	border-left: thin solid green;*/
+}
+
+#headerAreaIco3 {  /* AREA : MARKETS / ORDERS / PORTFOLIO */
+	z-index:1;
+	display: inline-block;
+	float: right;
+	width: 170px;
+	height: 100%;
+	overflow:hidden;
+	text-align:right;
+/*	border-right: thin solid red;
+	border
+	-left: thin solid green;*/
+}
+
+.header-ico3 {
+	margin-top: 0px;
+	width: 24px;
+	height: 24px;
+	margin-right:15px;
+	opacity: 0.8;
 }
 
 .header-ico2 {
@@ -128,7 +152,7 @@ form {
 	width: 28px;
 	height: 28px;
 	margin-left: 25px;
-	opacity: .75;
+	opacity: 0.8;
 }
 
 
@@ -153,12 +177,13 @@ form {
 #miniChartsTop2 {   /* AREA WITH x4 BOXED PAIRS */
 	display: inline-block;
 	float: right;
-	width: 192px;
+	width: 250px;
 	height: 50px;
 }
 
 .chart-box { /* INDIVIDUAL PRICED PAIRS */
-	opacity: 0.75;
+	position:relative;
+	opacity: 1;
 	display: inline-block;
 	float: left;
 	width: 25%;
@@ -190,26 +215,24 @@ form {
 	background: black;
 	text-align: center;
 	font-size: 0.65rem;
+	position:relative;
 }
 
 .chart-text { /* INDIVIDUAL BOXED PAIRS */
-	opacity: 0.75;
-	font-size: .65rem;
+	opacity: 1;
+	font-size: .7rem;
 	margin-top: 5px;
 	display: block;
 	cursor: pointer;	
 }
 
-.chart-sub-box-2 span:hover, .chart-box:hover {
-	opacity: 1;	
-}
 
 #mTN5A, #mTN6A { /* FIX FOR THE FADING BUG OF THE LOWER BOXES */
 	border-bottom: inset 1px white;	
 }
 
 .chart-text-top { /* INDIVIDUAL PRICED PAIRS TOP */
-	font-size: 0.65rem;
+	font-size: 0.7rem;
 	margin-top: 7px;
 	display: block;
 	cursor: pointer;
@@ -239,9 +262,9 @@ form {
 	height:100%;
 	position:relative;
 	z-index:0;
-	display: inline-block;
+	display: block;
 	top: 0;
-	width: calc(100vw - 384px);
+	width: 100%;
 	/*						*/
 
 	background: black;
@@ -261,16 +284,12 @@ form {
 /* ------------------------- ORDER BOOK AREA ------------------------- */
 
 #orderBook {
-
-	/*				*/
 	height:100%;
 	position:absolute;
-	/*height: calc(100vh - 50px);*/
-	/*				*/
-	
 	display: inline-block;
 	float: right;
-	width: 192px;
+	width: 250px;
+	min-width:250px;
 	background: black;
 	border-left: inset 1px white;
 	overflow: hidden;
@@ -299,7 +318,7 @@ form {
 	/*float: left;*/
 	position:relative;
 	display:block;
-	
+	color:rgba(27, 211, 87, 0.8) !important;
 	width: 100%;
 	height: 40px;
 	border-top: inset 1px rgb(115,115,115);
@@ -315,31 +334,24 @@ form {
 	padding-top: 3px;
 }
 
+
 /* ------------------------- MINICHARTS AREA ------------------------- */
 
 #miniChartsC {
-
-	/*			*/
 	height:100%;
-	/*			*/
-
+	width: 250px;
 	display: inline-block;
 	float: right;
-	width: 192px;
-	min-width: 192px !important;
+	min-width: 250px !important;
 	background: black;
 	border-left: inset 1px white;
-	border-right: inset 1px white;
-	/*border-bottom: inset 1px white;*/
 	overflow: hidden;
-	/*min-height: 500px;*/
-	/*height: calc(100vh - 50px);*/
 }
 
 .mini-chart {
-	/*float: left;*/
+	height: 25%;
 	width: 100%;
-	height: calc(25% - 37.5px);
+	position:relative;
 	border-bottom: inset 1px white;	
 	overflow: hidden;
 }
@@ -349,33 +361,22 @@ form {
 	border-bottom: inset 0px white;	
 }
 
-/*
-#miniCNum1, #miniCNum2, #miniCNum3, #miniCNum4  {
-	width: 100%;
-	height: calc(25vh - 50px);
-	border-bottom: inset 1px white;	
-	overflow: hidden;	
-}*/
 
 .mini-chart-area-1 {
-	padding: 4px;
-	font-size: 0.65rem;
+	height: 100%;
+	width: 70%;
+	display:inline-block;
 	float: left;
-	width: 50%;
-	height: 25px;
-	margin-top: -2px;
 	background: black;
 }
 
 .mini-chart-area-2 {
-	padding: 4px;
-	font-size: 0.65rem;
 	text-align: right;
 	float: left;
-	width: 50%;
-	height: 25px;
-	margin-top: -2px;	
+	width: 30%;
+	height: 100%;
 	background: black;
+	display:inline-block;
 }
 	
 .mini-chart-area-3 {
@@ -383,8 +384,9 @@ form {
 	text-align: center;
 	float:left;
 	width: 100%;
-	height: 30px;
-	margin-top: -4px;
+	height: 20px;
+	padding-top:6px;
+	margin-bottom:4px;
 	background: black;
 } 
 
@@ -392,20 +394,21 @@ form {
 	float: left;
 	padding-left: 0px;
 	width: 100%;
-	height: 57px;
-	margin-top: -8px;
+	height:calc(100% - 15px - 15px - 20px);
 	background: black;
-} 
+}
+
+.ok-green {
+	color: rgba(27, 211, 87, 0.8) !important;
+}
+
+.ok-red {
+	color:rgba(218, 59, 38, 0.9) !important;
+}
 
 /* ------------------------- ORDER BOX ------------------------- */
 
-#orderBox {
-	float: left;
-	width: 100%;
-	height: 150px;
-	border-bottom: inset 1px white;
-	overflow: hidden;
-}
+
 
 
 .tabs input[type=radio] {
@@ -445,9 +448,8 @@ form {
        
 [id^=tab]:checked + label {
     width: 100%;
-	background: white;
-    color: black;
-	border-bottom: solid 1px white;
+	background: black;
+    color: white;
 }
        
 [id^=tab]:checked ~ [id^=tab-content] {
@@ -466,26 +468,11 @@ form {
 	/*height: 90px;*/
     height: 100%;
 	position: absolute;
-	background: white;
+	background: black;
 	border-top: solid 1px white;
 }
 
-#balanceBuy, #balanceSell {
-    width: 100%;
-    background: rgb(200,200,200);
-    color: black;
-    font-size: 1rem;
-    padding: 3px 5px;
-    margin-bottom: 5px;
-}
 
-.bal-value {
-    float: right;
-}
-
-.bal-dec {
-    font-size: 60%;
-}
 
 #tabBuyPrice, #tabSellPrice, #tabBuyAmount, #tabSellAmount, #tabBuyTotal, #tabSellTotal, #tabBuyFee, #tabSellFee {
 	float:left;
@@ -526,14 +513,6 @@ form {
 	color: grey;
 }*/
 
-.order-input {
-	width: 100%;
-}
-
-.order-input:disabled {
-	background-color: white;
-	border: 0;
-}
 
 .order-button {
 	position: absolute;
@@ -615,9 +594,11 @@ form {
 /* ------------------------- TABLES - GENERIC ------------------------- */
 
 .table {
+
     width: 100%;
 	border-collapse: collapse;
 	overflow: auto;
+	position:relative;
 }
 
 .nav {
@@ -631,7 +612,7 @@ form {
 	color: black;
 }
 
-tbody tr:nth-child(odd) {
+.table tbody tr:nth-child(odd) {
    background-color: rgb(240,240,240);
 }
 
@@ -649,6 +630,16 @@ tbody tr:nth-child(odd) {
 	cursor: default;
 	background: black;
 	color: white;
+
+}
+
+.table thead {
+	position:relative;
+	width:100%;
+}
+.table tbody {
+	width:100%;
+	position:relative;
 }
 
 
@@ -768,80 +759,7 @@ tbody tr:nth-child(odd) {
 	padding-left: 5px;
 }
 
-.chart-number {
-    display: none;
-    position: absolute;
-    z-index: 2000;
-    font-size: 7vh;
-    font-weight: bold;
-}
 
-.chart-number.show {
-    display: inline;
-    top: 0;
-}
-
-.chart-number.show[chart-number="1"] {
-    right: 750px;
-    font-size: 35px;
-}
-
-.chart-number.show[chart-number="2"] {
-    right: 650px;
-    font-size: 35px;
-}
-
-.chart-number.show[chart-number="3"] {
-    right: 540px;
-    font-size: 35px;
-}
-
-.chart-number.show[chart-number="4"] {
-    right: 430px;
-    font-size: 35px;
-}
-
-.chart-number.show[chart-number="5"] {
-    right: 330px;
-    font-size: 18px;
-}
-
-.chart-number.show[chart-number="6"] {
-    right: 230px;
-    font-size: 18px;
-}
-
-.chart-number.show[chart-number="7"] {
-    top: 25px;
-    right: 330px;
-    font-size: 18px;
-}
-
-.chart-number.show[chart-number="8"] {
-    top: 25px;
-    right: 230px;
-    font-size: 18px;
-}
-
-.chart-number.show[chart-number="9"] {
-    top: calc((100% - 50px) * 15/100);
-    right: 80px;
-}
-
-.chart-number.show[chart-number="10"] {
-    top: calc((100% - 50px) * 34/100);
-    right: 70px;
-}
-
-.chart-number.show[chart-number="11"] {
-    top: calc((100% - 50px) * 70/100);
-    right: 70px;
-}
-
-.chart-number.show[chart-number="12"] {
-    top: calc((100% - 50px) * 90/100);
-    right: 70px;
-}
 
 #curr-list {
 	font-family: 'open_sanslight', Fallback, sans-serif;
@@ -971,13 +889,15 @@ tbody tr:nth-child(odd) {
 
 /* ------------------------- RESPONSIVENESS ------------------------- */
 
-@media (max-width: 1230px) {
+@media (max-width: 1340px) { /* EXPERIMENTAL */
+
     #headerAreaIco2 {
-        position: absolute;
-        left: calc(100vw - 401px - 110px);
-        top: 50px;
-        width: 130px;
         height: 41px;
+        width: 130px;
+        position: absolute;
+		display:block;
+        top: 50px;
+        left: calc(100vw - 500px - 130px);
     }
     
     .header-ico2 {
@@ -986,10 +906,6 @@ tbody tr:nth-child(odd) {
         margin-left: 13px;
         margin-top: 7px;
     }
-}
-
-@media (max-width: 1080px) { /* EXPERIMENTAL */
-
     .chart-text-top {
         font-size: 0.6rem;
     }
@@ -1007,59 +923,67 @@ tbody tr:nth-child(odd) {
     }
     
     #miniChartsTop {
-        width: 330px;
-        margin-top: 2px;
+		display: inline-block;
+		float: right;
+		width: 420px;
+		height: 50px;
+		padding-right: 5px;
     }
     
+
+	
     #miniTopNum1, #miniTopNum2, #miniTopNum3, #miniTopNum4 {
         margin: 0;
     }
-    
-    .chart-number.show[chart-number="1"] {
-        right: 660px;
+}
+
+@media (max-width: 1160px) {
+    #headerAreaIco2 {
+        height: 41px;
+        width: 130px;
+        position: absolute;
+		display:block;
+        top: 50px;
+        left: calc(658px - 130px);
     }
     
-    .chart-number.show[chart-number="2"] {
-        right: 580px;
-    }
-    
-    .chart-number.show[chart-number="3"] {
-        right: 500px;
-    }
-    
-    .chart-number.show[chart-number="4"] {
-        right: 420px;
+    .header-ico2 {
+        width: 25px;
+        height: 25px;
+        margin-left: 13px;
+        margin-top: 7px;
     }
 }
 
+
+/*
 @media (max-width: 975px) {
     #mainChart {
-        width: 60%;
+        width: 100%;
     }
     
     #headerAreaIco2 {
         width: 120px;
         left:calc(585px - 135px);
     }
-}
+}*/
 
 
 /*		ORDERBOOK		*/
 
 #sellBook {
-	position:relative;
-	height: calc(50% - 40px);
 	/*height: calc(50vh - 20px - 40px - 25px);*/
 }
 
 #buyBook {
-	position:relative;
-	height: calc(50% - 40px);
 	/*	height: calc(50vh - 20px - 25px);*/
 	/*border-bottom: inset 1px white;	*/
 }
 
 #sellBook, #buyBook {
+	overflow-y:hidden;
+	position:relative;
+	height: calc(50% - 40px);
 	/*float: left;
 	width: 100%;*/
 }
@@ -1081,12 +1005,14 @@ tbody tr:nth-child(odd) {
 
 .order-row {
 	display: block;
+	margin-top:2px;
+	margin-bottom:2px;
 }
 
 .order-col {
 	display: inline-block;
 	width: 44%;
-	font-size: .6rem;
+	font-size: .8rem;
 	text-align:right;
 
 	-webkit-transition: all 100ms ease-out;
@@ -1102,7 +1028,7 @@ tbody tr:nth-child(odd) {
 
 
 #sellBook > .twrap  > .order-row, #buyBook > .twrap  > .order-row {
-	font-family:Consolas, Monospace;
+	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
 }
 
 #sellBook > .twrap  > .order-row:hover, #buyBook > .twrap  > .order-row:hover{
@@ -1129,12 +1055,20 @@ tbody tr:nth-child(odd) {
 	background-color:rgba(222, 233, 255, 0.2);
 }
 
-#sellBook > .twrap > .order-row:hover  > .order-col {
-	color: rgb(0,210,0) !important;
+#sellBook > .twrap > .order-row  > .order-col {
+	color: rgba(218, 59, 38, 0.9) !important;
+}
+
+#buyBook > .twrap > .order-row  > .order-col {
+	color: rgba(27, 211, 87, 0.8) !important;
+}
+
+#sellBook > .twrap > .order-row:hover > .order-col {
+	color: rgba(218, 59, 38, 1) !important;
 }
 
 #buyBook > .twrap > .order-row:hover  > .order-col {
-	color: rgb(255,0,0) !important
+	color: rgba(27, 211, 87, 1) !important;
 }
 
 
@@ -1209,8 +1143,11 @@ tbody tr:nth-child(odd) {
 
 .growl.growl-notice {
     color: black;
-	background:rgba(124, 201, 236, 1);
-	background-color:rgba(124, 201, 236, 1);
+	/*background:rgba(124, 201, 236, 1);
+	background-color:rgba(124, 201, 236, 1);*/
+	
+	background: rgba(124, 181, 236, 1);
+
 }
 
 .growl.growl-error {
@@ -1253,6 +1190,26 @@ tbody tr:nth-child(odd) {
 	position:relative;
 }
 
+.mini-chart-area-3 {
+	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
+}
+
+.mini-wrap {
+	height:25px;
+	width:100%;
+	position:relative;
+	display:block;
+	font-size: 0.8rem;
+	padding:4px;
+	font-family:'open_sanslight', Fallback, sans-serif;
+	border-bottom:1px solid #404040;
+}
+
+
+.mini-chart-area-1:hover, .chart-text:hover, .chart-sub-box:hover {
+	cursor:pointer;
+	opacity:0.88 !important;
+}
 
 #chartArea {
 	height: calc(100% - 40px);
@@ -1261,15 +1218,440 @@ tbody tr:nth-child(odd) {
 	position:absolute;
 }
 
-#mainWrap {
-	height: calc(100% - 52px);
+#body_wrap {
+	height: 100%;
 	width: 100%;
-	min-width: 960px;
 	position:absolute;
-	border-bottom: inset 1px white;	
+	min-width: 1160px;
+	min-height:660px;
+	overflow-x:hidden;
+	overflow-y:hidden;
 }
 
-.mini-wrap {
+#header {
+	height: 50px;
+	width: 100%;
+	min-height:50px;
+	position:relative;
+	background: black;
+	overflow: hidden;
+	border-bottom: inset 1px white;
+/*	border-right: inset 1px white;
+	border-left: inset 1px white;*/
+}
+
+#main_wrap {
+	height: calc(100% - 52px);
+	width: 100%;
+	position:relative;
+	overflow-x:visible;
+	border-bottom: inset 1px white;
+}
+
+
+#left_wrap {
+	height:100%;
+	width: calc(100% - 502px);
+	position:relative;
+	display: inline-block;
+	float:left;
+}
+
+#left_top_wrap {
+	height:calc(100% - 175px);
 	width:100%;
+	position:relative;
+}
+
+#left_bottom_wrap {
+	height:175px;
+	width:100%;
+	position:relative;
+}
+
+
+#right_wrap {
+	height:100%;
+	width:500px;
+	min-width:500px;
+	position:relative;
+	display: inline-block;
+}
+
+#right_top_wrap {
+	height:calc(100% - 175px);
+	position:relative;
+}
+
+#right_bottom_wrap {
+	height:175px;
+	position:relative;
+}
+
+
+#orderBox {
+	height: 100%;
+	width: 100%;
+	position:relative;
+	overflow:hidden;
+	background:black;
+	background-color:black;
+}
+
+
+.idex-tabs-wrapper {
+	height:30px;
+	width:100%;
+	position:relative;
+	color:#B3B3B3;
+	font-family: Helvetica, Arial, 'Microsoft YaHei', Verdana, sans-serif, 'Segoe UI', Tahoma;
+}
+
+.idex-tabs {
+    height: 100%;
+	width: 100%;
+	position: relative;
+	float: none;
+	list-style: none;
+}
+
+.idex-tabs li {
+	height:100%;
+	border:1px solid #3D3D3D;
+	vertical-align:middle;
+	padding-top:6px;
+	background-color: #333333;
+}
+
+.order-tabs li {
+	width: 50%;
+	float: left;
+	text-align: center;
+}
+
+.order-tabs li:first-child, .info-tabs li:first-child {
+	margin-left:0px;
+	border-right:0px;
+	border-left:0px;
+
+}
+
+.idex-tabs li.active {
+	cursor:pointer;
+	background: #232323;
+	color: #e5e5e5;
+	border-bottom:#232323;
+}
+
+.idex-tabs li:hover:not(.active) {
+	cursor:pointer;
+	background: rgba(255,255,255,0.3);
+	border:1px solid #737373;
+}
+
+
+.idex-tabs li.idex-mousedown {
+	background: #232323 !important;
+	border:1px solid #333333 !important;
+}
+
+
+.idex-tab-content {
+	height:calc(100% - 30px);
+	position:relative;
+	border-left:1px solid #404040;
+}
+
+.order-tab-content-top {
+	height:66%;
+	position:relative;
+}
+
+
+
+.order-tab-content-top-balance {
+    width: 100%;
+    background: #121212;
+    color: #e5e5e5;
+    font-size: 1rem;
+    padding: 3px 5px;
+    margin-bottom: 15px;
+}
+
+.bal-value {
+    float: right;
+}
+
+.bal-dec {
+    font-size: 60%;
+}
+
+.order-input-row {
+	height:50%;
+	width:100%;
+	position:relative;
+	display:block;
+	margin-left:35px;
+	margin-right:35px;
+}
+
+.order-input {
+	height:100%;
+	width:39%;
+	margin-left:40px;
+	position:relative;
+	display:inline-block;
+}
+
+.order-input:first-child {
+	margin-left:0px;
+}
+
+.order-input-label {
+	width:30%;
+	display:inline-block;
+	margin-right:3px;
+}
+
+.order-input-label span {
+	color:#e5e5e5;
+	font-family: Helvetica, Arial, 'Microsoft YaHei', Verdana, sans-serif, 'Segoe UI', Tahoma;
+}
+
+.order-input input {
+	width:60%;
+	color:#232323;
+	background:#919191;
+	border:1px solid #404040;
+	/* 232323*/
+}
+
+.order-input input:disabled {
+	background:#696969;
+	color:#1F1F1F;
+}
+
+.order-input input:focus {
+	background: #B3B3B3;
+	border:1px solid rgba(255,255,255,0.4);
+}
+
+.order-tab-content-bottom {
+	height:33%;
+	position:relative;
+}
+
+
+.tab-order-button {
+	width:100%;
+	height:100%;
+	position:relative;
+}
+
+.tab-order-button button {
+	height:22px;
+	width:100px;
+	position:relative;
+	display:inline-block;
+	color:black;
+	float:left;
+	left: calc(50% - (100px - 50px));
+	top: calc(50% - (22px - 11px));
+}
+
+#tab_buy_button button {
+	background-color: #0d8d35;
+	border:1px solid #12A33F;
+}
+
+#tab_buy_button button:hover {
+	background-color:#0B732C;
+	border:1px solid #0d8d35;
+	cursor:pointer;
+}
+
+#tab_buy_button button.order-button-mousedown {
+	background-color:#0D5423;
+	border:1px solid #0B732C;
+}
+
+#tab_sell_button button {
+	background-color: rgba(218, 59, 38, 0.85);
+	border:1px solid rgba(218, 59, 38, 0.75);
+}
+
+#tab_sell_button button:hover {
+	background-color: rgba(218, 59, 38, 1);
+	border:1px solid rgba(218, 59, 38, 0.85);
+	cursor:pointer;
+}
+
+#tab_sell_button button.order-button-mousedown {
+	background-color: rgba(218, 59, 38, 0.75);
+	border:1px solid rgba(218, 59, 38, 0.65);
+}
+
+
+.tab-content-wrap {
+	height:100%;
+	position:relative;
+}
+
+
+#info_wrap {
+	height: 100%;
+	width: 100%;
+	position:relative;
+	overflow:hidden;
+	background:black;
+	background-color:black;
+}
+
+
+.info-tabs li{
+	width: 25%;
+	float: left;
+	text-align: center;
+}
+
+
+.modal-tab-content {
+	height:100%;
+	position:relative;
+	display:block;
+}
+
+.modal-table-body {
+	height:88%;
+	position:relative;
+	display:block;
+	overflow:auto;
+}
+
+.modal-table-footer {
+	height:12%;
+	position: relative;
+	display:block;
+}
+
+.modal-table-footer-content {
+	height:100%;
+	width:100%;
+	position:relative;
+	bottom:0px;	
+}
+
+.search-button-wrap {
+	width:30%;
+	position:absolute;
+	display:inline-block;
+	bottom:0px;
+	left:0px;
 	
 }
+
+.page-button-wrap {
+	width:69%;
+	position:absolute;
+	display:inline-block;
+	right:0px;
+	bottom:0px;
+}
+
+.current-open-orders-table {
+	margin-top:10px;
+	width:100%;
+	border-collapse:collapse;
+}
+
+.current-open-orders-table th {
+	padding-bottom:7px;
+}
+
+/*
+.current-open-orders-table tbody:before {
+	margin-top:15px;
+	display:block;
+	content: "-";
+	line-height:1em;
+	color:transparent;
+}*/
+
+.current-open-orders-table tr {
+	border-bottom: 1px solid #232323;
+}
+
+.current-open-orders-table td {
+	text-align:center;
+}
+
+.current-open-orders-table tbody td {
+	text-align:center;
+	padding:4px;
+}
+
+
+.info-tab-content-top {
+	height:80%;
+	position:relative;
+}
+
+.cancelOrder:hover {
+	cursor:pointer;
+}
+
+.chart-number {
+	width:100%;
+    position: absolute;
+	display:none;
+    z-index: 2000;
+    font-weight: bold;
+	text-align:center;
+	top: 50%;
+	transform: translateY(-50%);
+}
+.chart-number.show {
+	display:block;
+}
+
+.mini-chart .chart-number {
+	font-size: 5em;
+}
+.chart-sub-box-2 .chart-number {
+	font-size: 2em;
+}
+
+.chart-box .chart-number {
+	font-size: 2em;
+}
+
+
+
+
+/*
+
+.chart-number {
+	height:100%;
+	width:100%;
+    position: absolute;
+	display:none;
+	z-index:2000;
+	text-align:center;
+}
+.chart-number.show {
+	display:block;
+}
+
+.chart-number-wrap {
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.chart-number-wrap span {
+	font-size: 5em;
+    z-index: 2000;
+    font-weight: bold;
+}
+
+*/

@@ -14,8 +14,8 @@ $(".order-button").on("mouseout", function()
 
 IDEX.updateBalanceBox = function()
 {
-	var $buy = $("#balanceBuy")
-	var $sell = $("#balanceSell")
+	var $buy = $("#balance_buy")
+	var $sell = $("#balance_sell")
 	var baseBal = ["0", ".0"]
 	var relBal = ["0", ".0"]
 

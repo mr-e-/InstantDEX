@@ -171,7 +171,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				navigator:
 				{
-					enabled:true,
+					enabled:false,
 					adaptToUpdatedData:true,
 					baseSeries:1,
 					series:
@@ -209,7 +209,7 @@ var IDEX = (function(IDEX, $, undefined)
 						color: '#CCC',
 					},
 					text:titleName,
-					
+					x:40,
 				},
 				
 				rangeSelector: 
@@ -271,8 +271,9 @@ var IDEX = (function(IDEX, $, undefined)
 						y:0
 					},
 					events:{afterSetExtremes: highLowPrice},
-					startOnTick:true,
-					endOnTick:true,
+					startOnTick:false,
+					endOnTick:false,
+					showLastLabel:true,
 				}],
 				
 				series: [
@@ -651,8 +652,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var offset = $('#chartArea').offset();
 		if (chart)
 		{
-			var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+40,
-			'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+(offset.top/2)+40]
+			var path = ['M', 0, chart.plotTop+chart.series[0].yAxis.height+offset.top/2+20,
+			'L', 0 + $("#chartArea")[0].clientWidth, chart.plotTop+chart.series[0].yAxis.height+(offset.top/2)+20]
 			chart.splitLine.attr({d:path})
 		}
 	}
