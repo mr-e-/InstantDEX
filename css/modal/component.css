@@ -3,11 +3,11 @@
 	position: absolute;
 	top: 51px;
 	left: 0;
-    height:calc(80% - 50px);
+    height:calc(100% - 175px - 50px - 4px);
     min-height:527px;
     overflow:hidden;
-	width: calc(100% - 253px);
-    min-width: calc(1160px - 253px);
+	width: calc(100% - 503px);
+    min-width: calc(1160px - 503px);
 	bottom: 0;
 	z-index: 2000;
 	visibility: hidden;
@@ -25,7 +25,7 @@
 	top: 51px;
 	left: calc(100% - 503px);;
     width: calc(250px);
-    height:calc(80% - 50px);
+    height:calc(100% - 175px - 50px - 4px);
     min-height:527px;
 	z-index: 2000;
 	visibility: hidden;
