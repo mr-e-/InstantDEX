@@ -89,7 +89,7 @@ function pollOrderbook(timeout)
 {
 	orderbookTimeout = setTimeout(function() 
 	{
-		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':3};
+		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':25};
 		params['showall'] = 1
 		orderbookAsync = true;
 		console.log('Waiting for orderbook');
