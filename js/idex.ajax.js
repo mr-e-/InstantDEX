@@ -37,6 +37,7 @@ IDEX.sendPost = function(params, isNXT)
 		
 	}).fail(function(data)
 	{
+		console.log(params);
 		if (isNXT)
 			var message = "Could not connect to NXT"
 		else

@@ -20,12 +20,13 @@ IDEX.loadOrderbook = function(baseid, relid)
 	IDEX.curBase = IDEX.getAssetInfo("asset", baseid);
 	IDEX.curRel = IDEX.getAssetInfo("asset", relid);
 	emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name, "Loading...");
-	IDEX.currentOpenOrders();
 	IDEX.updateBalanceBox();
 	$("#placeBidForm").trigger("reset");
 	$("#placeAskForm").trigger("reset");
 	IDEX.killChart();
 	IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
+
+	IDEX.currentOpenOrders();
 	if (!isStoppingOrderbook)
 	{
 		IDEX.stopPollingOrderbook();
@@ -44,7 +45,6 @@ IDEX.stopPollingOrderbook = function()
 	
 	isStoppingOrderbook = false;
 	clearTimeout(orderbookTimeout);
-	console.log('1')
 	IDEX.currentOrderbook = new IDEX.Orderbook();
 	pollOrderbook(1);
 }
@@ -78,7 +78,6 @@ IDEX.displayBoth = function()
 
 IDEX.refreshOrderbook = function()
 {
-	console.log(orderbookTimeout);
 	if (!orderbookAsync)
 	{
 		clearTimeout(orderbookTimeout);
@@ -90,8 +89,8 @@ function pollOrderbook(timeout)
 {
 	orderbookTimeout = setTimeout(function() 
 	{
-		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':25};
-		params['showall'] = 0
+		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':3};
+		params['showall'] = 1
 		orderbookAsync = true;
 		console.log('Waiting for orderbook');
 		IDEX.sendPost(params).done(function(orderbookData)
@@ -107,12 +106,18 @@ function pollOrderbook(timeout)
 					orderbookData['bids'].sort(IDEX.compareProp('price')).reverse();
 					orderbookData['asks'].sort(IDEX.compareProp('price')).reverse();
 					updateOrderbook(orderbookData);
-
+				}
+				else
+				{
+					$("#currLast .order-text").text("0.0");
+					$(".twrap").empty();
+					$(".empty-orderbook").show();
 				}
 				pollOrderbook(3000);
 			}
 		}).fail(function(data)
 		{
+			$(".empty-orderbook").hide()
 			emptyOrderbook(IDEX.curBase.name+"/"+IDEX.curRel.name, "Error loading orderbook");
 			orderbookAsync = false;
 		})
@@ -199,6 +204,11 @@ function animateOrderbook()
 
 function updateOrders($book, orderData)
 {
+	if (!orderData.newOrders.length && !orderData.oldOrders.length)
+		$book.parent().find(".empty-orderbook").show()
+	else
+		$book.parent().find(".empty-orderbook").hide()	
+		
 	if (!($book.find(".order-row").length))
 	{
 		for (var i = 0; i < orderData.newOrders.length; ++i)

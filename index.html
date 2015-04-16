@@ -181,10 +181,10 @@
 									<li><span class="dropdown-option">Virtual</span></li>
 								</ul>
 							</div>
-							<div id="headerAreaIco3" style="display:none;">
-								<img id="icoMarkets" src="img/ico_top_markets.svg" class="header-ico3 fadeSlow tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
-								<img id="icoOrders" src="img/ico_top_orders.svg" class="header-ico3 fadeSlow tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
-								<img id="icoFolio" src="img/ico_top_folio.svg" class="header-ico3 fadeSlow tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
+							<div id="headerAreaIco3">
+								<img src="img/ico_top_markets.svg" class="header-ico3 fadeSlow tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
+								<img src="img/ico_top_orders.svg" class="header-ico3 fadeSlow tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
+								<img src="img/ico_top_folio.svg" class="header-ico3 fadeSlow tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
 							</div>
 							
 						</div>
@@ -327,6 +327,9 @@
 						</div>
 						
 						<div id="sellBook" class ="bookname">
+							<div class="empty-orderbook">
+								<span>No asks</span>
+							</div>
 							<div class="twrap"></div>
 						</div>
 						
@@ -335,6 +338,9 @@
 						</div>
 						
 						<div id="buyBook" class ="bookname">
+							<div class="empty-orderbook">
+								<span>No bids</span>
+							</div>
 							<div class="twrap"></div>
 						</div>
 					</div>
@@ -664,36 +670,44 @@
 					<div class="nav" tab-index="tabs-4" align="center"><p>??</p></div>
 				</div>
 				<div class="tabs-container">
-					<div id="tabs-3" class="active">
-						<table id="balancesTable" class="table sortable" data-method="getAccountAssets" cellspacing=0> 
-							<thead data-keys="accountAssets name asset availableBalance unconfirmedBalance change"> 
-							<tr> 
-								<th>Name</th> 
-								<th>Asset ID</th> 
-								<th>Available Balance</th>
-								<th>Unconfirmed Balance</th>
-								<th>% Change</th>
-							</tr> 
-							</thead> 
-							<tbody> 
+					<div id="tabs-3" class="modal-tab-content active">
+						<div class="modal-table-body">
+							<table id="balancesTable" class="table sortable" data-method="getAccountAssets" cellspacing=0> 
+								<thead data-keys="accountAssets name asset availableBalance unconfirmedBalance change"> 
+								<tr> 
+									<th>Name</th> 
+									<th>Asset ID</th> 
+									<th>Available Balance</th>
+									<th>Unconfirmed Balance</th>
+									<th>% Change</th>
+								</tr> 
+								</thead> 
+								<tbody> 
 
-							</tbody> 
-						</table>
+								</tbody> 
+							</table>
+						</div>
 						
-						<div class="table-footer">
-							<button class="buttSearch fadeSlow">SEARCH</button>
-							<input type="search" class="table-searchbox">
-							<span class="buttPage">
-								<button class="fadeSlow">FIRST</button>
-								<button class="fadeSlow buttPageS"><</button>
-								<button class="fadeSlow buttPageS">1</button>
-								<button class="fadeSlow buttPageS">2</button>
-								<button class="fadeSlow buttPageS">3</button>
-								<button class="fadeSlow buttPageS">4</button>
-								<button class="fadeSlow buttPageS">5</button>
-								<button class="fadeSlow buttPageS">></button>
-								<button class="fadeSlow">LAST</button>
-							</span>
+						<div class="modal-table-footer">
+							<div class="modal-table-footer-content">
+								<div class="search-button-wrap">
+									<button class="buttSearch fadeSlow">SEARCH</button>
+									<input type="search" class="table-searchbox">
+								</div>
+								<div class="page-button-wrap">
+									<span class="buttPage">
+										<button class="fadeSlow">FIRST</button>
+										<button class="fadeSlow buttPageS"><</button>
+										<button class="fadeSlow buttPageS">1</button>
+										<button class="fadeSlow buttPageS">2</button>
+										<button class="fadeSlow buttPageS">3</button>
+										<button class="fadeSlow buttPageS">4</button>
+										<button class="fadeSlow buttPageS">5</button>
+										<button class="fadeSlow buttPageS">></button>
+										<button class="fadeSlow">LAST</button>
+									</span>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div id="tabs-4">

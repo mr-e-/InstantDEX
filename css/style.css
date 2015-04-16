@@ -24,7 +24,6 @@
 html {
 	width: 100%;
 	height: 100%;
-
 }
 
 body {
@@ -86,7 +85,6 @@ form {
 /* ------------------------- HEADER AREA ------------------------- */
 
 
-
 #topLogoWrap {
 	display: inline-block;
 	float: left;
@@ -115,36 +113,31 @@ form {
 	opacity: 0.8;
 }
 
-#headerAreaIco2 {  /* AREA : MARKETS / ORDERS / PORTFOLIO */
+#headerAreaIco2 {
 	z-index:1;
 	display: inline-block;
 	float: right;
 	width: 170px;
 	height: 50px;
 	overflow:hidden;
-/*	border-right: thin solid red;
-	border-left: thin solid green;*/
 }
 
-#headerAreaIco3 {  /* AREA : MARKETS / ORDERS / PORTFOLIO */
+#headerAreaIco3 {
 	z-index:1;
-	display: inline-block;
+	display: none;
 	float: right;
 	width: 170px;
 	height: 100%;
 	overflow:hidden;
 	text-align:right;
-/*	border-right: thin solid red;
-	border
-	-left: thin solid green;*/
 }
 
 .header-ico3 {
-	margin-top: 0px;
 	width: 24px;
 	height: 24px;
-	margin-right:15px;
 	opacity: 0.8;
+	margin-right: 13px;
+	margin-top: 3px;
 }
 
 .header-ico2 {
@@ -156,25 +149,20 @@ form {
 }
 
 
-#headerAreaIco:hover, #headerAreaIco2:hover{
-	cursor: pointer;	
-}
-
-.header-ico:hover, .header-ico2:hover {
+.header-ico:hover, .header-ico2:hover, .header-ico3:hover {
 	opacity: 1;	
+	cursor: pointer;
 }
 
-#miniChartsTop {   /* AREA WITH PRICED PAIRS */
+#miniChartsTop {
 	display: inline-block;
 	float: right;
 	width: 430px;
 	height: 50px;
 	padding-right: 5px;
-/*	border-right: thin solid red;
-	border-left: thin solid green;	*/
 }
 
-#miniChartsTop2 {   /* AREA WITH x4 BOXED PAIRS */
+#miniChartsTop2 {
 	display: inline-block;
 	float: right;
 	width: 250px;
@@ -257,16 +245,11 @@ form {
 
 #mainChart {
 
-	/*							*/
-	/*height: calc(100vh - 54px);*/
 	height:100%;
 	position:relative;
-	z-index:0;
 	display: block;
 	top: 0;
-	width: 100%;
-	/*						*/
-
+	z-index:0;
 	background: black;
 	overflow: hidden;
 	/*border-left: inset 1px white;
@@ -275,9 +258,9 @@ form {
 
 #mainChartTop {
 	height: 40px;
-	border-bottom: inset 1px rgb(45,45,45);
 	padding-top: 5px;
 	padding-left: 5px;
+	border-bottom: inset 1px rgb(45,45,45);
 	overflow: hidden;	
 }	
 
@@ -285,23 +268,21 @@ form {
 
 #orderBook {
 	height:100%;
+	width: 250px;
+	min-width:250px;
 	position:absolute;
 	display: inline-block;
 	float: right;
-	width: 250px;
-	min-width:250px;
 	background: black;
 	border-left: inset 1px white;
 	overflow: hidden;
 }
 
 #currPair {
-	/*float: left;*/
-	position:relative;
-	display:block;
-	
 	width: 100%;
 	height: 40px;
+	position:relative;
+	display:block;
 	font-size: 1.2rem;
 	color: white;
 	background: black;
@@ -315,15 +296,14 @@ form {
 
 
 #currLast {
-	/*float: left;*/
+	height: 40px;
+	width: 100%;
 	position:relative;
 	display:block;
+	padding-top: 6px;
 	color:rgba(27, 211, 87, 0.8) !important;
-	width: 100%;
-	height: 40px;
 	border-top: inset 1px rgb(115,115,115);
 	border-bottom: inset 1px rgb(45,45,45);
-	padding-top: 6px;
 	font-size: 1.2rem;
 	font-weight: 600;
 }
@@ -340,9 +320,9 @@ form {
 #miniChartsC {
 	height:100%;
 	width: 250px;
+	min-width: 250px !important;
 	display: inline-block;
 	float: right;
-	min-width: 250px !important;
 	background: black;
 	border-left: inset 1px white;
 	overflow: hidden;
@@ -408,9 +388,6 @@ form {
 
 /* ------------------------- ORDER BOX ------------------------- */
 
-
-
-
 .tabs input[type=radio] {
     position: absolute;
     top: -9999px;
@@ -463,74 +440,12 @@ form {
 	width: 100%;
 	float: left;
 	text-align: left;
-	/*padding-top: 4px;*/
-	/*padding-left: 4px;*/
-	/*height: 90px;*/
     height: 100%;
 	position: absolute;
 	background: black;
 	border-top: solid 1px white;
 }
 
-
-
-#tabBuyPrice, #tabSellPrice, #tabBuyAmount, #tabSellAmount, #tabBuyTotal, #tabSellTotal, #tabBuyFee, #tabSellFee {
-	float:left;
-	width: 80%;
-	height: 22px;
-}
-
-#tabBuyPriceLab, #tabBuyAmountLab, #tabBuyTotalLab, #tabBuyFeeLab, #tabSellPriceLab, #tabSellAmountLab, #tabSellTotalLab, #tabSellFeeLab {
-	float: left;
-	display: inline-block;
-	width: 50%;
-	color: black;
-	font-size: 0.8rem;
-	font-weight: 200;
-	padding-left: 2px;
-	cursor: default; 	
-}
-
-#tabBuyPriceBox, #tabBuyAmountBox, #tabBuyTotalBox, #tabBuyFeeBox, #tabSellPriceBox, #tabSellAmountBox, #tabSellTotalBox, #tabSellFeeBox {
-	float: right;
-	display: inline-block;
-	width: 50%;
-	font-size: 0.9rem;
-	font-weight: 200;
-	padding-left: 5px; 	
-}
-
-/*
-#placeBidPrice, #placeBidAmount {
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	font-weight: 600;
-	color: black;	
-}
-	
-#placeBidFee, #placeBidTotal {
-	background: rgb(240,240,240);
-	border: none;
-	color: grey;
-}*/
-
-
-.order-button {
-	position: absolute;
-	top: 32px;
-    bottom: 22px;
-	right: 5px;
-	width: 20%;
-    padding: 4px 2px 0x 2px;
-}
-
-.order-button:hover {
-	cursor: pointer;
-}
-
-.order-button > button {
-	width: 100%;
-    height: 100%;
-}
 
 .form-group {
 	clear: both;
@@ -560,7 +475,7 @@ form {
     height: 30px;
 }
 
-.tabs-nav .nav { /* Non active table tab */
+.tabs-nav .nav {
     width: 20%;
     height: 30px;
     float: left;
@@ -571,7 +486,6 @@ form {
 }
 
 .tabs-nav .nav.active {
-    cursor: auto;
     background: transparent;
 	border-bottom: none;
 }
@@ -637,6 +551,7 @@ form {
 	position:relative;
 	width:100%;
 }
+
 .table tbody {
 	width:100%;
 	position:relative;
@@ -656,19 +571,6 @@ form {
 }
 
 
-.table-footer {
-	position: absolute;
-	bottom: 25px;
-	left: 35px;
-    right: 35px;
-}
-
-.table-button {
-	float: left;
-	padding: 5px 7px;
-	margin-right: 10px;
-}
-
 .table-searchbox {
     width:150px;
 	height: 30px;
@@ -678,14 +580,6 @@ form {
 	font-size: 0.65rem;
 }
 
-.pagination {
-	float: right;
-}
-
-.pagination button {
-	float:left;
-	padding: 5px 7px;
-}
 
 /* ------------------------- CHARTS PANEL ------------------------- */
 
@@ -892,20 +786,12 @@ form {
 @media (max-width: 1340px) { /* EXPERIMENTAL */
 
     #headerAreaIco2 {
-        height: 41px;
-        width: 130px;
-        position: absolute;
-		display:block;
-        top: 50px;
-        left: calc(100vw - 500px - 130px);
+		display:none;
+	}
+    #headerAreaIco3 {
+		display:inline-block;
     }
     
-    .header-ico2 {
-        width: 25px;
-        height: 25px;
-        margin-left: 13px;
-        margin-top: 7px;
-    }
     .chart-text-top {
         font-size: 0.6rem;
     }
@@ -929,63 +815,31 @@ form {
 		height: 50px;
 		padding-right: 5px;
     }
-    
 
-	
-    #miniTopNum1, #miniTopNum2, #miniTopNum3, #miniTopNum4 {
-        margin: 0;
-    }
+
 }
 
 @media (max-width: 1160px) {
-    #headerAreaIco2 {
-        height: 41px;
-        width: 130px;
-        position: absolute;
-		display:block;
-        top: 50px;
-        left: calc(658px - 130px);
-    }
-    
-    .header-ico2 {
-        width: 25px;
-        height: 25px;
-        margin-left: 13px;
-        margin-top: 7px;
-    }
+
 }
 
 
-/*
-@media (max-width: 975px) {
-    #mainChart {
-        width: 100%;
-    }
-    
-    #headerAreaIco2 {
-        width: 120px;
-        left:calc(585px - 135px);
-    }
-}*/
 
 
 /*		ORDERBOOK		*/
 
 #sellBook {
-	/*height: calc(50vh - 20px - 40px - 25px);*/
+
 }
 
 #buyBook {
-	/*	height: calc(50vh - 20px - 25px);*/
-	/*border-bottom: inset 1px white;	*/
+
 }
 
 #sellBook, #buyBook {
 	overflow-y:hidden;
 	position:relative;
 	height: calc(50% - 40px);
-	/*float: left;
-	width: 100%;*/
 }
 
 #sellBook > .twrap, #buyBook > .twrap {
@@ -1115,12 +969,6 @@ form {
 	display: block;
 }
 
-/*
-	border-style:solid;
-	border-width: 1px;
-	border-color: #8F8F8F;
-*/
-
 
 .ui-state-hover, .ui-state-active, .ui-state-highlight, .ui-state-focus, .ui-state-default {
     background-color: rgba(200,200,200,1) !important;
@@ -1143,17 +991,12 @@ form {
 
 .growl.growl-notice {
     color: black;
-	/*background:rgba(124, 201, 236, 1);
-	background-color:rgba(124, 201, 236, 1);*/
-	
 	background: rgba(124, 181, 236, 1);
-
 }
 
 .growl.growl-error {
 	color: #FFF;
 	background:rgba(192, 57, 43, 1);
-	background-color:rgba(192, 57, 43, 1);
 }
 
 .growl.growl-warning {
@@ -1173,21 +1016,23 @@ form {
 
 
 #chartLoading {
-	height: calc(100% - 50px);
+	height: calc(100% - 40px);
 	width:100%;
 	position:absolute;
 	display:none;
 	z-index:99999;
 	float:left;
 	vertical-align:middle;
+	cursor:default;
 }
 
 #chartLoading span {
 	text-align:center;
 	display:block;
 	font-size:1rem;
-	top:50%;
 	position:relative;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .mini-chart-area-3 {
@@ -1625,33 +1470,22 @@ form {
 	font-size: 2em;
 }
 
-
-
-
-/*
-
-.chart-number {
-	height:100%;
+.empty-orderbook {
+	height: calc(100% - 50px);
 	width:100%;
-    position: absolute;
+	position:absolute;
 	display:none;
-	z-index:2000;
+	z-index:1;
+	float:left;
+	vertical-align:middle;
+	cursor:default;
+}
+
+.empty-orderbook span {
 	text-align:center;
-}
-.chart-number.show {
 	display:block;
+	font-size:1rem;
+	top:50%;
+	position:relative;
 }
 
-.chart-number-wrap {
-	position: relative;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-.chart-number-wrap span {
-	font-size: 5em;
-    z-index: 2000;
-    font-weight: bold;
-}
-
-*/

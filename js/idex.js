@@ -7,6 +7,7 @@ IDEX.allAssets = [];
 IDEX.curBase = {};
 IDEX.curRel = {};
 IDEX.pendingOrder = {};
+IDEX.isSNRunning = false;
 IDEX.orderbookInit = false;
 IDEX.chartInit = false;
 
@@ -271,12 +272,6 @@ function initChartFavorites()
 	if (localStorage.chartFavorites)
 	{
 		chartFavs = JSON.parse(localStorage.getItem("chartFavorites"));
-
-		for (var i = 0; i < chartFavs.length; ++i)
-		{
-			if (!("asset" in chartFavs[i]) || typeof chartFavs[i]['asset'] === "undefined")
-				chartFavs[i]['asset'] = "-1";
-		}
 	}
 	else
 	{
@@ -289,29 +284,27 @@ function initChartFavorites()
 			{'name':"LIQUID",'asset':"4630752101777892988"}
 		];
 		var ids = ["11","12","21","22","31","32","41","42","51","52","61","62","71","72","81","82","91","92","101","102","111","112","121","122"];
-		var lastAsset = "";
+		var lastIndex = "-1";
 		var tempFavs = [];
 
 		for (var i = 0; i < ids.length; ++i)
 		{
-			var randIndex = Math.floor(Math.random() * defaultFavs.length);
-			var randFav = {} 
+			var randFav = {}
+			var randIndex = ""
+			
+			while (( randIndex = Math.floor(Math.random() * defaultFavs.length)) == lastIndex)
+				continue;
+			
 			randFav ['name'] = defaultFavs[randIndex]['name'];
 			randFav['asset'] = defaultFavs[randIndex]['asset'];
 			randFav['id'] = ids[i];
-			
-			if (randFav['asset'] == lastAsset)
-			{
-				--i;
-				continue;
-			}
-			
-			lastAsset = randFav['asset'];
 			chartFavs[ids[i]] = randFav;
+			lastIndex = randIndex;
 		}
+		
+		localStorage.setItem('chartFavorites', JSON.stringify(chartFavs));
 	}
 	
-	localStorage.setItem('chartFavorites', JSON.stringify(chartFavs));
 	IDEX.user.favorites = chartFavs;
 
 	for (var id in chartFavs)
@@ -320,7 +313,7 @@ function initChartFavorites()
 		$("#chart-curr-"+id).html(chartFavs[id]['name']).attr("data-asset", chartFavs[id]['asset']);
 	}
 	
-	IDEX.loadMiniCharts()
+	IDEX.loadMiniCharts();
 }
 
 IDEX.loadMiniCharts = function()
@@ -392,9 +385,10 @@ $(".idex-submit").on("click", function()
 	{
 		params['baseid'] = IDEX.curBase.asset;
 		params['relid'] = IDEX.curRel.asset;
-		params['duration'] = Number(IDEX.user.options['duration'])
+		params['duration'] = IDEX.user.options['duration'];
+		params['minperc'] = Number(IDEX.user.options['minperc']);
 
-		console.log(params)
+		console.log(params);
 		IDEX.sendPost(params).done(function(data)
 		{
 			console.log(data);
@@ -446,7 +440,7 @@ $(".idex-tabs li").on("mouseup", function()
 
 		var tab = $(this).attr('data-tab');
 		var $parent = $(this).closest(".idex-tabs-wrapper").next();
-		$parent.find(".tab-content-wrap").hide()
+		$parent.find(".tab-content-wrap").hide();
 		$parent.find(".tab-content-wrap[data-tab='"+tab+"']").show();
 	}
 })
