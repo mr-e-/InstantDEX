@@ -197,8 +197,9 @@ IDEX.updateScrollbar = function()
 	
 IDEX.init = function()
 {
-	$("#sellBook").perfectScrollbar();
-	$("#buyBook").perfectScrollbar();
+	var obj = {}
+	$("#sellBook").perfectScrollbar(obj);
+	$("#buyBook").perfectScrollbar(obj);
 	
 	IDEX.user = new User();
 	IDEX.account = new Account();

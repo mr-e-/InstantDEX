@@ -785,6 +785,10 @@ form {
 
 @media (max-width: 1340px) { /* EXPERIMENTAL */
 
+	body {
+		overflow-x:visible !important;
+	}
+	
     #headerAreaIco2 {
 		display:none;
 	}
@@ -823,30 +827,30 @@ form {
 
 }
 
-
+.ps-container > .ps-scrollbar-y-rail {
+	-webkit-backface-visibility:hidden;
+}
 
 
 /*		ORDERBOOK		*/
 
 #sellBook {
+	position:relative;
 	height: calc(50% - 40px - 30px - 4px);
 }
 
 #buyBook {
-	height: calc(50% - 40px - 30px - 3px);
-}
-
-
-#sellBook, #buyBook {
 	position:relative;
+	height: calc(50% - 40px - 30px - 4px);
 }
+
 
 #sellBook > .twrap, #buyBook > .twrap {
 	position:absolute;
 	width:100%;
 	padding-right:10px;
 	padding-left:10px;
-	height:100%;
+	height:calc(100%);
 }
 
 #sellBook > .twrap {
@@ -962,31 +966,34 @@ form {
 	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
 }
 
-#sellBook > .twrap  > .order-row:hover, #buyBook > .twrap  > .order-row:hover{
-	cursor:pointer;
-}
 
 #sellBook > .twrap  > .order-row > .order-col, #buyBook > .twrap > .order-row > .order-col {
 	color:#D8D8D8;
 	color:#A4A4A4;
 }
 
+#sellBook > .twrap  > .order-row:hover > .order-col, #buyBook > .twrap  > .order-row:hover > .order-col{
+	cursor:pointer;
+	color:#D8D8D8;
+}
+
 #sellBook > .twrap > .order-row.newrow, #buyBook > .twrap > .order-row.newrow {
 	background-color:#333;
 }
 
+/*
 #sellBook > .twrap  > .order-row.closed, #buyBook > .twrap  > .order-row.closed {
 	background-color:blue;
 }
 
 #sellBook > .twrap > .order-row.virtual > .order-col, #buyBook  > .twrap > .order-row.virtual > .order-col {
 	color:#A4A4A4;
-}
+}*/
 
 #sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
 	background-color:rgba(222, 233, 255, 0.2);
 }
-
+/*
 #sellBook > .twrap > .order-row  > .order-col {
 	color: rgba(218, 59, 38, 0.9) !important;
 }
@@ -1002,7 +1009,7 @@ form {
 #buyBook > .twrap > .order-row:hover  > .order-col {
 	color: rgba(27, 211, 87, 1) !important;
 }
-
+*/
 
 .tooltipster-content {
 	background-color:black;

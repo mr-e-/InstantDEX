@@ -304,6 +304,7 @@ function expandOrders()
 	})
 }
 
+
 function orderTooltip(row, rowData)
 {
 	var nxt = "";
@@ -313,9 +314,9 @@ function orderTooltip(row, rowData)
 		nxt = IDEX.toRS(rowData['NXT'])
 	else
 		return row
-	
 	return $(row).tooltipster({
-		'content':$("<span style='width:100%'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
+		
+		'content':$("<span style='position:relative;'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
 	})
 	
 	/*$(this).tooltipster({
