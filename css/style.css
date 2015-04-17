@@ -1139,7 +1139,8 @@ form {
 	width: 100%;
 	position:relative;
 	overflow:hidden;
-	background-color:#232323;	
+	background:black;
+	background-color:black;
 }
 
 
@@ -1148,7 +1149,7 @@ form {
 	width:100%;
 	position:relative;
 	color:#B3B3B3;
-	font-family: 'open_sanslight', Fallback, sans-serif;
+	font-family: Helvetica, Arial, 'Microsoft YaHei', Verdana, sans-serif, 'Segoe UI', Tahoma;
 }
 
 .idex-tabs {
@@ -1163,7 +1164,7 @@ form {
 	height:100%;
 	border:1px solid #3D3D3D;
 	vertical-align:middle;
-	padding-top:4px;
+	padding-top:6px;
 	background-color: #333333;
 }
 
@@ -1180,36 +1181,19 @@ form {
 
 }
 
-.idex-tabs li.active { /* Order box active tab */
+.idex-tabs li.active {
 	cursor:pointer;
 	background: #232323;
 	color: #e5e5e5;
 	border-bottom:#232323;
-	border-top: 2px solid white;
-	border-left: 2px solid white;
-	border-right: 2px solid white;
-	border-top-left-radius:4px;
-	border-top-right-radius:4px;
-	z-index: 8;
-}
-
-.idex-tabs li:not(.active) {
-	cursor:pointer;
-	background: rgba(255,255,255,0.3);
-	border:1px solid #737373;
-	border-bottom: 2px solid white;
-	z-index: 1;
 }
 
 .idex-tabs li:hover:not(.active) {
 	cursor:pointer;
-	background: rgba(255,255,255,0.8);
+	background: rgba(255,255,255,0.3);
 	border:1px solid #737373;
-	border-bottom: 2px solid #ffffff;
-	border-right: white;
-	border-left: white;
-	color: black;
 }
+
 
 .idex-tabs li.idex-mousedown {
 	background: #232323 !important;
@@ -1232,8 +1216,8 @@ form {
 
 .order-tab-content-top-balance {
     width: 100%;
-    background: rgba(255,255,255, 0.1);
-    color: #ffffff;
+    background: #121212;
+    color: #e5e5e5;
     font-size: 1rem;
     padding: 3px 5px;
     margin-bottom: 15px;
@@ -1262,7 +1246,6 @@ form {
 	margin-left:40px;
 	position:relative;
 	display:inline-block;
-	font-family: 'open_sanslight', Fallback, sans-serif;
 }
 
 .order-input:first-child {
@@ -1277,8 +1260,7 @@ form {
 
 .order-input-label span {
 	color:#e5e5e5;
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	font-weight: 200;
+	font-family: Helvetica, Arial, 'Microsoft YaHei', Verdana, sans-serif, 'Segoe UI', Tahoma;
 }
 
 .order-input input {
