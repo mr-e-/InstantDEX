@@ -185,12 +185,12 @@ Account.prototype.updateBalances = function()
 }
 
 
-IDEX.updateScrollbar = function()
+IDEX.updateScrollbar = function(toBottom)
 {
 	//$("#sellBook").perfectScrollbar('update');
-	//console.log($("#sellBook"))
-	$("#sellBook").scrollTop($("#sellBook").prop("scrollHeight"));
-	$("#sellBook").perfectScrollbar('update');
+	if (toBottom)
+		$("#sellBook .twrap").scrollTop($("#sellBook .twrap").prop("scrollHeight"));
+	$("#sellBook .twrap").perfectScrollbar('update');
 	$("#buyBook").perfectScrollbar('update');
 }
 
@@ -198,7 +198,8 @@ IDEX.updateScrollbar = function()
 IDEX.init = function()
 {
 	var obj = {}
-	$("#sellBook").perfectScrollbar(obj);
+	$("#sellBook .twrap").perfectScrollbar(obj);
+
 	$("#buyBook").perfectScrollbar(obj);
 	
 	IDEX.user = new User();
@@ -528,6 +529,6 @@ $(window).load(function()
 })
 
 $(window).resize(function()
-{
-	IDEX.updateScrollbar();
+{	
+	IDEX.updateScrollbar(false);
 })

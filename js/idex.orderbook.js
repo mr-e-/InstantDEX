@@ -42,7 +42,7 @@ IDEX.stopPollingOrderbook = function()
         setTimeout(IDEX.stopPollingOrderbook, 100);
 		return false;
     }
-	
+	IDEX.updateScrollbar(false)
 	isStoppingOrderbook = false;
 	clearTimeout(orderbookTimeout);
 	IDEX.currentOrderbook = new IDEX.Orderbook();
@@ -109,7 +109,7 @@ function pollOrderbook(timeout)
 				}
 				else
 				{
-					IDEX.updateScrollbar();
+					IDEX.updateScrollbar(false);
 					$("#currLast .order-text").text("0.0");
 					$(".twrap").empty();
 					$(".empty-orderbook").show();
@@ -208,12 +208,12 @@ function animateOrderbook()
 	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(700, function()
 	{
 		$(this).replaceWith($(this).contents());
+		IDEX.updateScrollbar(false)
 	})
 	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(700, function()
 	{
 		$(this).parent().remove();
-		$("#sellBook").perfectScrollbar('update');
-		$("#buyBook").perfectScrollbar('update');
+		IDEX.updateScrollbar(false)
 	})
 
 	$(".newrow").removeClass("newrow");
@@ -234,7 +234,8 @@ function updateOrders($book, orderData)
 		{
 			$book.append(orderTooltip(orderData.newOrders[i]['row'], orderData.newOrders[i]))
 		}
-		IDEX.updateScrollbar();
+		
+		IDEX.updateScrollbar(true);
 	}
 	else
 	{
