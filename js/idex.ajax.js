@@ -1,6 +1,6 @@
 
 var IDEX = (function(IDEX, $, undefined) {
-/* test */
+	
 var snURL = "http://127.0.0.1:7777";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 

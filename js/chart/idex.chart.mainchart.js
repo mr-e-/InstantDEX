@@ -148,7 +148,10 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			data = data.results.bars
 			if (!data.length)
+			{
+				$("#chartLoading span").text("Not enough data");
 				return
+			}
 			var both = getStepOHLC(data, baseNXT)
 			var ohlc = both[0]
 			var volume = both[1]
@@ -665,7 +668,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (chart)
 		{
 			chart.destroy()
-			$("#chartLoading").show();
+			$("#chartLoading span").text("Loading...").parent().show();
 		}
 		if (IDEX.ohlcTimeout)
 		{

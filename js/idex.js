@@ -10,6 +10,8 @@ IDEX.pendingOrder = {};
 IDEX.isSNRunning = false;
 IDEX.orderbookInit = false;
 IDEX.chartInit = false;
+IDEX.isOrderbookExpanded = false;
+
 
 IDEX.snAssets = {
 	'nxt':{'name':"NXT", 'asset':"5527630", 'assetid':"5527630", 'decimals':8}
@@ -182,9 +184,22 @@ Account.prototype.updateBalances = function()
 	return dfd.promise();
 }
 
+
+IDEX.updateScrollbar = function()
+{
+	//$("#sellBook").perfectScrollbar('update');
+	//console.log($("#sellBook"))
+	$("#sellBook").scrollTop($("#sellBook").prop("scrollHeight"));
+	$("#sellBook").perfectScrollbar('update');
+	$("#buyBook").perfectScrollbar('update');
+}
+
 	
 IDEX.init = function()
 {
+	$("#sellBook").perfectScrollbar();
+	$("#buyBook").perfectScrollbar();
+	
 	IDEX.user = new User();
 	IDEX.account = new Account();
 	IDEX.currentOrderbook = new IDEX.Orderbook();
@@ -204,6 +219,11 @@ function getRS()
 			var index = data['peers'].length == 1 ? 0 : 1;
 			IDEX.account.nxtRS = data['peers'][index]['RS'];
 			IDEX.account.nxtID = data['peers'][index]['srvNXT'];
+			$(".option-nxtrs").val(IDEX.account.nxtRS);
+		}
+		else
+		{
+			$(".option-nxtrs").val("Error getting RS");	
 		}
 	})
 }
@@ -418,14 +438,38 @@ $(".idex-submit").on("click", function()
 
 
 
-
-
-
-$("#icoLog").on("click", function()
+$("#expand_orderbook_button").on("click", function()
 {
-	$.growl.error({'message':"Order placed", 'location':"bl"});
-	$.growl.warning({'message':"Order placed", 'location':"bl"});
-	$.growl.notice({'message':"Order placed", 'location':"bl"});
+	//$.growl.error({'message':"Order placed", 'location':"bl"});
+	//$.growl.warning({'message':"Order placed", 'location':"bl"});
+	//$.growl.notice({'message':"Order placed", 'location':"bl"});
+	
+	if (!IDEX.isOrderbookExpanded)
+	{
+		$("#miniChartsC").css("display", "none")
+		$("#orderBook").css("width", "100%")
+		
+		$(".labels-col").addClass("labels-col-expand")
+		$(".labels-col-extra").addClass("extra-show");
+		
+		$(".order-row").addClass("order-row-expand")
+		$(".order-col-extra").addClass("extra-show");
+
+		IDEX.isOrderbookExpanded = true;
+	}
+	else
+	{
+		$("#orderBook").css("width", "250px")
+		$("#miniChartsC").css("display", "inline-block")
+		
+		$(".labels-col").removeClass("labels-col-expand")
+		$(".labels-col-extra").removeClass("extra-show")
+		
+		$(".order-row").removeClass("order-row-expand")
+		$(".order-col-extra").removeClass("extra-show")
+		
+		IDEX.isOrderbookExpanded = false;
+	}
 
 })
 
@@ -480,4 +524,9 @@ $(".tab-order-button button").on("mouseleave", function()
 $(window).load(function()
 {
 	IDEX.init();
+})
+
+$(window).resize(function()
+{
+	IDEX.updateScrollbar();
 })

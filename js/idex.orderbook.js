@@ -90,7 +90,7 @@ function pollOrderbook(timeout)
 	orderbookTimeout = setTimeout(function() 
 	{
 		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':25};
-		params['showall'] = 1
+		params['showall'] = 0
 		orderbookAsync = true;
 		console.log('Waiting for orderbook');
 		IDEX.sendPost(params).done(function(orderbookData)
@@ -109,6 +109,7 @@ function pollOrderbook(timeout)
 				}
 				else
 				{
+					IDEX.updateScrollbar();
 					$("#currLast .order-text").text("0.0");
 					$(".twrap").empty();
 					$(".empty-orderbook").show();
@@ -130,6 +131,7 @@ function groupOrders(orders, currentOrders)
 	var oldOrders = [];
 	var newOrders = [];
 	var expiredOrders = [];
+	var runningTotal = 0;
 	
 	for (var i = 0; i < currentOrders.length; ++i)
 		currentOrders[i]['index'] = i;
@@ -156,10 +158,25 @@ function groupOrders(orders, currentOrders)
 		{
 			order.price = IDEX.toSatoshi(order.price).toFixed(8);
 			order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
-			var trString = IDEX.buildTableRows([[order.price, order.volume]], "span");
+			order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
+			runningTotal = IDEX.toSatoshi(Number(runningTotal) + Number(order['total'])).toFixed(6);
+			order['sum'] = runningTotal;
+
+			var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
 			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
 			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
+			trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
 			trString = IDEX.addElClass(trString, trClasses);
+			trString = $(trString).find("span").each(function(index, e)
+			{
+				var extraClasses = "order-col-extra";
+				if (index == 2 || index == 3)
+				{
+					if (IDEX.isOrderbookExpanded)
+						extraClasses += " extra-show";
+					$(this).addClass(extraClasses);
+				}
+			}).parent()[0].outerHTML
 			order['row'] = trString;
 			newOrders.push(order);
 		}
@@ -195,6 +212,8 @@ function animateOrderbook()
 	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(700, function()
 	{
 		$(this).parent().remove();
+		$("#sellBook").perfectScrollbar('update');
+		$("#buyBook").perfectScrollbar('update');
 	})
 
 	$(".newrow").removeClass("newrow");
@@ -215,6 +234,7 @@ function updateOrders($book, orderData)
 		{
 			$book.append(orderTooltip(orderData.newOrders[i]['row'], orderData.newOrders[i]))
 		}
+		IDEX.updateScrollbar();
 	}
 	else
 	{
@@ -272,6 +292,18 @@ function addNewOrders($row, orderData, rowData, index)
 	}
 }
 
+
+function expandOrders()
+{
+	$book.find(".order-row").each(function(index, element)
+	{
+		var tdStrings;
+		var rowData = IDEX.getRowData($(this), index)
+		removeOrders($(this), orderData, index);
+		addNewOrders($(this), orderData, rowData, index);
+	})
+}
+
 function orderTooltip(row, rowData)
 {
 	var nxt = "";
@@ -283,7 +315,7 @@ function orderTooltip(row, rowData)
 		return row
 	
 	return $(row).tooltipster({
-		'content':$("<span><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
+		'content':$("<span style='width:100%'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
 	})
 	
 	/*$(this).tooltipster({

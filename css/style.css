@@ -829,17 +829,16 @@ form {
 /*		ORDERBOOK		*/
 
 #sellBook {
-
+	height: calc(50% - 40px - 30px - 4px);
 }
 
 #buyBook {
-
+	height: calc(50% - 40px - 30px - 3px);
 }
 
+
 #sellBook, #buyBook {
-	overflow-y:hidden;
 	position:relative;
-	height: calc(50% - 40px);
 }
 
 #sellBook > .twrap, #buyBook > .twrap {
@@ -847,6 +846,7 @@ form {
 	width:100%;
 	padding-right:10px;
 	padding-left:10px;
+	height:100%;
 }
 
 #sellBook > .twrap {
@@ -857,10 +857,62 @@ form {
 	top:0px;
 }
 
-.order-row {
+#orderbook_footer {
+	height:30px;
+	width:100%;
+	position:relative;
+	margin-top:3px;
+}
+
+.orderbook-button-wrap {
+	width:100%;
+	height:100%;
+	position:relative;
+	text-align:center;
+	vertical-align:middle;
+}
+
+.orderbook-button-wrap span {
+	position:relative;
+	display:inline-block;
+	line-height:30px;
+}
+
+.orderbook-button-wrap span:first-child {
+	margin-right:10px;
+}
+
+.orderbook-button-wrap span:hover {
+	cursor:pointer;
+}
+
+
+
+#orderbook_labels {
+	height:30px;
+	position:relative;
+	width:100%;
+	padding-right:10px;
+	padding-left:10px;
+	text-align:center;
+}
+
+.order-row, .labels-row {
+	position:relative;
 	display: block;
-	margin-top:2px;
-	margin-bottom:2px;
+	margin-top:4px;
+	margin-bottom:4px;
+	width:100%;
+}
+
+.order-row {
+	height:16px;
+	line-height:16px;
+	-webkit-transition: all 500ms ease-out;
+    -moz-transition: all 500ms ease-out;
+    -o-transition: all 500ms ease-out;
+    -ms-transition: all 500ms ease-out;
+    transition: all 500ms ease-out;	
 }
 
 .order-col {
@@ -868,18 +920,43 @@ form {
 	width: 44%;
 	font-size: .8rem;
 	text-align:right;
+	vertical-align:middle;
 
-	-webkit-transition: all 100ms ease-out;
-    -moz-transition: all 100ms ease-out;
-    -o-transition: all 100ms ease-out;
-    -ms-transition: all 100ms ease-out;
-    transition: all 100ms ease-out;	
 }
 
-.order-col:first-child {
+
+.order-row-expand .order-col {
+	width:23%;
+}
+
+.order-col-extra {
+	display:none;
+}
+
+
+
+.labels-col  {
+	width:44%;
+	display:inline-block;
+	font-size: .8rem;
+}
+
+
+.labels-col-expand {
+	width:23%;
+}
+
+.labels-col-extra {
+	display:none;
+}
+
+.extra-show{
+	display:inline-block;
+}
+
+/*.order-col:first-child , .labels-col:first-child {
 	margin-right:8px;
-}
-
+}*/
 
 #sellBook > .twrap  > .order-row, #buyBook > .twrap  > .order-row {
 	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
@@ -891,6 +968,7 @@ form {
 
 #sellBook > .twrap  > .order-row > .order-col, #buyBook > .twrap > .order-row > .order-col {
 	color:#D8D8D8;
+	color:#A4A4A4;
 }
 
 #sellBook > .twrap > .order-row.newrow, #buyBook > .twrap > .order-row.newrow {
@@ -961,7 +1039,9 @@ form {
 	width:100px;
 	position:absolute;
 	display: none;
+	list-style:none;
 }
+
 .dropdown-chart > ul > li{
 	float:none;
 }
