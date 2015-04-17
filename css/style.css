@@ -1250,7 +1250,7 @@ form {
 
 .order-input {
 	height:100%;
-	width:39%;
+	width:45%;
 	margin-left:40px;
 	position:relative;
 	display:inline-block;
@@ -1269,7 +1269,6 @@ form {
 
 .order-input-label span {
 	color:#e5e5e5;
-	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-weight: 200;
 }
 
@@ -1282,11 +1281,13 @@ form {
 	font-family: 'open_sanslight', Fallback, sans-serif;
 	font-weight: 600;
 	padding-left: 3%;
+	margin-left: -14px;
 }
 
 .order-input input:disabled {
-	background:#696969;
-	color:#1F1F1F;
+	background: transparent;
+	border: none;
+	color: grey;
 }
 
 .order-input input:focus {
@@ -1295,11 +1296,18 @@ form {
 	border:1px solid rgba(255,255,255,0.4);
 }
 
+#placeBidTotal, #placeAskTotal {
+	background: transparent;
+	border: none;
+	color: white;
+	font-weight: 600;
+	font-size: .75rem;
+}
+
 .order-tab-content-bottom {
 	height:33%;
 	position:relative;
 }
-
 
 .tab-order-button {
 	width:100%;
@@ -1346,6 +1354,10 @@ form {
 	border: #0D5423;
 }
 
+#tab_buy_button button {
+	outline: none;
+}
+
 #tab_sell_button button {
 /* 	background-color: rgba(218, 59, 38, 0.85);
 	border:1px solid rgba(218, 59, 38, 0.75); */
@@ -1370,6 +1382,9 @@ form {
 	border:1px solid rgba(218, 59, 38, 0.65);
 }
 
+#tab_sell_button button {
+	outline: none;
+}
 
 .tab-content-wrap {
 	height:100%;
