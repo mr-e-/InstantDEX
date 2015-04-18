@@ -115,7 +115,7 @@ function pollOrderbook(timeout)
 					$(".twrap").empty();
 					$(".empty-orderbook").show();
 				}
-				pollOrderbook(3000);
+				pollOrderbook(4000);
 			}
 		}).fail(function(data)
 		{
@@ -208,8 +208,8 @@ function groupOrders(orders, currentOrders)
 function updateOrderbook(orderbookData)
 {
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
-	var bidData = groupOrders(orderbookData.bids, IDEX.currentOrderbook.bids.slice());
-	var askData = groupOrders(orderbookData.asks, IDEX.currentOrderbook.asks.slice());
+	var bidData = groupOrders(orderbookData.bids.slice(), IDEX.currentOrderbook.bids.slice());
+	var askData = groupOrders(orderbookData.asks.slice(), IDEX.currentOrderbook.asks.slice());
 
 	updateOrders($("#buyBook .twrap"), bidData);
 	updateOrders($("#sellBook .twrap"), askData);
@@ -356,11 +356,12 @@ function orderTooltip(row, rowData)
 		return row
 	
 	return $(row).tooltipster({
-		'content':$("<span style=''><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>"),
+		'minWidth':240,
+		'content':$("<div style='display:block'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</div>"),
 		/*'functionBefore':function(origin, continueTooltip)
 		{
-			console.log(origin)
-			$(this).tooltipster('fixedWidth',300)
+			$(this).tooltipster('option','minWidth', 300)
+			$(this).tooltipster('reposition')
 			continueTooltip();
 		}*/
 	})
