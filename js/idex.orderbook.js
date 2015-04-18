@@ -46,6 +46,7 @@ IDEX.stopPollingOrderbook = function()
 	isStoppingOrderbook = false;
 	clearTimeout(orderbookTimeout);
 	IDEX.currentOrderbook = new IDEX.Orderbook();
+	$(".empty-orderbook").hide();
 	pollOrderbook(1);
 }
 
@@ -133,8 +134,24 @@ function groupOrders(orders, currentOrders)
 	var expiredOrders = [];
 	var runningTotal = 0;
 	
-	for (var i = 0; i < currentOrders.length; ++i)
+	for (var i = 0; i < currentOrders.length; i++)
 		currentOrders[i]['index'] = i;
+
+	var len = orders.length
+	var isAsk = len && orders[0].askoffer
+	var loopStart = isAsk ? len - 1 : 0;
+	var loopEnd = isAsk ? -1 : len;
+	var loopInc = isAsk ? -1 : 1;
+
+	for (var i = loopStart; i != loopEnd; i += loopInc)
+	{
+		var order = orders[i]
+		order.price = IDEX.toSatoshi(order.price).toFixed(8);
+		order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
+		order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
+		runningTotal = IDEX.toSatoshi(Number(runningTotal) + Number(order['total'])).toFixed(6);
+		order['sum'] = runningTotal;
+	}
 	
 	for (var i = 0; i < orders.length; i++)
 	{
@@ -147,6 +164,7 @@ function groupOrders(orders, currentOrders)
 
 			if (IDEX.compObjs(order, currentOrder, ['quoteid']))
 			{
+				order['index'] = currentOrders[j]['index']
 				oldOrders.push(order);
 				currentOrders.splice(j, 1);
 				isNew = false;
@@ -156,12 +174,6 @@ function groupOrders(orders, currentOrders)
 
 		if (isNew)
 		{
-			order.price = IDEX.toSatoshi(order.price).toFixed(8);
-			order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
-			order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
-			runningTotal = IDEX.toSatoshi(Number(runningTotal) + Number(order['total'])).toFixed(6);
-			order['sum'] = runningTotal;
-
 			var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
 			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
 			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
@@ -181,6 +193,11 @@ function groupOrders(orders, currentOrders)
 			newOrders.push(order);
 		}
 	}
+	if (newOrders.length)
+	{
+		//console.log(newOrders[0])
+		//console.log(oldOrders[0])
+	}
 
 	expiredOrders = currentOrders;
 
@@ -191,9 +208,9 @@ function groupOrders(orders, currentOrders)
 function updateOrderbook(orderbookData)
 {
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
-	var bidData = groupOrders(orderbookData.bids.slice(), IDEX.currentOrderbook.bids.slice());
-	var askData = groupOrders(orderbookData.asks.slice(), IDEX.currentOrderbook.asks.slice());
-	
+	var bidData = groupOrders(orderbookData.bids, IDEX.currentOrderbook.bids.slice());
+	var askData = groupOrders(orderbookData.asks, IDEX.currentOrderbook.asks.slice());
+
 	updateOrders($("#buyBook .twrap"), bidData);
 	updateOrders($("#sellBook .twrap"), askData);
 	animateOrderbook();
@@ -205,12 +222,12 @@ function updateOrderbook(orderbookData)
 
 function animateOrderbook()
 {
-	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(700, function()
+	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(400, function()
 	{
 		$(this).replaceWith($(this).contents());
 		IDEX.updateScrollbar(false)
 	})
-	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(700, function()
+	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(400, function()
 	{
 		$(this).parent().remove();
 		IDEX.updateScrollbar(false)
@@ -242,10 +259,32 @@ function updateOrders($book, orderData)
 		$book.find(".order-row").each(function(index, element)
 		{
 			var rowData = IDEX.getRowData($(this), index)
+			
+			updateSum($(this), index, orderData, rowData);
 			removeOrders($(this), orderData, index);
 			addNewOrders($(this), orderData, rowData, index);
+			
 		})
 	}
+}
+
+
+function updateSum($row, index, orderData, rowData)
+{
+
+		for (var i = 0; i < orderData['oldOrders'].length; i++)
+		{
+			var oldOrder = orderData['oldOrders'][i];
+			//console.log(String(index)+"   "+String(oldOrder['index']))
+			//console.log(oldOrder)
+			if (index == oldOrder['index'] && (Number(oldOrder['sum']) != Number(rowData['sum'])))
+			{
+				//console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
+				$row.find(".order-col").eq(3).text(oldOrder.sum);
+			}
+		}
+	
+	//console.log(orderData['oldOrders'])
 }
 
 
@@ -269,7 +308,7 @@ function addNewOrders($row, orderData, rowData, index)
 		var trString = IDEX.addElClass(orderData.newOrders[i]['row'], "newrow");
 		trString = orderTooltip(trString, newOrder)
 
-		if (newOrder.price < rowData.price)
+		if (Number(newOrder.price) < Number(rowData.price))
 		{
 			var $sib = $row;
 			
@@ -278,7 +317,7 @@ function addNewOrders($row, orderData, rowData, index)
 			
 			var sibData = IDEX.getRowData($sib, index+1)
 			
-			if (!sibData || newOrder.price >= sibData.price)
+			if (!sibData || Number(newOrder.price) >= Number(sibData.price))
 				$sib.after($(trString));
 			else
 				break;
@@ -315,9 +354,15 @@ function orderTooltip(row, rowData)
 		nxt = IDEX.toRS(rowData['NXT'])
 	else
 		return row
+	
 	return $(row).tooltipster({
-		
-		'content':$("<span style='position:relative;'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
+		'content':$("<span style=''><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>"),
+		/*'functionBefore':function(origin, continueTooltip)
+		{
+			console.log(origin)
+			$(this).tooltipster('fixedWidth',300)
+			continueTooltip();
+		}*/
 	})
 	
 	/*$(this).tooltipster({

@@ -27,6 +27,7 @@ IDEX.Orderbook = function(obj)
 	this.relAsset = "";
 	this.asks = [];
 	this.bids = [];
+
 	
 	IDEX.constructFromObject(this, obj);
 };
