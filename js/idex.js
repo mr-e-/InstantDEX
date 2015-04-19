@@ -422,11 +422,11 @@ $(".idex-submit").on("click", function()
 		params['relid'] = IDEX.curRel.asset;
 		params['duration'] = IDEX.user.options['duration'];
 		params['minperc'] = Number(IDEX.user.options['minperc']);
-
+		var balanceToCheck = (method == "placebid") ? params['relid'] : params['baseid'];
 		console.log(params);
 		IDEX.account.updateBalances().done(function()
 		{
-			if (IDEX.account.checkBalance(params['baseid'], params['volume']))
+			if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
 			{
 				IDEX.sendPost(params).done(function(data)
 				{
