@@ -132,6 +132,18 @@ Account.prototype.getBalance = function(assetID)
 	return balance
 }
 
+Account.prototype.checkBalance = function(assetID, amount)
+{
+	var balance = {}
+	var retBool = false
+
+	if (assetID in this.balances && Number(this.balances[assetID].unconfirmedBalance) >= amount)
+		retBool = true;
+		
+	return retBool;
+}
+
+
 Account.prototype.setBalances = function(balances)
 {
 	
@@ -158,7 +170,7 @@ Account.prototype.updateBalances = function()
 					nxtBal['asset'] = IDEX.snAssets['nxt']['asset']
 					balances.push(nxtBal)
 				}
-				
+
 				for (var i = 0; i < balances.length; i++)
 				{
 					var balance = new IDEX.Balance(balances[i])
@@ -412,19 +424,29 @@ $(".idex-submit").on("click", function()
 		params['minperc'] = Number(IDEX.user.options['minperc']);
 
 		console.log(params);
-		IDEX.sendPost(params).done(function(data)
+		IDEX.account.updateBalances().done(function()
 		{
-			console.log(data);
-
-			if ('error' in data && data['error'])
+			if (IDEX.account.checkBalance(params['baseid'], params['volume']))
 			{
-				$.growl.error({'message':data['error'], 'location':"tl"});				
+				IDEX.sendPost(params).done(function(data)
+				{
+					console.log(data);
+
+					if ('error' in data && data['error'])
+					{
+						$.growl.error({'message':data['error'], 'location':"tl"});				
+					}
+					else
+					{
+						IDEX.currentOpenOrders();
+						IDEX.refreshOrderbook();
+						$.growl.notice({'message':"Order placed", 'location':"tl"});
+					}
+				})
 			}
 			else
 			{
-				IDEX.currentOpenOrders();
-				IDEX.refreshOrderbook();
-				$.growl.notice({'message':"Order placed", 'location':"tl"});
+				$.growl.error({'message':"Not enough funds", 'location':"tl"});
 			}
 		})
 	}

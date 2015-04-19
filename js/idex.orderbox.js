@@ -38,7 +38,7 @@ function parseBalance(balance)
 	var dec = ".0";
 	if (!($.isEmptyObject(balance)))
 	{
-		var amount = String(balance.availableBalance);
+		var amount = String(balance.unconfirmedBalance);
 		var both = amount.split(".");
 		
 		whole = both[0];

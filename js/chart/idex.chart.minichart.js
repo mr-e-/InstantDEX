@@ -39,8 +39,7 @@ var IDEX = (function(IDEX, $, undefined) {
 			var ee = data[data.length-1][0]
 			var range = ((((ee-ss)/60)/60)/24)/2
 			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev()
-			var $parent = $(this).parent();
-			$parent.find(".mini-chart-area-2").text(change.toFixed(2)+"%")
+			$("#"+divid).parent().find(".mini-chart-area-2").text(change.toFixed(2)+"%")
 			
 			var chart2 = new Highcharts.StockChart(
 			{
