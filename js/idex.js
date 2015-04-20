@@ -463,6 +463,67 @@ $(".idex-submit").on("click", function()
 
 
 
+/*
+function getBiggestWidth(newBids, newAsks)
+{
+	var joined = newBids.concat(newAsks);
+	var len = joined.length;
+	var biggestWidth = -1;
+	
+	for (var i = 0; i < len; i++)
+	{
+		var num = joined[i];
+		var numStr = String(num);
+		var wholeDigits = numStr.split(".")[0]
+		if (wholeDigits.length > biggestWidth)
+			biggestWidth = wholeDigits.length
+	}
+	
+	return biggestWidth
+}*/
+
+IDEX.formatNumberWidth = function(allNumbers)
+{
+	var maxWidth = 8 + 1;
+	var biggestWidth = -1;
+	var len = allNumbers.length;
+	
+	for (var i = 0; i < len; i++)
+	{
+		var num = allNumbers[i];
+		var numStr = String(num);
+		var wholeDigits = numStr.split(".")[0]
+		if (wholeDigits.length > biggestWidth)
+			biggestWidth = wholeDigits.length
+	}
+	
+	for (var i = 0; i < len; i++)
+	{
+		var num = allNumbers[i];
+		var numStr = String(num);
+		var digits = numStr.split(".");
+		var wholeDigits = digits[0];
+		var decDigits = digits[1];
+		//var hasDecimal = numStr.search("\\.");
+		if (numStr.length > maxWidth)
+		{
+			var extra = numStr.length - maxWidth;
+			decDigits = decDigits.slice(0, (decDigits.length - extra));
+		}
+		if (wholeDigits.length < biggestWidth)
+		{
+			var extra = biggestWidth - wholeDigits.length;
+			decDigits = decDigits.slice(0, ((decDigits.length) - extra));
+		}
+		allNumbers[i] = wholeDigits + "." + decDigits;
+	}
+	
+	//console.log(allNumbers)
+	return allNumbers
+}
+
+
+
 $("#expand_orderbook_button").on("click", function()
 {
 	//$.growl.error({'message':"Order placed", 'location':"bl"});
@@ -497,7 +558,6 @@ $("#expand_orderbook_button").on("click", function()
 	}
 
 })
-
 
 $(".idex-tabs li").on("mouseup", function()
 {
@@ -539,6 +599,9 @@ $(".tab-order-button button").on("mouseleave", function()
 {
 	$(this).removeClass("order-button-mousedown")
 })
+
+
+
 
 	return IDEX;
 	

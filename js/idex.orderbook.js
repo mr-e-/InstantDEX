@@ -115,7 +115,7 @@ function pollOrderbook(timeout)
 					$(".twrap").empty();
 					$(".empty-orderbook").show();
 				}
-				pollOrderbook(4000);
+				pollOrderbook(10000);
 			}
 		}).fail(function(data)
 		{
@@ -127,17 +127,10 @@ function pollOrderbook(timeout)
 }
 
 
-function groupOrders(orders, currentOrders)
+function formatOrderData(orders)
 {
-	var oldOrders = [];
-	var newOrders = [];
-	var expiredOrders = [];
-	var runningTotal = 0;
-	
-	for (var i = 0; i < currentOrders.length; i++)
-		currentOrders[i]['index'] = i;
-
 	var len = orders.length
+	var runningTotal = 0;
 	var isAsk = len && orders[0].askoffer
 	var loopStart = isAsk ? len - 1 : 0;
 	var loopEnd = isAsk ? -1 : len;
@@ -146,12 +139,22 @@ function groupOrders(orders, currentOrders)
 	for (var i = loopStart; i != loopEnd; i += loopInc)
 	{
 		var order = orders[i]
+		order['index'] = i;
 		order.price = IDEX.toSatoshi(order.price).toFixed(8);
 		order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
 		order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
 		runningTotal = IDEX.toSatoshi(Number(runningTotal) + Number(order['total'])).toFixed(6);
 		order['sum'] = runningTotal;
 	}
+}
+
+
+
+function groupOrders(orders, currentOrders)
+{
+	var oldOrders = [];
+	var newOrders = [];
+	var expiredOrders = [];
 	
 	for (var i = 0; i < orders.length; i++)
 	{
@@ -171,32 +174,9 @@ function groupOrders(orders, currentOrders)
 				break;
 			}
 		}
-
+		
 		if (isNew)
-		{
-			var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
-			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
-			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
-			trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
-			trString = IDEX.addElClass(trString, trClasses);
-			trString = $(trString).find("span").each(function(index, e)
-			{
-				var extraClasses = "order-col-extra";
-				if (index == 2 || index == 3)
-				{
-					if (IDEX.isOrderbookExpanded)
-						extraClasses += " extra-show";
-					$(this).addClass(extraClasses);
-				}
-			}).parent()[0].outerHTML
-			order['row'] = trString;
-			newOrders.push(order);
-		}
-	}
-	if (newOrders.length)
-	{
-		//console.log(newOrders[0])
-		//console.log(oldOrders[0])
+			newOrders.push(order)
 	}
 
 	expiredOrders = currentOrders;
@@ -205,8 +185,60 @@ function groupOrders(orders, currentOrders)
 }
 
 
+function formatOrderNumbers(newBids, newAsks)
+{
+	var keys = ['price', 'volume', 'total', 'sum'];
+	var len = newBids.length;
+	var allBidNumbers = IDEX.getListObjVals(newBids, keys);
+	var allAskNumbers = IDEX.getListObjVals(newAsks, keys);
+
+	for (var i = 0; i < keys.length; i++)
+	{
+		var key = keys[i];
+		var allNumbers = IDEX.formatNumberWidth(allBidNumbers[key].concat(allAskNumbers[key]));
+		var asks = allNumbers.splice(len);
+		var bids = allNumbers;
+		newBids = IDEX.setListObjVals(newBids, key, bids)
+		newAsks = IDEX.setListObjVals(newAsks, key, asks)
+		//var bigggestWidth = getBiggestWidth(newBids[key], newAsks[key])	
+	}
+
+}
+
+
+function formatNewOrders(newOrders)
+{	
+	for (var i = 0; i < newOrders.length; i++)
+	{
+		var order = newOrders[i]
+		var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
+		var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
+		trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
+		trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
+		trString = IDEX.addElClass(trString, trClasses);
+		trString = $(trString).find("span").each(function(index, e)
+		{
+			var extraClasses = "order-col-extra";
+			if (index == 2 || index == 3)
+			{
+				if (IDEX.isOrderbookExpanded)
+					extraClasses += " extra-show";
+				$(this).addClass(extraClasses);
+			}
+		}).parent()[0].outerHTML
+		order['row'] = trString;
+	}	
+}
+
+
 function updateOrderbook(orderbookData)
 {
+	formatOrderData(orderbookData.bids)
+	formatOrderData(orderbookData.asks)
+	formatOrderNumbers(orderbookData.bids, orderbookData.asks)
+	formatNewOrders(orderbookData.bids)
+	formatNewOrders(orderbookData.asks)
+	
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
 	var bidData = groupOrders(orderbookData.bids.slice(), IDEX.currentOrderbook.bids.slice());
 	var askData = groupOrders(orderbookData.asks.slice(), IDEX.currentOrderbook.asks.slice());

@@ -964,7 +964,8 @@ form {
 }*/
 
 #sellBook > .twrap  > .order-row, #buyBook > .twrap  > .order-row {
-	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
+	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma !important;
+
 }
 
 
