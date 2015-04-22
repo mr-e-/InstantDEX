@@ -24,7 +24,7 @@ $("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow
 
 	$("#place"+isAsk+"Price").val(order.price);
 	$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");
-	$("#tab"+tab).trigger("click")
+	$(".order-tabs li[data-tab='"+tab+"'] span").trigger("mousedown").trigger("mouseup")
 })
 
 $(".conf-input").css("width","80%")
@@ -58,10 +58,11 @@ function triggerMakeoffer($button)
 	}
 	//params['askoffer'] = 1;
 	console.log(params);
-
+	console.log(JSON.stringify(params, null, 4))
 	IDEX.sendPost(params).done(function(data)
 	{
 		console.log(data);
+		console.log(JSON.stringify(data, null, 4))
 		$button.prop('disabled', false);
 		if ("error" in data && data.error.length)
 		{

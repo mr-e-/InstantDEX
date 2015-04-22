@@ -195,7 +195,12 @@ function formatOrderNumbers(newBids, newAsks)
 	for (var i = 0; i < keys.length; i++)
 	{
 		var key = keys[i];
-		var allNumbers = IDEX.formatNumberWidth(allBidNumbers[key].concat(allAskNumbers[key]));
+		var decimals = -1;
+		if (key == "price")
+			decimals = IDEX.curRel.decimals;
+		else if (key == "volume")
+			decimals = IDEX.curBase.decimals;
+		var allNumbers = IDEX.formatNumberWidth(allBidNumbers[key].concat(allAskNumbers[key]), decimals);
 		var asks = allNumbers.splice(len);
 		var bids = allNumbers;
 		newBids = IDEX.setListObjVals(newBids, key, bids)

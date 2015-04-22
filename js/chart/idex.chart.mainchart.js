@@ -330,7 +330,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var offset = $('#chartArea').offset();
 		var x = event.pageX - offset.left;
 		var y = event.pageY - offset.top	
-		
 		if (IDEX.isInsidePlot(event))
 		{
 			var pointRange = chart.series[0].pointRange

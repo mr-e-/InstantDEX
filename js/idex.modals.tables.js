@@ -48,7 +48,7 @@ function tableHandler($modalTable)
 	var method = $modalTable.attr("data-method");
 	var params = {'requestType':method};
 	var type = 0;
-	
+
 	if (method == "tradehistory")
 		params['timestamp'] = 0;
 	
@@ -59,11 +59,13 @@ function tableHandler($modalTable)
 	}
 	else
 	{
-
 		IDEX.sendPost(params, type).done(function(data)
 		{
+			var dataTable = $($modalTable[1]).dataTable();
+			var newDataTable = $($modalTable[1]).DataTable();
+			newDataTable.clear()
+			dataTable.fnAdjustColumnSizing();
 			var row = "";
-
 			if (keys[0] in data)
 			{
 				var tableData = data[keys[0]];
@@ -71,20 +73,23 @@ function tableHandler($modalTable)
 
 				if (method == "openorders")
 				{
+					
 					tableData = formatPairName(tableData);
 					tableData = formatOpenOrders(tableData);
-					row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
+					tableData = IDEX.objToList(tableData, keys)
+					/*row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
 					row = $(row).each(function()
 					{
 						$(this).find("td:last").after("<td class='cancelOrder'>CANCEL</td>");
 					})
-					row = IDEX.addElDataAttr(row, tableData, ["quoteid"]);
+					row = IDEX.addElDataAttr(row, tableData, ["quoteid"]);*/
 				}
 				else if (method ==	"allorderbooks")
 				{
 					addEmptyMarketData(tableData);
-					row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
-					row = IDEX.addElDataAttr(row, tableData, ["baseid","relid"]);
+					tableData = IDEX.objToList(tableData, keys)
+					//row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
+					//row = IDEX.addElDataAttr(row, tableData, ["baseid","relid"]);
 				}
 				else if (method == "tradehistory")
 				{
@@ -93,6 +98,7 @@ function tableHandler($modalTable)
 						tableData = tableData['rawtrades'];
 						addAssetNames(tableData, "baseid", "relid");
 						tableData = formatPairName(tableData);
+						tableData = IDEX.objToList(tableData, keys)
 					}
 				}
 				else if (method == "getAccountAssets")
@@ -100,11 +106,15 @@ function tableHandler($modalTable)
 
 				}
 				
-				if (!row.length)
-					row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
+				//dataTable.clear().draw()
+				dataTable.fnAddData(tableData)
+			}
+			else
+			{
+				//dataTable.clear().draw()
+				//dataTable.fnAdjustColumnSizing();
 			}
 			
-			$modalTable.find("tbody").empty().append(row);
 		})
 	}
 }
@@ -161,6 +171,9 @@ $(".current-open-orders-table tbody").on("click", "tr td.cancelOrder", function(
 function balancesTable(keys, $modalTable)
 {	
 	var row = "";
+	
+	var dataTable = $($modalTable[1]).dataTable();
+	dataTable.fnAdjustColumnSizing();
 
 	IDEX.account.updateBalances().done(function()
 	{
@@ -178,8 +191,9 @@ function balancesTable(keys, $modalTable)
 			//tableData[i].unconfirmedQuantityQNT = "-";
 			tableData[i]['change'] = "-";
 		}
-		row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
-		$modalTable.find("tbody").empty().append(row);
+		
+		dataTable.fnClearTable(false)
+		dataTable.fnAddData(IDEX.objToList(tableData, keys))
 	})
 }
 

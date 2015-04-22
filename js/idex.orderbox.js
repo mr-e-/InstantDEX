@@ -2,16 +2,6 @@
 
 var IDEX = (function(IDEX, $, undefined) {
 
-$(".order-button").on("mouseover", function()
-{
-	var text = $(this).find("button").attr("data-method") == "placebid" ? "B<br>U<br>Y" : "S<br>E<br>L<br>L";
-	$(this).find("button").html(text);
-})
-$(".order-button").on("mouseout", function()
-{
-	$(this).find("button").html("P<br>L<br>A<br>C<br>E");
-})
-
 IDEX.updateBalanceBox = function()
 {
 	var $buy = $("#balance_buy")

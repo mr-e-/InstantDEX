@@ -113,7 +113,10 @@ IDEX.objToList = function(data, keys)
 
 		for (var j = 0; j < keys.length; ++j)
 		{
-			loopArr.push(data[i][keys[j]]);
+			if (!(keys[j] in data[i]))
+				loopArr.push("")
+			else
+				loopArr.push(data[i][keys[j]]);
 		}
 		arr.push(loopArr);
 	}

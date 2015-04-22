@@ -18,6 +18,7 @@ IDEX.snAssets = {
 }
 
 
+
 IDEX.Orderbook = function(obj) 
 {	
 	this.nxtRs = "";
@@ -482,7 +483,7 @@ function getBiggestWidth(newBids, newAsks)
 	return biggestWidth
 }*/
 
-IDEX.formatNumberWidth = function(allNumbers)
+IDEX.formatNumberWidth = function(allNumbers, decimals)
 {
 	var maxWidth = 8 + 1;
 	var biggestWidth = -1;
@@ -608,13 +609,64 @@ $(".tab-order-button button").on("mouseleave", function()
 }(IDEX || {}, jQuery));
 
 
-
 $(window).load(function()
 {
 	IDEX.init();
+	$(".modal-table-body table").each(function()
+	{
+		$(this).DataTable(
+		{
+			"scrollX":true,
+			"sScrollY":0,
+			"pagingType":"simple_numbers",
+			"lengthChange":false,
+		}).on("page.dt draw.dt column-sizing.dt stateLoaded.dt", function(e) 
+		{ 
+			adjustDataTableHeight($(this)) 
+		}).on("init.dt", function()
+		{
+			//$(this).closest(".modal-table-body").find('.dataTables_scrollHead').css('height', '20px')
+			//$(this).dataTable().fnAdjustColumnSizing(true);
+		})
+	})
 })
+
+
+function adjustDataTableHeight($table) 
+{
+	if (!($table.closest(".md-modal").hasClass("md-show")) || !($table.closest(".modal-tab-content").hasClass("active")))
+	{
+		return;
+	}
+	var maxRows = 10;
+	var $wrapper = $table.closest(".modal-table-body")
+    var oTable = $table.dataTable();
+	var $scrollBody = $wrapper.find('.dataTables_scrollBody');
+	var $scrollHead = $wrapper.find('.dataTables_scrollHead');
+	var wrapperHeight = $wrapper.height();
+	var scrollHeadHeight = $scrollHead.height();
+	var allowedHeight = wrapperHeight - scrollHeadHeight - 30 - 20;
+	var numRows = $table.find("tbody tr").length;
+	var rowHeight = (allowedHeight / maxRows);
+	var newScrollBodyHeight = rowHeight * numRows;
+	var scrollBodyMarginBottom = allowedHeight - newScrollBodyHeight;
+	$scrollBody.css('height', String(newScrollBodyHeight)+"px");
+	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom)+"px");
+	if (numRows == 1 && $table.find("tr td").eq(0).hasClass("dataTables_empty"))
+	{
+		//$table.css("margin", "0px")
+	}
+	//oTable.fnAdjustColumnSizing(false);
+	//oTable.fnDraw();
+};
+
 
 $(window).resize(function()
 {	
+	/*var $modal = $(".md-modal").each(function()
+	{
+		var $table = $(this).find("table");
+		$($table[1]).dataTable().fnAdjustColumnSizing();
+	})*/
 	IDEX.updateScrollbar(false);
 })
