@@ -617,8 +617,9 @@ $(window).load(function()
 		$(this).DataTable(
 		{
 			"scrollX":true,
-			"sScrollY":0,
+			//"sScrollY":0,
 			"pagingType":"simple_numbers",
+			"pageLength":20,
 			"lengthChange":false,
 		}).on("page.dt draw.dt column-sizing.dt stateLoaded.dt", function(e) 
 		{ 
@@ -638,9 +639,10 @@ function adjustDataTableHeight($table)
 	{
 		return;
 	}
-	var maxRows = 10;
 	var $wrapper = $table.closest(".modal-table-body")
     var oTable = $table.dataTable();
+	var oSettings = oTable.fnSettings();
+	var maxRows = oSettings.oInit.pageLength;
 	var $scrollBody = $wrapper.find('.dataTables_scrollBody');
 	var $scrollHead = $wrapper.find('.dataTables_scrollHead');
 	var wrapperHeight = $wrapper.height();
@@ -649,12 +651,16 @@ function adjustDataTableHeight($table)
 	var numRows = $table.find("tbody tr").length;
 	var rowHeight = (allowedHeight / maxRows);
 	var newScrollBodyHeight = rowHeight * numRows;
+	console.log(numRows)
+	console.log(newScrollBodyHeight)
 	var scrollBodyMarginBottom = allowedHeight - newScrollBodyHeight;
-	$scrollBody.css('height', String(newScrollBodyHeight)+"px");
+	$scrollBody.css('height', String(newScrollBodyHeight+1)+"px");
+	console.log(newScrollBodyHeight)
 	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom)+"px");
 	if (numRows == 1 && $table.find("tr td").eq(0).hasClass("dataTables_empty"))
 	{
-		//$table.css("margin", "0px")
+		$scrollBody.css('height', String(newScrollBodyHeight*2)+"px")
+		$table.css("margin", "0px")
 	}
 	//oTable.fnAdjustColumnSizing(false);
 	//oTable.fnDraw();

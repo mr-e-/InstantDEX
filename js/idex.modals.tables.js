@@ -63,8 +63,9 @@ function tableHandler($modalTable)
 		{
 			var dataTable = $($modalTable[1]).dataTable();
 			var newDataTable = $($modalTable[1]).DataTable();
-			newDataTable.clear()
 			dataTable.fnAdjustColumnSizing();
+			dataTable.fnClearTable()
+
 			var row = "";
 			if (keys[0] in data)
 			{
@@ -111,6 +112,7 @@ function tableHandler($modalTable)
 			}
 			else
 			{
+				//dataTable.fnClearTable()
 				//dataTable.clear().draw()
 				//dataTable.fnAdjustColumnSizing();
 			}
