@@ -122,6 +122,14 @@ form {
 	overflow:hidden;
 }
 
+.header-ico2 {
+	margin-top: 10px;
+	width: 28px;
+	height: 28px;
+	margin-left: 25px;
+	opacity: 0.8;
+}
+
 #headerAreaIco3 {
 	z-index:1;
 	display: none;
@@ -140,16 +148,8 @@ form {
 	margin-top: 3px;
 }
 
-.header-ico2 {
-	margin-top: 10px;
-	width: 28px;
-	height: 28px;
-	margin-left: 25px;
-	opacity: 0.8;
-}
 
-
-.header-ico:hover, .header-ico2:hover, .header-ico3:hover {
+.header-ico:hover, .header-ico2:hover, #headerAreaIco3 > .header-ico3:hover {
 	opacity: 1;	
 	cursor: pointer;
 }
@@ -290,7 +290,7 @@ form {
 	border-bottom: inset 1px rgb(45,45,45);
 }
 
-#currPair, #currLast:hover {
+#currPair:hover, #currLast:hover {
 	cursor: default;
 }
 
@@ -551,7 +551,6 @@ form {
 .table thead {
 	position:relative;
 	width:100%;
-	height:20px;
 }
 
 .table tbody {
@@ -825,9 +824,6 @@ form {
 
 }
 
-@media (max-width: 1160px) {
-
-}
 
 .ps-container > .ps-scrollbar-y-rail {
 	-webkit-backface-visibility:hidden;
@@ -1508,10 +1504,10 @@ form {
 }
 
 .modal-table-body {
-	height:100%%;
+	height:100%;
 	width:100%;
 	position:relative;
-	display:inline-block;
+	display:block;
 }
 
 .modal-table-body table {
@@ -1534,19 +1530,13 @@ form {
 	cursor: pointer;
 }
 
-.dataTables_wrapper .dataTables_paginate .paginate_button{
 
-}
-
-table.dataTable tr{
-
-}
 table.dataTable tbody th, table.dataTable tbody td{
 	padding:2px;
 	font-size:0.75rem;
 }
 
-*/
+/*
 .buttPage button:active {
 	background: #FF9B00;
 	top: 2px;
@@ -1563,7 +1553,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	font-size: 140%;
 	width: 60px;
 	background: rgba(0,0,0,0.05);
-}
+}*/
 
 .modal-table-footer {
 	height:12%;

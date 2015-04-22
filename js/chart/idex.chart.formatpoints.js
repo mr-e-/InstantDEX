@@ -52,7 +52,7 @@
 					sub[10] = String((Number(sub[10])) - (diff))
 
 					graphic.attr({d:sub.join(" ")})
-					graphic.attr('stroke-width', 1)
+					graphic.attr('stroke-width', "1.5px")
 					graphic.attr('stroke', strokeColor);
 					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
@@ -79,7 +79,7 @@
 					
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
-					graphic.attr('stroke-width', 1)
+					graphic.attr('stroke-width', "1.5px")
 					graphic.attr('borderWidth', 1)
 					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
