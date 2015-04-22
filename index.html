@@ -9,9 +9,12 @@
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.growl.css" />
 	<link rel="stylesheet" type="text/css" href="css/perfect-scrollbar/perfect-scrollbar.css" />
-	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
 	<link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
+	<link rel="stylesheet" type="text/css" href="css/DataTables-1.10.6/css/jquery.dataTables.css" />
+	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
+	
+	
 	<!--<link rel="stylesheet" type="text/css" href="css/minichart/graph.css" />-->
 	<link rel="icon" href="img/snicon.ico" type="image/x-icon" />
     <link rel="icon" href="img/favicon.ico" type="img/x-icon" />
@@ -211,10 +214,10 @@
 									<span>HISTORY</span>
 								</li>
 								<li class="fadeSlow" data-tab="3">
-									<span></span>
+									<span>PENDING OFFERS</span>
 								</li>
 								<li class="fadeSlow" data-tab="4">
-									<span></span>
+									<span>TROLLBOX</span>
 								</li>
 							</ul>
 						</div>
@@ -512,7 +515,7 @@
 					<div id="tabs-1" class="modal-tab-content active">
 					
 						<div class="modal-table-body">
-							<table id="marketTable" class="table sortable" data-method="allorderbooks" cellspacing=0> 
+							<table id="marketTable" class="table" data-method="allorderbooks" cellspacing=0> 
 								<thead data-keys="orderbooks base rel last high low volume exchange"> 
 									<tr> 
 										<th>BASE</th> 
@@ -527,28 +530,6 @@
 								<tbody> 
 								</tbody> 
 							</table>
-						</div>
-						
-						<div class="modal-table-footer">
-							<div class="modal-table-footer-content">
-								<div class="search-button-wrap">
-									<button class="buttSearch fadeSlow">SEARCH</button>
-									<input type="search" class="table-searchbox">
-								</div>
-								<div class="page-button-wrap">
-									<span class="buttPage">
-										<button class="fadeSlow">FIRST</button>
-										<button class="fadeSlow buttPageS"><</button>
-										<button class="fadeSlow buttPageS">1</button>
-										<button class="fadeSlow buttPageS">2</button>
-										<button class="fadeSlow buttPageS">3</button>
-										<button class="fadeSlow buttPageS">4</button>
-										<button class="fadeSlow buttPageS">5</button>
-										<button class="fadeSlow buttPageS">></button>
-										<button class="fadeSlow">LAST</button>
-									</span>
-								</div>
-							</div>
 						</div>
 					</div>
 					
@@ -586,7 +567,7 @@
 				<div class="tabs-container">
 					<div id="tabs-5" class="modal-tab-content active">
 						<div class="modal-table-body">
-							<table id="openOrdersTable" class="table sortable" data-method="openorders" cellspacing=0> 
+							<table id="openOrdersTable" class="table" data-method="openorders" cellspacing=0> 
 								<thead data-keys="openorders askoffer market price volume total quoteid age"> 
 								<tr> 
 									<th>TYPE</th> 
@@ -604,31 +585,10 @@
 							</table>
 						</div>
 						
-						<div class="modal-table-footer">
-							<div class="modal-table-footer-content">
-								<div class="search-button-wrap">
-									<button class="buttSearch fadeSlow">SEARCH</button>
-									<input type="search" class="table-searchbox">
-								</div>
-								<div class="page-button-wrap">
-									<span class="buttPage">
-										<button class="fadeSlow">FIRST</button>
-										<button class="fadeSlow buttPageS"><</button>
-										<button class="fadeSlow buttPageS">1</button>
-										<button class="fadeSlow buttPageS">2</button>
-										<button class="fadeSlow buttPageS">3</button>
-										<button class="fadeSlow buttPageS">4</button>
-										<button class="fadeSlow buttPageS">5</button>
-										<button class="fadeSlow buttPageS">></button>
-										<button class="fadeSlow">LAST</button>
-									</span>
-								</div>
-							</div>
-						</div>
 					</div>
 					<div id="tabs-6" class="modal-tab-content">
 						<div class="modal-table-body">
-							<table id="tradeHistoryTable" class="table sortable" data-method="tradehistory" cellspacing=0> 
+							<table id="tradeHistoryTable" class="table" data-method="tradehistory" cellspacing=0> 
 								<thead data-keys="tradehistory market priceNQTA priceNQTB NXT triggerhash"> 
 								<tr> 
 									<th>MARKET</th> 
@@ -642,28 +602,6 @@
 
 								</tbody> 
 							</table>
-						</div>
-						
-						<div class="modal-table-footer">
-							<div class="modal-table-footer-content">
-								<div class="search-button-wrap">
-									<button class="buttSearch fadeSlow">SEARCH</button>
-									<input type="search" class="table-searchbox">
-								</div>
-								<div class="page-button-wrap">
-									<span class="buttPage">
-										<button class="fadeSlow">FIRST</button>
-										<button class="fadeSlow buttPageS"><</button>
-										<button class="fadeSlow buttPageS">1</button>
-										<button class="fadeSlow buttPageS">2</button>
-										<button class="fadeSlow buttPageS">3</button>
-										<button class="fadeSlow buttPageS">4</button>
-										<button class="fadeSlow buttPageS">5</button>
-										<button class="fadeSlow buttPageS">></button>
-										<button class="fadeSlow">LAST</button>
-									</span>
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>
@@ -695,28 +633,6 @@
 
 								</tbody> 
 							</table>
-						</div>
-						
-						<div class="modal-table-footer">
-							<div class="modal-table-footer-content">
-								<div class="search-button-wrap">
-									<button class="buttSearch fadeSlow">SEARCH</button>
-									<input type="search" class="table-searchbox">
-								</div>
-								<div class="page-button-wrap">
-									<span class="buttPage">
-										<button class="fadeSlow">FIRST</button>
-										<button class="fadeSlow buttPageS"><</button>
-										<button class="fadeSlow buttPageS">1</button>
-										<button class="fadeSlow buttPageS">2</button>
-										<button class="fadeSlow buttPageS">3</button>
-										<button class="fadeSlow buttPageS">4</button>
-										<button class="fadeSlow buttPageS">5</button>
-										<button class="fadeSlow buttPageS">></button>
-										<button class="fadeSlow">LAST</button>
-									</span>
-								</div>
-							</div>
 						</div>
 					</div>
 					<div id="tabs-4">
@@ -971,6 +887,8 @@
 	<script src="js/idex.orderbox.js" type="text/javascript"></script>	
 	<script src="js/idex.autocomplete.js" type="text/javascript"></script>	
 	<script src="js/idex.util.js" type="text/javascript"></script>	
+	<script src="js/DataTables-1.10.6/jquery.dataTables.js" type="text/javascript"></script>	
+
 	
 	<script src="js/chart/idex.chart.formatpoints.js" type="text/javascript"></script>
 	<script src="js/chart/idex.chart.theme.js" type="text/javascript"></script>	
