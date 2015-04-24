@@ -903,25 +903,25 @@ form {
 .order-row, .labels-row {
 	position:relative;
 	display: block;
-	margin-top:4px;
-	margin-bottom:4px;
+	margin-top:6px;
+	margin-bottom:6px;
 	width:100%;
 }
 
 .order-row {
 	height:16px;
 	line-height:16px;
-	-webkit-transition: all 500ms ease-out;
-    -moz-transition: all 500ms ease-out;
-    -o-transition: all 500ms ease-out;
-    -ms-transition: all 500ms ease-out;
-    transition: all 500ms ease-out;	
+	-webkit-transition: all 800ms ease-out;
+    -moz-transition: all 800ms ease-out;
+    -o-transition: all 800ms ease-out;
+    -ms-transition: all 800ms ease-out;
+    transition: all 800ms ease-out;	
 }
 
 .order-col {
 	display: inline-block;
 	width: 44%;
-	font-size: .8rem;
+	font-size: 14px;
 	text-align:right;
 	vertical-align:middle;
 

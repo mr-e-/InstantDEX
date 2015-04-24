@@ -654,13 +654,13 @@ function adjustDataTableHeight($table)
 	var $scrollHead = $wrapper.find('.dataTables_scrollHead');
 	var wrapperHeight = $wrapper.height();
 	var scrollHeadHeight = $scrollHead.height();
-	var allowedHeight = wrapperHeight - scrollHeadHeight - 30 - 20;
+	var allowedHeight = (wrapperHeight - scrollHeadHeight) - (30 + 20) ;
 	var numRows = $table.find("tbody tr").length;
-	var rowHeight = (allowedHeight / maxRows);
-	var newScrollBodyHeight = Math.floor(rowHeight * numRows) + 2;
+	var rowHeight = allowedHeight / maxRows;
+	var newScrollBodyHeight = (rowHeight * numRows) + 15;
 	var scrollBodyMarginBottom = allowedHeight - newScrollBodyHeight;
 
-	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom + 2)+"px");
+	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom + 15)+"px");
 	// && $table.find("tr td").eq(0).hasClass("dataTables_empty")
 	if (numRows == 1)
 	{

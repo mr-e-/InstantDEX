@@ -167,7 +167,7 @@ function groupOrders(orders, currentOrders)
 
 			if (IDEX.compObjs(order, currentOrder, ['quoteid']))
 			{
-				order['index'] = currentOrders[j]['index']
+				//order['index'] = currentOrders[j]['index']
 				oldOrders.push(order);
 				currentOrders.splice(j, 1);
 				isNew = false;
@@ -180,7 +180,7 @@ function groupOrders(orders, currentOrders)
 	}
 
 	expiredOrders = currentOrders;
-
+	//console.log(expiredOrders)
 	return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'oldOrders':oldOrders};
 }
 
@@ -259,7 +259,7 @@ function updateOrderbook(orderbookData)
 
 function animateOrderbook()
 {
-	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(400, function()
+	/*$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(400, function()
 	{
 		$(this).replaceWith($(this).contents());
 		IDEX.updateScrollbar(false)
@@ -268,10 +268,14 @@ function animateOrderbook()
 	{
 		$(this).parent().remove();
 		IDEX.updateScrollbar(false)
-	})
-
+	})*/
+	$(".twrap").find(".order-row.expiredRow").each(function()
+	{
+		$(this).remove();
+	});
+	IDEX.updateScrollbar(false)
 	$(".newrow").removeClass("newrow");
-	$(".expiredRow").removeClass("expiredRow");
+	//$(".expiredRow").removeClass("expiredRow");
 }
 
 
@@ -332,7 +336,10 @@ function removeOrders($row, orderData, index)
 		var expiredOrder = orderData['expiredOrders'][i];
 		
 		if (index == expiredOrder['index'])
+		{
+			
 			$row.addClass("expiredRow");
+		}
 	}
 }
 
