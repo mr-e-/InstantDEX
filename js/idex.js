@@ -620,7 +620,7 @@ $(window).load(function()
 			"scrollY":0,
 			"autoWidth":true,
 			"pagingType":"simple_numbers",
-			"pageLength":15,
+			"pageLength":20,
 			"lengthChange":false,
 			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull)
 			{
