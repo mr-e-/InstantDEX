@@ -122,6 +122,14 @@ form {
 	overflow:hidden;
 }
 
+.header-ico2 {
+	margin-top: 10px;
+	width: 28px;
+	height: 28px;
+	margin-left: 25px;
+	opacity: 0.8;
+}
+
 #headerAreaIco3 {
 	z-index:1;
 	display: none;
@@ -140,16 +148,8 @@ form {
 	margin-top: 3px;
 }
 
-.header-ico2 {
-	margin-top: 10px;
-	width: 28px;
-	height: 28px;
-	margin-left: 25px;
-	opacity: 0.8;
-}
 
-
-.header-ico:hover, .header-ico2:hover, .header-ico3:hover {
+.header-ico:hover, .header-ico2:hover, #headerAreaIco3 > .header-ico3:hover {
 	opacity: 1;	
 	cursor: pointer;
 }
@@ -290,7 +290,7 @@ form {
 	border-bottom: inset 1px rgb(45,45,45);
 }
 
-#currPair, #currLast:hover {
+#currPair:hover, #currLast:hover {
 	cursor: default;
 }
 
@@ -536,6 +536,7 @@ form {
 	color: black;
 }
 
+
 .table th {	
 	font-size: .75rem;
 	height: 30px;
@@ -558,7 +559,7 @@ form {
 }
 
 
-.table tbody tr:hover {
+.table:not(#openOrdersTable) tbody tr:hover {
 	cursor: pointer;
 	background: #FF9B00;
     /*background: rgb(240,230,210);*/
@@ -567,7 +568,7 @@ form {
 
 .table td {
 	padding-left: 5px;
-	font-size: .75rem;
+
 }
 
 
@@ -785,6 +786,10 @@ form {
 
 @media (max-width: 1340px) { /* EXPERIMENTAL */
 
+	body {
+		overflow-x:visible !important;
+	}
+	
     #headerAreaIco2 {
 		display:none;
 	}
@@ -819,28 +824,24 @@ form {
 
 }
 
-@media (max-width: 1160px) {
 
+.ps-container > .ps-scrollbar-y-rail {
+	-webkit-backface-visibility:hidden;
 }
-
-
 
 
 /*		ORDERBOOK		*/
 
 #sellBook {
-
+	position:relative;
+	height: calc(50% - 40px - 30px - 4px);
 }
 
 #buyBook {
-
-}
-
-#sellBook, #buyBook {
-	overflow-y:hidden;
 	position:relative;
-	height: calc(50% - 40px);
+	height: calc(50% - 40px - 30px - 4px);
 }
+
 
 #sellBook > .twrap, #buyBook > .twrap {
 	position:absolute;
@@ -850,6 +851,8 @@ form {
 }
 
 #sellBook > .twrap {
+	height:auto;
+	max-height:100%;
 	bottom:0px;
 }
 
@@ -857,10 +860,62 @@ form {
 	top:0px;
 }
 
-.order-row {
+#orderbook_footer {
+	height:30px;
+	width:100%;
+	position:relative;
+	margin-top:3px;
+}
+
+.orderbook-button-wrap {
+	width:100%;
+	height:100%;
+	position:relative;
+	text-align:center;
+	vertical-align:middle;
+}
+
+.orderbook-button-wrap span {
+	position:relative;
+	display:inline-block;
+	line-height:30px;
+}
+
+.orderbook-button-wrap span:first-child {
+	margin-right:10px;
+}
+
+.orderbook-button-wrap span:hover {
+	cursor:pointer;
+}
+
+
+
+#orderbook_labels {
+	height:30px;
+	position:relative;
+	width:100%;
+	padding-right:10px;
+	padding-left:10px;
+	text-align:center;
+}
+
+.order-row, .labels-row {
+	position:relative;
 	display: block;
-	margin-top:2px;
-	margin-bottom:2px;
+	margin-top:4px;
+	margin-bottom:4px;
+	width:100%;
+}
+
+.order-row {
+	height:16px;
+	line-height:16px;
+	-webkit-transition: all 500ms ease-out;
+    -moz-transition: all 500ms ease-out;
+    -o-transition: all 500ms ease-out;
+    -ms-transition: all 500ms ease-out;
+    transition: all 500ms ease-out;	
 }
 
 .order-col {
@@ -868,28 +923,57 @@ form {
 	width: 44%;
 	font-size: .8rem;
 	text-align:right;
+	vertical-align:middle;
 
-	-webkit-transition: all 100ms ease-out;
-    -moz-transition: all 100ms ease-out;
-    -o-transition: all 100ms ease-out;
-    -ms-transition: all 100ms ease-out;
-    transition: all 100ms ease-out;	
 }
 
-.order-col:first-child {
+
+.order-row-expand .order-col {
+	width:23%;
+}
+
+.order-col-extra {
+	display:none;
+}
+
+
+
+.labels-col  {
+	width:44%;
+	display:inline-block;
+	font-size: .8rem;
+}
+
+
+.labels-col-expand {
+	width:23%;
+}
+
+.labels-col-extra {
+	display:none;
+}
+
+.extra-show{
+	display:inline-block;
+}
+
+/*.order-col:first-child , .labels-col:first-child {
 	margin-right:8px;
-}
-
+}*/
 
 #sellBook > .twrap  > .order-row, #buyBook > .twrap  > .order-row {
-	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
+	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma !important;
+
 }
 
-#sellBook > .twrap  > .order-row:hover, #buyBook > .twrap  > .order-row:hover{
-	cursor:pointer;
-}
 
 #sellBook > .twrap  > .order-row > .order-col, #buyBook > .twrap > .order-row > .order-col {
+	color:#D8D8D8;
+	color:#A4A4A4;
+}
+
+#sellBook > .twrap  > .order-row:hover > .order-col, #buyBook > .twrap  > .order-row:hover > .order-col{
+	cursor:pointer;
 	color:#D8D8D8;
 }
 
@@ -897,18 +981,19 @@ form {
 	background-color:#333;
 }
 
+/*
 #sellBook > .twrap  > .order-row.closed, #buyBook > .twrap  > .order-row.closed {
 	background-color:blue;
 }
 
 #sellBook > .twrap > .order-row.virtual > .order-col, #buyBook  > .twrap > .order-row.virtual > .order-col {
 	color:#A4A4A4;
-}
+}*/
 
 #sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
 	background-color:rgba(222, 233, 255, 0.2);
 }
-
+/*
 #sellBook > .twrap > .order-row  > .order-col {
 	color: rgba(218, 59, 38, 0.9) !important;
 }
@@ -924,11 +1009,12 @@ form {
 #buyBook > .twrap > .order-row:hover  > .order-col {
 	color: rgba(27, 211, 87, 1) !important;
 }
-
+*/
 
 .tooltipster-content {
 	background-color:black;
 }
+
 
 
 /*	color:#6E6E6E;*/
@@ -961,7 +1047,9 @@ form {
 	width:100px;
 	position:absolute;
 	display: none;
+	list-style:none;
 }
+
 .dropdown-chart > ul > li{
 	float:none;
 }
@@ -1416,11 +1504,60 @@ form {
 }
 
 .modal-table-body {
-	height:88%;
+	height:100%;
+	width:100%;
 	position:relative;
-	display:block;
-	overflow:auto;
+	display:inline-block;
 }
+
+.modal-table-body table {
+	width:100%;
+	height:100%;
+	position:relative;
+}
+/*
+.dataTables_scrollHeadInner, .dataTables_scrollHeadInner  table, table.dataTable {
+	width:100% !important;
+}*/
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+	background: black;
+	color: white !important;
+	font-family: 'open_sanslight', Fallback, sans-serif;
+	border: none;
+}
+
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+	background: rgb(255,255,255);
+	color: rgb(0,0,0) !important;
+	cursor: pointer;
+}
+
+
+table.dataTable tbody th, table.dataTable tbody td{
+	padding:2px;
+	font-size:0.75rem;
+}
+
+/*
+.buttPage button:active {
+	background: #FF9B00;
+	top: 2px;
+}
+
+
+
+.buttPage button:before {
+	position: absolute;
+	height: 100%;
+	left: 0;
+	top: 0;
+	line-height: 3;
+	font-size: 140%;
+	width: 60px;
+	background: rgba(0,0,0,0.05);
+}*/
 
 .modal-table-footer {
 	height:12%;
@@ -1491,6 +1628,7 @@ form {
 }
 
 .cancelOrder:hover {
+	background: #FF9B00;
 	cursor:pointer;
 }
 

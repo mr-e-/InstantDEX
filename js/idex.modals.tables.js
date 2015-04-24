@@ -22,9 +22,9 @@ $(".md-modal").on("idexShow", function()
 })
 
 
-$("#openOrdersTable tbody").on("click", "tr", function(e)
+$("#openOrdersTable tbody").on("click", "tr td.cancelOrder", function(e)
 {
-	var quoteid = $(this).attr("data-quoteid");
+	var quoteid = $(this).parent().attr("data-quoteid");
 	var $thisScope = $(this);
 	
 	IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
@@ -48,7 +48,7 @@ function tableHandler($modalTable)
 	var method = $modalTable.attr("data-method");
 	var params = {'requestType':method};
 	var type = 0;
-	
+
 	if (method == "tradehistory")
 		params['timestamp'] = 0;
 	
@@ -59,11 +59,12 @@ function tableHandler($modalTable)
 	}
 	else
 	{
-
 		IDEX.sendPost(params, type).done(function(data)
 		{
-			var row = "";
+			var dataTable = $($modalTable[1]).dataTable();
+			var newDataTable = $($modalTable[1]).DataTable();
 
+			var row = "";
 			if (keys[0] in data)
 			{
 				var tableData = data[keys[0]];
@@ -71,6 +72,7 @@ function tableHandler($modalTable)
 
 				if (method == "openorders")
 				{
+					
 					tableData = formatPairName(tableData);
 					tableData = formatOpenOrders(tableData);
 					row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
@@ -83,6 +85,7 @@ function tableHandler($modalTable)
 				else if (method ==	"allorderbooks")
 				{
 					addEmptyMarketData(tableData);
+					
 					row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
 					row = IDEX.addElDataAttr(row, tableData, ["baseid","relid"]);
 				}
@@ -93,18 +96,18 @@ function tableHandler($modalTable)
 						tableData = tableData['rawtrades'];
 						addAssetNames(tableData, "baseid", "relid");
 						tableData = formatPairName(tableData);
+						row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
 					}
 				}
 				else if (method == "getAccountAssets")
 				{
 
 				}
-				
-				if (!row.length)
-					row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
 			}
+			dataTable.fnClearTable(false)
+			newDataTable.rows.add($(row))
+			dataTable.fnAdjustColumnSizing();
 			
-			$modalTable.find("tbody").empty().append(row);
 		})
 	}
 }
@@ -164,6 +167,11 @@ function balancesTable(keys, $modalTable)
 
 	IDEX.account.updateBalances().done(function()
 	{
+		var dataTable = $($modalTable[1]).dataTable();
+		var newDataTable = $($modalTable[1]).DataTable();
+		dataTable.fnAdjustColumnSizing(false);
+		dataTable.fnClearTable(false)
+		
 		var tableData = IDEX.account.balances;
 		var arr = [];
 		for (var key in tableData)
@@ -178,8 +186,9 @@ function balancesTable(keys, $modalTable)
 			//tableData[i].unconfirmedQuantityQNT = "-";
 			tableData[i]['change'] = "-";
 		}
+		
 		row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");
-		$modalTable.find("tbody").empty().append(row);
+		newDataTable.rows.add($(row)).draw()
 	})
 }
 

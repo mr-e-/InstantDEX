@@ -73,6 +73,35 @@ IDEX.addElDataAttr = function(row, data, keys)
 	return s;
 }
 
+IDEX.getListObjVals = function(listObj, keys)
+{
+	var obj = {};
+	var len = listObj.length;
+
+	for (var j = 0; j < keys.length; j++)
+	{
+		var key = keys[j];
+		var vals = [];
+		
+		for (var i = 0; i < len; i++)
+			vals.push(listObj[i][key]);
+		
+		obj[key] = vals;
+	}
+	
+	return obj;
+}
+
+IDEX.setListObjVals = function(listObj, key, vals)
+{
+	var len = listObj.length;
+	
+	for (var i = 0; i < len; i++)
+		listObj[i][key] = vals[i];
+	
+	return listObj;	
+}
+
 
 IDEX.objToList = function(data, keys)
 {
@@ -84,7 +113,10 @@ IDEX.objToList = function(data, keys)
 
 		for (var j = 0; j < keys.length; ++j)
 		{
-			loopArr.push(data[i][keys[j]]);
+			if (!(keys[j] in data[i]))
+				loopArr.push("")
+			else
+				loopArr.push(data[i][keys[j]]);
 		}
 		arr.push(loopArr);
 	}

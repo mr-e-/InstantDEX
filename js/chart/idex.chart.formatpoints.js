@@ -46,14 +46,13 @@
 					var sub = graphic.d.split(" ")
 					var pairwidth = Number(sub[7]) - Number(sub[4])
 					var diff = points.length >= 700 ? 0.6 : 0.5
-	
 					sub[1] = String((Number(sub[1])) + (diff))
 					sub[4] = String((Number(sub[4])) + (diff))
 					sub[7] = String((Number(sub[7])) - (diff))
 					sub[10] = String((Number(sub[10])) - (diff))
 
 					graphic.attr({d:sub.join(" ")})
-					graphic.attr('stroke-width', 1)
+					graphic.attr('stroke-width', "1.2px")
 					graphic.attr('stroke', strokeColor);
 					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
@@ -80,7 +79,7 @@
 					
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
-					graphic.attr('stroke-width', 1)
+					graphic.attr('stroke-width', "1.2px")
 					graphic.attr('borderWidth', 1)
 					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")

@@ -42,10 +42,11 @@ IDEX.stopPollingOrderbook = function()
         setTimeout(IDEX.stopPollingOrderbook, 100);
 		return false;
     }
-	
+	IDEX.updateScrollbar(false)
 	isStoppingOrderbook = false;
 	clearTimeout(orderbookTimeout);
 	IDEX.currentOrderbook = new IDEX.Orderbook();
+	$(".empty-orderbook").hide();
 	pollOrderbook(1);
 }
 
@@ -90,7 +91,7 @@ function pollOrderbook(timeout)
 	orderbookTimeout = setTimeout(function() 
 	{
 		var params = {'requestType':"orderbook", 'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'allfields':1, 'maxdepth':25};
-		params['showall'] = 1
+		params['showall'] = 0
 		orderbookAsync = true;
 		console.log('Waiting for orderbook');
 		IDEX.sendPost(params).done(function(orderbookData)
@@ -109,11 +110,12 @@ function pollOrderbook(timeout)
 				}
 				else
 				{
+					IDEX.updateScrollbar(false);
 					$("#currLast .order-text").text("0.0");
 					$(".twrap").empty();
 					$(".empty-orderbook").show();
 				}
-				pollOrderbook(3000);
+				pollOrderbook(4000);
 			}
 		}).fail(function(data)
 		{
@@ -125,14 +127,34 @@ function pollOrderbook(timeout)
 }
 
 
+function formatOrderData(orders)
+{
+	var len = orders.length
+	var runningTotal = 0;
+	var isAsk = len && orders[0].askoffer
+	var loopStart = isAsk ? len - 1 : 0;
+	var loopEnd = isAsk ? -1 : len;
+	var loopInc = isAsk ? -1 : 1;
+
+	for (var i = loopStart; i != loopEnd; i += loopInc)
+	{
+		var order = orders[i]
+		order['index'] = i;
+		order.price = IDEX.toSatoshi(order.price).toFixed(8);
+		order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
+		order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
+		runningTotal = IDEX.toSatoshi(Number(runningTotal) + Number(order['total'])).toFixed(6);
+		order['sum'] = runningTotal;
+	}
+}
+
+
+
 function groupOrders(orders, currentOrders)
 {
 	var oldOrders = [];
 	var newOrders = [];
 	var expiredOrders = [];
-	
-	for (var i = 0; i < currentOrders.length; ++i)
-		currentOrders[i]['index'] = i;
 	
 	for (var i = 0; i < orders.length; i++)
 	{
@@ -145,24 +167,16 @@ function groupOrders(orders, currentOrders)
 
 			if (IDEX.compObjs(order, currentOrder, ['quoteid']))
 			{
+				order['index'] = currentOrders[j]['index']
 				oldOrders.push(order);
 				currentOrders.splice(j, 1);
 				isNew = false;
 				break;
 			}
 		}
-
+		
 		if (isNew)
-		{
-			order.price = IDEX.toSatoshi(order.price).toFixed(8);
-			order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
-			var trString = IDEX.buildTableRows([[order.price, order.volume]], "span");
-			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
-			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
-			trString = IDEX.addElClass(trString, trClasses);
-			order['row'] = trString;
-			newOrders.push(order);
-		}
+			newOrders.push(order)
 	}
 
 	expiredOrders = currentOrders;
@@ -171,12 +185,69 @@ function groupOrders(orders, currentOrders)
 }
 
 
+function formatOrderNumbers(newBids, newAsks)
+{
+	var keys = ['price', 'volume', 'total', 'sum'];
+	var len = newBids.length;
+	var allBidNumbers = IDEX.getListObjVals(newBids, keys);
+	var allAskNumbers = IDEX.getListObjVals(newAsks, keys);
+
+	for (var i = 0; i < keys.length; i++)
+	{
+		var key = keys[i];
+		var decimals = -1;
+		if (key == "price")
+			decimals = IDEX.curRel.decimals;
+		else if (key == "volume")
+			decimals = IDEX.curBase.decimals;
+		var allNumbers = IDEX.formatNumberWidth(allBidNumbers[key].concat(allAskNumbers[key]), decimals);
+		var asks = allNumbers.splice(len);
+		var bids = allNumbers;
+		newBids = IDEX.setListObjVals(newBids, key, bids)
+		newAsks = IDEX.setListObjVals(newAsks, key, asks)
+		//var bigggestWidth = getBiggestWidth(newBids[key], newAsks[key])	
+	}
+
+}
+
+
+function formatNewOrders(newOrders)
+{	
+	for (var i = 0; i < newOrders.length; i++)
+	{
+		var order = newOrders[i]
+		var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
+		var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
+		trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
+		trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
+		trString = IDEX.addElClass(trString, trClasses);
+		trString = $(trString).find("span").each(function(index, e)
+		{
+			var extraClasses = "order-col-extra";
+			if (index == 2 || index == 3)
+			{
+				if (IDEX.isOrderbookExpanded)
+					extraClasses += " extra-show";
+				$(this).addClass(extraClasses);
+			}
+		}).parent()[0].outerHTML
+		order['row'] = trString;
+	}	
+}
+
+
 function updateOrderbook(orderbookData)
 {
+	formatOrderData(orderbookData.bids)
+	formatOrderData(orderbookData.asks)
+	formatOrderNumbers(orderbookData.bids, orderbookData.asks)
+	formatNewOrders(orderbookData.bids)
+	formatNewOrders(orderbookData.asks)
+	
 	var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
 	var bidData = groupOrders(orderbookData.bids.slice(), IDEX.currentOrderbook.bids.slice());
 	var askData = groupOrders(orderbookData.asks.slice(), IDEX.currentOrderbook.asks.slice());
-	
+
 	updateOrders($("#buyBook .twrap"), bidData);
 	updateOrders($("#sellBook .twrap"), askData);
 	animateOrderbook();
@@ -188,13 +259,15 @@ function updateOrderbook(orderbookData)
 
 function animateOrderbook()
 {
-	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(700, function()
+	$(".newrow").wrapInner("<div style='display:none; background-color:#333;' />").parent().find('.order-row > div').slideDown(400, function()
 	{
 		$(this).replaceWith($(this).contents());
+		IDEX.updateScrollbar(false)
 	})
-	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(700, function()
+	$(".expiredRow").wrapInner("<div style='display:block; color:#A4A4A4; background-color:#333;' />").parent().find('.order-row > div').slideUp(400, function()
 	{
 		$(this).parent().remove();
+		IDEX.updateScrollbar(false)
 	})
 
 	$(".newrow").removeClass("newrow");
@@ -215,16 +288,40 @@ function updateOrders($book, orderData)
 		{
 			$book.append(orderTooltip(orderData.newOrders[i]['row'], orderData.newOrders[i]))
 		}
+		
+		IDEX.updateScrollbar(true);
 	}
 	else
 	{
 		$book.find(".order-row").each(function(index, element)
 		{
 			var rowData = IDEX.getRowData($(this), index)
+			
+			updateSum($(this), index, orderData, rowData);
 			removeOrders($(this), orderData, index);
 			addNewOrders($(this), orderData, rowData, index);
+			
 		})
 	}
+}
+
+
+function updateSum($row, index, orderData, rowData)
+{
+
+		for (var i = 0; i < orderData['oldOrders'].length; i++)
+		{
+			var oldOrder = orderData['oldOrders'][i];
+			//console.log(String(index)+"   "+String(oldOrder['index']))
+			//console.log(oldOrder)
+			if (index == oldOrder['index'] && (Number(oldOrder['sum']) != Number(rowData['sum'])))
+			{
+				//console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
+				$row.find(".order-col").eq(3).text(oldOrder.sum);
+			}
+		}
+	
+	//console.log(orderData['oldOrders'])
 }
 
 
@@ -248,7 +345,7 @@ function addNewOrders($row, orderData, rowData, index)
 		var trString = IDEX.addElClass(orderData.newOrders[i]['row'], "newrow");
 		trString = orderTooltip(trString, newOrder)
 
-		if (newOrder.price < rowData.price)
+		if (Number(newOrder.price) < Number(rowData.price))
 		{
 			var $sib = $row;
 			
@@ -257,7 +354,7 @@ function addNewOrders($row, orderData, rowData, index)
 			
 			var sibData = IDEX.getRowData($sib, index+1)
 			
-			if (!sibData || newOrder.price >= sibData.price)
+			if (!sibData || Number(newOrder.price) >= Number(sibData.price))
 				$sib.after($(trString));
 			else
 				break;
@@ -272,6 +369,19 @@ function addNewOrders($row, orderData, rowData, index)
 	}
 }
 
+
+function expandOrders()
+{
+	$book.find(".order-row").each(function(index, element)
+	{
+		var tdStrings;
+		var rowData = IDEX.getRowData($(this), index)
+		removeOrders($(this), orderData, index);
+		addNewOrders($(this), orderData, rowData, index);
+	})
+}
+
+
 function orderTooltip(row, rowData)
 {
 	var nxt = "";
@@ -283,7 +393,14 @@ function orderTooltip(row, rowData)
 		return row
 	
 	return $(row).tooltipster({
-		'content':$("<span><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</span>")
+		'minWidth':240,
+		'content':$("<div style='display:block'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</div>"),
+		/*'functionBefore':function(origin, continueTooltip)
+		{
+			$(this).tooltipster('option','minWidth', 300)
+			$(this).tooltipster('reposition')
+			continueTooltip();
+		}*/
 	})
 	
 	/*$(this).tooltipster({

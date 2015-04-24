@@ -1,6 +1,6 @@
 
 var IDEX = (function(IDEX, $, undefined) {
-/* test */
+	
 var snURL = "http://127.0.0.1:7777";
 var nxtURL = "http://127.0.0.1:7876/nxt?";
 
@@ -12,7 +12,7 @@ IDEX.snPostParams = {
 	'openorders':[],
 	'tradehistory':["timestamp"],
 	'cancelorder':["quoteid"],
-	'makeoffer3':["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset"]
+	'makeoffer3':["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset","offerNXT"]
 };
 
 

@@ -10,10 +10,13 @@ IDEX.pendingOrder = {};
 IDEX.isSNRunning = false;
 IDEX.orderbookInit = false;
 IDEX.chartInit = false;
+IDEX.isOrderbookExpanded = false;
+
 
 IDEX.snAssets = {
 	'nxt':{'name':"NXT", 'asset':"5527630", 'assetid':"5527630", 'decimals':8}
 }
+
 
 
 IDEX.Orderbook = function(obj) 
@@ -25,6 +28,7 @@ IDEX.Orderbook = function(obj)
 	this.relAsset = "";
 	this.asks = [];
 	this.bids = [];
+
 	
 	IDEX.constructFromObject(this, obj);
 };
@@ -129,6 +133,18 @@ Account.prototype.getBalance = function(assetID)
 	return balance
 }
 
+Account.prototype.checkBalance = function(assetID, amount)
+{
+	var balance = {}
+	var retBool = false
+
+	if (assetID in this.balances && Number(this.balances[assetID].unconfirmedBalance) >= amount)
+		retBool = true;
+		
+	return retBool;
+}
+
+
 Account.prototype.setBalances = function(balances)
 {
 	
@@ -155,7 +171,7 @@ Account.prototype.updateBalances = function()
 					nxtBal['asset'] = IDEX.snAssets['nxt']['asset']
 					balances.push(nxtBal)
 				}
-				
+
 				for (var i = 0; i < balances.length; i++)
 				{
 					var balance = new IDEX.Balance(balances[i])
@@ -182,9 +198,24 @@ Account.prototype.updateBalances = function()
 	return dfd.promise();
 }
 
+
+IDEX.updateScrollbar = function(toBottom)
+{
+	//$("#sellBook").perfectScrollbar('update');
+	if (toBottom)
+		$("#sellBook .twrap").scrollTop($("#sellBook .twrap").prop("scrollHeight"));
+	$("#sellBook .twrap").perfectScrollbar('update');
+	$("#buyBook").perfectScrollbar('update');
+}
+
 	
 IDEX.init = function()
 {
+	var obj = {}
+	$("#sellBook .twrap").perfectScrollbar(obj);
+
+	$("#buyBook").perfectScrollbar(obj);
+	
 	IDEX.user = new User();
 	IDEX.account = new Account();
 	IDEX.currentOrderbook = new IDEX.Orderbook();
@@ -204,6 +235,11 @@ function getRS()
 			var index = data['peers'].length == 1 ? 0 : 1;
 			IDEX.account.nxtRS = data['peers'][index]['RS'];
 			IDEX.account.nxtID = data['peers'][index]['srvNXT'];
+			$(".option-nxtrs").val(IDEX.account.nxtRS);
+		}
+		else
+		{
+			$(".option-nxtrs").val("Error getting RS");	
 		}
 	})
 }
@@ -387,21 +423,31 @@ $(".idex-submit").on("click", function()
 		params['relid'] = IDEX.curRel.asset;
 		params['duration'] = IDEX.user.options['duration'];
 		params['minperc'] = Number(IDEX.user.options['minperc']);
-
+		var balanceToCheck = (method == "placebid") ? params['relid'] : params['baseid'];
 		console.log(params);
-		IDEX.sendPost(params).done(function(data)
+		IDEX.account.updateBalances().done(function()
 		{
-			console.log(data);
-
-			if ('error' in data && data['error'])
+			if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
 			{
-				$.growl.error({'message':data['error'], 'location':"tl"});				
+				IDEX.sendPost(params).done(function(data)
+				{
+					console.log(data);
+
+					if ('error' in data && data['error'])
+					{
+						$.growl.error({'message':data['error'], 'location':"tl"});				
+					}
+					else
+					{
+						IDEX.currentOpenOrders();
+						IDEX.refreshOrderbook();
+						$.growl.notice({'message':"Order placed", 'location':"tl"});
+					}
+				})
 			}
 			else
 			{
-				IDEX.currentOpenOrders();
-				IDEX.refreshOrderbook();
-				$.growl.notice({'message':"Order placed", 'location':"tl"});
+				$.growl.error({'message':"Not enough funds", 'location':"tl"});
 			}
 		})
 	}
@@ -418,17 +464,101 @@ $(".idex-submit").on("click", function()
 
 
 
-
-
-
-$("#icoLog").on("click", function()
+/*
+function getBiggestWidth(newBids, newAsks)
 {
-	$.growl.error({'message':"Order placed", 'location':"bl"});
-	$.growl.warning({'message':"Order placed", 'location':"bl"});
-	$.growl.notice({'message':"Order placed", 'location':"bl"});
+	var joined = newBids.concat(newAsks);
+	var len = joined.length;
+	var biggestWidth = -1;
+	
+	for (var i = 0; i < len; i++)
+	{
+		var num = joined[i];
+		var numStr = String(num);
+		var wholeDigits = numStr.split(".")[0]
+		if (wholeDigits.length > biggestWidth)
+			biggestWidth = wholeDigits.length
+	}
+	
+	return biggestWidth
+}*/
+
+IDEX.formatNumberWidth = function(allNumbers, decimals)
+{
+	var maxWidth = 8 + 1;
+	var biggestWidth = -1;
+	var len = allNumbers.length;
+	
+	for (var i = 0; i < len; i++)
+	{
+		var num = allNumbers[i];
+		var numStr = String(num);
+		var wholeDigits = numStr.split(".")[0]
+		if (wholeDigits.length > biggestWidth)
+			biggestWidth = wholeDigits.length
+	}
+	
+	for (var i = 0; i < len; i++)
+	{
+		var num = allNumbers[i];
+		var numStr = String(num);
+		var digits = numStr.split(".");
+		var wholeDigits = digits[0];
+		var decDigits = digits[1];
+		//var hasDecimal = numStr.search("\\.");
+		if (numStr.length > maxWidth)
+		{
+			var extra = numStr.length - maxWidth;
+			decDigits = decDigits.slice(0, (decDigits.length - extra));
+		}
+		if (wholeDigits.length < biggestWidth)
+		{
+			var extra = biggestWidth - wholeDigits.length;
+			decDigits = decDigits.slice(0, ((decDigits.length) - extra));
+		}
+		allNumbers[i] = wholeDigits + "." + decDigits;
+	}
+	
+	//console.log(allNumbers)
+	return allNumbers
+}
+
+
+
+$("#expand_orderbook_button").on("click", function()
+{
+	//$.growl.error({'message':"Order placed", 'location':"bl"});
+	//$.growl.warning({'message':"Order placed", 'location':"bl"});
+	//$.growl.notice({'message':"Order placed", 'location':"bl"});
+	
+	if (!IDEX.isOrderbookExpanded)
+	{
+		$("#miniChartsC").css("display", "none")
+		$("#orderBook").css("width", "100%")
+		
+		$(".labels-col").addClass("labels-col-expand")
+		$(".labels-col-extra").addClass("extra-show");
+		
+		$(".order-row").addClass("order-row-expand")
+		$(".order-col-extra").addClass("extra-show");
+
+		IDEX.isOrderbookExpanded = true;
+	}
+	else
+	{
+		$("#orderBook").css("width", "250px")
+		$("#miniChartsC").css("display", "inline-block")
+		
+		$(".labels-col").removeClass("labels-col-expand")
+		$(".labels-col-extra").removeClass("extra-show")
+		
+		$(".order-row").removeClass("order-row-expand")
+		$(".order-col-extra").removeClass("extra-show")
+		
+		IDEX.isOrderbookExpanded = false;
+	}
 
 })
-
 
 $(".idex-tabs li").on("mouseup", function()
 {
@@ -471,13 +601,92 @@ $(".tab-order-button button").on("mouseleave", function()
 	$(this).removeClass("order-button-mousedown")
 })
 
+
+
+
 	return IDEX;
 	
 }(IDEX || {}, jQuery));
 
 
-
 $(window).load(function()
 {
 	IDEX.init();
+	$(".modal-table-body table").each(function()
+	{
+		$(this).DataTable(
+		{
+			"scrollX":true,
+			"scrollY":0,
+			"autoWidth":true,
+			"pagingType":"simple_numbers",
+			"pageLength":15,
+			"lengthChange":false,
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull)
+			{
+				//var id = $(this).attr
+				//console.log(nRow)
+				//console.log(aData)
+				//console.log($(this))
+			}
+		}).on("page.dt draw.dt column-sizing.dt", function(e) 
+		{ 
+			adjustDataTableHeight($(this)) 
+		}).on("init.dt", function()
+		{
+			//$(this).closest(".modal-table-body").find('.dataTables_scrollHead').css('height', '20px')
+			//$(this).dataTable().fnAdjustColumnSizing(true);
+		})
+	})
+})
+
+//var counter = 0;
+function adjustDataTableHeight($table) 
+{
+	if (!($table.closest(".md-modal").hasClass("md-show")) || !($table.closest(".modal-tab-content").hasClass("active")))
+		return;
+	//console.log(counter++)
+	var $wrapper = $table.closest(".modal-table-body")
+    var oTable = $table.dataTable();
+	var oSettings = oTable.fnSettings();
+	var maxRows = oSettings.oInit.pageLength;
+	var $scrollBody = $wrapper.find('.dataTables_scrollBody');
+	var $scrollHead = $wrapper.find('.dataTables_scrollHead');
+	var wrapperHeight = $wrapper.height();
+	var scrollHeadHeight = $scrollHead.height();
+	var allowedHeight = wrapperHeight - scrollHeadHeight - 30 - 20;
+	var numRows = $table.find("tbody tr").length;
+	var rowHeight = (allowedHeight / maxRows);
+	var newScrollBodyHeight = Math.floor(rowHeight * numRows) + 2;
+	var scrollBodyMarginBottom = allowedHeight - newScrollBodyHeight;
+
+	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom + 2)+"px");
+	// && $table.find("tr td").eq(0).hasClass("dataTables_empty")
+	if (numRows == 1)
+	{
+		$scrollBody.css('border','none');
+		$table.css("margin", "0px")
+	}
+	else
+	{
+		$scrollBody.css('height', String(newScrollBodyHeight)+"px");
+	}
+};
+
+
+$(window).resize(function()
+{	
+	var $modal = $(".md-modal.md-show")
+	if ($modal && $modal.length)
+	{
+		var $tab = $modal.find(".tab-tables .nav.active")
+		var $table = $("#"+$tab.attr('tab-index')).find("table.dataTable");
+		if ($table && $table.length)
+		{
+			var dt = $($table[1]).dataTable()
+			dt.fnAdjustColumnSizing(false);
+			adjustDataTableHeight($($table[1]))
+		}
+	}
+	IDEX.updateScrollbar(false);
 })

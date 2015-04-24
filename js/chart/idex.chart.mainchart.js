@@ -148,7 +148,10 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			data = data.results.bars
 			if (!data.length)
+			{
+				$("#chartLoading span").text("Not enough data");
 				return
+			}
 			var both = getStepOHLC(data, baseNXT)
 			var ohlc = both[0]
 			var volume = both[1]
@@ -327,7 +330,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var offset = $('#chartArea').offset();
 		var x = event.pageX - offset.left;
 		var y = event.pageY - offset.top	
-		
 		if (IDEX.isInsidePlot(event))
 		{
 			var pointRange = chart.series[0].pointRange
@@ -665,7 +667,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (chart)
 		{
 			chart.destroy()
-			$("#chartLoading").show();
+			$("#chartLoading span").text("Loading...").parent().show();
 		}
 		if (IDEX.ohlcTimeout)
 		{
@@ -685,16 +687,9 @@ var IDEX = (function(IDEX, $, undefined)
 		setTimeout(function()
 		{
 			highLowPrice()
-		},125)
+		},250)
 		drawDivideLine()
 	})
-	
-	$(window).load(function()
-	{
-
-	})
-	
-
 
 	
 	

@@ -11,18 +11,20 @@ $("#buyBook, #sellBook").on("click", ".order-row.own-order", function()
 
 $("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
 {
-	var order = IDEX.getRowData($(this), $(this).index());
+	var bookID = $(this).closest(".bookname").attr("id")
+	var rowIndex = $(this).index("#"+bookID+" .order-row")
+	var order = IDEX.getRowData($(this), rowIndex);
 	var isAsk = order.askoffer ? "Bid" : "Ask";
 	var tab = order.askoffer ? "1" : "2";
 	IDEX.pendingOrder = order;
 	console.log(order);
-	
+
 	confirmPopup($("#"+$("#tempBuyClick").data("modal")), order);
 	$("#tempBuyClick").trigger("click");
 
 	$("#place"+isAsk+"Price").val(order.price);
 	$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");
-	$("#tab"+tab).trigger("click")
+	$(".order-tabs li[data-tab='"+tab+"'] span").trigger("mousedown").trigger("mouseup")
 })
 
 $(".conf-input").css("width","80%")
@@ -54,12 +56,13 @@ function triggerMakeoffer($button)
 	{
 		params[IDEX.snPostParams.makeoffer3[i]] = IDEX.pendingOrder[IDEX.snPostParams.makeoffer3[i]];
 	}
-	//postParams['askoffer'] = 0;
+	//params['askoffer'] = 1;
 	console.log(params);
-
+	console.log(JSON.stringify(params, null, 4))
 	IDEX.sendPost(params).done(function(data)
 	{
 		console.log(data);
+		console.log(JSON.stringify(data, null, 4))
 		$button.prop('disabled', false);
 		if ("error" in data && data.error.length)
 		{
