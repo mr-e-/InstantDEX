@@ -115,7 +115,7 @@ function pollOrderbook(timeout)
 					$(".twrap").empty();
 					$(".empty-orderbook").show();
 				}
-				pollOrderbook(10000);
+				pollOrderbook(4000);
 			}
 		}).fail(function(data)
 		{

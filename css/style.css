@@ -559,7 +559,7 @@ form {
 }
 
 
-.table tbody tr:hover {
+.table:not(#openOrdersTable) tbody tr:hover {
 	cursor: pointer;
 	background: #FF9B00;
     /*background: rgb(240,230,210);*/
@@ -1515,6 +1515,10 @@ form {
 	height:100%;
 	position:relative;
 }
+/*
+.dataTables_scrollHeadInner, .dataTables_scrollHeadInner  table, table.dataTable {
+	width:100% !important;
+}*/
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
 	background: black;
@@ -1624,6 +1628,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 }
 
 .cancelOrder:hover {
+	background: #FF9B00;
 	cursor:pointer;
 }
 

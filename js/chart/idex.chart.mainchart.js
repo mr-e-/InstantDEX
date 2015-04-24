@@ -687,16 +687,9 @@ var IDEX = (function(IDEX, $, undefined)
 		setTimeout(function()
 		{
 			highLowPrice()
-		},125)
+		},250)
 		drawDivideLine()
 	})
-	
-	$(window).load(function()
-	{
-
-	})
-	
-
 
 	
 	

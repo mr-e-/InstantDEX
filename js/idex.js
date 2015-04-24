@@ -617,11 +617,19 @@ $(window).load(function()
 		$(this).DataTable(
 		{
 			"scrollX":true,
-			//"sScrollY":0,
+			"scrollY":0,
+			"autoWidth":true,
 			"pagingType":"simple_numbers",
-			"pageLength":20,
+			"pageLength":15,
 			"lengthChange":false,
-		}).on("page.dt draw.dt column-sizing.dt stateLoaded.dt", function(e) 
+			"fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull)
+			{
+				//var id = $(this).attr
+				//console.log(nRow)
+				//console.log(aData)
+				//console.log($(this))
+			}
+		}).on("page.dt draw.dt column-sizing.dt", function(e) 
 		{ 
 			adjustDataTableHeight($(this)) 
 		}).on("init.dt", function()
@@ -632,13 +640,12 @@ $(window).load(function()
 	})
 })
 
-
+//var counter = 0;
 function adjustDataTableHeight($table) 
 {
 	if (!($table.closest(".md-modal").hasClass("md-show")) || !($table.closest(".modal-tab-content").hasClass("active")))
-	{
 		return;
-	}
+	//console.log(counter++)
 	var $wrapper = $table.closest(".modal-table-body")
     var oTable = $table.dataTable();
 	var oSettings = oTable.fnSettings();
@@ -650,29 +657,36 @@ function adjustDataTableHeight($table)
 	var allowedHeight = wrapperHeight - scrollHeadHeight - 30 - 20;
 	var numRows = $table.find("tbody tr").length;
 	var rowHeight = (allowedHeight / maxRows);
-	var newScrollBodyHeight = rowHeight * numRows;
-	console.log(numRows)
-	console.log(newScrollBodyHeight)
+	var newScrollBodyHeight = Math.floor(rowHeight * numRows) + 2;
 	var scrollBodyMarginBottom = allowedHeight - newScrollBodyHeight;
-	$scrollBody.css('height', String(newScrollBodyHeight+1)+"px");
-	console.log(newScrollBodyHeight)
-	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom)+"px");
-	if (numRows == 1 && $table.find("tr td").eq(0).hasClass("dataTables_empty"))
+
+	$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom + 2)+"px");
+	// && $table.find("tr td").eq(0).hasClass("dataTables_empty")
+	if (numRows == 1)
 	{
-		$scrollBody.css('height', String(newScrollBodyHeight*2)+"px")
+		$scrollBody.css('border','none');
 		$table.css("margin", "0px")
 	}
-	//oTable.fnAdjustColumnSizing(false);
-	//oTable.fnDraw();
+	else
+	{
+		$scrollBody.css('height', String(newScrollBodyHeight)+"px");
+	}
 };
 
 
 $(window).resize(function()
 {	
-	/*var $modal = $(".md-modal").each(function()
+	var $modal = $(".md-modal.md-show")
+	if ($modal && $modal.length)
 	{
-		var $table = $(this).find("table");
-		$($table[1]).dataTable().fnAdjustColumnSizing();
-	})*/
+		var $tab = $modal.find(".tab-tables .nav.active")
+		var $table = $("#"+$tab.attr('tab-index')).find("table.dataTable");
+		if ($table && $table.length)
+		{
+			var dt = $($table[1]).dataTable()
+			dt.fnAdjustColumnSizing(false);
+			adjustDataTableHeight($($table[1]))
+		}
+	}
 	IDEX.updateScrollbar(false);
 })
