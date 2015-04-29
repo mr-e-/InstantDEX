@@ -29,7 +29,7 @@
 				var graphic = point.graphic
 				var attribute = point.pointAttr
 				var isOpenUp = candlePoints[i].open > candlePoints[i].close
-				var strokeColor = isOpenUp ? "#d00" : "#0c0";
+				var strokeColor = isOpenUp ? "#d00" : "#0c0"; //00E800
 				var fillColor = isOpenUp ? '#a80808' : backgroundColor;
 
 				point.pointAttr = merge(attribute, 
@@ -51,11 +51,11 @@
 					sub[7] = String((Number(sub[7])) - (diff))
 					sub[10] = String((Number(sub[10])) - (diff))
 
-					graphic.attr({d:sub.join(" ")})
-					graphic.attr('stroke-width', "1.2px")
+					//graphic.attr({d:sub.join(" ")})
+					//graphic.attr('stroke-width', 1)
 					graphic.attr('stroke', strokeColor);
 					graphic.attr('fill', fillColor);
-					graphic.attr('shape-rendering', "crispEdges")
+					//graphic.attr('shape-rendering', "geometricPrecision")
 				}
 				else if (type === 'column')
 				{
@@ -68,7 +68,7 @@
 						
 					if (point.y < 1.0 && point.y > 0.00)
 					{
-						graphic.attr('height', 1)
+						graphic.attr('height', 1.01)
 						graphic.attr('y', series.yAxis.bottom - (series.yAxis.bottom - series.yAxis.height))
 					}
 					
@@ -79,8 +79,8 @@
 					
 					graphic.attr('width', w)
 					graphic.attr('stroke', strokeColor)
-					graphic.attr('stroke-width', "1.2px")
-					graphic.attr('borderWidth', 1)
+					graphic.attr('stroke-width', 1)
+					graphic.attr('borderWidth', 0)
 					graphic.attr('fill', fillColor);
 					graphic.attr('shape-rendering', "crispEdges")
 				} 

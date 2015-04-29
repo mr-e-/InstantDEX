@@ -1,287 +1,276 @@
 
 
-
-var IDEX = (function(IDEX, $, undefined) {
-	
-IDEX.SATOSHI = 100000000;
-
-IDEX.compareProp = function(prop)
+var IDEX = (function(IDEX, $, undefined)
 {
-	return function(a, b)
+	
+	var SATOSHI = 100000000;
+
+	
+	IDEX.compareProp = function(prop)
 	{
-		return a[prop] - b[prop];
-	}
-}
-
-
-IDEX.toRS = function(id)
-{
-	var s = new NxtAddress()
-	s.set(id)
-	return s.toString();
-}
-
-IDEX.toSatoshi = function(number)
-{
-	return Math.round(Number(number) * IDEX.SATOSHI) / IDEX.SATOSHI;
-}
-
-
-IDEX.addElClass = function(row, rowClass)
-{
-	var s = "";
-	
-	$(row).each(function(e, p)
-	{
-		$(p).addClass(rowClass);
-		s += $(p)[0].outerHTML;
-	})
-	
-	return s;
-}
-
-IDEX.addElAttr = function(row, data, rowAttr)
-{
-	var s = "";
-	
-	$(row).each(function(e, p)
-	{
-		$(p).attr(rowAttr, data);
-		s += $(p)[0].outerHTML;
-	})
-	
-	return s;
-}
-
-
-IDEX.addElDataAttr = function(row, data, keys)
-{
-	var s = "";
-	var i = 0;
-	
-	$(row).each(function(e, p)
-	{
-		for (var j = 0; j < keys.length; ++j)
+		return function(a, b)
 		{
-			$(p).attr("data-"+keys[j], data[i][keys[j]]);
+			return a[prop] - b[prop];
+		}
+	}
+
+
+	IDEX.toRS = function(id)
+	{
+		var s = new NxtAddress()
+		s.set(id)
+		return s.toString();
+	}
+	
+
+	IDEX.toSatoshi = function(number)
+	{
+		return Math.round(Number(number) * IDEX.SATOSHI) / IDEX.SATOSHI;
+	}
+
+
+	IDEX.addElClass = function(row, rowClass)
+	{
+		var s = "";
+		
+		$(row).each(function(e, p)
+		{
+			$(p).addClass(rowClass);
+			s += $(p)[0].outerHTML;
+		})
+		
+		return s;
+	}
+	
+
+	IDEX.addElAttr = function(row, data, rowAttr)
+	{
+		var s = "";
+		
+		$(row).each(function(e, p)
+		{
+			$(p).attr(rowAttr, data);
+			s += $(p)[0].outerHTML;
+		})
+		
+		return s;
+	}
+
+
+	IDEX.addElDataAttr = function(row, data, keys)
+	{
+		var s = "";
+		var i = 0;
+		
+		$(row).each(function(e, p)
+		{
+			for (var j = 0; j < keys.length; ++j)
+			{
+				$(p).attr("data-"+keys[j], data[i][keys[j]]);
+			}
+			
+			s += $(p)[0].outerHTML;
+			++i;
+		})
+		
+		return s;
+	}
+
+	
+	IDEX.getListObjVals = function(listObj, keys)
+	{
+		var obj = {};
+		var len = listObj.length;
+
+		for (var j = 0; j < keys.length; j++)
+		{
+			var key = keys[j];
+			var vals = [];
+			
+			for (var i = 0; i < len; i++)
+				vals.push(listObj[i][key]);
+			
+			obj[key] = vals;
 		}
 		
-		s += $(p)[0].outerHTML;
-		++i;
-	})
+		return obj;
+	}
+
 	
-	return s;
-}
-
-IDEX.getListObjVals = function(listObj, keys)
-{
-	var obj = {};
-	var len = listObj.length;
-
-	for (var j = 0; j < keys.length; j++)
+	IDEX.setListObjVals = function(listObj, key, vals)
 	{
-		var key = keys[j];
-		var vals = [];
+		var len = listObj.length;
 		
 		for (var i = 0; i < len; i++)
-			vals.push(listObj[i][key]);
+			listObj[i][key] = vals[i];
 		
-		obj[key] = vals;
+		return listObj;	
 	}
-	
-	return obj;
-}
-
-IDEX.setListObjVals = function(listObj, key, vals)
-{
-	var len = listObj.length;
-	
-	for (var i = 0; i < len; i++)
-		listObj[i][key] = vals[i];
-	
-	return listObj;	
-}
 
 
-IDEX.objToList = function(data, keys)
-{
-	var arr = [];
-
-	for (var i = 0; i < data.length; ++i)
+	IDEX.objToList = function(data, keys)
 	{
-		var loopArr = [];
+		var arr = [];
 
-		for (var j = 0; j < keys.length; ++j)
+		for (var i = 0; i < data.length; ++i)
 		{
-			if (!(keys[j] in data[i]))
-				loopArr.push("")
-			else
-				loopArr.push(data[i][keys[j]]);
-		}
-		arr.push(loopArr);
-	}
+			var loopArr = [];
 
-	return arr;
-}
-
-
-IDEX.compObjs = function(aObj, bObj, keys)
-{
-	var compCount = 0;
-
-	for(var i = 0; i < keys.length; i++)
-	{
-		if (aObj[keys[i]] == bObj[keys[i]])
-		{
-			compCount++;
-		}
-	}
-
-	return ((compCount == keys.length) ? true : false);
-}
-
-IDEX.getFormData = function($form) 
-{
-	var serialized = $form.serializeArray();
-	var data = {};
-
-	for (var s in serialized) 
-		data[serialized[s]['name']] = serialized[s]['value'];
-
-	return data;
-}
-
-
-IDEX.extractPostPayload = function($element)
-{
-	var params = {};
-
-	if ($element.is("button"))
-	{
-		var $form = $("#" + $element.attr("data-form"));
-		params = IDEX.getFormData($form);
-	}
-	else
-	{
-		params = $element.data();
-	}
-
-	return params;
-}
-
-
-IDEX.buildPostPayload = function(method, data)
-{
-	var params = {'requestType':method};
-
-	for (var i = 0; i < IDEX.snPostParams[method].length; ++i)
-	{
-		for (var key in data)
-		{
-			if (key == IDEX.snPostParams[method][i])
+			for (var j = 0; j < keys.length; ++j)
 			{
-				params[key] = data[key];
-				break;
+				if (!(keys[j] in data[i]))
+					loopArr.push("")
+				else
+					loopArr.push(data[i][keys[j]]);
+			}
+			arr.push(loopArr);
+		}
+
+		return arr;
+	}
+
+
+	IDEX.compObjs = function(aObj, bObj, keys)
+	{
+		var compCount = 0;
+
+		for(var i = 0; i < keys.length; i++)
+		{
+			if (aObj[keys[i]] == bObj[keys[i]])
+			{
+				compCount++;
 			}
 		}
+
+		return ((compCount == keys.length) ? true : false);
+	}
+	
+
+	IDEX.getFormData = function($form) 
+	{
+		var serialized = $form.serializeArray();
+		var data = {};
+
+		for (var s in serialized) 
+			data[serialized[s]['name']] = serialized[s]['value'];
+
+		return data;
 	}
 
-	return params;
-}
 
-
-IDEX.constructFromObject = function(classInstance, obj)
-{
-
-	if (obj)
+	IDEX.extractPostPayload = function($element)
 	{
-		for (var key in obj)
+		var params = {};
+
+		if ($element.is("button"))
 		{
-			classInstance[key] = obj[key];
+			var $form = $("#" + $element.attr("data-form"));
+			params = IDEX.getFormData($form);
 		}
-	}
-	
-	return classInstance
-}
-
-
-IDEX.getAssetInfo = function(key, val)
-{
-	var arr = [];
-	var assetInfo = {};
-	var len = IDEX.allAssets.length;
-	
-	for (var i = 0; i < len; ++i)
-	{
-		if (IDEX.allAssets[i][key] == val)
+		else
 		{
-			arr.push(IDEX.allAssets[i]);
+			params = $element.data();
 		}
+
+		return params;
 	}
-	
-	if (arr.length)
+
+
+	IDEX.buildPostPayload = function(method, data)
 	{
-		var numTrades = -1;
-		var index = 0;
-		
-		for (var i = 0; i < arr.length; ++i)
+		var params = {'requestType':method};
+
+		for (var i = 0; i < IDEX.snPostParams[method].length; ++i)
 		{
-			if (arr[i].numberOfTrades > numTrades)
+			for (var key in data)
 			{
-				numTrades = arr[i].numberOfTrades;
-				index = i;
+				if (key == IDEX.snPostParams[method][i])
+				{
+					params[key] = data[key];
+					break;
+				}
+			}
+		}
+
+		return params;
+	}
+
+
+	IDEX.constructFromObject = function(classInstance, obj)
+	{
+
+		if (obj)
+		{
+			for (var key in obj)
+			{
+				classInstance[key] = obj[key];
 			}
 		}
 		
-		assetInfo = arr[index];
+		return classInstance
 	}
-	
-	return assetInfo;
-}
 
 
-
-IDEX.buildTableRows = function(data, tableType)
-{
-	var row = "";
-	var rowWrap = "";
-	var tdWrap = "";
-
-	if (tableType == "table")
+	/*
+	function getBiggestWidth(newBids, newAsks)
 	{
-		rowWrap = "<tr></tr>"
-		tdWrap = "<td></td>";
-	}
-	else if (tableType == "span")
-	{
-		rowWrap = "<div class='order-row'></div>"
-		tdWrap = "<span class='order-col'></span>";
-	}
-	
-	for (var i = 0; i < data.length; ++i)
-	{
-		var td = "";
-
-		for (var j = 0; j < data[i].length; ++j)
+		var joined = newBids.concat(newAsks);
+		var len = joined.length;
+		var biggestWidth = -1;
+		
+		for (var i = 0; i < len; i++)
 		{
-			td += $(tdWrap).text(data[i][j])[0].outerHTML
+			var num = joined[i];
+			var numStr = String(num);
+			var wholeDigits = numStr.split(".")[0]
+			if (wholeDigits.length > biggestWidth)
+				biggestWidth = wholeDigits.length
 		}
 		
-		row += $(td).wrapAll(rowWrap).parent()[0].outerHTML
+		return biggestWidth
+	}*/
+
+	IDEX.formatNumberWidth = function(allNumbers, decimals)
+	{
+		var maxWidth = 8 + 1;
+		var biggestWidth = -1;
+		var len = allNumbers.length;
+		
+		for (var i = 0; i < len; i++)
+		{
+			var num = allNumbers[i];
+			var numStr = String(num);
+			var wholeDigits = numStr.split(".")[0]
+			if (wholeDigits.length > biggestWidth)
+				biggestWidth = wholeDigits.length
+		}
+		
+		for (var i = 0; i < len; i++)
+		{
+			var num = allNumbers[i];
+			var numStr = String(num);
+			var digits = numStr.split(".");
+			var wholeDigits = digits[0];
+			var decDigits = digits[1];
+			//var hasDecimal = numStr.search("\\.");
+			if (numStr.length > maxWidth)
+			{
+				var extra = numStr.length - maxWidth;
+				decDigits = decDigits.slice(0, (decDigits.length - extra));
+			}
+			if (wholeDigits.length < biggestWidth)
+			{
+				var extra = biggestWidth - wholeDigits.length;
+				decDigits = decDigits.slice(0, ((decDigits.length) - extra));
+			}
+			allNumbers[i] = wholeDigits + "." + decDigits;
+		}
+		
+		//console.log(allNumbers)
+		return allNumbers
 	}
 
-	return row;
-}
-
-
-IDEX.getRowData = function($row, index)
-{
-	var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? "bids" : "asks";
-	var rowData = index >= IDEX.currentOrderbook[isAsk].length ? null : IDEX.currentOrderbook[isAsk][index];
-
-	return rowData;
-}
-
+	
 	return IDEX;
 	
 }(IDEX || {}, jQuery));

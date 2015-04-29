@@ -20,32 +20,6 @@ var IDEX = (function(IDEX, $, undefined)
 			that.close = obj[4]
 		}(this)
 	}
-	
-	IDEX.Chart = function(obj) 
-	{
-		this.baseid = "6854596569382794790"
-		this.relid = "6932037131189568014"
-		this.basename = "SkyNET"
-		this.relname = "jl777hodl"
-		this.numticks = "5"
-		this.numbars = "100"
-		this.isvirtual = false
-		this.flip = false
-		this.isNew = false
-		
-		var __construct = function(that) 
-		{
-			if (obj)
-			{
-				for (var key in obj)
-				{
-					that[key] = obj[key]
-				}
-			}
-		}(this)
-	}
-	
-	var currentChart = new IDEX.Chart()
 
 	var statAttr=
 	{
@@ -314,6 +288,7 @@ var IDEX = (function(IDEX, $, undefined)
 					chart.splitLine = chart.renderer.path().attr({'stroke-width': 0.5,stroke: '#999',}).add();
 					$("#chartLoading").hide();
 					$(chart.container).on("mousemove",buildChartRenders)
+					console.log(chart)
 			   }
 			);
 		});
@@ -330,7 +305,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var offset = $('#chartArea').offset();
 		var x = event.pageX - offset.left;
 		var y = event.pageY - offset.top	
-		if (IDEX.isInsidePlot(event))
+		if (IDEX.isInsidePlot(event.clientX, event.clientY, chart))
 		{
 			var pointRange = chart.series[0].pointRange
 			var closestTime = Number(chart.xAxis[0].toValue(x).toFixed())

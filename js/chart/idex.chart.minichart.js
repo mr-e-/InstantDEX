@@ -1,19 +1,34 @@
 
-var IDEX = (function(IDEX, $, undefined) {
-
-
+var IDEX = (function(IDEX, $, undefined) 
+{
+	
+	IDEX.loadMiniCharts = function()
+	{
+		$('.mini-chart').each(function()
+		{
+			var baseID = $(this).find(".mini-chart-area-1 span").first().attr("data-asset")
+			var relID = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset");
+			var divid = $(this).find(".mini-chart-area-4").attr('id');
+			
+			//if (baseID != "-1" && relID != "-1")
+			IDEX.makeMiniChart(baseID, relID, divid);
+		})
+	}
+	
+	
 	IDEX.makeMiniChart = function(baseID, relID, divid)
 	{
 		var baseNXT = baseID == IDEX.snAssets.nxt.assetid
 		if (baseNXT)
 			baseID = relID
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair="+baseID+"_NXT&type=tick&len=10&num=300"
-			
+
 		$.getJSON(url, function(data)
 		{
 			var price = []
 			var minPrice = -1;
 			var maxPrice = -1;
+			
 			data = data.results.bars
 
 			for (var i = 0; i < data.length; ++i)
@@ -32,12 +47,14 @@ var IDEX = (function(IDEX, $, undefined) {
 				minPrice = (data[i][6] < minPrice || minPrice == -1) ? data[i][6] : minPrice
 				maxPrice = (data[i][6] > maxPrice || maxPrice == -1) ? data[i][6] : maxPrice
 			}
+
 			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
-			priceAddClass = change >= 0 ? "ok-green" : "ok-red"
-			priceRemoveClass = priceAddClass == "ok-green" ? "ok-red" : "ok-green"
+			var priceAddClass = change >= 0 ? "ok-green" : "ok-red"
+			var priceRemoveClass = priceAddClass == "ok-green" ? "ok-red" : "ok-green"
 			var ss = data[0][0]
 			var ee = data[data.length-1][0]
 			var range = ((((ee-ss)/60)/60)/24)/2
+			
 			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev()
 			$("#"+divid).parent().find(".mini-chart-area-2").text(change.toFixed(2)+"%")
 			
@@ -51,7 +68,6 @@ var IDEX = (function(IDEX, $, undefined) {
 					spacingRight:4,
 					panning:true,
 					zoomType:"",
-					//width:"100%"
 				},
 				
 				navigator:
@@ -64,14 +80,12 @@ var IDEX = (function(IDEX, $, undefined) {
 				
 				title: 
 				{
-					text:"",
 					enabled:false,
 				},
 				
 				rangeSelector: 
 				{
 					enabled:false,
-					inputEnabled:false,
 				},
 				
 				scrollbar:
@@ -100,16 +114,12 @@ var IDEX = (function(IDEX, $, undefined) {
 					{
 						enabled:false,
 					},
-					//height:"100%",
 					maxPadding:0.0,
 					minPadding:0.0,
 					width:0,
 					tickWidth:0,
-					//min:minPrice - ((maxPrice-minPrice)/10),
-					//max:maxPrice,
 					endOnTick:false,
 					startOnTick:false
-					//showLastLabel:true,
 				}],
 				
 				xAxis: [
@@ -124,16 +134,13 @@ var IDEX = (function(IDEX, $, undefined) {
 						autoRotation:false,
 						formatter: function () 
 						{
-							if (this.isLast)
-								b = Highcharts.dateFormat('<span style="float:right;padding-right:73px">%b %d</span>',this.value)
-							else if (this.isFirst)
-								b = Highcharts.dateFormat('<span style="float:right;padding-right:0px">%b %d</span>',this.value)
-							else
-								b = Highcharts.dateFormat('<span style="float:right;padding-right:30px">%b %d</span>',this.value)
-
-							return b
+							var rightPadding = "30px";
+							if (this.isLast) rightPadding = "73px";
+							else if (this.isFirst) rightPadding = "0px";
+							var html = '<span style="float:right;padding-right:'+rightPadding+'">%b %d</span>'
+							
+							return Highcharts.dateFormat(html, this.value)
 						}
-						//step:1
 					},
 					tickLength:5,
 					ordinal:true,
@@ -155,9 +162,8 @@ var IDEX = (function(IDEX, $, undefined) {
 							if (this.ordinalPositions[j] >= b)
 								break;
 						
-						//var zz = this.ordinalPositions[i] - a
-
 						var calc = i + ((j - i)/2)
+						
 						if (calc % 1 != 0)
 						{
 							var highMid = this.ordinalPositions[Math.floor(calc)+1]
@@ -189,8 +195,6 @@ var IDEX = (function(IDEX, $, undefined) {
 						states:
 						{
 							hover:{enabled:true},
-							//select:{enabled:true}
-
 						},
 						lineWidth: 2,
 						animation:false,

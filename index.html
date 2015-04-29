@@ -223,7 +223,7 @@
 						<div class="idex-tab-content info-tab-content">
 							<div class="tab-content-wrap" data-tab="1">
 								<div class="info-tab-content-top">
-									<table class="current-open-orders-table sortable">
+									<table id="marketOpenOrdersTable" class="sortable">
 										<thead>
 										<tr>
 											<th>TYPE</th>
@@ -514,8 +514,8 @@
 					<div id="tabs-1" class="modal-tab-content active">
 					
 						<div class="modal-table-body">
-							<table id="marketTable" class="table" data-method="allorderbooks" cellspacing=0> 
-								<thead data-keys="orderbooks base rel last high low volume exchange"> 
+							<table id="allOrderbooksTable" class="table" cellspacing=0> 
+								<thead> 
 									<tr> 
 										<th>BASE</th> 
 										<th>QUOTE</th> 
@@ -566,8 +566,8 @@
 				<div class="tabs-container">
 					<div id="tabs-5" class="modal-tab-content active">
 						<div class="modal-table-body">
-							<table id="openOrdersTable" class="table" data-method="openorders" cellspacing=0> 
-								<thead data-keys="openorders askoffer market price volume total quoteid age"> 
+							<table id="openOrdersTable" class="table" cellspacing=0> 
+								<thead> 
 								<tr> 
 									<th>TYPE</th> 
 									<th>MARKET</th> 
@@ -588,8 +588,8 @@
 					</div>
 					<div id="tabs-6" class="modal-tab-content">
 						<div class="modal-table-body">
-							<table id="tradeHistoryTable" class="table" data-method="tradehistory" cellspacing=0> 
-								<thead data-keys="tradehistory market priceNQTA priceNQTB NXT triggerhash"> 
+							<table id="tradeHistoryTable" class="table" cellspacing=0> 
+								<thead> 
 								<tr> 
 									<th>MARKET</th> 
 									<th>BASE AMOUNT</th> 
@@ -619,8 +619,8 @@
 				<div class="tabs-container">
 					<div id="tabs-3" class="modal-tab-content active">
 						<div class="modal-table-body">
-							<table id="balancesTable" class="table sortable" data-method="getAccountAssets" cellspacing=0> 
-								<thead data-keys="accountAssets name asset availableBalance unconfirmedBalance change"> 
+							<table id="balancesTable" class="table sortable" cellspacing=0> 
+								<thead> 
 								<tr> 
 									<th>Name</th> 
 									<th>Asset ID</th> 
@@ -886,7 +886,16 @@
 	<script src="js/idex.modals.tables.js" type="text/javascript"></script>	
 	<script src="js/idex.orderbox.js" type="text/javascript"></script>	
 	<script src="js/idex.autocomplete.js" type="text/javascript"></script>	
-	<script src="js/idex.util.js" type="text/javascript"></script>	
+	<script src="js/idex.util.js" type="text/javascript"></script>
+	<script src="js/idex.user.allassets.js" type="text/javascript"></script>	
+	<script src="js/idex.user.chartfavorites.js" type="text/javascript"></script>
+	<script src="js/idex.user.options.js" type="text/javascript"></script>	
+
+	<script src="js/idex.account.js" type="text/javascript"></script>	
+	<script src="js/idex.datatable.js" type="text/javascript"></script>	
+	<script src="js/idex.scrollbar.js" type="text/javascript"></script>	
+	<script src="js/idex.tables.js" type="text/javascript"></script>	
+	<script src="js/idex.binds.js" type="text/javascript"></script>	
 	<script src="js/DataTables-1.10.6/jquery.dataTables.js" type="text/javascript"></script>	
 
 	
