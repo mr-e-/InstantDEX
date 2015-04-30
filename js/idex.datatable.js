@@ -28,8 +28,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var oTable = $table.dataTable();
 		var oSettings = oTable.fnSettings();
-		console.log(oSettings);
-		var $wrapper = $(this).closest(".modal-table-body");
+		//console.log(oSettings);
+		var $wrapper = $table.closest(".modal-table-body");
 		var maxRows = oSettings.oInit.pageLength;
 		var $scrollBody = $wrapper.find('.dataTables_scrollBody');
 		var $scrollHead = $wrapper.find('.dataTables_scrollHead');
@@ -52,7 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$scrollBody.css('height', String(newScrollBodyHeight)+"px");
 		}
-		console.log('a')
+		
 	//var counter = 0;
 	//console.log(counter++)
 		/*console.log(String(rowHeight) + " " + String(maxRows) + " " + String(allowedHeight))

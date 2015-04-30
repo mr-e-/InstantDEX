@@ -51,7 +51,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var arr = [];
 		var assetInfo = {};
 		var len = this.allAssets.length;
-		for (var i = 0; i < len; ++i)
+		for (var i = 0; i < len; i++)
 		{
 			if (this.allAssets[i][key] == val)
 			{

@@ -8,17 +8,17 @@ var IDEX = (function(IDEX, $, undefined)
 		this.nxtID = "";
 		this.nxtRS = "";
 		
-		if (rsID.length == 1)
+		if (nxtIDAndRS.length == 1)
 		{
 			
 		}
-		else if (rsID.length == 2)
+		else if (nxtIDAndRS.length == 2)
 		{
 			this.nxtID = nxtIDAndRS[0];
 			this.nxtRS = nxtIDAndRS[1];
 		}
 		
-		//$(".option-nxtrs").val(IDEX.account.nxtRS);
+		$(".option-nxtrs").val(this.nxtRS);
 	}
 
 	
@@ -26,6 +26,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var dfd = new $.Deferred();
 		var nxtIDAndRS = [];
+		var account = this;
 		
 		IDEX.sendPost({'requestType':"getpeers"}).then(function(data)
 		{
@@ -36,7 +37,7 @@ var IDEX = (function(IDEX, $, undefined)
 				nxtIDAndRS.push(data['peers'][index]['RS']);
 			}
 			
-			this.setNXTRS(nxtIDAndRS)
+			account.setNXTRS(nxtIDAndRS)
 		})
 	}
 
@@ -57,7 +58,7 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < balances.length; i++)
 		{
 			var balance = new IDEX.Balance(balances[i]);
-			this.balances[balance.asset] = balance;
+			this.balances[balance.assetID] = balance;
 		}
 	}
 	
@@ -79,24 +80,25 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var balances = [];
 		var dfd = new $.Deferred();
+		var account = this;
 		//var postObj = {'requestType':"getAccount",'account':IDEX.account.nxtID, 'includeAssets':true};
-		var postObj = {'requestType':"getAccountAssets",'account':IDEX.account.nxtID};
-		var thisScope = this;
+		var postObj = {'requestType':"getAccountAssets",'account':account.nxtID};
 		
 		IDEX.sendPost(postObj, 1).then(function(data)
 		{
 			if (!("errorCode" in data) && ("accountAssets" in data))
 				balances = data['accountAssets'];
 				
-			IDEX.sendPost({'requestType':"getBalance", 'account':IDEX.account.nxtID}, 1).then(function(nxtBal)
+			IDEX.sendPost({'requestType':"getBalance", 'account':account.nxtID}, 1).then(function(nxtBal)
 			{
 				if (!("errorCode" in nxtBal))
 				{
 					nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
 					balances.push(nxtBal);
 				}
-
-				thisScope.setBalances(balances);
+				
+				balances = addAssetID(balances);
+				account.setBalances(balances);
 				dfd.resolve();
 			})
 		})
@@ -119,7 +121,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				data = data.openorders;
 				
-				for (var i=0; i < data.length; i++)
+				for (var i = 0; i < data.length; i++)
 					if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
 						temp.push(data[i]);
 			}
@@ -136,6 +138,19 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise();
 	}
 
+	
+	
+	function addAssetID(assets)
+	{
+		for (var i = 0; i < assets.length; i++)
+			for (key in assets[i])
+				if (key == "asset")
+					assets[i]['assetID'] = assets[i][key];
+				
+		return assets;
+	}
+	
+	
 	
 	return IDEX;
 	

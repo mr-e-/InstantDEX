@@ -9,7 +9,7 @@ var IDEX = (function(IDEX, $, undefined)
 		"marketOpenOrdersTable": {"method":"openorders", "keys":"askoffer market price volume total quoteid age", "isDataTable":false},
 		"allOrderbooksTable": {"method":"allorderbooks", "keys":"base rel last high low volume exchange", "isDataTable":true},
 		"tradeHistoryTable": {"method":"tradehistory", "keys":"market priceNQTA priceNQTB NXT triggerhash", "isDataTable":true},
-		"balancesTable": {"method":"getAccountAssets", "keys":"accountAssets name asset availableBalance unconfirmedBalance change", "isDataTable":true}
+		"balancesTable": {"method":"getAccountAssets", "keys":"name assetID availableBalance unconfirmedBalance change", "isDataTable":true}
 	};
 
 	
@@ -38,7 +38,11 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			IDEX.account.updateBalances().done(function()
 			{
-				dfd.resolve(IDEX.account.balances);
+				var temp = [];
+				for (var key in IDEX.account.balances)
+					temp.push(IDEX.account.balances[key]);
+				
+				dfd.resolve(temp);
 			})
 		}
 		else if (method == "openorders")
@@ -56,10 +60,10 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				if (method in data)
 				{
-					tableData = data.method;
+					tableData = data[method];
 				}
 				
-				dfd.resolve(data);
+				dfd.resolve(tableData);
 			})
 		}
 		
@@ -114,6 +118,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		else if (tableName == "tradeHistoryTable")
 		{
+			console.log(tableData);
 			if ("rawtrades" in tableData) 
 			{
 				tableData = tableData['rawtrades'];
@@ -132,15 +137,11 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (table.isDataTable)
 		{
-			var dataTable = $($modalTable[1]).dataTable();
-			var newDataTable = $($modalTable[1]).DataTable();
+			var dataTable = $modalTable.dataTable();
+			var newDataTable = $modalTable.DataTable();
 			
 			dataTable.fnClearTable(false);
-			
-			if (row.length)	
-			{
-				newDataTable.rows.add($(row));
-			}
+			newDataTable.rows.add($(row));
 			
 			newDataTable.columns.adjust().draw();
 		}
@@ -188,8 +189,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		for (var i = 0; i < tableData.length; ++i)
 		{
-			tableData[i]['base'] = IDEX.getAssetInfo("asset", tableData[i][baseName])['name'];
-			tableData[i]['rel'] = IDEX.getAssetInfo("asset", tableData[i][relName])['name'];
+			tableData[i]['base'] = IDEX.user.getAssetInfo("assetID", tableData[i][baseName])['name'];
+			tableData[i]['rel'] = IDEX.user.getAssetInfo("assetID", tableData[i][relName])['name'];
 		}
 		
 		return tableData;

@@ -25,10 +25,17 @@ var IDEX = (function(IDEX, $, undefined)
 		this.options = options;
 	}
 	
+	
 	IDEX.User.prototype.updateOptionsDom = function(options)
 	{
 		$(".option-minperc").val(options['minperc']);
 		$(".option-duration").val(options['duration']);
+	}
+	
+	
+	IDEX.User.prototype.setOptions = function()
+	{
+		
 	}
 	
 	

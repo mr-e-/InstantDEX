@@ -74,7 +74,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var __construct = function(that, constructorObj)
 		{
-			var asset = IDEX.getAssetInfo("asset", constructorObj['asset'])
+			var asset = IDEX.user.getAssetInfo("assetID", constructorObj['assetID'])
 			
 			if (asset)
 			{
@@ -147,6 +147,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.orderbook = new IDEX.Orderbook();
 		IDEX.chart = new IDEX.Chart();
 		
+		IDEX.account.updateNXTRS();
 		IDEX.user.initAllAssets().done(function()
 		{
 			IDEX.initAutocomplete();
