@@ -1,19 +1,19 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
+	var dataTableSettings = {
+		"scrollX":true,
+		"scrollY":0,
+		"pagingType":"simple_numbers",
+		"pageLength":20,
+		"lengthChange":false,
+	};
 	
 	IDEX.initDataTable = function()
 	{
 		$(".modal-table-body table").each(function()
 		{
-			$(this).DataTable(
-			{
-				"scrollX":true,
-				"scrollY":0,
-				"pagingType":"simple_numbers",
-				"pageLength":20,
-				"lengthChange":false,
-			}).on("page.dt draw.dt column-sizing.dt", function() 
+			$(this).DataTable(dataTableSettings).on("page.dt draw.dt column-sizing.dt", function() 
 			{ 
 				adjustDataTableHeight($(this)) 
 			})
@@ -28,7 +28,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var oTable = $table.dataTable();
 		var oSettings = oTable.fnSettings();
-		//console.log(oSettings);
+		console.log(oSettings);
 		var $wrapper = $(this).closest(".modal-table-body");
 		var maxRows = oSettings.oInit.pageLength;
 		var $scrollBody = $wrapper.find('.dataTables_scrollBody');
@@ -52,7 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$scrollBody.css('height', String(newScrollBodyHeight)+"px");
 		}
-		
+		console.log('a')
 	//var counter = 0;
 	//console.log(counter++)
 		/*console.log(String(rowHeight) + " " + String(maxRows) + " " + String(allowedHeight))

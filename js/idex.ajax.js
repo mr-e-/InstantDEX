@@ -32,8 +32,8 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			$.growl.error({'message':message, 'location':"tl"});
 
-			console.log(params);
-			console.log(data);
+			//console.log(params);
+			//console.log(data);
 			
 			dfd.reject(data);
 		})

@@ -86,7 +86,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var display = IDEX.isOrderbookExpanded ? "inline-block" : "none";
 		var width = IDEX.isOrderbookExpanded ? "250px" : "100%";
-		var classFunc = IDEX.isOrderbookExpanded ? "addClass" : "removeClass";
+		var classFunc = IDEX.isOrderbookExpanded ? "removeClass" : "addClass";
+		
+		$("#orderBook").css("width", width)
+		$("#miniChartsC").css("display", display)
 		
 		$(".labels-col")[classFunc]("labels-col-expand")
 		$(".labels-col-extra")[classFunc]("extra-show");

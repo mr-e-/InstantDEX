@@ -8,7 +8,8 @@ var IDEX = (function(IDEX, $, undefined)
 	var prevIndex;
 	var btcwKeys = [3,5,6,4,7]
 	var skynetKeys = [3,4,5,6,8]
-
+	var currentChart;
+	
 	IDEX.OHLC = function(obj) 
 	{
 		var __construct = function(that) 
@@ -107,7 +108,6 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
 		currentChart = new IDEX.Chart(siteOptions)
-	
 		if (currentChart.isNew)
 		{
 			resetDropdown();
@@ -288,7 +288,6 @@ var IDEX = (function(IDEX, $, undefined)
 					chart.splitLine = chart.renderer.path().attr({'stroke-width': 0.5,stroke: '#999',}).add();
 					$("#chartLoading").hide();
 					$(chart.container).on("mousemove",buildChartRenders)
-					console.log(chart)
 			   }
 			);
 		});

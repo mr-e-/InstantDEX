@@ -7,7 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 //					IDEX.refreshOrderbook();
 	IDEX.placeOrder = function(params)
 	{
-		var balanceToCheck = (method == "placebid") ? params['relid'] : params['baseid'];
+		var balanceToCheck = (params['requestType'] == "placebid") ? params['relid'] : params['baseid'];
 		
 		console.log(params);
 		
@@ -55,13 +55,13 @@ var IDEX = (function(IDEX, $, undefined)
 		var baseBal = ["0", ".0"];
 		var relBal = ["0", ".0"];
 
-		$buy.find("span").first().text(IDEX.curRel.name);
-		$sell.find("span").first().text(IDEX.curBase.name);
+		$buy.find("span").first().text(IDEX.user.curRel.name);
+		$sell.find("span").first().text(IDEX.user.curBase.name);
 		
 		IDEX.account.updateBalances().done(function()
 		{
-			baseBal = parseBalance(IDEX.account.getBalance(IDEX.curBase.assetid));
-			relBal = parseBalance(IDEX.account.getBalance(IDEX.curRel.assetid));
+			baseBal = parseBalance(IDEX.account.getBalance(IDEX.user.curBase.assetID));
+			relBal = parseBalance(IDEX.account.getBalance(IDEX.user.curRel.assetID));
 
 			$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1]);
 			$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1]);

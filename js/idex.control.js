@@ -3,14 +3,14 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	IDEX.changeMarket = function()
+	IDEX.changeMarket = function(baseid, relid)
 	{
-		IDEX.user.updatePair();
+		IDEX.user.updatePair(baseid, relid);
 		IDEX.updateOrderBox();
-		IDEX.currentOpenOrders();
-		
+		IDEX.makeTable("marketOpenOrdersTable");
+
 		IDEX.killChart();
-		IDEX.makeChart({'baseid':IDEX.curBase.asset, 'relid':IDEX.curRel.asset, 'basename':IDEX.curBase.name, 'relname':IDEX.curRel.name, 'isNew':true});
+		IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID, 'basename':IDEX.user.curBase.name, 'relname':IDEX.user.curRel.name, 'isNew':true});
 		IDEX.loadOrderbook();
 	}
 	

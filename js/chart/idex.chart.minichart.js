@@ -18,7 +18,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.makeMiniChart = function(baseID, relID, divid)
 	{
-		var baseNXT = baseID == IDEX.snAssets.nxt.assetid
+		var baseNXT = baseID == IDEX.snAssets.nxt.assetID
 		if (baseNXT)
 			baseID = relID
 		var url = "http://idex.finhive.com/v1.0/run.cgi?run=qts&mode=bars&exchange=ex_nxtae&pair="+baseID+"_NXT&type=tick&len=10&num=300"
@@ -47,7 +47,7 @@ var IDEX = (function(IDEX, $, undefined)
 				minPrice = (data[i][6] < minPrice || minPrice == -1) ? data[i][6] : minPrice
 				maxPrice = (data[i][6] > maxPrice || maxPrice == -1) ? data[i][6] : maxPrice
 			}
-
+			
 			var change = (Math.round(((data[data.length-1][6]/data[data.length-2][6])-1)*100)/100)*100
 			var priceAddClass = change >= 0 ? "ok-green" : "ok-red"
 			var priceRemoveClass = priceAddClass == "ok-green" ? "ok-red" : "ok-green"

@@ -4,13 +4,15 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	
 	IDEX.snAssets = {
-		'nxt':{'name':"NXT",'assetid':"5527630", 'decimals':8}
-	}
+		'nxt':{'name':"NXT",'assetID':"5527630", 'decimals':8}
+	};
 	
 	
 	IDEX.User.prototype.initAllAssets = function()
 	{
+		var retdfd = new $.Deferred();
 		var dfd = new $.Deferred();
+		var user = this;
 		
 		if (localStorage.allAssets)
 		{
@@ -21,10 +23,10 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			IDEX.sendPost({'requestType':"getAllAssets"}, 1).then(function(data)
 			{
-				var assets = []
+				var assets = [];
 				if ("assets" in data)
 				{
-					assets = parseAllAssets(data.assets)
+					assets = parseAllAssets(data.assets);
 					localStorage.setItem('allAssets', JSON.stringify(assets));
 				}
 				
@@ -36,12 +38,11 @@ var IDEX = (function(IDEX, $, undefined)
 		dfd.done(function(assets)
 		{
 			assets.sort(IDEX.compareProp('name'));
-			this.allAssets = assets;
-
-			IDEX.initAutocomplete();
+			user.allAssets = assets;
+			retdfd.resolve();
 		})
 		
-		//return dfd.promise();
+		return retdfd.promise();
 	}
 
 	
@@ -50,7 +51,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var arr = [];
 		var assetInfo = {};
 		var len = this.allAssets.length;
-		
 		for (var i = 0; i < len; ++i)
 		{
 			if (this.allAssets[i][key] == val)
@@ -95,7 +95,7 @@ var IDEX = (function(IDEX, $, undefined)
 					continue;
 				
 				if (key == "asset")
-					obj['assetid'] = assets[i][key];
+					obj['assetID'] = assets[i][key];
 				
 				obj[key] = assets[i][key];
 			}

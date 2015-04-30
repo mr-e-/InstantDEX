@@ -10,11 +10,11 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var assets = IDEX.user.allAssets;
 		var len = assets.length;
-		
+
 		for (var i = 0; i < len; i++)
 		{
-			IDEX.auto.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].name});
-			IDEX.auto2.push({"label":assets[i].name+" <span>("+assets[i].assetid+")</span>","value":assets[i].asset});
+			autoSearchName.push({"label":assets[i].name+" <span>("+assets[i].assetID+")</span>","value":assets[i].name});
+			autoSearchAsset.push({"label":assets[i].name+" <span>("+assets[i].assetID+")</span>","value":assets[i].asset});
 		}
 	}
 	

@@ -4,9 +4,9 @@ var IDEX = (function(IDEX, $, undefined)
 {
 
 	//$button.prop('disabled', true);
-	//"perc":$(".conf-perc").val()
+	//"perc":$(".conf-perc").val();
 	//$button.prop('disabled', false);
-	
+
 	IDEX.makeOffer = function()
 	{
 		var params = {"requestType":"makeoffer3"};
@@ -35,7 +35,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 
-	function confirmPopup($modal, order)
+	IDEX.buildMakeofferModal = function($modal, order)
 	{
 		$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order");
 		$modal.find(".conf-pair").text(IDEX.currentOrderbook.pair);
@@ -51,31 +51,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$(".conf-confirm").prop('disabled', false);
 		$(".conf-jumbotron").hide().find("div").empty();
 	}
-
-
-
-	$("input.conf-perc").on("keyup", function() 
-	{
-		var perc = $(this).val();
-		var amount = (perc/100) * IDEX.pendingOrder['volume'];
-		//var total = Number(IDEX.pendingOrder['price'])*Number(amount);
-		
-		$(".conf-amount").val(amount);
-		$(".conf-total").val(total.toFixed(8));
-		
-		var check = checkPerc(perc, IDEX.pendingOrder['minperc']);
-		
-		if (!check.length)
-		{
-			$("button.conf-confirm").prop('disabled', false);
-			$(".conf-jumbotron").hide().find("div").empty();
-		}
-		else
-		{
-			$("button.conf-confirm").prop('disabled', true);
-			$(".conf-jumbotron").show().find("div").text(check);
-		}
-	});
 
 	
 	function checkPerc(perc, minperc)
@@ -113,7 +88,31 @@ var IDEX = (function(IDEX, $, undefined)
 		return text;
 	}
 
+	
+	$("input.conf-perc").on("keyup", function() 
+	{
+		var perc = $(this).val();
+		var amount = (perc/100) * IDEX.pendingOrder['volume'];
+		//var total = Number(IDEX.pendingOrder['price'])*Number(amount);
+		
+		$(".conf-amount").val(amount);
+		$(".conf-total").val(total.toFixed(8));
+		
+		var check = checkPerc(perc, IDEX.pendingOrder['minperc']);
+		
+		if (!check.length)
+		{
+			$("button.conf-confirm").prop('disabled', false);
+			$(".conf-jumbotron").hide().find("div").empty();
+		}
+		else
+		{
+			$("button.conf-confirm").prop('disabled', true);
+			$(".conf-jumbotron").show().find("div").text(check);
+		}
+	});
 
+	
 	return IDEX;
 	
 	

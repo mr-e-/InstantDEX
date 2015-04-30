@@ -51,7 +51,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var isZoomOut = wheelDeltaY < 0;
 			
-			zoomChart(chart, isZoomOut)
+			zoomChart(chart, isZoomOut);
 		}
 	})
 	

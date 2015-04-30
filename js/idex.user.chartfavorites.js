@@ -80,7 +80,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 			$("#chart-curr-"+id).attr("data-asset", asset);
 			$("#chart-curr-"+id).text(name);
-			parsed[id] = {"name":name,"id":id,"asset":asset}
+			parsed[id] = {"name":name,"id":id,"assetID":asset}
 		});
 		
 		localStorage.setItem('chartFavorites', JSON.stringify(parsed));
@@ -123,14 +123,13 @@ var IDEX = (function(IDEX, $, undefined)
 	//}
 
 
-//	$("#miniChartsTop .chart-box, #miniChartsTop2 .chart-box-2 .chart-sub-box-2").on("click", function()
-	$("#miniChartsC .mini-chart .mini-chart-area-1").on("click", function()
+	$(".fav-pair").on("click", function()
 	{
-		var baseid = $div.find("span").eq(0).attr("data-asset");
-		var relid = $div.find("span").eq(1).attr("data-asset");
-		
+		var baseid = $(this).find("span").eq(0).attr("data-asset");
+		var relid = $(this).find("span").eq(1).attr("data-asset");
+
 		if (baseid && relid && baseid.length && relid.length)
-			IDEX.loadOrderbook(baseid, relid);
+			IDEX.changeMarket(baseid, relid);
 	})
 	
 	

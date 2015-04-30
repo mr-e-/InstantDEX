@@ -147,7 +147,10 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.orderbook = new IDEX.Orderbook();
 		IDEX.chart = new IDEX.Chart();
 		
-		IDEX.user.initAllAssets();
+		IDEX.user.initAllAssets().done(function()
+		{
+			IDEX.initAutocomplete();
+		});
 		IDEX.user.initChartFavorites();
 		IDEX.user.initOptions();
 		IDEX.user.updateFavoritesDom();

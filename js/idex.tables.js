@@ -16,7 +16,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.makeTable = function(tableName)
 	{
 		var table = tables[tableName];
-		console.log(tableName);
+
 		getTableData(table).done(function(tableData)
 		{
 			buildTable(table, tableName, tableData);
@@ -125,7 +125,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		else if (tableName == "balancesTable")
 		{
-			addEmptyMarketData(tableData, ["change"]);	
+			addEmptyMarketData(tableData, ["change"]);
+			row = IDEX.buildTableRows(IDEX.objToList(tableData, keys), "table");			
 		}
 		
 		
@@ -133,9 +134,15 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var dataTable = $($modalTable[1]).dataTable();
 			var newDataTable = $($modalTable[1]).DataTable();
+			
 			dataTable.fnClearTable(false);
-			newDataTable.rows.add($(row));
-			dataTable.fnAdjustColumnSizing();
+			
+			if (row.length)	
+			{
+				newDataTable.rows.add($(row));
+			}
+			
+			newDataTable.columns.adjust().draw();
 		}
 		else
 		{
@@ -222,7 +229,37 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 	
+	$("#openOrdersTable tbody").on("click", "tr td.cancelOrder", function()
+	{
+		var quoteid = $(this).parent().attr("data-quoteid");
+		var $thisScope = $(this);
+		
+		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
+		{
+			$thisScope.closest(".md-content").find(".tab-tables .nav.active").trigger("click");
+		})
+	})
 	
+	
+	$(".current-open-orders-table tbody").on("click", "tr td.cancelOrder", function(e)
+	{
+		var quoteid = $(this).parent().attr("data-quoteid");
+		var $thisScope = $(this);
+
+		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
+		{
+			IDEX.currentOpenOrders();
+		})
+	})
+	
+
+	$("#marketTable tbody").on("click", "tr", function()
+	{
+		IDEX.changePair($(this).attr("data-baseid"), $(this).attr("data-relid"));
+		$(".md-overlay").trigger("click");
+	})
+	
+
 	return IDEX;
 	
 	
