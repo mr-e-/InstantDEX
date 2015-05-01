@@ -36,15 +36,34 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 
 
-	IDEX.Orderbook = function(obj) 
+	IDEX.OrderbookVar = function(obj) 
 	{	
 		this.nxtRS = "";
 		this.pair = "";
 		this.orderbookID = "";
 		this.baseAsset = "";
 		this.relAsset = "";
+		
 		this.asks = [];
 		this.bids = [];
+		this.groupedBids = {};
+		this.groupedAsks = {};
+
+		IDEX.constructFromObject(this, obj);
+	};
+	
+	
+	IDEX.Orderbook = function(obj) 
+	{	
+		this.isStoppingOrderbook = false;
+		this.orderbookAsync = false;
+		this.orderbookTimeout;
+		this.orderbookInit;
+		
+		this.currentOrderbook;
+		this.newOrderbook;
+		
+		
 
 		IDEX.constructFromObject(this, obj);
 	};

@@ -37,7 +37,7 @@ var IDEX = (function(IDEX, $, undefined)
 				nxtIDAndRS.push(data['peers'][index]['RS']);
 			}
 			
-			account.setNXTRS(nxtIDAndRS)
+			account.setNXTRS(nxtIDAndRS);
 		})
 	}
 
@@ -138,7 +138,6 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise();
 	}
 
-	
 	
 	function addAssetID(assets)
 	{
