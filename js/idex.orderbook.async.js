@@ -3,33 +3,35 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	IDEX.Orderbook.prototype.getOrderbookData(timeout)
+	IDEX.Orderbook.prototype.getOrderbookData = function(timeout)
 	{
 		var retDFD = new $.Deferred();
+		var orderbook = this;
 		
-		this.setTimeout(timeout).then(function(wasCleared)
+		orderbook.setTimeout(timeout).then(function(wasCleared)
 		{
-			if (wasCleared)
+			/*if (wasCleared)
 			{
 				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
 			else
+			{*/
+			orderbook.orderbookPost().done(function(orderbookData)
 			{
-				orderbookPost.done(function(orderbookData)
+				console.log(orderbookData);
+				if (!orderbookData)
 				{
-					if (!orderbookData)
-					{
-						retDFD.resolve({}, IDEX.AJAX_FAILED);
-					}
-					else
-					{
-						if ("error" in orderbookData)
-							orderbookData = {};
-						
-						retDFD.resolve(orderbookData, IDEX.OK);
-					}
-				})
-			}
+					retDFD.resolve({}, IDEX.AJAX_FAILED);
+				}
+				else
+				{
+					if ("error" in orderbookData)
+						orderbookData = {};
+					
+					retDFD.resolve(orderbookData, IDEX.OK);
+				}
+			})
+			//}
 		})
 		
 		return retDFD.promise();
@@ -51,11 +53,11 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		this.isWaitingForOrderbook = true;
 		
-		
+		console.log('waiting');
 		IDEX.sendPost(params).done(function(orderbookData)
 		{
 			console.log(orderbookData);
-			
+			console.log('done');
 			this.isWaitingForOrderbook = false;
 			retDFD.resolve(orderbookData);
 			
@@ -71,18 +73,22 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbook.prototype.clearTimeout = function()
 	{
-		clearTimeout(this.orderbookTimeout);
-		this.timeoutDFD.resolve(false)
+		if (this.timeoutDFD)
+		{
+			clearTimeout(this.orderbookTimeout);
+			this.timeoutDFD.resolve(true);
+		}
 	}
 	
 
 	IDEX.Orderbook.prototype.setTimeout = function(timeout)
 	{
 		this.timeoutDFD = new $.Deferred();
+		var orderbook = this;
 		
 		orderbookTimeout = setTimeout(function() 
 		{
-			this.timeoutDFD.resolve(true);
+			orderbook.timeoutDFD.resolve(false);
 		}, timeout)
 		
 		return this.timeoutDFD.promise()

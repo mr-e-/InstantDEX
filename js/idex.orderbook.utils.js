@@ -6,16 +6,16 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.getRowData = function($row, index)
 	{
 		var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? "bids" : "asks";
-		var rowData = index >= IDEX.orderbook[isAsk].length ? null : IDEX.orderbook[isAsk][index];
+		var rowData = index >= IDEX.orderbook.currentOrderbook[isAsk].length ? null : IDEX.orderbook[isAsk][index];
 
 		return rowData;
 	}
 	
 	
-	IDEX.Orderbook.prototype.emptyOrderbook = function(currPair, price)
+	IDEX.Orderbook.prototype.emptyOrderbook = function(basename, relname, price)
 	{
 		price = (typeof price === "undefined") ? '0.0' : price;
-		$("#currPair .order-text").text(currPair);
+		$("#currPair .order-text").text(basename+"/"+relname);
 		$("#buyBook .twrap").empty();
 		$("#sellBook .twrap").empty();
 		$("#currLast .order-text").empty().text(price);

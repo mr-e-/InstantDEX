@@ -46,8 +46,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		this.asks = [];
 		this.bids = [];
-		this.groupedBids = {};
-		this.groupedAsks = {};
 
 		IDEX.constructFromObject(this, obj);
 	};
@@ -56,14 +54,16 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook = function(obj) 
 	{	
 		this.isStoppingOrderbook = false;
-		this.orderbookAsync = false;
+		this.isWaitingForOrderbook = false;
 		this.orderbookTimeout;
 		this.orderbookInit;
+		this.timeoutDFD = false;
 		
 		this.currentOrderbook;
 		this.newOrderbook;
-		
-		
+
+		this.groupedBids = {};
+		this.groupedAsks = {};
 
 		IDEX.constructFromObject(this, obj);
 	};

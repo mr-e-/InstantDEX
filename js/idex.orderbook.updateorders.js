@@ -3,7 +3,7 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 
-	function updateOrders($book, orderData)
+	IDEX.Orderbook.prototype.updateOrders = function($book, orderData)
 	{
 		if (isEmpty)
 			$book.parent().find(".empty-orderbook").show()
