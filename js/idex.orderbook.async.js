@@ -2,45 +2,45 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-		
-	function getOrderbookData()
+	
+	IDEX.Orderbook.prototype.getOrderbookData(timeout)
 	{
-		var dfd = new $.Deferred();
+		var retDFD = new $.Deferred();
 		
-		poll().then(function(wasCleared)
+		this.setTimeout(timeout).then(function(wasCleared)
 		{
 			if (wasCleared)
 			{
-				dfd.resolve("wasCleared")
+				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
-			
 			else
 			{
 				orderbookPost.done(function(orderbookData)
 				{
 					if (!orderbookData)
 					{
-						dfd.resolve("wasError");
+						retDFD.resolve({}, IDEX.AJAX_FAILED);
 					}
 					else
 					{
 						if ("error" in orderbookData)
 							orderbookData = {};
 						
-						dfd.resolve(orderbookData);
+						retDFD.resolve(orderbookData, IDEX.OK);
 					}
 				})
 			}
 		})
 		
-		return dfd.promise()
+		return retDFD.promise();
 	}
 	
 	
-	function orderbookPost()
+	IDEX.Orderbook.prototype.orderbookPost = function()
 	{
-		var dfd = new $.Deferred();
-		var params = {
+		var retDFD = new $.Deferred();
+		var params = 
+		{
 			'requestType':"orderbook", 
 			'baseid':IDEX.user.curBase.assetID, 
 			'relid':IDEX.user.curRel.assetID, 
@@ -49,39 +49,46 @@ var IDEX = (function(IDEX, $, undefined)
 			'showAll':0
 		};
 		
-		orderbookAsync = true;
-		console.log('Waiting for orderbook');
+		this.isWaitingForOrderbook = true;
 		
-		IDEX.sendPost(params).then(function(orderbookData)
+		
+		IDEX.sendPost(params).done(function(orderbookData)
 		{
-			orderbookAsync = false;
-			console.log('Finished waiting for orderbook');
 			console.log(orderbookData);
 			
-			dfd.resolve(orderbookData)
+			this.isWaitingForOrderbook = false;
+			retDFD.resolve(orderbookData);
 			
 		}).fail(function(data)
 		{
-			orderbookAsync = false;
-			dfd.resolve(false)
-
+			this.isWaitingForOrderbook = false;
+			retDFD.resolve(false);
 		})
 		
-		return dfd.promise()
+		return retDFD.promise();
 	}
 
-
-	function poll(timeout)
+	
+	IDEX.Orderbook.prototype.clearTimeout = function()
 	{
-		pollDFD = new $.Deferred();
+		clearTimeout(this.orderbookTimeout);
+		this.timeoutDFD.resolve(false)
+	}
+	
+
+	IDEX.Orderbook.prototype.setTimeout = function(timeout)
+	{
+		this.timeoutDFD = new $.Deferred();
 		
 		orderbookTimeout = setTimeout(function() 
 		{
-			pollDFD.resolve();
+			this.timeoutDFD.resolve(true);
 		}, timeout)
 		
-		return pollDFD.promise()
+		return this.timeoutDFD.promise()
 	}
+	
+	
 	
 	
 	return IDEX;

@@ -2,8 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	
-	
+
 	IDEX.Orderbook.prototype.formatOrderbookData = function(orderbookData)
 	{
 		formatOrderData(orderbookData.bids)

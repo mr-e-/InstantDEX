@@ -17,7 +17,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var order = IDEX.getRowData($(this), rowIndex);
 		var isAsk = order.askoffer ? "Bid" : "Ask";
 		var tab = order.askoffer ? "1" : "2";
-		IDEX.pendingOrder = order;
+		IDEX.user.pendingOrder = order;
 		console.log(order);
 
 		IDEX.buildMakeofferModal($("#"+$("#tempBuyClick").data("modal")), order);

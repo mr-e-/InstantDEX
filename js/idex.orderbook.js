@@ -2,7 +2,11 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-
+	IDEX.OK = 0;
+	IDEX.AJAX_FAILED = 1;
+	IDEX.TIMEOUT_CLEARED = 2;
+	
+	
 	IDEX.Orderbook.prototype.loadNewOrderbook = function()
 	{
 		this.currentOrderbook = new IDEX.OrderbookVar();
@@ -27,7 +31,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 	
-	function stopPollingOrderbook()
+	IDEX.Orderbook.prototype.stopPollingOrderbook = function()
 	{
 		if (orderbookAsync) 
 		{
@@ -36,16 +40,16 @@ var IDEX = (function(IDEX, $, undefined)
 			return false;
 		}
 		
-		clearTimeout(orderbookTimeout);
+		clearTimeout(this.orderbookTimeout);
 		isStoppingOrderbook = false;
 	}
 	
 	
-	function orderbookHandler(timeout)
+	IDEX.Orderbook.prototype.orderbookHandler = function(timeout)
 	{
-		while (isPollingOrderbook)
+		while (this.isPollingOrderbook)
 		{
-			getOrderbookdata(timeout).done(function(orderbookData)
+			this.getOrderbookdata(timeout).done(function(orderbookData)
 			{
 				if (orderbookData == "wasCleared")
 				{

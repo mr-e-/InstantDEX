@@ -22,7 +22,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	function updateLastPrice(orderbookData)
+	IDEX.Orderbook.prototype.updateLastPrice = function(orderbookData)
 	{
 		var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
 		
@@ -30,7 +30,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 
-	function animateOrderbook()
+	IDEX.Orderbook.prototype.animateOrderbook = function()
 	{
 		$(".twrap").find(".order-row.expiredRow").remove();
 		IDEX.updateScrollbar(false)
