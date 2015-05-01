@@ -5,16 +5,17 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.formatOrderbookData = function(orderbookData)
 	{
+		console.log(orderbookData)
 		formatOrderData(orderbookData.bids)
 		formatOrderData(orderbookData.asks)
-		
+		console.log(orderbookData)
 		formatOrderNumbers(orderbookData.bids, orderbookData.asks)
 		
-		this.groupedBids = groupOrders(orderbookData.bids.slice(), IDEX.currentOrderbook.bids.slice());
-		this.groupedAsks = groupOrders(orderbookData.asks.slice(), IDEX.currentOrderbook.asks.slice());
+		this.groupedBids = groupOrders(orderbookData.bids.slice(), this.currentOrderbook.bids.slice());
+		this.groupedAsks = groupOrders(orderbookData.asks.slice(), this.currentOrderbook.asks.slice());
 		
-		formatNewOrders(bidData.newOrders)
-		formatNewOrders(askData.newOrders)
+		formatNewOrders(this.groupedBids.newOrders)
+		formatNewOrders(this.groupedAsks.newOrders)
 	}
 
 	
@@ -38,6 +39,7 @@ var IDEX = (function(IDEX, $, undefined)
 			order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
 			runningTotal = (Number(runningTotal) + Number(order['total'])).toFixed(6);
 			order['sum'] = runningTotal;
+			//console.log(order.price);
 			//console.log(runningTotal)
 		}
 	}

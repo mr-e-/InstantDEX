@@ -5,7 +5,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.updateOrders = function($book, orderData)
 	{
-		if (isEmpty)
+		if ($.isEmptyObject(orderData))
 			$book.parent().find(".empty-orderbook").show()
 		else
 			$book.parent().find(".empty-orderbook").hide()
@@ -13,7 +13,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!($book.find(".order-row").length))
 		{
 			for (var i = 0; i < orderData.newOrders.length; i++)
-				$book.append(orderTooltip(orderData.newOrders[i]['row'], orderData.newOrders[i]))
+				$book.append(orderData.newOrders[i]['row'])
 
 			IDEX.updateScrollbar(true);
 		}

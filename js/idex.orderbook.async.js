@@ -18,7 +18,6 @@ var IDEX = (function(IDEX, $, undefined)
 			{*/
 			orderbook.orderbookPost().done(function(orderbookData)
 			{
-				console.log(orderbookData);
 				if (!orderbookData)
 				{
 					retDFD.resolve({}, IDEX.AJAX_FAILED);
@@ -56,7 +55,7 @@ var IDEX = (function(IDEX, $, undefined)
 		console.log('waiting');
 		IDEX.sendPost(params).done(function(orderbookData)
 		{
-			console.log(orderbookData);
+			//console.log(orderbookData);
 			console.log('done');
 			this.isWaitingForOrderbook = false;
 			retDFD.resolve(orderbookData);

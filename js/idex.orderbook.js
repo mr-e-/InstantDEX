@@ -53,9 +53,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var orderbook = this;
 		
-		this.getOrderbookData(timeout).done(function(errorLevel, orderbookData)
+		this.getOrderbookData(timeout).done(function(orderbookData, errorLevel)
 		{
-			console.log('c');
 			if (errorLevel == IDEX.TIMEOUT_CLEARED)
 			{
 				
@@ -68,7 +67,6 @@ var IDEX = (function(IDEX, $, undefined)
 			else
 			{
 				//orderbookData = new IDEX.OrderbookVar(orderbookData);
-				
 				if ($.isEmptyObject(orderbookData))
 				{
 					IDEX.updateScrollbar(false);
@@ -80,7 +78,8 @@ var IDEX = (function(IDEX, $, undefined)
 				else
 				{
 					orderbook.formatOrderbookData(orderbookData);
-					
+					console.log('a');
+					console.log(orderbook);
 					orderbook.updateOrders($("#buyBook .twrap"), orderbook.groupedBids);
 					orderbook.updateOrders($("#sellBook .twrap"), orderbook.groupedAsks);
 					
