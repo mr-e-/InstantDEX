@@ -3,7 +3,7 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	var SATOSHI = 100000000;
+	IDEX.SATOSHI = 100000000;
 
 	
 	IDEX.compareProp = function(prop)

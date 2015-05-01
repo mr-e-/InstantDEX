@@ -6,7 +6,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.getRowData = function($row, index)
 	{
 		var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? "bids" : "asks";
-		var rowData = index >= IDEX.orderbook.currentOrderbook[isAsk].length ? null : IDEX.orderbook[isAsk][index];
+		var rowData = index >= IDEX.orderbook.currentOrderbook[isAsk].length ? null : IDEX.orderbook.currentOrderbook[isAsk][index];
 
 		return rowData;
 	}

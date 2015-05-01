@@ -5,7 +5,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.formatOrderbookData = function(orderbookData)
 	{
-		console.log(orderbookData)
 		formatOrderData(orderbookData.bids)
 		formatOrderData(orderbookData.asks)
 		console.log(orderbookData)
