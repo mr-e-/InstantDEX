@@ -216,6 +216,19 @@ var IDEX = (function(IDEX, $, undefined)
 		return baseName+"/"+relName;
 	}
 
+	
+	IDEX.cloneListOfObjects = function(listObj)
+	{
+		var len = listObj.length;
+		var clone = [];
+		
+		for (var i = 0; i < len; i++)
+		{
+			clone.push($.extend(true, {}, listObj[i]));
+		}
+		
+		return clone;
+	}
 
 	/*
 	function getBiggestWidth(newBids, newAsks)

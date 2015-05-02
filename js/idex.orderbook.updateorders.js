@@ -41,7 +41,7 @@ var IDEX = (function(IDEX, $, undefined)
 			if (index == oldOrder['index'] && (Number(oldOrder['sum']) != Number(rowData['sum'])))
 			{
 				//console.log(oldOrder)
-				//console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
+				console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
 				$row.find(".order-col").eq(3).text(String(oldOrder.sum));
 			}
 		}

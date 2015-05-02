@@ -7,12 +7,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		formatOrderData(orderbookData.bids);
 		formatOrderData(orderbookData.asks);
+		
+		//formatOrderNumbers(orderbookData.bids, orderbookData.asks);
 
-		formatOrderNumbers(orderbookData.bids, orderbookData.asks);
-		
-		this.groupedBids = groupOrders(orderbookData.bids.slice(), this.currentOrderbook.bids.slice());
-		this.groupedAsks = groupOrders(orderbookData.asks.slice(), this.currentOrderbook.asks.slice());
-		
+		this.groupedBids = groupOrders(IDEX.cloneListOfObjects(orderbookData.bids), IDEX.cloneListOfObjects(this.currentOrderbook.bids));
+		this.groupedAsks = groupOrders(IDEX.cloneListOfObjects(orderbookData.asks), IDEX.cloneListOfObjects(this.currentOrderbook.asks));
+
 		formatNewOrders(this.groupedBids.newOrders)
 		formatNewOrders(this.groupedAsks.newOrders)
 	}
@@ -21,7 +21,7 @@ var IDEX = (function(IDEX, $, undefined)
 	function formatOrderData(orders)
 	{
 		orders.sort(IDEX.compareProp('price')).reverse();
-		
+
 		var len = orders.length;
 		var runningTotal = 0;
 		var isAsk = len && orders[0].askoffer;
@@ -38,8 +38,6 @@ var IDEX = (function(IDEX, $, undefined)
 			order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
 			runningTotal = (Number(runningTotal) + Number(order['total'])).toFixed(6);
 			order['sum'] = runningTotal;
-			//console.log(order.price);
-			//console.log(runningTotal)
 		}
 	}
 	
@@ -82,7 +80,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 				if (IDEX.compObjs(order, currentOrder, ['quoteid']))
 				{
-					order['index'] = currentOrders[j]['index'];
+					order['index'] = currentOrder['index'];
 					//console.log(order['index'])
 					oldOrders.push(order);
 					currentOrders.splice(j, 1);
@@ -96,7 +94,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 
 		expiredOrders = currentOrders;
-		
+		orders = [];
+		currentOrders = [];
 		return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'oldOrders':oldOrders};
 	}
 

@@ -32,7 +32,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (!this.isWaitingForOrderbook)
 		{
-			console.log('a')
+			console.log('refreshing orderbook')
 			this.clearTimeout();
 			this.orderbookHandler(1);
 		}
@@ -46,11 +46,10 @@ var IDEX = (function(IDEX, $, undefined)
 		if (this.isWaitingForOrderbook) 
 		{
 			//this.xhr.abort();
-			//console.log('abort2')
 			this.isStoppingOrderbook = true;
 			setTimeout(function()
 			{ 
-				thisScope.stopPollingOrderbook(callback)
+				thisScope.stopPollingOrderbook(callback);
 			}, 100);
 			return false;
 		}
@@ -63,10 +62,12 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbook.prototype.orderbookHandler = function(timeout)
 	{
-		var orderbook = this;
+		var _this = this;
 		
 		this.getOrderbookData(timeout).done(function(orderbookData, errorLevel)
 		{
+			timeout = 5000;
+			
 			if (errorLevel == IDEX.TIMEOUT_CLEARED)
 			{
 				return;
@@ -78,34 +79,32 @@ var IDEX = (function(IDEX, $, undefined)
 			else if (errorLevel == IDEX.AJAX_ERROR)
 			{
 				$(".empty-orderbook").hide();
-				orderbook.emptyOrderbook("Error loading orderbook");
+				_this.emptyOrderbook("Error loading orderbook");
 			}
 			else
 			{
 				//orderbookData = new IDEX.OrderbookVar(orderbookData);
 				if ($.isEmptyObject(orderbookData))
 				{
-					IDEX.updateScrollbar(false);
-					$("#currLast .order-text").text("0.0");
-					$(".twrap").empty();
+					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
+					_this.emptyOrderbook();
 					$(".empty-orderbook").show();
-					orderbook.currentOrderbook = new IDEX.Orderbook(orderbookData);
+					IDEX.updateScrollbar(false);
 				}
 				else
 				{
-					orderbook.formatOrderbookData(orderbookData);
-					orderbook.updateOrders($("#buyBook .twrap"), orderbook.groupedBids);
-					orderbook.updateOrders($("#sellBook .twrap"), orderbook.groupedAsks);
+					_this.formatOrderbookData(orderbookData);
+					_this.updateOrders($("#buyBook .twrap"), _this.groupedBids);
+					_this.updateOrders($("#sellBook .twrap"), _this.groupedAsks);
 					
-					orderbook.updateLastPrice(orderbookData);
-					orderbook.animateOrderbook();
-					orderbook.currentOrderbook = new IDEX.Orderbook(orderbookData);
+					_this.updateLastPrice(orderbookData);
+					_this.animateOrderbook();
+					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
 				}
 			}
 			
-			timeout = 5000;
-			if (!orderbook.isStoppingOrderbook)
-				orderbook.orderbookHandler(timeout);
+			if (!(_this.isStoppingOrderbook))
+				_this.orderbookHandler(timeout);
 		})
 	}
 	

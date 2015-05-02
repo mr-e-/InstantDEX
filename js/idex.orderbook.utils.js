@@ -22,6 +22,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$("#currLast .order-text").empty().text(price);
 	}
 	
+
 	
 	IDEX.Orderbook.prototype.updateLastPrice = function(orderbookData)
 	{
