@@ -38,7 +38,8 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.buildMakeofferModal = function($modal, order)
 	{
 		$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order");
-		$modal.find(".conf-pair").text(IDEX.currentOrderbook.pair);
+		console.log(order)
+		$modal.find(".conf-pair").text(IDEX.user.curBase.name+"/"+IDEX.user.curRel.name);
 		$modal.find(".conf-exchange").text(order.exchange);
 		$modal.find(".conf-amount").val(order.volume);
 		$modal.find(".conf-price").val(order.price);
@@ -92,13 +93,13 @@ var IDEX = (function(IDEX, $, undefined)
 	$("input.conf-perc").on("keyup", function() 
 	{
 		var perc = $(this).val();
-		var amount = (perc/100) * IDEX.pendingOrder['volume'];
-		//var total = Number(IDEX.pendingOrder['price'])*Number(amount);
+		var amount = (perc/100) * IDEX.user.pendingOrder['volume'];
+		var total = Number(IDEX.user.pendingOrder['price'])*Number(amount);
 		
 		$(".conf-amount").val(amount);
 		$(".conf-total").val(total.toFixed(8));
 		
-		var check = checkPerc(perc, IDEX.pendingOrder['minperc']);
+		var check = checkPerc(perc, IDEX.user.pendingOrder['minperc']);
 		
 		if (!check.length)
 		{

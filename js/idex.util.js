@@ -209,6 +209,12 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return classInstance
 	}
+	
+	
+	IDEX.makeMarketString = function(baseName, relName)
+	{
+		return baseName+"/"+relName;
+	}
 
 
 	/*

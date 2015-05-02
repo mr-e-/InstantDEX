@@ -70,7 +70,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var newOrder = orderData.newOrders[i];
 			var trString = IDEX.addElClass(orderData.newOrders[i]['row'], "newrow");
-			trString = orderTooltip(trString, newOrder)
+			//trString = orderTooltip(trString, newOrder)
 
 			if (Number(newOrder.price) < Number(rowData.price))
 			{

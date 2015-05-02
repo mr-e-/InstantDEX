@@ -5,41 +5,53 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.OK = 0;
 	IDEX.AJAX_FAILED = 1;
 	IDEX.TIMEOUT_CLEARED = 2;
+	IDEX.AJAX_ABORT = 3;
 	
 	
-	IDEX.Orderbook.prototype.loadNewOrderbook = function()
+	IDEX.Orderbook.prototype.loadNewOrderbook = function(base, rel)
 	{
+		this.baseAsset = base;
+		this.relAsset = rel;
 		this.currentOrderbook = new IDEX.OrderbookVar();
-		this.emptyOrderbook(IDEX.user.curBase.name, IDEX.user.curRel.name, "Loading...");
-		var orderbook = this;
+		this.emptyOrderbook("Loading...");
 		IDEX.updateScrollbar(false);
-
-		this.stopPollingOrderbook(function()
+		var thisScope = this;
+		
+		if (!this.isStoppingOrderbook)
 		{
-			$(".empty-orderbook").hide();
-			//orderbook.isPollingOrderbook = true;
-			orderbook.orderbookHandler(1);
-		});
+			this.stopPollingOrderbook(function()
+			{
+				$(".empty-orderbook").hide();
+				thisScope.orderbookHandler(1);
+			});
+		}
 	}
 	
 	
 	IDEX.Orderbook.prototype.refreshOrderbook = function()
 	{
-		if (!orderbookAsync)
+		if (!this.isWaitingForOrderbook)
 		{
-			clearTimeout(orderbookTimeout);
-			//orderbook.isStoppingOrderbook = false;
-			pollOrderbook(1);
+			console.log('a')
+			this.clearTimeout();
+			this.orderbookHandler(1);
 		}
 	}
 
 	
 	IDEX.Orderbook.prototype.stopPollingOrderbook = function(callback)
 	{
+		var thisScope = this;
+		
 		if (this.isWaitingForOrderbook) 
 		{
+			//this.xhr.abort();
+			//console.log('abort2')
 			this.isStoppingOrderbook = true;
-			setTimeout(this.stopPollingOrderbook, 100);
+			setTimeout(function()
+			{ 
+				thisScope.stopPollingOrderbook(callback)
+			}, 100);
 			return false;
 		}
 		
@@ -57,12 +69,16 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			if (errorLevel == IDEX.TIMEOUT_CLEARED)
 			{
-				
+				return;
+			}
+			else if (errorLevel == IDEX.AJAX_ABORT)
+			{
+				return;
 			}
 			else if (errorLevel == IDEX.AJAX_ERROR)
 			{
 				$(".empty-orderbook").hide();
-				orderbook.emptyOrderbook(IDEX.user.curBase.name, IDEX.user.curRel.name, "Error loading orderbook");
+				orderbook.emptyOrderbook("Error loading orderbook");
 			}
 			else
 			{
@@ -78,8 +94,6 @@ var IDEX = (function(IDEX, $, undefined)
 				else
 				{
 					orderbook.formatOrderbookData(orderbookData);
-					console.log('a');
-					console.log(orderbook);
 					orderbook.updateOrders($("#buyBook .twrap"), orderbook.groupedBids);
 					orderbook.updateOrders($("#sellBook .twrap"), orderbook.groupedAsks);
 					

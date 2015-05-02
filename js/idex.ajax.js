@@ -4,9 +4,8 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	var snURL = "http://127.0.0.1:7777";
 	var nxtURL = "http://127.0.0.1:7876/nxt?";
-	IDEX.xhr;
 
-	IDEX.sendPost = function(params, isNXT) 
+	IDEX.sendPost = function(params, isNXT, callback) 
 	{
 		var dfd = new $.Deferred();
 		var url = isNXT ? nxtURL : snURL;
@@ -17,31 +16,45 @@ var IDEX = (function(IDEX, $, undefined)
 			data: params,
 		};
 		
-		IDEX.xhr = $.ajax(ajaxSettings);
+		var xhr = $.ajax(ajaxSettings);
 		
-		IDEX.xhr.done(function(data)
+		xhr.done(function(data)
 		{
 			data = $.parseJSON(data);
 			//console.log(params)
 			//console.log(JSON.stringify(data))
 			dfd.resolve(data);
-			
+			if (callback)
+				callback(data);
 		})
 		
-		IDEX.xhr.fail(function(data)
+		xhr.fail(function(data)
 		{
-			var name = isNXT ? "NXT" : "SuperNET";
-			var message = "Could not connect to " + name;
-			
-			$.growl.error({'message':message, 'location':"tl"});
+			if (data.statusText == "abort")
+			{
+				data = "abort";
+			}
+			else
+			{
+				var name = isNXT ? "NXT" : "SuperNET";
+				var message = "Could not connect to " + name;
+				$.growl.error({'message':message, 'location':"tl"});
+			}
+
 
 			//console.log(params);
 			//console.log(data);
 			
 			dfd.reject(data);
+			if (callback)
+				callback("fail");
 		})
-
-		return dfd.promise();
+		
+		
+		if (callback)
+			return xhr;
+		else
+			return dfd.promise();
 	}
 
 

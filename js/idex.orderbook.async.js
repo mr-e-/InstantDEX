@@ -6,31 +6,35 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.getOrderbookData = function(timeout)
 	{
 		var retDFD = new $.Deferred();
-		var orderbook = this;
-		
-		orderbook.setTimeout(timeout).then(function(wasCleared)
+		var thisScope = this;
+
+		thisScope.setTimeout(timeout).then(function(wasCleared)
 		{
-			/*if (wasCleared)
+			if (wasCleared)
 			{
 				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
 			else
-			{*/
-			orderbook.orderbookPost().done(function(orderbookData)
 			{
-				if (!orderbookData)
+				thisScope.orderbookPost().done(function(orderbookData)
 				{
-					retDFD.resolve({}, IDEX.AJAX_FAILED);
-				}
-				else
-				{
-					if ("error" in orderbookData)
-						orderbookData = {};
-					
-					retDFD.resolve(orderbookData, IDEX.OK);
-				}
-			})
-			//}
+					if (orderbookData == "fail")
+					{
+						retDFD.resolve({}, IDEX.AJAX_ERROR);
+					}
+					else if (thisScope.isStoppingOrderbook)
+					{
+						retDFD.resolve({}, IDEX.AJAX_ABORT);
+					}
+					else
+					{
+						if ("error" in orderbookData)
+							orderbookData = {};
+						
+						retDFD.resolve(orderbookData, IDEX.OK);
+					}
+				})
+			}
 		})
 		
 		return retDFD.promise();
@@ -40,30 +44,30 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.orderbookPost = function()
 	{
 		var retDFD = new $.Deferred();
+		var thisScope = this;
 		var params = 
 		{
 			'requestType':"orderbook", 
-			'baseid':IDEX.user.curBase.assetID, 
-			'relid':IDEX.user.curRel.assetID, 
+			'baseid':this.baseAsset.assetID, 
+			'relid':this.relAsset.assetID, 
 			'allfields':1,
 			'maxDepth':25,
 			'showAll':0
 		};
 		
 		this.isWaitingForOrderbook = true;
+		console.log('starting orderbook ajax');
 		
-		console.log('waiting');
-		IDEX.sendPost(params).done(function(orderbookData)
+		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
 		{
-			//console.log(orderbookData);
-			console.log('done');
-			this.isWaitingForOrderbook = false;
-			retDFD.resolve(orderbookData);
+			console.log(orderbookData);
+			console.log('finished orderbook ajax');
 			
-		}).fail(function(data)
-		{
-			this.isWaitingForOrderbook = false;
-			retDFD.resolve(false);
+			//if (orderbookData == "abort")
+			//	orderbookData = false;
+
+			thisScope.isWaitingForOrderbook = false;
+			retDFD.resolve(orderbookData);
 		})
 		
 		return retDFD.promise();
@@ -74,8 +78,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (this.timeoutDFD)
 		{
+			console.log('clearTimeout')
 			clearTimeout(this.orderbookTimeout);
 			this.timeoutDFD.resolve(true);
+			this.timeoutDFD = false;
 		}
 	}
 	
@@ -85,12 +91,15 @@ var IDEX = (function(IDEX, $, undefined)
 		this.timeoutDFD = new $.Deferred();
 		var orderbook = this;
 		
-		orderbookTimeout = setTimeout(function() 
+		console.log("starting setTimeout " + String(timeout));
+		this.orderbookTimeout = setTimeout(function() 
 		{
+			console.log("finished setTimeout " + String(timeout));
 			orderbook.timeoutDFD.resolve(false);
+			orderbook.timeoutDFD = false;
 		}, timeout)
 		
-		return this.timeoutDFD.promise()
+		return this.timeoutDFD.promise();
 	}
 	
 	

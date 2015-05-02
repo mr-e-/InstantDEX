@@ -12,12 +12,13 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.Orderbook.prototype.emptyOrderbook = function(basename, relname, price)
+	IDEX.Orderbook.prototype.emptyOrderbook = function(price)
 	{
 		price = (typeof price === "undefined") ? '0.0' : price;
-		$("#currPair .order-text").text(basename+"/"+relname);
+		
 		$("#buyBook .twrap").empty();
 		$("#sellBook .twrap").empty();
+		$("#currPair .order-text").text(this.baseAsset.name+"/"+this.relAsset.name);
 		$("#currLast .order-text").empty().text(price);
 	}
 	

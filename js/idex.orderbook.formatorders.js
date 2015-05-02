@@ -5,10 +5,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.formatOrderbookData = function(orderbookData)
 	{
-		formatOrderData(orderbookData.bids)
-		formatOrderData(orderbookData.asks)
-		console.log(orderbookData)
-		formatOrderNumbers(orderbookData.bids, orderbookData.asks)
+		formatOrderData(orderbookData.bids);
+		formatOrderData(orderbookData.asks);
+
+		formatOrderNumbers(orderbookData.bids, orderbookData.asks);
 		
 		this.groupedBids = groupOrders(orderbookData.bids.slice(), this.currentOrderbook.bids.slice());
 		this.groupedAsks = groupOrders(orderbookData.asks.slice(), this.currentOrderbook.asks.slice());
@@ -58,8 +58,8 @@ var IDEX = (function(IDEX, $, undefined)
 			var asks = allNumbers.splice(len);
 			var bids = allNumbers;
 			
-			newBids = IDEX.setListObjVals(newBids, key, bids)
-			newAsks = IDEX.setListObjVals(newAsks, key, asks)
+			newBids = IDEX.setListObjVals(newBids, key, bids);
+			newAsks = IDEX.setListObjVals(newAsks, key, asks);
 		}
 
 	}
@@ -132,9 +132,9 @@ var IDEX = (function(IDEX, $, undefined)
 		var exchange = rowData['exchange']
 		
 		if (exchange == "InstantDEX" || exchange == "nxtae")
-			nxt = IDEX.toRS(rowData['NXT'])
+			nxt = IDEX.toRS(rowData['NXT']);
 		else
-			return row
+			return row;
 		
 		return $(row).tooltipster(
 		{

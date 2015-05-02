@@ -58,6 +58,7 @@ var IDEX = (function(IDEX, $, undefined)
 		this.orderbookTimeout;
 		this.orderbookInit;
 		this.timeoutDFD = false;
+		this.xhr = false;
 		
 		this.currentOrderbook;
 		this.newOrderbook;
@@ -93,7 +94,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var __construct = function(that, constructorObj)
 		{
-			var asset = IDEX.user.getAssetInfo("assetID", constructorObj['assetID'])
+			var asset = IDEX.user.getAssetInfo("assetID", constructorObj['assetID']);
 			
 			if (asset)
 			{
@@ -142,15 +143,15 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Chart = function(obj) 
 	{
-		this.baseid = "6854596569382794790"
-		this.relid = "6932037131189568014"
-		this.basename = "SkyNET"
-		this.relname = "jl777hodl"
-		this.numticks = "5"
-		this.numbars = "100"
-		this.isvirtual = false
-		this.flip = false
-		this.isNew = false
+		this.baseid = "6854596569382794790";
+		this.relid = "6932037131189568014";
+		this.basename = "SkyNET";
+		this.relname = "jl777hodl";
+		this.numticks = "5";
+		this.numbars = "100";
+		this.isvirtual = false;
+		this.flip = false;
+		this.isNew = false;
 		
 		IDEX.constructFromObject(this, obj);
 	}
