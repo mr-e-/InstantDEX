@@ -60,7 +60,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
 		{
-			console.log(orderbookData);
+			//console.log(orderbookData);
 			console.log('finished orderbook ajax');
 			
 			//if (orderbookData == "abort")
@@ -78,7 +78,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (this.timeoutDFD)
 		{
-			console.log('clearTimeout')
+			//console.log("clearTimeout")
 			clearTimeout(this.orderbookTimeout);
 			this.timeoutDFD.resolve(true);
 			this.timeoutDFD = false;
@@ -91,10 +91,10 @@ var IDEX = (function(IDEX, $, undefined)
 		this.timeoutDFD = new $.Deferred();
 		var orderbook = this;
 		
-		console.log("starting setTimeout " + String(timeout));
+		//console.log("starting setTimeout " + String(timeout));
 		this.orderbookTimeout = setTimeout(function() 
 		{
-			console.log("finished setTimeout " + String(timeout));
+			//console.log("finished setTimeout " + String(timeout));
 			orderbook.timeoutDFD.resolve(false);
 			orderbook.timeoutDFD = false;
 		}, timeout)

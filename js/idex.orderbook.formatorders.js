@@ -94,8 +94,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 
 		expiredOrders = currentOrders;
-		orders = [];
-		currentOrders = [];
+
 		return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'oldOrders':oldOrders};
 	}
 

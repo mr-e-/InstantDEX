@@ -6,13 +6,16 @@ var IDEX = (function(IDEX, $, undefined)
 	//$button.prop('disabled', true);
 	//"perc":$(".conf-perc").val();
 	//$button.prop('disabled', false);
-
-	IDEX.makeOffer = function()
+	
+	$(".conf-confirm").on("click", function()
 	{
-		var params = {"requestType":"makeoffer3"};
-		
-		params = IDEX.buildPostPayload(IDEX.user.pendingOrder, "makeoffer3")
-		
+		IDEX.makeOffer() 
+	})
+	
+	IDEX.makeOffer = function()
+	{	
+		params = IDEX.buildPostPayload("makeoffer3", IDEX.user.pendingOrder)
+		params['perc'] = $(".conf-perc").val();
 		console.log(params);
 		//console.log(JSON.stringify(params, null, 4))
 		
@@ -28,6 +31,9 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
+				var message = "makeoffer placed!"
+				$.growl.error({'message':message, 'location':"tl"});
+				
 				console.log("success");
 				$(".md-overlay").trigger("click");
 			}

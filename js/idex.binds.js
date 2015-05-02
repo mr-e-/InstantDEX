@@ -109,10 +109,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	//$(".info-tabs li").on("click", IDEX.currentOpenOrders)		
-	$(".conf-confirm").on("click", function()
-	{
-		IDEX.makeOffer() 
-	})
+
 		
 		
 	return IDEX;
