@@ -1,64 +1,63 @@
 
-var IDEX = (function(IDEX, $, undefined) {
+var IDEX = (function(IDEX, $, undefined)
+{
 
-
-	IDEX.isInsidePlot = function (event, chart2)
+	IDEX.isInsidePlot = function (eX, eY, chart)
 	{
-		var chart =	 $('#chartArea').highcharts()
-		if (typeof chart2 !== "undefined")
-		{
-			chart = chart2
-		}
 		var container = $(chart.container);
 		var offset = container.offset();
-		var x = event.clientX - chart.plotLeft - offset.left;
-		var y = event.clientY - chart.plotTop - offset.top;
+		var x = eX - chart.plotLeft - offset.left;
+		var y = eY - chart.plotTop - offset.top;
 		
 		return chart.isInsidePlot(x, y);
 	}
 
-	$("#chartArea, .mini-chart-area-4").on('mousewheel DOMMouseScroll', function(event) 
+	
+	function zoomChart(chart, isZoomOut)
 	{
-		event.preventDefault()
-		var chart =	 $('#chartArea').highcharts()
-		chart = $(this).highcharts()
-		if (!chart)
-			return
+		var curMax = chart.xAxis[0]['max'];
+		var curMin = chart.xAxis[0]['min'];
+		var dataMax = chart.xAxis[0]['dataMax'];
+		var dataMin = chart.xAxis[0]['dataMin'];
+		var diff = (curMax - curMin) / 10;
+		   
+		if (isZoomOut)
+			chart.xAxis[0].setExtremes((curMin-diff > dataMin) ? curMin-diff : dataMin, curMax, true, false);
+		else
+			chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
+	}
+	
+	
+	$("#chartArea, .mini-chart-area-4").on('mousewheel DOMMouseScroll', function(e)
+	{
+		e.preventDefault();
+	
+		var chart = $(this).highcharts();
 		
-		if ("type" in event && event.type == "DOMMouseScroll")
+		if ("type" in e && e.type == "DOMMouseScroll")
 		{
-			event = event['originalEvent']
-			event['originalEvent'] = {}
-			if (event['detail'] > 0 )
-			{
-				event['originalEvent']['wheelDeltaY'] = -1
-			}
-			else
-			{
-				event['originalEvent']['wheelDeltaY'] = 1
-			}
+			var wheelDeltaY = e['originalEvent']['detail'] > 0 ? -1 : 1;
+			var clientX = e['originalEvent']['clientX'];
+			var clientY = e['originalEvent']['clientY'];
+		}
+		else
+		{
+			var wheelDeltaY = e.originalEvent.wheelDeltaY;
+			var clientX = e['clientX'];
+			var clientY = e['clientY'];
 		}
 		
-		if (IDEX.isInsidePlot(event, chart))
+		if (chart && IDEX.isInsidePlot(clientX, clientY, chart))
 		{
-			var curMax = chart.xAxis[0]['max']
-			var curMin = chart.xAxis[0]['min']
-			var dataMax = chart.xAxis[0]['dataMax']
-			var dataMin = chart.xAxis[0]['dataMin']
-			var diff = curMax - curMin
-			diff /= 10				   
-			if (event.originalEvent.wheelDeltaY < 0)
-			{
-				chart.xAxis[0].setExtremes((curMin-diff > dataMin) ? curMin-diff : dataMin, curMax, true, false);
-			}
-			else if (event.originalEvent.wheelDeltaY > 0)
-			{
-				chart.xAxis[0].setExtremes((curMin+diff < curMax) ? curMin+diff : curMin, curMax, true, false);
-			}
+			var isZoomOut = wheelDeltaY < 0;
+			
+			zoomChart(chart, isZoomOut);
 		}
-	});
+	})
+	
 	
 	
 	return IDEX;
+	
 	
 }(IDEX || {}, jQuery));

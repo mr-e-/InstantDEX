@@ -8,7 +8,8 @@ var IDEX = (function(IDEX, $, undefined)
 	var prevIndex;
 	var btcwKeys = [3,5,6,4,7]
 	var skynetKeys = [3,4,5,6,8]
-
+	var currentChart;
+	
 	IDEX.OHLC = function(obj) 
 	{
 		var __construct = function(that) 
@@ -20,32 +21,6 @@ var IDEX = (function(IDEX, $, undefined)
 			that.close = obj[4]
 		}(this)
 	}
-	
-	IDEX.Chart = function(obj) 
-	{
-		this.baseid = "6854596569382794790"
-		this.relid = "6932037131189568014"
-		this.basename = "SkyNET"
-		this.relname = "jl777hodl"
-		this.numticks = "5"
-		this.numbars = "100"
-		this.isvirtual = false
-		this.flip = false
-		this.isNew = false
-		
-		var __construct = function(that) 
-		{
-			if (obj)
-			{
-				for (var key in obj)
-				{
-					that[key] = obj[key]
-				}
-			}
-		}(this)
-	}
-	
-	var currentChart = new IDEX.Chart()
 
 	var statAttr=
 	{
@@ -133,7 +108,6 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		siteOptions = (typeof siteOptions === "undefined") ? {} : siteOptions;
 		currentChart = new IDEX.Chart(siteOptions)
-	
 		if (currentChart.isNew)
 		{
 			resetDropdown();
@@ -330,7 +304,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var offset = $('#chartArea').offset();
 		var x = event.pageX - offset.left;
 		var y = event.pageY - offset.top	
-		if (IDEX.isInsidePlot(event))
+		if (IDEX.isInsidePlot(event.clientX, event.clientY, chart))
 		{
 			var pointRange = chart.series[0].pointRange
 			var closestTime = Number(chart.xAxis[0].toValue(x).toFixed())

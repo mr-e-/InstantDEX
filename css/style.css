@@ -722,12 +722,12 @@ form {
 }
 
 .conf-input {
-    width: 90%;
+    width: 85%;
     height: 25px;
 }
 
 .conf-input-addon {
-    width: 9.97%;
+    width: 15%;
     border: inset 1px;
     padding: 2px;
     margin-left: -4px;
@@ -1589,13 +1589,13 @@ table.dataTable tbody th, table.dataTable tbody td{
 	bottom:0px;
 }
 
-.current-open-orders-table {
+#marketOpenOrdersTable {
 	margin-top:10px;
 	width:100%;
 	border-collapse:collapse;
 }
 
-.current-open-orders-table th {
+#marketOpenOrdersTable th {
 	padding-bottom:7px;
 }
 
@@ -1608,15 +1608,15 @@ table.dataTable tbody th, table.dataTable tbody td{
 	color:transparent;
 }*/
 
-.current-open-orders-table tr {
+#marketOpenOrdersTabletr {
 	border-bottom: 1px solid #232323;
 }
 
-.current-open-orders-table td {
+#marketOpenOrdersTable td {
 	text-align:center;
 }
 
-.current-open-orders-table tbody td {
+#marketOpenOrdersTable tbody td {
 	text-align:center;
 	padding:4px;
 }
