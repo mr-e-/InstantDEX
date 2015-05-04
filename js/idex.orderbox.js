@@ -5,6 +5,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 //					IDEX.currentOpenOrders();
 //					IDEX.refreshOrderbook();
+
+	
 	IDEX.placeOrder = function(params)
 	{
 		var balanceToCheck = (params['requestType'] == "placebid") ? params['relid'] : params['baseid'];

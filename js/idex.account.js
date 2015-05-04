@@ -137,6 +137,60 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return dfd.promise();
 	}
+	
+	IDEX.Account.prototype.pollOpenOrders = function(timeout)
+	{
+		var account = this;
+		timeout = typeof timeout === "undefined" ? 1 : timeout;
+
+		this.setTimeout(timeout).done(function(a)
+		{
+			IDEX.makeTable("marketOpenOrdersTable", function()
+			{
+				timeout = 4000;
+				account.pollOpenOrders(timeout);
+			});
+		})
+	}
+	
+	IDEX.Account.prototype.stopPollingOpenOrders = function()
+	{
+		
+	}
+	
+	IDEX.Account.prototype.refreshOpenOrdersPoll = function()
+	{
+		
+	}
+	
+	IDEX.Account.prototype.setTimeout = function(timeout)
+	{
+		this.timeoutDFD = new $.Deferred();
+		var account = this;
+		//console.log(account.timeoutDFD);
+
+		this.openOrdersTimeout = setTimeout(function() 
+		{
+			account.timeoutDFD.resolve(false);
+			account.timeoutDFD = false;
+			
+		}, timeout)
+		
+		return this.timeoutDFD.promise();
+	}
+	
+	IDEX.Account.prototype.clearTimeout = function()
+	{
+		if (this.timeoutDFD)
+		{
+			//console.log("clearTimeout")
+			clearTimeout(this.openOrdersTimeout);
+			this.timeoutDFD.resolve(true);
+			this.timeoutDFD = false;
+		}
+	}
+	
+	//$(".info-tabs li").on("click", IDEX.currentOpenOrders)	
 
 	
 	function addAssetID(assets)

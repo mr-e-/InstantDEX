@@ -101,10 +101,10 @@ var IDEX = (function(IDEX, $, undefined)
 					_this.animateOrderbook();
 					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
 				}
+				if (!(_this.isStoppingOrderbook))
+					_this.orderbookHandler(timeout);
 			}
 			
-			if (!(_this.isStoppingOrderbook))
-				_this.orderbookHandler(timeout);
 		})
 	}
 	

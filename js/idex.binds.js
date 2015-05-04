@@ -48,39 +48,50 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$(this).removeClass("order-button-mousedown")
 	})
-		
+
 	
-	
-	$(".idex-submit").on("click", function()
+	$("#open_orderbook_button").on("click", function()
 	{
 		var $form = $("#" + $(this).attr("data-form"));
-		var method = $(this).attr("data-method");
-		var params = IDEX.extractPostPayload($(this));
-		params = IDEX.buildPostPayload(method, params);
+		var params = getPostPayload($(this), "orderbook");
 
-		if (method == "orderbook")
+		if (IDEX.changeMarket(params.baseid, params.relid))
 		{
-			IDEX.loadOrderbook(params.baseid, params.relid);
-		}
-		else if (method == "placebid" || method == "placeask")
-		{
-			params['baseid'] = IDEX.user.curBase.assetID;
-			params['relid'] = IDEX.user.curRel.assetID;
-			params['duration'] = IDEX.user.options['duration'];
-			params['minperc'] = Number(IDEX.user.options['minperc']);
-			IDEX.placeOrder(params);
+			$form.trigger("reset");
+			$(".md-overlay").trigger("click");
 		}
 		else
 		{
-			IDEX.sendPost(params);
-		}
 
-		if ($form)
-			$form.trigger("reset");
+		}
 		
-		$(".md-overlay").trigger("click");
 	})
 	
+	$(".place-order-button").on("click", function()
+	{
+		var $form = $("#" + $(this).attr("data-form"));
+		var params = getPostPayload($(this));
+		
+		params['baseid'] = IDEX.user.curBase.assetID;
+		params['relid'] = IDEX.user.curRel.assetID;
+		params['duration'] = IDEX.user.options['duration'];
+		params['minperc'] = Number(IDEX.user.options['minperc']);
+		
+		IDEX.placeOrder(params);
+		
+		$form.trigger("reset");
+	})
+	
+	
+	function getPostPayload($element, method)
+	{
+		method = typeof method === "undefined" ? $element.attr("data-method") : method;
+		var params = IDEX.extractPostPayload($element);
+		params = IDEX.buildPostPayload(method, params);
+		
+		return params;
+	}	
+
 	
 	$("#expand_orderbook_button").on("click", function()
 	{
@@ -107,8 +118,7 @@ var IDEX = (function(IDEX, $, undefined)
 		//$.growl.notice({'message':"Order placed", 'location':"bl"});
 	*/
 	
-
-	//$(".info-tabs li").on("click", IDEX.currentOpenOrders)		
+	
 
 		
 		

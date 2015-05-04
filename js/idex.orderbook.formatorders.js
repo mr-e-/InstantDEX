@@ -8,7 +8,7 @@ var IDEX = (function(IDEX, $, undefined)
 		formatOrderData(orderbookData.bids);
 		formatOrderData(orderbookData.asks);
 		
-		//formatOrderNumbers(orderbookData.bids, orderbookData.asks);
+		formatOrderNumbers(orderbookData.bids, orderbookData.asks);
 
 		this.groupedBids = groupOrders(IDEX.cloneListOfObjects(orderbookData.bids), IDEX.cloneListOfObjects(this.currentOrderbook.bids));
 		this.groupedAsks = groupOrders(IDEX.cloneListOfObjects(orderbookData.asks), IDEX.cloneListOfObjects(this.currentOrderbook.asks));

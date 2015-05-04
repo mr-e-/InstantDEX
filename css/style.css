@@ -559,7 +559,7 @@ form {
 }
 
 
-#marketTable tbody tr:hover {
+#allOrderbooksTable tbody tr:hover {
 	cursor: pointer;
 	background: #FF9B00;
     /*background: rgb(240,230,210);*/

@@ -13,12 +13,23 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 
 	
-	IDEX.makeTable = function(tableName)
+	IDEX.makeTable = function(tableName, callback)
 	{
 		var table = tables[tableName];
+		/*if (table.isDataTable)
+		{
+			var $modalTable = $("#"+tableName);
+			var newDataTable = $modalTable.DataTable();
+			setTimeout(function(){
+				newDataTable.clear();
+				newDataTable.columns.adjust();
+			}, 1)
+		}*/
 		getTableData(table).done(function(tableData)
 		{
 			buildTable(table, tableName, tableData);
+			if (callback)
+				callback();
 		})
 	}
 	
@@ -240,21 +251,21 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$(".current-open-orders-table tbody").on("click", "tr td.cancelOrder", function(e)
+	$("#marketOpenOrdersTable tbody").on("click", "tr td.cancelOrder", function(e)
 	{
 		var quoteid = $(this).parent().attr("data-quoteid");
 		var $thisScope = $(this);
 
 		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
 		{
-			IDEX.currentOpenOrders();
+			//IDEX.currentOpenOrders();
 		})
 	})
 	
 
-	$("#marketTable tbody").on("click", "tr", function()
+	$("#allOrderbooksTable tbody").on("click", "tr", function()
 	{
-		IDEX.changePair($(this).attr("data-baseid"), $(this).attr("data-relid"));
+		IDEX.changeMarket($(this).attr("data-baseid"), $(this).attr("data-relid"));
 		$(".md-overlay").trigger("click");
 	})
 	

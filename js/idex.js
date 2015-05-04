@@ -115,6 +115,8 @@ var IDEX = (function(IDEX, $, undefined)
 		this.nxtID = "";
 		this.balances = {};
 		this.openOrders = [];
+		this.timeoutDFD = false;
+		this.openOrdersTimeout;
 		
 		IDEX.constructFromObject(this, obj);
 	};
