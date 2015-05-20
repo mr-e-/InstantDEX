@@ -100,7 +100,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				if (baseID != IDEX.user.favorites[id].asset)
 				{
-					var divid = $("#chart-curr-"+id).closest(".mini-chart").find(".mini-chart-area-4").attr('id');
+					var divid = $("#chart-curr-"+id).closest(".fav-market-chart-cell").find(".fav-pair").attr('id');
 					
 					if (baseID != "-1" && relID != "-1")
 						IDEX.makeMiniChart(baseID, relID, divid);

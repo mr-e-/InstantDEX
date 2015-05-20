@@ -1,42 +1,39 @@
 <!doctype html>
 <html lang="en" class="no-js">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<!--<link href='http://fonts.googleapis.com/css?family=Open+Sans:200,300,400,600,700' rel='stylesheet' type='text/css'>-->
-	<!--<link rel="stylesheet" href="css/reset.css">--> <!-- CSS reset TEST-->
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.growl.css" />
 	<link rel="stylesheet" type="text/css" href="css/perfect-scrollbar/perfect-scrollbar.css" />
 	<link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
 	<link rel="stylesheet" type="text/css" href="css/DataTables-1.10.6/css/jquery.dataTables.css" />
-	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
+	<link rel="stylesheet" href="css/style.css">
 
     <link rel="icon" href="img/favicon.ico" type="img/x-icon" />
-	<script src="js/modernizr.js"></script> <!-- Modernizr -->
+
+	<script src="js/modernizr.js"></script>
     <script src="js/jquery-2.1.1.js"></script>
 	<script src="js/jquery.tooltipster.min.js"></script>
 	<script src="js/jquery.tablesorter.min.js"></script> 
 	<script src="js/modal/classie.js"></script>
     <script src="js/sorttable.js"></script>
-	<script src="js/lib.js"></script>
-	<script src="js/main.js"></script> <!-- Resource jQuery -->
 	<script src="js/jquery-ui/jquery-ui.min.js"></script>
 	<script src="js/jquery.growl.js"></script>
 	
 	<title>instantDEX Beta</title>
-	<!--TOOLTIP SETTINGS-->
     <script>
-        $(document).ready(function() {
+        $(document).ready(function()
+		{
             $('.tooltip').tooltipster({
 				delay: 1200,
 				position: 'bottom'
 			});
         });
-    </script>
-	<!--END OF TOOLTIP SETTINGS-->   
+    </script>  
 </head>
 
 <body>
@@ -154,7 +151,7 @@
 						</span>
 					</div>
 					
-					<div class="fav-market-ticker-cell-top-bottom">
+					<div class="fav-market-ticker-cell-bottom">
 						<span class="chart-text-bottom text-red">0.00</span>
 					</div>
 					
@@ -308,7 +305,7 @@
 								<div class="fav-market-chart-percent">0%</div>
 							</div>
 							<div class="fav-market-chart-price ok-green">0.00</div>
-							<div class="fav-market-chart-indicator"></div>
+							<div id="fav-market-chart-1" class="fav-market-chart-indicator"></div>
 							
 						</div>
 						
@@ -324,7 +321,7 @@
 							</div>
 							
 							<div class="fav-market-chart-price ok-red">0.00</div>
-							<div class="fav-market-chart-indicator"></div>
+							<div id="fav-market-chart-2" class="fav-market-chart-indicator"></div>
 							
 						</div>
 					
@@ -340,7 +337,7 @@
 							</div>
 							
 							<div class="fav-market-chart-price ok-green">0.00</div>
-							<div class="fav-market-chart-indicator"></div>
+							<div id="fav-market-chart-3" class="fav-market-chart-indicator"></div>
 							
 						</div>
 						
@@ -356,7 +353,7 @@
 							</div>
 							
 							<div class="fav-market-chart-price ok-red">0.00</div>
-							<div class="fav-market-chart-indicator"></div>		
+							<div id="fav-market-chart-4" class="fav-market-chart-indicator"></div>		
 							
 						</div>
 						
@@ -939,7 +936,7 @@
 	<script src="js/perfect-scrollbar/perfect-scrollbar.jquery.js" type="text/javascript"></script>	
 	<script src="js/DataTables-1.10.6/jquery.dataTables.js" type="text/javascript"></script>
 	<script src="js/jquery-ui/jquery.ui.autocomplete.html.js"></script>
-	<script src="js/Highstock-2.1.3/highstock.js"></script>
+	<script src="js/chart/Highstock-2.1.3/highstock.js"></script>
 	<script src="js/nxtaddress.js" type="text/javascript"></script>	
 	
 	

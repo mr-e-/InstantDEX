@@ -3,6 +3,19 @@
 var IDEX = (function(IDEX, $, undefined) 
 {	
 	
+	/*******************TABS*******************/
+	
+    $(".tabs-nav .nav").click(function() 
+	{
+        var el = $(this);
+        var parent = el.closest(".md-content");
+		
+        parent.find(".tabs-nav .nav").removeClass("active");
+        parent.find(".tabs-container > div").removeClass("active");
+        el.addClass("active");
+        $("#"+el.attr("tab-index")).addClass("active");
+    });
+	
 	$(".idex-tabs li").on("mouseup", function()
 	{
 		if (!($(this).hasClass("active")))
@@ -17,15 +30,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$parent.find(".tab-content-wrap[data-tab='"+tab+"']").show();
 		}
 	})
-
-
-	$(".md-modal").on("idexHide", function()
-	{
-		$(this).find(".tabs-container div").removeClass("active").first().addClass("active");
-		$(this).find(".tabs-nav .nav").removeClass("active").first().addClass("active");
-	})
-
-
+	
 	$(".idex-tabs li:not(.active)").on("mousedown", function()
 	{
 		$(this).addClass("idex-mousedown");
@@ -34,7 +39,18 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$(this).removeClass("idex-mousedown");
 	})
+	
 
+	/*******************MODALS*******************/
+	
+	$(".md-modal").on("idexHide", function()
+	{
+		$(this).find(".tabs-container div").removeClass("active").first().addClass("active");
+		$(this).find(".tabs-nav .nav").removeClass("active").first().addClass("active");
+	})
+
+
+	/*******************ORDER BUTTON*******************/
 
 	$(".tab-order-button button").on("mousedown", function()
 	{
@@ -48,25 +64,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$(this).removeClass("order-button-mousedown")
 	})
-
 	
-	$("#open_orderbook_button").on("click", function()
-	{
-		var $form = $("#" + $(this).attr("data-form"));
-		var params = getPostPayload($(this), "orderbook");
 
-		if (IDEX.changeMarket(params.baseid, params.relid))
-		{
-			$form.trigger("reset");
-			$(".md-overlay").trigger("click");
-		}
-		else
-		{
-
-		}
-		
-	})
-	
 	$(".place-order-button").on("click", function()
 	{
 		var $form = $("#" + $(this).attr("data-form"));
@@ -83,15 +82,26 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	function getPostPayload($element, method)
+	/*******************SEARCH ORDERBOOK BUTTON*******************/
+	
+	$("#open_orderbook_button").on("click", function()
 	{
-		method = typeof method === "undefined" ? $element.attr("data-method") : method;
-		var params = IDEX.extractPostPayload($element);
-		params = IDEX.buildPostPayload(method, params);
-		
-		return params;
-	}	
+		var $form = $("#" + $(this).attr("data-form"));
+		var params = getPostPayload($(this), "orderbook");
 
+		if (IDEX.changeMarket(params.baseid, params.relid))
+		{
+			$form.trigger("reset");
+			$(".md-overlay").trigger("click");
+		}
+		else
+		{
+
+		}
+	})
+	
+	
+	/*******************EXPAND ORDERBOOK BUTTON*******************/
 	
 	$("#expand_orderbook_button").on("click", function()
 	{
@@ -100,7 +110,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var classFunc = IDEX.isOrderbookExpanded ? "removeClass" : "addClass";
 		
 		$("#orderBook").css("width", width)
-		$("#miniChartsC").css("display", display)
+		$("#fav-market-chart-area").css("display", display)
 		
 		$(".labels-col")[classFunc]("labels-col-expand")
 		$(".labels-col-extra")[classFunc]("extra-show");
@@ -112,14 +122,58 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 
 	
+	function getPostPayload($element, method)
+	{
+		method = typeof method === "undefined" ? $element.attr("data-method") : method;
+		var params = IDEX.extractPostPayload($element);
+		params = IDEX.buildPostPayload(method, params);
+		
+		return params;
+	}	
+	
+	
+	/*******************CHART CONTROL*******************/
+    
+    function chartControl(obj) 
+	{
+        var chartId = obj.attr("chart-id");
+		
+        $("#chart-curr-"+chartId).html(obj.val());
+    }
+    
+    $(".chart-control").on('input',function() { chartControl($(this)); });
+    
+	
+    $(".chart-panel-pair").mouseover(function()
+	{
+        var num = $(this).attr('chart-number');
+		
+        $(".chart-panel-number[chart-number='"+num+"']").css("color","#FF9B00");
+        $(".chart-number[chart-number='"+num+"']").css("color","#FF9B00");
+    });
+    
+    $(".chart-panel-pair").mouseout(function()
+	{
+        var num = $(this).attr('chart-number');
+		
+        $(".chart-panel-number[chart-number='"+num+"']").css("color","white");
+        $(".chart-number[chart-number='"+num+"']").css("color","white");
+    });
+	
+
+    /** Number Format (comma separated) */
+    $(".bal-num").each(function()
+	{
+        var val = $(this).html();
+		
+        //$(this).html(z.numberFormat(val));
+    });
+	
 	/*
 		//$.growl.error({'message':"Order placed", 'location':"bl"});
 		//$.growl.warning({'message':"Order placed", 'location':"bl"});
 		//$.growl.notice({'message':"Order placed", 'location':"bl"});
 	*/
-	
-	
-
 		
 		
 	return IDEX;

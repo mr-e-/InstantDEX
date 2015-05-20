@@ -28,7 +28,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	$("#chartArea, .mini-chart-area-4").on('mousewheel DOMMouseScroll', function(e)
+	$("#chartArea, .fav-market-chart-indicator").on('mousewheel DOMMouseScroll', function(e)
 	{
 		e.preventDefault();
 	

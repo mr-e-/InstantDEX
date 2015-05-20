@@ -563,21 +563,18 @@ table.dataTable tbody th, table.dataTable tbody td{
 .chart-text { /* INDIVIDUAL BOXED PAIRS */
 	opacity: 1;
 	font-size: .7rem;
-	margin-top: 5px;
 	display: block;
 	cursor: pointer;	
 }
 
 .chart-text-top { /* INDIVIDUAL PRICED PAIRS TOP */
 	font-size: 0.7rem;
-	margin-top: 7px;
 	display: block;
 	cursor: pointer;
 }
 
 .chart-text-bottom { /* INDIVIDUAL PRICED PAIRS BOTTOM */
 	font-size: 0.85rem;
-	margin-top: -2px;
 	display: block;
 	cursor: pointer;
 }
@@ -592,13 +589,14 @@ table.dataTable tbody th, table.dataTable tbody td{
 .fav-market-basic-row { /* INDIVIDUAL BOXED PAIRS */
 	display: block;
 	width: 100%;
-	height: 50px;
+	height: 25px;
 	border-left: inset 1px white;	
 }
 
 .fav-market-basic-cell { /* INDIVIDUAL BOXED PAIRS */
-	width: 50%;
+	width: 49%;
 	height: 100%;
+	display: inline-block;	
 	background: black;
 	text-align: center;
 }
@@ -626,13 +624,14 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:block;
 	height: 50%;
 	width:100%;
+	text-align: center;
 }
 
-.chart-box .chart-number {
+.fav-market-basic-area .chart-number {
 	font-size: 2em;
 }
 
-.chart-sub-box-2 .chart-number {
+.fav-market-ticker-area .chart-number {
 	font-size: 2em;
 }
 
@@ -959,16 +958,16 @@ table.dataTable tbody th, table.dataTable tbody td{
 /* ------------------------- MINICHARTS AREA TOP RIGHT-RIGHT  ------------------------- */
 
 
-.mini-chart .chart-number {
+.fav-market-chart-area .chart-number {
 	font-size: 5em;
 }
 
-/*.mini-chart:last-child:after*/
+/*.mini-chart:last-child:after
 #miniCNum4 {
 	border-bottom: inset 0px white;	
-}
+}*/
 
-.fav-market-chart-pair:hover, .chart-text:hover, .chart-sub-box:hover {
+.fav-market-chart-pair:hover, .fav-pair:hover {
 	cursor:pointer;
 	opacity:0.88 !important;
 }
@@ -1020,7 +1019,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:inline-block;
 }
 	
-.fav-market-chart-price{
+.fav-market-chart-price {
 	font-size: 0.85rem;
 	text-align: center;
 	float:left;

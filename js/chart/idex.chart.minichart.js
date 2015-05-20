@@ -4,11 +4,11 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.loadMiniCharts = function()
 	{
-		$('.mini-chart').each(function()
+		$('.fav-market-chart-cell').each(function()
 		{
-			var baseID = $(this).find(".mini-chart-area-1 span").first().attr("data-asset")
-			var relID = $(this).find(".mini-chart-area-1 span").first().next().attr("data-asset");
-			var divid = $(this).find(".mini-chart-area-4").attr('id');
+			var baseID = $(this).find(".fav-pair span").first().attr("data-asset")
+			var relID = $(this).find(".fav-pair span").first().next().attr("data-asset");
+			var divid = $(this).find(".fav-market-chart-indicator").attr('id');
 			
 			//if (baseID != "-1" && relID != "-1")
 			IDEX.makeMiniChart(baseID, relID, divid);
@@ -56,7 +56,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var range = ((((ee-ss)/60)/60)/24)/2
 			
 			$("#"+divid).prev().removeClass(priceRemoveClass).addClass(priceAddClass).text(data[data.length-1][6]).prev()
-			$("#"+divid).parent().find(".mini-chart-area-2").text(change.toFixed(2)+"%")
+			$("#"+divid).parent().find(".fav-market-chart-percent").text(change.toFixed(2)+"%")
 			
 			var chart2 = new Highcharts.StockChart(
 			{

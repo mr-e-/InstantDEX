@@ -12,10 +12,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.chartInit = false;
 	IDEX.isOrderbookExpanded = false;
 
-	/*IDEX.HTMLElements = {
-		'buyBook':
-		'sellBook':
-	}*/
 
 	IDEX.snPostParams = 
 	{
