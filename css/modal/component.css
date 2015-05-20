@@ -62,8 +62,6 @@
 	visibility: visible;
 }
 
-
-/* Overlay */
 .md-overlay {
     overflow: hidden;
 	position: fixed;
@@ -84,7 +82,6 @@
 	opacity: 1;
 	visibility: visible;
 }
-/* End of Overlay */
 
 /* Modal Content styles */
 .md-content {
@@ -117,10 +114,7 @@
 .md-head, .md-head-mail {
 	width: 100%;
 }
-/* END OF Modal Content Styles */
 
-
-/* Modal effect */
 .md-effect .md-content {
 	-webkit-transform-style: preserve-3d;
 	-moz-transform-style: preserve-3d;
@@ -170,7 +164,6 @@
 	transform: translateZ(0px) translateX(0%) rotateY(0deg);
 	opacity: 1;
 }
-/* End of Modal effect*/
 
 @-webkit-keyframes OpenTop {
 	50% { 
@@ -212,52 +205,6 @@
 	margin-top: 20px;
 	text-align: center;
 }
-
-/*@media (max-width: 1100px) {
-	.md-clear {
-		left: 40%;
-	}
-}
-
-@media (max-width: 900px) {
-    .md-content button {
-        padding: 0.3em 1.2em;
-    }
-}
-
-@media (max-width: 800px) {
-    .md-content button {
-        padding: 0.15em 0.8em;
-        font-size: 75%;
-    }
-    
-    .md-content h3 {
-        font-size: 175%;
-    }
-}
-
-@media (max-width: 750px) {
-	.md-content {
-		padding-bottom: 60px;
-	}
-	
-	.md-button-wrapper {
-		text-align: center;
-		margin-left: auto;
-		margin-right: auto;
-		width: 100px;
-	}
-	
-	.md-content button {
-		width: 100%;
-		float: left;
-		position: inherit;
-	}
-}*/
-
-
-/* END OF Buttons style */
-
 
 /* SEARCH BUTTON */
 
@@ -344,9 +291,6 @@
 	width: 30px !important;
 }
 
-
-
-/* Text Boxes Style */
 .input_type {
 	font-size: .8em;
 	font-family: 'open_sanslight', Fallback, sans-serif;
@@ -354,9 +298,7 @@
 	font-weight: 200;
 	width: 100%;
 }
-/* END OF Text Boxes Style */
 
-/* Form */
 .input_label {
     width: 40%;
     float: left;
@@ -374,19 +316,4 @@
 	resize: none;
 }
 
-/*@media (max-width: 900px) {
-    .input_label,.input_field {
-        font-size: 75%;
-    }
-}
 
-@media (max-width: 750px) {
-    .input_label,.input_field {
-        font-size: 65%;
-    }
-	
-	.input_span {
-		min-height: 50px;
-	}
-}*/
-/* END OF Form */

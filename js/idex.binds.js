@@ -175,7 +175,14 @@ var IDEX = (function(IDEX, $, undefined)
 		//$.growl.notice({'message':"Order placed", 'location':"bl"});
 	*/
 		
-		
+	$(document).ready(function()
+	{
+		$('.tooltip').tooltipster({
+			delay: 1200,
+			position: 'bottom'
+		});
+	});
+	
 	return IDEX;
 	
 	
