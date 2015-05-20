@@ -13,8 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="css/modal/component.css" />
 	<link rel="stylesheet" type="text/css" href="css/DataTables-1.10.6/css/jquery.dataTables.css" />
 	<link rel="stylesheet" href="css/style.css"> <!-- Resource style -->
-	
-	<!--<link rel="stylesheet" type="text/css" href="css/minichart/graph.css" />-->
+
     <link rel="icon" href="img/favicon.ico" type="img/x-icon" />
 	<script src="js/modernizr.js"></script> <!-- Modernizr -->
     <script src="js/jquery-2.1.1.js"></script>
@@ -46,46 +45,47 @@
 	
 		<!--------------------------- HEADER AREA ---------------------->
 		<div id="header" class="unselectable">
+		
 			<div id="topLogoWrap">
 				<img id="topLogo" src="img/logo-hor.svg"></img>
 			</div>
 			
-			<div id="headerAreaIco">
-				<img id="icoCharts" src="img/ico_top_charts.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-04" title="Click to configure your chart settings."></img>
-				<img id="icoLog" src="img/ico_top_logout.svg" class="header-ico fadeSlow tooltip" title="Click to go back to superNET."></img>
-				<img id="icoHam" src="img/ico_top_ham.svg" class="header-ico fadeSlow tooltip md-trigger" data-modal="modal-05" title="Opens the Options menu."></img>
+			<div id="headerConfigIconsWrap">
+				<img id="icoCharts" src="img/ico_top_charts.svg" class="header-config-icon fadeSlow tooltip md-trigger" data-modal="modal-04" title="Click to configure your chart settings."></img>
+				<img id="icoLog" src="img/ico_top_logout.svg" class="header-config-icon fadeSlow tooltip" title="Click to go back to superNET."></img>
+				<img id="icoHam" src="img/ico_top_ham.svg" class="header-config-icon fadeSlow tooltip md-trigger" data-modal="modal-05" title="Opens the Options menu."></img>
 			</div>
 			
-			<div id="miniChartsTop2">
+			<div class="fav-market-basic-area">
 			
-				<div id="miniTopNum5" class="chart-box-2">
+				<div class="fav-market-basic-row">
 				
-					<div id="mTN5A" class="chart-sub-box-2">
+					<div class="fav-market-basic-cell">
 						<span class="chart-text fadeSlow fav-pair">
 							<span id="chart-curr-51">---</span>/<span id="chart-curr-52">---</span>
 						</span>
 						<span class="chart-number fadeSlow" chart-number="5">5</span>
 					</div>
 					
-					<div id="mTN5B" class="chart-sub-box-2">
-						<span class="chart-text fadeSlow fav-pair">
-							<span id="chart-curr-61">---</span>/<span id="chart-curr-62">---</span>
-						</span>
-						<span class="chart-number fadeSlow" chart-number="7">7</span>
-					</div>
-					
-				</div>
-				
-				<div id="miniTopNum6" class="chart-box-2">
-				
-					<div id="mTN6A" class="chart-sub-box-2">
+					<div class="fav-market-basic-cell">
 						<span class="chart-text fadeSlow fav-pair">
 							<span id="chart-curr-71">---</span>/<span id="chart-curr-72">---</span>
 						</span>
 						<span class="chart-number fadeSlow" chart-number="6">6</span>
 					</div>
 					
-					<div id="mTN6B" class="chart-sub-box-2">
+				</div>
+				
+				<div class="fav-market-basic-row">
+				
+					<div class="fav-market-basic-cell">
+						<span class="chart-text fadeSlow fav-pair">
+							<span id="chart-curr-61">---</span>/<span id="chart-curr-62">---</span>
+						</span>
+						<span class="chart-number fadeSlow" chart-number="7">7</span>
+					</div>
+					
+					<div class="fav-market-basic-cell">
 						<span class="chart-text fadeSlow fav-pair">
 							<span id="chart-curr-81">---</span>/<span id="chart-curr-82">---</span>
 						</span>
@@ -96,17 +96,17 @@
 				
 			</div>
 			
-			<div id="miniChartsTop">
+			<div class="fav-market-ticker-area">
 			
-				<div id="miniTopNum1" class="chart-box fadeSlow">
+				<div class="fav-market-ticker-cell fadeSlow">
 				
-					<div id="mTN1A" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-top">
 						<span class="chart-text-top fav-pair">
 							<span id="chart-curr-11">---</span>/<span id="chart-curr-12">---</span>
 						</span>
 					</div>
 					
-					<div id="mTN1B" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-bottom">
 						<span class="chart-text-bottom text-red">0.00</span>
 					</div>
 					
@@ -114,15 +114,15 @@
 
 				</div>
 				
-				<div id="miniTopNum2" class="chart-box fadeSlow">
+				<div class="fav-market-ticker-cell fadeSlow">
 				
-					<div id="mTN2A" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-top">
 						<span class="chart-text-top fav-pair">
 							<span id="chart-curr-21">---</span>/<span id="chart-curr-22">---</span>
 						</span>
 					</div>
 					
-					<div id="mTN2B" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-bottom">
 						<span class="chart-text-bottom text-green">0.00</span>
 					</div>
 					
@@ -130,15 +130,15 @@
 					
 				</div>
 				
-				<div id="miniTopNum3" class="chart-box fadeSlow">
+				<div class="fav-market-ticker-cell fadeSlow">
 				
-					<div id="mTN3A" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-top">
 						<span class="chart-text-top fav-pair">
 							<span id="chart-curr-31">---</span>/<span id="chart-curr-32">---</span>
 						</span>
 					</div>
 					
-					<div id="mTN3B" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-bottom">
 						<span class="chart-text-bottom text-green">0.00</span>
 					</div>
 					
@@ -146,25 +146,28 @@
 					
 				</div>
 				
-				<div id="miniTopNum4" class="chart-box fadeSlow">
+				<div class="fav-market-ticker-cell fadeSlow">
 				
-					<div id="mTN4A" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-top">
 						<span class="chart-text-top fav-pair">
 							<span id="chart-curr-41">---</span>/<span id="chart-curr-42">---</span>
 						</span>
 					</div>
 					
-					<div id="mTN4B" class="chart-sub-box">
+					<div class="fav-market-ticker-cell-top-bottom">
 						<span class="chart-text-bottom text-red">0.00</span>
 					</div>
+					
 					<span class="chart-number fadeSlow" chart-number="4">4</span>
+					
 				</div>
+				
 			</div>
 			
-			<div id="headerAreaIco2" style="">
-				<img id="icoMarkets" src="img/ico_top_markets.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
-				<img id="icoOrders" src="img/ico_top_orders.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
-				<img id="icoFolio" src="img/ico_top_folio.svg" class="header-ico2 fadeSlow tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
+			<div id="headerModalIconsWrap">
+				<img id="icoMarkets" src="img/ico_top_markets.svg" class="header-modal-icon fadeSlow tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
+				<img id="icoOrders" src="img/ico_top_orders.svg" class="header-modal-icon fadeSlow tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
+				<img id="icoFolio" src="img/ico_top_folio.svg" class="header-modal-icon fadeSlow tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
 			</div>
 			
 		</div>
@@ -177,6 +180,7 @@
 			<div id="left_wrap">
 			
 				<div id="left_top_wrap">
+				
 					<div id="mainChart" class="unselectable">
 					
 						<div id="mainChartTop">
@@ -209,10 +213,10 @@
 									<li><span class="dropdown-option">Virtual</span></li>
 								</ul>
 							</div>
-							<div id="headerAreaIco3">
-								<img src="img/ico_top_markets.svg" class="header-ico3 fadeSlowIndy tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
-								<img src="img/ico_top_orders.svg" class="header-ico3 fadeSlowIndy tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
-								<img src="img/ico_top_folio.svg" class="header-ico3 fadeSlowIndy tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
+							<div id="headerModalIconsMinWrap">
+								<img src="img/ico_top_markets.svg" class="header-modal-icon-min fadeSlowIndy tooltip md-trigger" data-modal="modal-01" title="Click to access to the Markets panel."></img>        
+								<img src="img/ico_top_orders.svg" class="header-modal-icon-min fadeSlowIndy tooltip md-trigger" data-modal="modal-02" title="Click to access to the Orders panel."></img>
+								<img src="img/ico_top_folio.svg" class="header-modal-icon-min fadeSlowIndy tooltip md-trigger" data-modal="modal-03" title="Click to access to your Portfolio information panel."></img>
 							</div>
 							
 						</div>
@@ -245,7 +249,7 @@
 								</li>
 							</ul>
 						</div>
-						<div class="idex-tab-content info-tab-content">
+						<div class="idex-tab-content">
 							<div class="tab-content-wrap" data-tab="1">
 								<div class="info-tab-content-top">
 									<table id="marketOpenOrdersTable" class="sortable">
@@ -290,56 +294,72 @@
 			<div id="right_wrap">
 			
 				<div id="right_top_wrap">
-					<div id="miniChartsC" class="unselectable">
-						<div id="miniCNum1" class="mini-chart">
+				
+					<div id="fav-market-chart-area" class="unselectable">
+					
+						<div class="fav-market-chart-cell">
+						
 							<span class="chart-number fadeSlow" chart-number="9">9</span>
 
-							<div class="mini-wrap">
-								<div id="mCN1A" class="mini-chart-area-1 fav-pair">
+							<div class="fav-market-chart-cell-top-wrap">
+								<div class="fav-market-chart-pair fav-pair">
 									<span id="chart-curr-91">---</span>/<span id="chart-curr-92">---</span>
 								</div>
-								<div id="mCN1B" class="mini-chart-area-2">0%</div>
+								<div class="fav-market-chart-percent">0%</div>
 							</div>
-							<div id="mCN1C" class="mini-chart-area-3 ok-green">0.00</div>
-							<div id="mCN1D" class="mini-chart-area-4"></div>
+							<div class="fav-market-chart-price ok-green">0.00</div>
+							<div class="fav-market-chart-indicator"></div>
+							
 						</div>
 						
-						<div id="miniCNum2" class="mini-chart">
+						<div class="fav-market-chart-cell">
+						
 							<span class="chart-number fadeSlow" chart-number="10">10</span>
-							<div class="mini-wrap">
-								<div id="mCN2A" class="mini-chart-area-1 fav-pair">
+
+							<div class="fav-market-chart-cell-top-wrap">
+								<div class="fav-market-chart-pair fav-pair">
 									<span id="chart-curr-101">---</span>/<span id="chart-curr-102">---</span>
 								</div>
-								<div id="mCN2B" class="mini-chart-area-2">0%</div>
+								<div class="fav-market-chart-percent">0%</div>
 							</div>
-							<div id="mCN2C" class="mini-chart-area-3 ok-red">0.00</div>
-							<div id="mCN2D" class="mini-chart-area-4"></div> 
+							
+							<div class="fav-market-chart-price ok-red">0.00</div>
+							<div class="fav-market-chart-indicator"></div>
+							
 						</div>
-						
 					
-						<div id="miniCNum3" class="mini-chart">
+						<div class="fav-market-chart-cell">
+						
 							<span class="chart-number fadeSlow" chart-number="11">11</span>
-							<div class="mini-wrap">
-								<div id="mCN3A" class="mini-chart-area-1 fav-pair">
+
+							<div class="fav-market-chart-cell-top-wrap">
+								<div class="fav-market-chart-pair fav-pair">
 									<span id="chart-curr-111">---</span>/<span id="chart-curr-112">---</span>
 								</div>
-								<div id="mCN3B" class="mini-chart-area-2">0%</div>
+								<div class="fav-market-chart-percent">0%</div>
 							</div>
-							<div id="mCN3C" class="mini-chart-area-3 ok-green">0.00</div>
-							<div id="mCN3D" class="mini-chart-area-4"></div>	
+							
+							<div class="fav-market-chart-price ok-green">0.00</div>
+							<div class="fav-market-chart-indicator"></div>
+							
 						</div>
 						
-						<div id="miniCNum4" class="mini-chart">
+						<div class="fav-market-chart-cell">
+						
 							<span class="chart-number fadeSlow" chart-number="12">12</span>
-							<div class="mini-wrap">
-								<div id="mCN4A" class="mini-chart-area-1 fav-pair">
+
+							<div class="fav-market-chart-cell-top-wrap">
+								<div class="fav-market-chart-pair fav-pair">
 									<span id="chart-curr-121">---</span>/<span id="chart-curr-122">---</span>
 								</div>
-								<div id="mCN4B" class="mini-chart-area-2">0%</div>
+								<div class="fav-market-chart-percent">0%</div>
 							</div>
-							<div id="mCN4C" class="mini-chart-area-3 ok-red">0.00</div>
-							<div id="mCN4D" class="mini-chart-area-4"></div>   			
+							
+							<div class="fav-market-chart-price ok-red">0.00</div>
+							<div class="fav-market-chart-indicator"></div>		
+							
 						</div>
+						
 					</div>
 				
 				<!----- ORDER BOOK AREA ---------------------------------------------------->
@@ -350,8 +370,6 @@
 					
 						<div id="currPair" class="order-big">
 							<span class="order-text">---/---</span>
-							<!--<span id="activePair1">BTC</span>
-							<span id="activePair2">VRC</span>-->
 						</div>
 						
 						<div id="orderbook_labels">
@@ -380,31 +398,36 @@
 							</div>
 							<div class="twrap"></div>
 						</div>
+						
 						<div id="orderbook_footer">
 							<div class="orderbook-button-wrap">
 								<span id="expand_orderbook_button">EXPAND</span>
 								<span>FILTER</span>
-								<!--<span>???</span>
-								<span>???</span>-->
 							</div>
 						</div>
+						
 					</div>
+					
 				</div>
 				
 				<div id="right_bottom_wrap">
 				
 					<div id="orderBox">
+					
 						<div class="idex-tabs-wrapper">
+						
 							<ul class="idex-tabs order-tabs">
+							
 								<li class="fadeSlow active" data-tab="1" active>
 									<span>BUY</span>
 								</li>
+								
 								<li class="fadeSlow" data-tab="2">
 									<span>SELL</span>
 								</li>
 							</ul>
-						
 						</div>
+						
 						<div class="idex-tab-content">
 						
 							<div class="tab-content-wrap" data-tab="1">
@@ -420,6 +443,7 @@
 									</div>
 								
 									<form role="form" id="placeBidForm" autocomplete="off">
+									
 										<div class="order-input-row" style="margin-bottom:5px; margin-top:5px;">
 											<div class="order-input">
 												<div class="order-input-label">
@@ -450,7 +474,9 @@
 												<input disabled type="text" name="total" id="placeBidTotal" placeholder=""></input>
 											</div>
 										</div>
+										
 									</form>
+									
 								</div>
 								
 								<div class="order-tab-content-bottom">
@@ -511,17 +537,20 @@
 										<button class="place-order-button fadeSlowIndy" data-method="placeask" data-form="placeAskForm">SELL</button>
 									</div>
 								</div>
+								
 							</div>
+							
 						</div>
-
 						
 					</div>
+					
 				</div>
 				
 			</div>
 		
 		</div>
-		<!-- Modal Windows -->
+		
+	<!------------------ MODALS ------------------------------->
 		
 		<!------------------ MARKETS PANEL ------------------------------->
 		
@@ -572,7 +601,7 @@
 								</div>
 							</form>
 							<div style="position:relative;margin-top:20px">
-								<button id="open_orderbook_button" data-form="findOrderbook" style="width:100px;height:20px">Find</button>
+								<button id="open_orderbook_button" data-form="findOrderbook" style="width:100px;height:20px">OPEN</button>
 							</div>
 						</div>
 					</div>
@@ -583,11 +612,14 @@
 	 <!-- ORDERS PANEL ----------------------------------------------->
 	 
 		<div class="md-modal md-effect" id="modal-02">
+		
 			<div class="md-content">
+			
 				<div class="tabs-nav tab-tables">
 					<div class="nav active" tab-index="tabs-5" align="center"><p>ORDERS</p></div>
 					<div class="nav" tab-index="tabs-6" align="center"><p>HISTORY</p></div>
 				</div>
+				
 				<div class="tabs-container">
 					<div id="tabs-5" class="modal-tab-content active">
 						<div class="modal-table-body">
@@ -609,8 +641,8 @@
 								</tbody> 
 							</table>
 						</div>
-						
 					</div>
+					
 					<div id="tabs-6" class="modal-tab-content">
 						<div class="modal-table-body">
 							<table id="tradeHistoryTable" class="table" cellspacing=0> 
@@ -629,6 +661,7 @@
 							</table>
 						</div>
 					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -636,11 +669,14 @@
 	 <!-- PORTFOLIO PANEL ----------------------------------------------->
 		
 		<div class="md-modal md-effect" id="modal-03">
+		
 			<div class="md-content">
+			
 				<div class="tabs-nav">
 					<div class="nav active" tab-index="tabs-3" align="center"><p>BALANCES</p></div>
 					<div class="nav" tab-index="tabs-4" align="center"><p>??</p></div>
 				</div>
+				
 				<div class="tabs-container">
 					<div id="tabs-3" class="modal-tab-content active">
 						<div class="modal-table-body">
@@ -660,11 +696,14 @@
 							</table>
 						</div>
 					</div>
+					
 					<div id="tabs-4">
 						<h1 align="center">CUSTOM MARKETS PANEL</h1>
 						<p align="center">< UNDER CONSTRUCTION ><p>
 					</div>
+					
 				</div>
+				
 			</div>
 		</div>
 

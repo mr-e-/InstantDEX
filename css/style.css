@@ -256,6 +256,10 @@ form {
 	border-left:1px solid #404040;
 }
 
+.tab-content-wrap {
+	height:100%;
+	position:relative;
+}
 
 /* ------------------------- TABLES - GENERIC ------------------------- */
 
@@ -495,7 +499,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	margin-left: 10px;
 }
 
-#headerAreaIco {  /* AREA : CHARTS / LOG OUT / OPTIONS */
+#headerConfigIconsWrap {  /* AREA : CHARTS / LOG OUT / OPTIONS */
 	display: inline-block;
 	float: right;
 	width: 252px;
@@ -504,7 +508,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	padding-left:30px;
 }
 
-.header-ico {
+.header-config-icon {
 	margin-top: 10px;
 	width: 28px;
 	height: 28px;
@@ -512,7 +516,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	opacity: 0.8;
 }
 
-#headerAreaIco2 {
+#headerModalIconsWrap {
 	z-index:1;
 	display: inline-block;
 	float: right;
@@ -521,7 +525,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	overflow:hidden;
 }
 
-.header-ico2 {
+.header-modal-icon {
 	margin-top: 10px;
 	width: 28px;
 	height: 28px;
@@ -529,7 +533,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	opacity: 0.8;
 }
 
-#headerAreaIco3 {
+#headerModalIconsMinWrap {
 	z-index:1;
 	display: none;
 	float: right;
@@ -539,7 +543,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	text-align:right;
 }
 
-.header-ico3 {
+.header-modal-icon-min {
 	width: 24px;
 	height: 24px;
 	opacity: 0.8;
@@ -547,70 +551,14 @@ table.dataTable tbody th, table.dataTable tbody td{
 	margin-top: 3px;
 }
 
-.header-ico:hover, .header-ico2:hover, #headerAreaIco3 > .header-ico3:hover {
+.header-config-icon:hover, .header-modal-icon:hover, .header-modal-icon-min:hover {
 	opacity: 1;	
 	cursor: pointer;
 }
 
-#miniChartsTop {
-	display: inline-block;
-	float: right;
-	width: 430px;
-	height: 50px;
-	padding-right: 5px;
-}
 
-#miniChartsTop2 {
-	display: inline-block;
-	float: right;
-	width: 250px;
-	height: 50px;
-}
+/* ------------------------- HEADER FAVS ------------------------- */
 
-.chart-box { /* INDIVIDUAL PRICED PAIRS */
-	position:relative;
-	opacity: 1;
-	display: inline-block;
-	float: left;
-	width: 25%;
-	height: 50px;
-	/*border-left: inset 1px white;*/
-}
-
-.chart-box .chart-number {
-	font-size: 2em;
-}
-
-.chart-box-2 { /* INDIVIDUAL BOXED PAIRS */
-	display: inline-block;
-	float: left;
-	width: 50%;
-	height: 50px;
-	border-left: inset 1px white;	
-}
-
-.chart-sub-box { /* INDIVIDUAL BOXED PAIRS */
-	float:left;
-	width: 100%;
-	height: 25px;
-	/*background: grey;*/
-	background: black;
-	text-align: center;
-}
-
-.chart-sub-box-2 { /* INDIVIDUAL BOXED PAIRS */
-	float: left;
-	width: 100%;
-	height: 24px;
-	background: black;
-	text-align: center;
-	font-size: 0.65rem;
-	position:relative;
-}
-
-.chart-sub-box-2 .chart-number {
-	font-size: 2em;
-}
 
 .chart-text { /* INDIVIDUAL BOXED PAIRS */
 	opacity: 1;
@@ -618,10 +566,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 	margin-top: 5px;
 	display: block;
 	cursor: pointer;	
-}
-
-#mTN5A, #mTN6A { /* FIX FOR THE FADING BUG OF THE LOWER BOXES */
-	border-bottom: inset 1px white;	
 }
 
 .chart-text-top { /* INDIVIDUAL PRICED PAIRS TOP */
@@ -636,6 +580,64 @@ table.dataTable tbody th, table.dataTable tbody td{
 	margin-top: -2px;
 	display: block;
 	cursor: pointer;
+}
+
+.fav-market-basic-area {
+	display: inline-block;
+	float: right;
+	width: 250px;
+	height: 50px;
+}
+
+.fav-market-basic-row { /* INDIVIDUAL BOXED PAIRS */
+	display: block;
+	width: 100%;
+	height: 50px;
+	border-left: inset 1px white;	
+}
+
+.fav-market-basic-cell { /* INDIVIDUAL BOXED PAIRS */
+	width: 50%;
+	height: 100%;
+	background: black;
+	text-align: center;
+}
+
+.fav-market-ticker-area {
+	display: inline-block;
+	float: right;
+	width: 430px;
+	height: 50px;
+	padding-right: 5px;
+}
+
+.fav-market-ticker-cell{ /* INDIVIDUAL PRICED PAIRS */
+	position:relative;
+	opacity: 1;
+	display: inline-block;
+	float: left;
+	width: 25%;
+	height: 100%;
+	/*border-left: inset 1px white;*/
+}
+
+.fav-market-ticker-cell-top, .fav-market-ticker-cell-bottom {
+	position:relative;
+	display:block;
+	height: 50%;
+	width:100%;
+}
+
+.chart-box .chart-number {
+	font-size: 2em;
+}
+
+.chart-sub-box-2 .chart-number {
+	font-size: 2em;
+}
+
+#mTN5A, #mTN6A { /* FIX FOR THE FADING BUG OF THE LOWER BOXES */
+	border-bottom: inset 1px white;	
 }
 
 
@@ -784,7 +786,11 @@ table.dataTable tbody th, table.dataTable tbody td{
 	font-weight: 600;
 }
 
-/*	color:#6E6E6E;*/
+.order-big {
+	text-align: center;
+	font-size: 30px;
+	padding-top: 3px;
+}
 
 #sellBook {
 	position:relative;
@@ -837,8 +843,11 @@ table.dataTable tbody th, table.dataTable tbody td{
 	font-size: 14px;
 	text-align:right;
 	vertical-align:middle;
-
 }
+
+/*.order-col:first-child , .labels-col:first-child {
+	margin-right:8px;
+}*/
 
 .order-row-expand .order-col {
 	width:23%;
@@ -866,10 +875,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:inline-block;
 }
 
-/*.order-col:first-child , .labels-col:first-child {
-	margin-right:8px;
-}*/
-
 #sellBook > .twrap  > .order-row, #buyBook > .twrap  > .order-row {
 	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma !important;
 }
@@ -882,10 +887,15 @@ table.dataTable tbody th, table.dataTable tbody td{
 #sellBook > .twrap  > .order-row:hover > .order-col, #buyBook > .twrap  > .order-row:hover > .order-col{
 	cursor:pointer;
 	color:#D8D8D8;
+	/*	color:#6E6E6E;*/
 }
 
 #sellBook > .twrap > .order-row.newrow, #buyBook > .twrap > .order-row.newrow {
 	background-color:#333;
+}
+
+#sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
+	background-color:rgba(222, 233, 255, 0.2);
 }
 
 /*
@@ -896,28 +906,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 #sellBook > .twrap > .order-row.virtual > .order-col, #buyBook  > .twrap > .order-row.virtual > .order-col {
 	color:#A4A4A4;
 }*/
-
-#sellBook > .twrap > .order-row.own-order, #buyBook > .twrap > .order-row.own-order {
-	background-color:rgba(222, 233, 255, 0.2);
-}
-
-/*
-#sellBook > .twrap > .order-row  > .order-col {
-	color: rgba(218, 59, 38, 0.9) !important;
-}
-
-#buyBook > .twrap > .order-row  > .order-col {
-	color: rgba(27, 211, 87, 0.8) !important;
-}
-
-#sellBook > .twrap > .order-row:hover > .order-col {
-	color: rgba(218, 59, 38, 1) !important;
-}
-
-#buyBook > .twrap > .order-row:hover  > .order-col {
-	color: rgba(27, 211, 87, 1) !important;
-}
-*/
 
 #orderbook_footer {
 	height:30px;
@@ -948,12 +936,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 	cursor:pointer;
 }
 
-.order-big {
-	text-align: center;
-	font-size: 30px;
-	padding-top: 3px;
-}
-
 .empty-orderbook {
 	height: calc(100% - 50px);
 	width:100%;
@@ -977,7 +959,21 @@ table.dataTable tbody th, table.dataTable tbody td{
 /* ------------------------- MINICHARTS AREA TOP RIGHT-RIGHT  ------------------------- */
 
 
-#miniChartsC {
+.mini-chart .chart-number {
+	font-size: 5em;
+}
+
+/*.mini-chart:last-child:after*/
+#miniCNum4 {
+	border-bottom: inset 0px white;	
+}
+
+.fav-market-chart-pair:hover, .chart-text:hover, .chart-sub-box:hover {
+	cursor:pointer;
+	opacity:0.88 !important;
+}
+
+#fav-market-chart-area {
 	height:100%;
 	width: 250px;
 	min-width: 250px !important;
@@ -988,7 +984,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	overflow: hidden;
 }
 
-.mini-chart {
+.fav-market-chart-cell {
 	height: 25%;
 	width: 100%;
 	position:relative;
@@ -996,11 +992,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	overflow: hidden;
 }
 
-.mini-chart .chart-number {
-	font-size: 5em;
-}
-
-.mini-wrap {
+.fav-market-chart-cell-top-wrap {
 	height:25px;
 	width:100%;
 	position:relative;
@@ -1011,18 +1003,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	border-bottom:1px solid #404040;
 }
 
-.mini-chart-area-1:hover, .chart-text:hover, .chart-sub-box:hover {
-	cursor:pointer;
-	opacity:0.88 !important;
-}
-
-/*.mini-chart:last-child:after*/
-#miniCNum4 {
-	border-bottom: inset 0px white;	
-}
-
-
-.mini-chart-area-1 {
+.fav-market-chart-pair {
 	height: 100%;
 	width: 70%;
 	display:inline-block;
@@ -1030,7 +1011,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	background: black;
 }
 
-.mini-chart-area-2 {
+.fav-market-chart-percent {
 	text-align: right;
 	float: left;
 	width: 30%;
@@ -1039,7 +1020,7 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:inline-block;
 }
 	
-.mini-chart-area-3 {
+.fav-market-chart-price{
 	font-size: 0.85rem;
 	text-align: center;
 	float:left;
@@ -1049,10 +1030,9 @@ table.dataTable tbody th, table.dataTable tbody td{
 	margin-bottom:4px;
 	background: black;
 	font-family:Helvetica,Arial,Microsoft YaHei,Verdana,sans-serif,Segoe UI,Tahoma;
-
 } 
 
-.mini-chart-area-4 {
+.fav-market-chart-indicator {
 	float: left;
 	padding-left: 0px;
 	width: 100%;
@@ -1125,36 +1105,35 @@ table.dataTable tbody th, table.dataTable tbody td{
 /* ------------------------- ORDER BOX BOTTOM RIGHT  ------------------------- */
 
 
+.order-tabs li {
+	width: 50%;
+	float: left;
+	text-align: center;
+}
+
+.order-tabs li:first-child, .info-tabs li:first-child {
+	margin-left:0px;
+	border-right:0px;
+	border-left:0px;
+
+}
+
+.order-tab-content-bottom {
+	height:33%;
+	position:relative;
+}
+
+.order-tab-content-top {
+	height:66%;
+	position:relative;
+}
+
 #orderBox {
 	height: 100%;
 	width: 100%;
 	position:relative;
 	overflow:hidden;
 	background-color:#232323;	
-}
-
-.form-group {
-	clear: both;
-	height: 5px;
-    margin-bottom: 19px;
-}
-
-.form-group > label {
-	width: 35%;
-	float: left;
-	font-size: 1rem;
-	font-weight: 200;	
-	padding-left: 4px;
-}
-
-.form-group > input {
-	width: 40%;
-    margin-bottom: 15px;
-}
-
-.order-tab-content-top {
-	height:66%;
-	position:relative;
 }
 
 .order-tab-content-top-balance {
@@ -1239,24 +1218,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 	font-size: .75rem;
 }
 
-.order-tabs li {
-	width: 50%;
-	float: left;
-	text-align: center;
-}
-
-.order-tabs li:first-child, .info-tabs li:first-child {
-	margin-left:0px;
-	border-right:0px;
-	border-left:0px;
-
-}
-
-.order-tab-content-bottom {
-	height:33%;
-	position:relative;
-}
-
 .tab-order-button {
 	width:100%;
 	height:100%;
@@ -1265,26 +1226,24 @@ table.dataTable tbody th, table.dataTable tbody td{
 }
 
 .tab-order-button button {
-	height:22px;
-	width:100px;
+	height: 25px;
+	width: 85%;
 	position:relative;
 	display:inline-block;
-	color:black;
 	float:left;
 	margin-top: 2%;
 	margin-left: 6.5%;
-	
+	background: transparent;
+	color:black;
+	font-size: .65rem;
+	font-family: 'open_sanslight', Fallback, sans-serif;
+	outline: none;
 }
 
 #tab_buy_button button {
 /* 	background-color: #0d8d35;
 	border:1px solid #12A33F; */
-	background: transparent;
 	color: rgb(0,210,0);
-	width: 85%;
-	height: 25px;
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	font-size: .65rem;
 	border: 2px solid green;
 }
 
@@ -1300,19 +1259,10 @@ table.dataTable tbody th, table.dataTable tbody td{
 	border: #0D5423;
 }
 
-#tab_buy_button button {
-	outline: none;
-}
-
 #tab_sell_button button {
 /* 	background-color: rgba(218, 59, 38, 0.85);
 	border:1px solid rgba(218, 59, 38, 0.75); */
-	background: transparent;
 	color: rgb(255,0,0);
-	width:  85%;
-	height: 25px;
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	font-size: .65rem;
 	border: 2px solid red;
 }
 
@@ -1326,15 +1276,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 #tab_sell_button button.order-button-mousedown {
 	background-color: rgba(218, 59, 38, 0.75);
 	border:1px solid rgba(218, 59, 38, 0.65);
-}
-
-#tab_sell_button button {
-	outline: none;
-}
-
-.tab-content-wrap {
-	height:100%;
-	position:relative;
 }
 
 
@@ -1542,6 +1483,25 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:block;
 }
 
+.form-group {
+	clear: both;
+	height: 5px;
+    margin-bottom: 19px;
+}
+
+.form-group > label {
+	width: 35%;
+	float: left;
+	font-size: 1rem;
+	font-weight: 200;	
+	padding-left: 4px;
+}
+
+.form-group > input {
+	width: 40%;
+    margin-bottom: 15px;
+}
+
 
 /* ------------------------- LIB OVERRIDE ------------------------- */
 
@@ -1630,10 +1590,10 @@ table.dataTable tbody th, table.dataTable tbody td{
 		overflow-x:visible !important;
 	}
 	
-    #headerAreaIco2 {
+    #headerModalIconsWrap {
 		display:none;
 	}
-    #headerAreaIco3 {
+    #headerModalIconsMinWrap {
 		display:inline-block;
     }
     
