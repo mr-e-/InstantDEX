@@ -21,7 +21,6 @@ var IDEX = (function(IDEX, $, undefined)
 		});
 	})
 
-
 	
 	$(".chart-style").on("mouseover", function()
 	{
@@ -270,6 +269,13 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 
 	
+	
+	$(".cm-orderbox-config-trig").on("click", function()
+	{
+		
+		console.log('a');
+		
+	})
 
 
 

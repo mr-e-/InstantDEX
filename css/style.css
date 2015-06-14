@@ -2554,6 +2554,126 @@ table.dataTable tbody th, table.dataTable tbody td{
 /* ------------------------- CURRENT MARKET ORDERBOX  ------------------------- */
 
 
+.cm-orderbox-config-trig:hover {
+	cursor:pointer;
+}
+
+.cm-orderbox-config-popup {
+	height:200px;
+	width:350px;
+	position:absolute;
+	display:none;
+	top:5px;
+	left:5px;
+	background: rgba(0,0,0,0.8);
+	border:1px solid #505050;
+	border-radius:4px;
+	z-index:300;
+	padding-bottom:10px;
+}
+
+.cm-orderbox-config-popup.active {
+	display:block;
+}
+
+.cm-orderbox-config-popup-header {
+	height:30px;
+	width:100%;
+	display:block;
+	position:relative;
+	font-size:15px;
+	border-bottom:1px solid #505050;
+}
+
+.cm-orderbox-config-popup-header-cell {
+	height:100%;
+	float:left;
+	padding-left:20px;
+}
+
+.cm-orderbox-config-popup-close {
+	position:absolute;
+	display:block;
+	top:5px;
+	right:10px;
+}
+
+.cm-orderbox-config-popup-close img {
+	height:16px;
+	width:16px;
+	position:relative;
+}
+
+.cm-orderbox-config-popup-main {
+	height:calc(100% - 30px);
+	width:100%;
+	position:relative;
+	display:block;
+	padding-top:10px;
+	padding-left:40px;
+	padding-right:40px;
+	padding-bottom:20px;
+}
+
+.cm-orderbox-config-popup-row {
+	height:20px;
+	width:100%;
+	position:relative;
+	display:block;
+	margin-top:10px;
+}
+
+.cm-orderbox-config-popup-row-label {
+	height:100%;
+	position:relative;
+	float:left;
+	font-size:12px;
+}
+
+.cm-orderbox-config-popup-row-input {
+	height:100%;
+	position:relative;
+	float:right;
+	padding-top:3px;
+	padding-bottom:3px;
+}
+
+.cm-orderbox-config-popup-row-input input {
+	height:100%;
+	position:relative;
+	background-color:#e5e5e5;
+	color:black;
+	text-align:right;
+	padding-right:3px;
+}
+
+.cm-orderbox-config-popup-minperc {
+	width:40px;
+}
+
+.cm-orderbox-config-popup-duration {
+	width:40px;
+}
+
+.cm-orderbox-config-popup-footer {
+
+}
+
+.cm-orderbox-config-popup-confirm {
+	height:30px;
+	width:100%;
+	position:relative;
+	display:block;
+	text-align:center;
+	font-size:14px;
+}
+
+.cm-orderbox-config-popup-confirm-trig:hover {
+	color:#EDB379;
+	cursor:pointer;
+}
+
+
 .cm-orderbox {
 	height: 30px;
 	width: calc(100% - 2px);
@@ -2607,12 +2727,18 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:block;
 }
 
-.cm-orderbox-config {
+.cm-orderbox-header-sub {
 	height:40px;
 	width:100%;
 	position:relative;
 	padding-left:20px;
 	padding-right:20px;
+}
+
+.cm-orderbox-config {
+	height:100%;
+	position:relative;
+	float:left;
 }
 
 .cm-orderbox-exchange {
@@ -2622,6 +2748,22 @@ table.dataTable tbody th, table.dataTable tbody td{
 	font-size:14px;
 	color:#329ddc;
 	text-decoration:underline;
+}
+
+.cm-orderbox-exchange-trig:hover {
+	cursor:pointer;
+}
+
+.cm-orderbox-exchange-config {
+	height:100%;
+	position:relative;
+	float:left;
+	padding-left:8px;
+}
+
+.cm-orderbox-exchange-config img {
+	height:18px;
+	width:16px;
 }
 
 .cm-orderbox-bal {

@@ -6,6 +6,34 @@ var IDEX = (function(IDEX, $, undefined)
 //	IDEX.currentOpenOrders();
 //	IDEX.refreshOrderbook();
 
+	$(".cm-orderbox-config-popup-close").on("mouseup", function()
+	{
+		var $popup = $(this).closest(".cm-orderbox-config-popup")
+		
+		$popup.removeClass("active");
+		
+	})
+	
+	$(".cm-orderbox-config-trig").on("mouseup", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $popup = $wrap.find(".cm-orderbox-config-popup");
+		var isActive = $popup.hasClass("active");
+
+		if (isActive)
+			$popup.removeClass("active");
+		else
+			$popup.addClass("active");
+
+	})
+	
+	$(".cm-orderbox-config-popup-confirm-trig").on("click", function()
+	{
+		var $popup = $(this).closest(".cm-orderbox-config-popup")
+
+		$popup.removeClass("active");
+	})
+	
 	
 
 	/*******************ORDER BUTTON*******************/
