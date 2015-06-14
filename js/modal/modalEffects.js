@@ -27,12 +27,7 @@ var ModalEffects = (function() {
 				if( hasPerspective ) {
 					classie.remove( document.documentElement, 'md-perspective' );
 				}
-				
-				$(".cd-3d-nav li").removeClass('cd-selected');
-				$(".cd-3d-nav li:first").addClass('cd-selected');
-				$(".cd-marker").css('left',0);
-                
-                $(".chart-number").removeClass("show");
+			                
 			}
 
 			function removeModalHandler() {
@@ -54,9 +49,6 @@ var ModalEffects = (function() {
 					}, 25 );
 				}
                 
-                if( classie.has( modal, 'md-chart' ) ) {
-                    $(".chart-number").addClass("show");
-                }
 			});
 			
 			if (close) {
