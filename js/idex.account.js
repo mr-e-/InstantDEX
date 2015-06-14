@@ -28,7 +28,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var nxtIDAndRS = [];
 		var account = this;
 		
-		IDEX.sendPost({'requestType':"getpeers"}).then(function(data)
+		/*IDEX.sendPost({'requestType':"getpeers"}).then(function(data)
 		{
 			if ('peers' in data && data['peers'].length)
 			{
@@ -38,7 +38,8 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 			account.setNXTRS(nxtIDAndRS);
-		})
+		})*/
+		//account.setNXTRS(["", ""]);
 	}
 
 
@@ -116,7 +117,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.sendPost(params).then(function(data)
 		{
 			var temp = [];
-			
+
 			if ("openorders" in data)
 			{
 				data = data.openorders;
@@ -132,6 +133,7 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			account.openOrders = data;
 			account.marketOpenOrders = temp;
+			//console.log(account)*/
 			dfd.resolve();
 		})
 		

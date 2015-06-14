@@ -2,14 +2,14 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	var ids = ["11","12","21","22","31","32","41","42","51","52","61","62","71","72","81","82","91","92","101","102","111","112","121","122"];
+	var ids = ["91","92","101","102","111","112","121","122"];
 
 	var defaultFavs = [
 		{'name':"InstantDEX",'assetID':"15344649963748848799"},
 		{'name':"SuperNET",'assetID':"12071612744977229797"},
 		{'name':"jl777hodl",'assetID':"6932037131189568014"},
 		{'name':"SkyNET",'assetID':"6854596569382794790"},
-		{'name':"mgwBTC",'assetID':"17554243582654188572"},
+		//{'name':"mgwBTC",'assetID':"17554243582654188572"},
 		{'name':"LIQUID",'assetID':"4630752101777892988"}
 	];
 
@@ -24,17 +24,36 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var lastIndex = "-1";
+			var lastIndex = -1;
 
 			for (var i = 0; i < ids.length; ++i)
 			{
 				var randFav = {}
 				var randIndex = ""
+				while (true)
+				{
+					var ret = true;
+					randIndex = Math.floor(Math.random() * defaultFavs.length)
+					
+					if (randIndex == lastIndex)
+						continue;
+					var tempfav = defaultFavs[randIndex]
+					for (fav in chartFavs)
+					{
+						fav = chartFavs[fav]
+						if (fav.name == tempfav.name && Number(fav.divID) % 2 != 0)
+						{
+							console.log(fav.name)
+							ret = false
+							break
+						}
+					}
+					if (ret)
+						break;
+				}
+				console.log("done: " + String(randIndex))
 				
-				while (( randIndex = Math.floor(Math.random() * defaultFavs.length)) == lastIndex)
-					continue;
-				
-				randFav ['name'] = defaultFavs[randIndex]['name'];
+				randFav['name'] = defaultFavs[randIndex]['name'];
 				randFav['assetID'] = defaultFavs[randIndex]['assetID'];
 				randFav['divID'] = ids[i];
 				chartFavs[ids[i]] = randFav;
@@ -55,6 +74,11 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var id in chartFavs)
 		{
 			$(".chart-control[chart-id='"+id+"']").val(chartFavs[id]['name']).attr("data-asset", chartFavs[id]['assetID']);
+			if (Number(id) % 2 == 0)
+			{
+				$("#chart-curr-"+id).html("NXT").attr("data-asset", chartFavs[id]['assetID']);
+				continue
+			}
 			$("#chart-curr-"+id).html(chartFavs[id]['name']).attr("data-asset", chartFavs[id]['assetID']);
 		}	
 	}

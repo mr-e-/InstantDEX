@@ -20,11 +20,13 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function formatOrderData(orders)
 	{
-		orders.sort(IDEX.compareProp('price')).reverse();
 
 		var len = orders.length;
 		var runningTotal = 0;
 		var isAsk = len && orders[0].askoffer;
+		orders.sort(IDEX.compareProp('price'))
+		if (!isAsk)
+			orders.reverse();
 		var loopStart = isAsk ? len - 1 : 0;
 		var loopEnd = isAsk ? -1 : len;
 		var loopInc = isAsk ? -1 : 1;
@@ -101,18 +103,26 @@ var IDEX = (function(IDEX, $, undefined)
 
 	function formatNewOrders(newOrders)
 	{	
+		
 		for (var i = 0; i < newOrders.length; i++)
 		{
 			var order = newOrders[i]
-			var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
-			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "virtual tooltip" : "tooltip";
+			var isAsk = order.askoffer
+			if (isAsk)
+				var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
+			else
+				var trString = IDEX.buildTableRows([[order.total, order.volume, order.price, order.sum]], "span");
+			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "fadeSlowIndy tooltip" : "fadeSlowIndy tooltip";
 			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
 			trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
+			
+			trClasses += " " + getLabelClass(order)
+			
 			trString = IDEX.addElClass(trString, trClasses);
 			trString = $(trString).find("span").each(function(index, e)
 			{
 				var extraClasses = "order-col-extra";
-				if (index == 2 || index == 3)
+				if (index == 3 || index == 3)
 				{
 					if (IDEX.isOrderbookExpanded)
 						extraClasses += " extra-show";
@@ -121,6 +131,29 @@ var IDEX = (function(IDEX, $, undefined)
 			}).parent()[0].outerHTML;
 			order['row'] = trString;
 		}	
+	}
+	
+	
+	function getLabelClass(order)
+	{
+		var labelClass = "";
+		var vis = IDEX.getVisibleLabels()
+		var visMap = IDEX.getVisibleMap(vis)
+
+
+		for (var exchange in visMap)
+		{
+			var label = visMap[exchange]
+			//console.log(exchange)
+			
+			if (order.exchange == exchange)
+			{
+				labelClass = label.name
+				break;
+			}
+		}
+		
+		return labelClass
 	}
 	
 	

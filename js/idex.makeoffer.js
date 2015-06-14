@@ -16,6 +16,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{	
 		params = IDEX.buildPostPayload("makeoffer3", IDEX.user.pendingOrder)
 		params['perc'] = $(".conf-perc").val();
+		params['plugin'] = "InstantDEX"
 		console.log(params);
 		//console.log(JSON.stringify(params, null, 4))
 		

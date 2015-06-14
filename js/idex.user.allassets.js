@@ -23,6 +23,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			IDEX.sendPost({'requestType':"getAllAssets"}, 1).then(function(data)
 			{
+				console.log(data)
 				var assets = [];
 				if ("assets" in data)
 				{

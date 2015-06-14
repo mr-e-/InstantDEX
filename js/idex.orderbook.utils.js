@@ -18,7 +18,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$("#buyBook .twrap").empty();
 		$("#sellBook .twrap").empty();
-		$("#currPair .order-text").text(this.baseAsset.name+"/"+this.relAsset.name);
+		$("#currPair .order-text").text(this.baseAsset.name+"_"+this.relAsset.name);
 		$("#currLast .order-text").empty().text(price);
 	}
 	
@@ -36,6 +36,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$(".twrap").find(".order-row.expiredRow").remove();
 		IDEX.updateScrollbar(false)
+		$(".newrow").find(".order-col").addClass("fadeSlowIndy")
 		$(".newrow").removeClass("newrow");
 	}
 	

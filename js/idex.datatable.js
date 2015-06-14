@@ -52,9 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$scrollBody.css('height', String(newScrollBodyHeight)+"px");
 		}
-		
-	//var counter = 0;
-	//console.log(counter++)
+
 		/*console.log(String(rowHeight) + " " + String(maxRows) + " " + String(allowedHeight))
 		console.log(String(wrapperHeight) + "  " + scrollHeadHeight + "  "  + String($(document).height()));
 		console.log(String(newScrollBodyHeight) + " " + String(numRows))

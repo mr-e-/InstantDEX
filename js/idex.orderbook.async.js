@@ -8,16 +8,31 @@ var IDEX = (function(IDEX, $, undefined)
 		var retDFD = new $.Deferred();
 		var thisScope = this;
 
+		thisScope.counter = true;
+		thisScope.lastUpdatedHandler(0);
+		/*IDEX.makeTable("marketOpenOrdersTable", function()
+		{
+			
+		});*/
 		thisScope.setTimeout(timeout).then(function(wasCleared)
 		{
+			/*IDEX.makeTable("marketOpenOrdersTable", function()
+			{
+				
+			});*/
 			if (wasCleared)
 			{
+				thisScope.counter = false;
+				thisScope.clearUpdatedTimeout()
 				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
 			else
 			{
 				thisScope.orderbookPost().done(function(orderbookData)
 				{
+					thisScope.counter = false;
+					thisScope.clearUpdatedTimeout()
+					
 					if (orderbookData == "fail")
 					{
 						retDFD.resolve({}, IDEX.AJAX_ERROR);
@@ -47,22 +62,26 @@ var IDEX = (function(IDEX, $, undefined)
 		var thisScope = this;
 		var params = 
 		{
-			'requestType':"orderbook", 
+			'plugin':"InstantDEX",
+			'method':"orderbook", 
 			'baseid':this.baseAsset.assetID, 
 			'relid':this.relAsset.assetID, 
 			'allfields':1,
-			'maxDepth':25,
-			'showAll':0
+			'maxdepth':25,
+			'showall':0,
+			'timeout':10000
 		};
+		//console.log(params)
 		
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
-		console.log('starting orderbook ajax');
+		//console.log('starting orderbook ajax');
 		
 		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
 		{
+			//orderbookData = $.parseJSON(orderbookData);
 			//console.log(orderbookData);
-			console.log("finished orderbook ajax " + String((Date.now() - time)/1000) + "s");
+			//console.log("finished orderbook ajax " + String((Date.now() - time)/1000) + "s");
 			
 			//if (orderbookData == "abort")
 			//	orderbookData = false;
@@ -103,6 +122,64 @@ var IDEX = (function(IDEX, $, undefined)
 		return this.timeoutDFD.promise();
 	}
 	
+	IDEX.Orderbook.prototype.lastUpdatedHandler = function(seconds)
+	{
+		var orderbook = this;
+		//console.log(seconds)
+		
+		orderbook.lastUpdatedCounter().done(function()
+		{
+			//console.log(orderbook.counter)
+			var $el = $(".orderbook-last-updated");
+			
+			if (orderbook.counter)
+			{
+				seconds++;
+				if (orderbook.isWaitingForOrderbook)
+					var text = String(seconds) + "s..."
+					//var text = "Updating...(" + String(seconds) + "s)"
+				else
+					var text = String(seconds) + "s"
+				
+				$el.text(text)
+				
+				orderbook.lastUpdatedHandler(seconds)
+			}
+			else
+			{
+				var text = "0s"
+				$el.text(text)
+			}
+		})
+	}
+	
+	IDEX.Orderbook.prototype.lastUpdatedCounter = function()
+	{
+		this.lastUpdatedDFD = new $.Deferred();
+		var orderbook = this;
+		
+		this.lastUpdatedTimeout = setTimeout(function() 
+		{
+			if (orderbook.lastUpdatedDFD != false)
+			{
+				orderbook.lastUpdatedDFD.resolve(false);
+				//orderbook.lastUpdatedDFD = false;
+			}
+		}, 1000)
+		
+		return this.lastUpdatedDFD.promise();
+	}
+	
+	IDEX.Orderbook.prototype.clearUpdatedTimeout = function()
+	{
+		if (this.lastUpdatedDFD)
+		{
+			//console.log("clearTimeout")
+			clearTimeout(this.lastUpdatedTimeout);
+			this.lastUpdatedDFD.resolve(true);
+			this.lastUpdatedDFD = false;
+		}
+	}
 	
 	
 	

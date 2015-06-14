@@ -11,7 +11,8 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.isSNRunning = false;
 	IDEX.chartInit = false;
 	IDEX.isOrderbookExpanded = false;
-
+	
+	IDEX.logs = []
 
 	IDEX.snPostParams = 
 	{
@@ -78,7 +79,7 @@ var IDEX = (function(IDEX, $, undefined)
 		this.numberOfTrades = 0;
 		this.numberOfAccounts = 0;
 		this.numberOfTransfers = 0;
-		
+
 		IDEX.constructFromObject(this, obj);
 	};
 	
@@ -138,27 +139,11 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.constructFromObject(this, obj);
 	}
 	
-	
-	IDEX.Chart = function(obj) 
-	{
-		this.baseid = "6854596569382794790";
-		this.relid = "6932037131189568014";
-		this.basename = "SkyNET";
-		this.relname = "jl777hodl";
-		this.numticks = "5";
-		this.numbars = "100";
-		this.isvirtual = false;
-		this.flip = false;
-		this.isNew = false;
-		
-		IDEX.constructFromObject(this, obj);
-	}
-	
 
 	IDEX.init = function()
 	{
 		IDEX.initScrollbar();
-		IDEX.initDataTable();
+		//IDEX.initDataTable();
 		
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
@@ -169,13 +154,25 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.user.initAllAssets().done(function()
 		{
 			IDEX.initAutocomplete();
+			IDEX.getSkynet().done(function(data)
+			{
+			
+			})
 		});
-		IDEX.user.initChartFavorites();
-		IDEX.user.initOptions();
+
+		
+		//IDEX.user.initChartFavorites();
+		//IDEX.user.initOptions();
 		IDEX.user.updateFavoritesDom();
 		
 		IDEX.loadMiniCharts();
+		//IDEX.getPoloData();
+		
+		IDEX.buildTilesDom();
+		IDEX.buildMainChartDom();
+
 	}
+	
 
 
 	return IDEX;
@@ -186,6 +183,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 $(window).load(function()
 {
+	$('.tooltip').tooltipster({
+		delay: 1200,
+		position: 'bottom'
+	});
+		
 	IDEX.init();
 })
-

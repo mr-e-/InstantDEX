@@ -3,6 +3,8 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
+	var GENESIS_TIMESTAMP = 1385294400;
+
 	IDEX.SATOSHI = 100000000;
 
 	

@@ -3,36 +3,91 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-//					IDEX.currentOpenOrders();
-//					IDEX.refreshOrderbook();
+//	IDEX.currentOpenOrders();
+//	IDEX.refreshOrderbook();
 
+	
+
+	/*******************ORDER BUTTON*******************/
+
+	$(".place-order-button").on("mousedown", function()
+	{
+		$(this).addClass("order-button-mousedown")
+	})
+	$(".place-order-button").on("mouseup", function()
+	{
+		$(this).removeClass("order-button-mousedown")
+	})
+	$(".place-order-button").on("mouseleave", function()
+	{
+		$(this).removeClass("order-button-mousedown")
+	})
+	
+
+	$(".place-order-button").on("click", function()
+	{
+		var $form = $("#" + $(this).attr("data-form"));
+		var params = getPostPayload($(this));
+		//var both = ["6932037131189568014", "5527630"]
+
+		params['baseid'] = IDEX.user.curBase.assetID;
+		params['relid'] = IDEX.user.curRel.assetID;
+		params['duration'] = IDEX.user.options['duration'];
+		params['duration'] = "60"
+		params['minperc'] = Number(IDEX.user.options['minperc']);
+		//params['exchange'] = "nxtae"
+		
+		IDEX.placeOrder(params);
+		
+		$form.trigger("reset");
+	})
+	
+	
+	function getPostPayload($element, method)
+	{
+		method = typeof method === "undefined" ? $element.attr("data-method") : method;
+		var $form = $("#" + $element.attr("data-form"));
+		var params = IDEX.getFormData($form);
+		params = IDEX.buildPostPayload(method, params);
+		
+		return params;
+	}	
+	
 	
 	IDEX.placeOrder = function(params)
 	{
 		var balanceToCheck = (params['requestType'] == "placebid") ? params['relid'] : params['baseid'];
 		
 		console.log(params);
-		
-		if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
-		{
+		params['plugin'] = "InstantDEX"
+		//if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
+		//{
 			IDEX.sendPost(params).done(function(data)
 			{
+				/*IDEX.makeTable("marketOpenOrdersTable", function()
+				{
+					
+				});*/
 				console.log(data);
 
+				var log = {}
+				log['type'] = "order"
 				if ('error' in data && data['error'])
 				{
+					log['msg'] = data['error']
 					$.growl.error({'message':data['error'], 'location':"tl"});				
 				}
 				else
 				{
+					log['msg'] = "order placed"
 					$.growl.notice({'message':"Order placed", 'location':"tl"});
 				}
 			})
-		}
-		else
-		{
-			$.growl.error({'message':"Not enough funds", 'location':"tl"});
-		}
+		//}
+		//else
+		//{
+		//	$.growl.error({'message':"Not enough funds", 'location':"tl"});
+		//}
 
 	}
 	
@@ -40,7 +95,10 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.updateOrderBox = function()
 	{
 		IDEX.resetOrderBoxForm();
-		IDEX.updateOrderBoxBalance();
+		//IDEX.updateOrderBoxBalance();
+		
+		$(".refcur-base").text(IDEX.user.curBase.name);
+		$(".refcur-rel").text(IDEX.user.curRel.name);
 	}
 	
 
@@ -57,16 +115,16 @@ var IDEX = (function(IDEX, $, undefined)
 		var baseBal = ["0", ".0"];
 		var relBal = ["0", ".0"];
 
-		$buy.find("span").first().text(IDEX.user.curRel.name);
-		$sell.find("span").first().text(IDEX.user.curBase.name);
+		$buy.find(".bal-cur").first().text(IDEX.user.curRel.name + ": ");
+		$sell.find(".bal-cur").first().text(IDEX.user.curBase.name + ": ");
 		
 		IDEX.account.updateBalances().done(function()
 		{
 			baseBal = parseBalance(IDEX.account.getBalance(IDEX.user.curBase.assetID));
 			relBal = parseBalance(IDEX.account.getBalance(IDEX.user.curRel.assetID));
 
-			$buy.find(".bal-value span").first().text(relBal[0]).next().text(relBal[1]);
-			$sell.find(".bal-value span").first().text(baseBal[0]).next().text(baseBal[1]);
+			$buy.find(".bal-val").first().text(relBal[0]).next().text(relBal[1]);
+			$sell.find(".bal-val").first().text(baseBal[0]).next().text(baseBal[1]);
 		})
 	}
 

@@ -2,25 +2,44 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var snURL = "http://127.0.0.1:7777";
+	var snURL = "http://127.0.0.1:7777/InstantDEX?";
+	//var snURL = "http://127.0.0.1:7777";
 	var nxtURL = "http://127.0.0.1:7876/nxt?";
+	
 
 	IDEX.sendPost = function(params, isNXT, callback) 
 	{
 		var dfd = new $.Deferred();
 		var url = isNXT ? nxtURL : snURL;
-		params = isNXT ? params : JSON.stringify(params);
+		//params = isNXT ? params : JSON.stringify(params);
 		var ajaxSettings = {
 			type: "POST",
 			url: url,
 			data: params,
 		};
 		
+		if (!isNXT)
+		{
+			params['plugin'] = "InstantDEX";
+	        ajaxSettings = {
+		        type: "POST",
+		        url: url,
+		        data: params,
+		        contentType: 'application/x-www-form-urlencoded',
+                //headers: {"X-Requested-With":"XMLHttpRequest"},
+                xhrFields: {
+                  withCredentials: true
+                },
+	        };
+		}
+		console.log(params)
 		var xhr = $.ajax(ajaxSettings);
 		
 		xhr.done(function(data)
 		{
-			data = $.parseJSON(data);
+			if (!isNXT)
+				data = $.parseJSON(data);
+			console.log(data)
 			//console.log(params)
 			//console.log(JSON.stringify(data))
 			dfd.resolve(data);
@@ -38,7 +57,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var name = isNXT ? "NXT" : "SuperNET";
 				var message = "Could not connect to " + name;
-				$.growl.error({'message':message, 'location':"tl"});
+				//$.growl.error({'message':message, 'location':"tl"});
 			}
 
 
@@ -57,6 +76,9 @@ var IDEX = (function(IDEX, $, undefined)
 			return dfd.promise();
 	}
 
+
+	
+	
 
 	return IDEX;
 	

@@ -6,7 +6,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 	var tables = {
 		"openOrdersTable": {'method':"openorders", 'keys':"askoffer market price volume total quoteid age", 'firstKey':false, 'isDataTable':true},
-		"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total quoteid age", 'firstKey':false, 'isDataTable':false},
+		//"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total quoteid age", 'firstKey':false, 'isDataTable':false},
+		"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total quoteid", 'firstKey':false, 'isDataTable':false},
 		"allOrderbooksTable": {'method':"allorderbooks", 'keys':"base rel last high low volume exchange", 'firstKey':"orderbooks", 'isDataTable':true},
 		"tradeHistoryTable": {'method':"tradehistory", 'keys':"market priceNQTA priceNQTB NXT triggerhash", 'firstKey':"tradehistory", 'isDataTable':true},
 		"balancesTable": {'method':"getAccountAssets", 'keys':"name assetID availableBalance unconfirmedBalance change", 'firstKey':false, 'isDataTable':true}
@@ -59,7 +60,9 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			IDEX.account.updateOpenOrders().done(function()
 			{
-				dfd.resolve(IDEX.account.openOrders);
+				//if (!table.isDataTable)
+				//console.log(IDEX.account)
+				dfd.resolve(IDEX.account.marketOpenOrders);
 			})
 		}
 		else
@@ -256,10 +259,26 @@ var IDEX = (function(IDEX, $, undefined)
 		var quoteid = $(this).parent().attr("data-quoteid");
 		var $thisScope = $(this);
 
+		console.log(quoteid)
 		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
 		{
+			IDEX.makeTable("marketOpenOrdersTable", function()
+			{
+				
+			});
+			console.log(data)
 			//IDEX.currentOpenOrders();
 		})
+	})
+	
+	$("#marketOpenOrdersTable tbody").on("mouseover", "tr td.cancelOrder", function(e)
+	{
+		$(this).parent().addClass("cancel-hover")
+	})
+	
+	$("#marketOpenOrdersTable tbody").on("mouseleave", "tr td.cancelOrder", function(e)
+	{
+		$(this).parent().removeClass("cancel-hover")
 	})
 	
 

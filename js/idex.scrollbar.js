@@ -5,15 +5,26 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.initScrollbar = function()
 	{
-		$("#sellBook .twrap").perfectScrollbar();
-		$("#buyBook").perfectScrollbar();		
+		$("#sellBook").perfectScrollbar();
+		$("#buyBook").perfectScrollbar();	
+
+		$(".right-favs-popup-list-wrap").perfectScrollbar();
+		
+		$(".inspect-area-orderbook-bids").perfectScrollbar();
+		$(".inspect-area-orderbook-asks").perfectScrollbar();
+		$(".orderbook-label-popup-table").perfectScrollbar();
+		$(".inspect-candle-trades-body").perfectScrollbar();
+		$(".tiles-grid").perfectScrollbar();
+		
+		$(".tile-cell-orderbook-orders-bids").perfectScrollbar();
+		$(".tile-cell-orderbook-orders-asks").perfectScrollbar();
 	}
 
 	IDEX.updateScrollbar = function(toBottom)
 	{
-		if (toBottom)
-			$("#sellBook .twrap").scrollTop($("#sellBook .twrap").prop("scrollHeight"));
-		$("#sellBook .twrap").perfectScrollbar('update');
+		//if (toBottom)
+			//$("#sellBook").scrollTop($("#sellBook").prop("scrollHeight"));
+		$("#sellBook").perfectScrollbar('update');
 		$("#buyBook").perfectScrollbar('update');
 	}
 	

@@ -5,6 +5,9 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.updateOrders = function($book, orderData)
 	{
+		var isAsk = $book.parent().attr("id") == "buyBook";
+		//console.log("IS ASK: " + String(isAsk))
+		//console.log($book)
 		if ($.isEmptyObject(orderData))
 			$book.parent().find(".empty-orderbook").show()
 		else
@@ -25,7 +28,10 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				updateSum($(this), index, orderData, rowData);
 				removeOrders($(this), orderData, index);
-				addNewOrders($(this), orderData, rowData, index);
+				if (isAsk)
+					addNewOrders($(this), orderData, rowData, index);
+				else
+					addNewOrdersAsk($(this), orderData, rowData, index);
 			})
 		}
 	}
@@ -41,7 +47,7 @@ var IDEX = (function(IDEX, $, undefined)
 			if (index == oldOrder['index'] && (Number(oldOrder['sum']) != Number(rowData['sum'])))
 			{
 				//console.log(oldOrder)
-				console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
+				//console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
 				$row.find(".order-col").eq(3).text(String(oldOrder.sum));
 			}
 		}
@@ -64,8 +70,9 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 
-	function addNewOrders($row, orderData, rowData, index)
+	function addNewOrders($row, orderData, rowData, index, isAsk)
 	{
+
 		for (var i = 0; i < orderData.newOrders.length; i++)
 		{
 			var newOrder = orderData.newOrders[i];
@@ -82,6 +89,38 @@ var IDEX = (function(IDEX, $, undefined)
 				var sibData = IDEX.getRowData($sib, index+1)
 				
 				if (!sibData || Number(newOrder.price) >= Number(sibData.price))
+					$sib.after($(trString));
+				else
+					break;
+			}
+			else
+			{
+				$row.before($(trString));
+			}
+			
+			orderData['newOrders'].splice(i,1);
+			--i;
+		}
+	}
+	
+	function addNewOrdersAsk($row, orderData, rowData, index)
+	{
+		for (var i = 0; i < orderData.newOrders.length; i++)
+		{
+			var newOrder = orderData.newOrders[i];
+			var trString = IDEX.addElClass(orderData.newOrders[i]['row'], "newrow");
+			//trString = orderTooltip(trString, newOrder)
+
+			if (Number(newOrder.price) > Number(rowData.price))
+			{
+				var $sib = $row;
+				
+				while ($sib.next() && $sib.next().hasClass("newrow"))
+					$sib = $sib.next();
+				
+				var sibData = IDEX.getRowData($sib, index+1)
+				
+				if (!sibData || Number(newOrder.price) <= Number(sibData.price))
 					$sib.after($(trString));
 				else
 					break;
