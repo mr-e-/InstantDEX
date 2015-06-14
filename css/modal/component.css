@@ -1,15 +1,21 @@
 
 .md-modal {
 	position: absolute;
-	top: 51px;
-	left: 0;
-    height:calc(100% - 175px - 50px - 4px);
-    min-height:527px;
-    overflow:hidden;
-	width: calc(100% - 503px);
-    min-width: calc(1160px - 503px);
-	bottom: 0;
+    height:calc(50%);
+	width: calc(60%);
 	z-index: 2000;
+	
+	display:inline-block;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #3A545E;
+	background: rgba(0,0,0,0.9);
+	
+	left: 50%;
+	top: 50%;
+	transform:  translateX(-50%) translateY(-50%);
+
+	
 	visibility: hidden;
 	-webkit-backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
@@ -20,38 +26,28 @@
 	transform: translateX(-50%) translateY(-50%);*/
 }
 
-.md-modal-2 {
-	position: absolute;
-	top: 51px;
-	left: calc(100% - 503px);;
-    width: calc(250px);
-    height:calc(100% - 175px - 50px - 4px);
-    min-height:527px;
-	z-index: 2000;
-	visibility: hidden;
-	-webkit-backface-visibility: hidden;
-	-moz-backface-visibility: hidden;
-	backface-visibility: hidden;
-	/*-webkit-transform: translateX(-50%) translateY(-50%);
-	-moz-transform: translateX(-50%) translateY(-50%);
-	-ms-transform: translateX(-50%) translateY(-50%);
-	transform: translateX(-50%) translateY(-50%);*/
-}
 
 .md-modal-3 {
-	position: fixed;
-	top: 50px;
-	width: 50vw;
-    min-width: 575px;
+	position: absolute;
+    height:300px;
+	width: calc(100%);
+	display:inline-block;
+
 	z-index: 2000;
+	
+	border-width: 1px;
+	border-style: solid;
+	border-color: #3A545E;
+	background: rgba(0,0,0,0.9);
+	
+	/*left: 50%;
+	top: calc(50%);
+	transform:  translateX(-50%) translateY(-50%);*/
+	
 	visibility: hidden;
 	-webkit-backface-visibility: hidden;
 	-moz-backface-visibility: hidden;
 	backface-visibility: hidden;
-	-webkit-transform: translateX(50%);
-	-moz-transform: translateX(50%);
-	-ms-transform: translateX(50%);
-	transform: translateX(50%);
 }
 
 .md-content-inner {
@@ -86,7 +82,6 @@
 /* Modal Content styles */
 .md-content {
 	color: rgba(150,150,150,1); /* superNET grey */
-	background: white;
 	position: relative;
 	height: 100%;
 	margin: 0 auto;
@@ -105,11 +100,7 @@
 	/*border-radius: 3px 3px 0 0;*/
 }
 
-.md-content button {
-	display: block;
-	margin-top: 0;
-	font-size: 0.8em;
-}
+
 
 .md-head, .md-head-mail {
 	width: 100%;
@@ -186,134 +177,15 @@
 	}
 }
 
-/*.md-close {
+.md-close {
 	position: absolute;
     left: 35px;
-}*/
+}
 
 .md-submit {
 	position: absolute;
     right: 37px;
 }
 
-.md-clear {
-    position: absolute;
-    right: 40%;
-}
-
-.full-wrapper {
-	margin-top: 20px;
-	text-align: center;
-}
-
-/* SEARCH BUTTON */
-
-.buttSearch {
-	float: left;
-	background: black;
-	color: white;
-	width: 80px;
-	height: 30px;
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	font-size: .65rem !important;
-	border: none;
-		
-}
-
-.buttSearch:hover {
-	background: rgb(255,255,255);
-	color: rgb(0,0,0);
-	cursor: pointer;
-	border: 1.5px solid black;
-	font-weight: 600;
-}
-
-.buttSearch:active {
-	background: #FF9B00;
-	top: 2px;
-}
-
-.buttSearch:before {
-	position: absolute;
-	height: 100%;
-	left: 0;
-	top: 0;
-	line-height: 3;
-	font-size: 140%;
-	width: 60px;
-	background: rgba(0,0,0,0.05);
-}
-
-/* PAGINATION BUTTONS */
-
-.buttPage {
-	float: right;
-}
-
-.buttPage button {
-	float: left;
-	background: black;
-	color: white;
-	width: 60px;
-	height: 30px;
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	font-size: .65rem !important;
-	border: none;
-	margin-left: 2px;
-		
-}
-
-.buttPage button:hover {
-	background: rgb(255,255,255);
-	color: rgb(0,0,0);
-	cursor: pointer;
-	border: solid 1.5px black;
-	font-weight: 600;
-}
-
-.buttPage button:active {
-	background: #FF9B00;
-	top: 2px;
-}
-
-.buttPage button:before {
-	position: absolute;
-	height: 100%;
-	left: 0;
-	top: 0;
-	line-height: 3;
-	font-size: 140%;
-	width: 60px;
-	background: rgba(0,0,0,0.05);
-}
-
-.buttPageS {
-	width: 30px !important;
-}
-
-.input_type {
-	font-size: .8em;
-	font-family: 'open_sanslight', Fallback, sans-serif;
-	letter-spacing: 1px;
-	font-weight: 200;
-	width: 100%;
-}
-
-.input_label {
-    width: 40%;
-    float: left;
-}
-
-.input_field {
-    width: 60%;
-    float: left;
-    margin-bottom: 10px;
-}
-
-.input_span {
-    width: 100%;
-    min-height: 100px;
-	resize: none;
-}
 
 
