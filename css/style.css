@@ -1829,8 +1829,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:inline-block;
 	text-align:center;
 	float:right;
-	border-left:1px solid #050505;
-	border-right:1px solid #303030;
 }
 
 .cm-info-header-menu-min:hover {

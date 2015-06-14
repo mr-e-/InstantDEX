@@ -24,7 +24,9 @@ var IDEX = (function(IDEX, $, undefined)
 			$popup.removeClass("active");
 		else
 			$popup.addClass("active");
-
+		
+		var $exchangePopup = $wrap.find(".cm-orderbox-exchange-popup");
+		$exchangePopup.removeClass("active");
 	})
 	
 	$(".cm-orderbox-config-popup-confirm-trig").on("click", function()
@@ -46,8 +48,6 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 			$popup.addClass("active");
 		
-		//var $configPopup = $wrap.find(".cm-orderbox-config-popup");
-		//$configPopup.removeClass("active");
 	})
 	
 	$(".cm-orderbox-exchange-popup-row").on("click", function()
@@ -88,16 +88,24 @@ var IDEX = (function(IDEX, $, undefined)
 
 	$(".place-order-button").on("click", function()
 	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
 		var $form = $("#" + $(this).attr("data-form"));
 		var params = getPostPayload($(this));
-		//var both = ["6932037131189568014", "5527630"]
-
+		var exchange = $wrap.find(".cm-orderbox-exchange-trig").text();
+		
+		params['exchange'] = exchange;
 		params['baseid'] = IDEX.user.curBase.assetID;
 		params['relid'] = IDEX.user.curRel.assetID;
-		params['duration'] = IDEX.user.options['duration'];
-		params['duration'] = "60"
-		params['minperc'] = Number(IDEX.user.options['minperc']);
-		//params['exchange'] = "nxtae"
+		
+		if (exchange == "InstantDEX")
+		{
+			var duration = $wrap.find(".cm-orderbox-config-popup-duration").val()
+			var minperc = $wrap.find(".cm-orderbox-config-popup-minperc").val()
+			//params['duration'] = IDEX.user.options['duration'];
+			//params['minperc'] = Number(IDEX.user.options['minperc']);
+			params['duration'] = duration;
+			params['minperc'] = minperc
+		}
 		
 		IDEX.placeOrder(params);
 		
