@@ -268,16 +268,6 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 
-	
-	
-	$(".cm-orderbox-config-trig").on("click", function()
-	{
-		
-		console.log('a');
-		
-	})
-
-
 
 	$(".mm-search-trig").on("click", function()
 	{

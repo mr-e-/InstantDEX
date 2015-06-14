@@ -35,6 +35,40 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
+	$(".cm-orderbox-exchange-trig").on("mouseup", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $popup = $wrap.find(".cm-orderbox-exchange-popup");
+		var isActive = $popup.hasClass("active");
+
+		if (isActive)
+			$popup.removeClass("active");
+		else
+			$popup.addClass("active");
+		
+		//var $configPopup = $wrap.find(".cm-orderbox-config-popup");
+		//$configPopup.removeClass("active");
+	})
+	
+	$(".cm-orderbox-exchange-popup-row").on("click", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $popup = $(this).closest(".cm-orderbox-exchange-popup")
+		var text = $(this).find("span").text();
+		var $exTrig = $wrap.find(".cm-orderbox-exchange-trig");
+		var $config = $wrap.find(".cm-orderbox-exchange-config");
+		
+		if (text == "InstantDEX")
+			$config.show()
+		else
+			$config.hide();
+		
+		$exTrig.text(text);
+		$popup.removeClass("active");
+		
+	})
+	
+	
 
 	/*******************ORDER BUTTON*******************/
 
