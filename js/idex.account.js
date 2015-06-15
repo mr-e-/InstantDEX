@@ -27,19 +27,20 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred();
 		var nxtIDAndRS = [];
 		var account = this;
+		var params = {"requestType":"openorders"};
 		
-		/*IDEX.sendPost({'requestType':"getpeers"}).then(function(data)
+		IDEX.sendPost(params).then(function(data)
 		{
-			if ('peers' in data && data['peers'].length)
+			if ('NXT' in data && data['NXT'].length)
 			{
-				var index = data['peers'].length == 1 ? 0 : 1;
-				nxtIDAndRS.push(data['peers'][index]['srvNXT']);
-				nxtIDAndRS.push(data['peers'][index]['RS']);
+				var id = data['NXT']
+				var rs = IDEX.toRS(id);
+				nxtIDAndRS.push(id);
+				nxtIDAndRS.push(rs);
 			}
 			
 			account.setNXTRS(nxtIDAndRS);
-		})*/
-		//account.setNXTRS(["", ""]);
+		})
 	}
 
 

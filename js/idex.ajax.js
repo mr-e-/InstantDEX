@@ -4,7 +4,7 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	var snURL = "http://127.0.0.1:7777/InstantDEX?";
 	//var snURL = "http://127.0.0.1:7777";
-	var nxtURL = "http://127.0.0.1:7876/nxt?";
+	var nxtURL = "http://127.0.0.1:7777/nxt?";
 	
 
 	IDEX.sendPost = function(params, isNXT, callback) 
@@ -32,14 +32,27 @@ var IDEX = (function(IDEX, $, undefined)
                 },
 	        };
 		}
-		console.log(params)
+		else
+		{
+	        ajaxSettings = {
+		        type: "POST",
+		        url: url,
+		        data: params,
+		        contentType: 'application/x-www-form-urlencoded',
+                //headers: {"X-Requested-With":"XMLHttpRequest"},
+                xhrFields: {
+                  withCredentials: true
+                },
+	        };
+		}
+		//console.log(params)
 		var xhr = $.ajax(ajaxSettings);
 		
 		xhr.done(function(data)
 		{
-			if (!isNXT)
-				data = $.parseJSON(data);
-			console.log(data)
+
+			data = $.parseJSON(data);
+			//console.log(data)
 			//console.log(params)
 			//console.log(JSON.stringify(data))
 			dfd.resolve(data);

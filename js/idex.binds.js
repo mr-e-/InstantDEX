@@ -46,8 +46,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 			var tab = $(this).attr('data-tab');
 			var $parent = $(".browseArea-body")
-			$parent.find(".browseArea-tab").hide();
-			$parent.find(".browseArea-tab[data-tab='"+tab+"']").show();
+			$parent.find(".browseArea-tab").removeClass("active");
+			$parent.find(".browseArea-tab[data-tab='"+tab+"']").addClass("active");
 			//$(".util-title").text($(this).find("span").text())
 		}
 	})

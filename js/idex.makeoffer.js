@@ -7,7 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 	//"perc":$(".conf-perc").val();
 	//$button.prop('disabled', false);
 	
-	$(".conf-confirm").on("click", function()
+	$(".makeofferPopup-confirm").on("click", function()
 	{
 		IDEX.makeOffer() 
 	})
@@ -33,13 +33,19 @@ var IDEX = (function(IDEX, $, undefined)
 			else
 			{
 				var message = "makeoffer placed!"
-				$.growl.error({'message':message, 'location':"tl"});
+				$.growl.notice({'message':message, 'location':"tl"});
 				
 				console.log("success");
-				$(".md-overlay").trigger("click");
+				$(".makeofferPopup").removeClass("active");
 			}
 		})
 	}
+	
+	$(".makeofferPopup-close").on("click", function()
+	{
+		var $popup = $(this).closest(".makeofferPopup");
+		$popup.removeClass("active");
+	})
 	
 
 	IDEX.buildMakeofferModal = function($modal, order)
@@ -51,8 +57,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$modal.find(".conf-amount").val(order.volume);
 		$modal.find(".conf-price").val(order.price);
 		$modal.find(".conf-total").val((order.price*order.volume).toFixed(8));
-		$modal.find(".conf-base").text(order.base);
-		$modal.find(".conf-rel").text(order.rel);
 		$modal.find(".conf-minperc").val(order.minperc);
 		$modal.find(".conf-perc").val("100");
 		$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"));

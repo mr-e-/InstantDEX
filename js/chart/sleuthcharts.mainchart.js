@@ -1230,7 +1230,7 @@ var IDEX = (function(IDEX, $, undefined)
 		.attr("y", 20)
 		.attr("x", 20)
 		.attr(textAttr)
-		.attr("fill", "#e5e5e5")
+		.attr("fill", "#D3D3D3")
 		.attr("font-size", "12px")
 	}
 	

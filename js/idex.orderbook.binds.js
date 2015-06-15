@@ -20,8 +20,9 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.user.pendingOrder = order;
 		console.log(order);
 
-		IDEX.buildMakeofferModal($("#"+$("#tempBuyClick").data("modal")), order);
-		$("#tempBuyClick").trigger("click");
+		var $popup = $("#makeoffer_popup")
+		IDEX.buildMakeofferModal($popup, order);
+		$popup.addClass("active");
 
 		$("#place"+isAsk+"Price").val(order.price);
 		$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");

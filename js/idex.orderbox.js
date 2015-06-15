@@ -105,7 +105,9 @@ var IDEX = (function(IDEX, $, undefined)
 			//params['minperc'] = Number(IDEX.user.options['minperc']);
 			params['duration'] = duration;
 			params['minperc'] = minperc
+			params['timeout'] = 10000
 		}
+		params['timeout'] = 10000
 		
 		IDEX.placeOrder(params);
 		
@@ -165,7 +167,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.updateOrderBox = function()
 	{
 		IDEX.resetOrderBoxForm();
-		//IDEX.updateOrderBoxBalance();
+		IDEX.updateOrderBoxBalance();
 		
 		$(".refcur-base").text(IDEX.user.curBase.name);
 		$(".refcur-rel").text(IDEX.user.curRel.name);
@@ -193,8 +195,8 @@ var IDEX = (function(IDEX, $, undefined)
 			baseBal = parseBalance(IDEX.account.getBalance(IDEX.user.curBase.assetID));
 			relBal = parseBalance(IDEX.account.getBalance(IDEX.user.curRel.assetID));
 
-			$buy.find(".bal-val").first().text(relBal[0]).next().text(relBal[1]);
-			$sell.find(".bal-val").first().text(baseBal[0]).next().text(baseBal[1]);
+			$buy.find(".bal-val").first().text(relBal[0] + relBal[1])
+			$sell.find(".bal-val").first().text(baseBal[0] + baseBal[1]);
 		})
 	}
 

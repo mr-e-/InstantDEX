@@ -7,7 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 	var tables = {
 		"openOrdersTable": {'method':"openorders", 'keys':"askoffer market price volume total quoteid age", 'firstKey':false, 'isDataTable':true},
 		//"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total quoteid age", 'firstKey':false, 'isDataTable':false},
-		"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total quoteid", 'firstKey':false, 'isDataTable':false},
+		"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total exchange", 'firstKey':false, 'isDataTable':false},
 		"allOrderbooksTable": {'method':"allorderbooks", 'keys':"base rel last high low volume exchange", 'firstKey':"orderbooks", 'isDataTable':true},
 		"tradeHistoryTable": {'method':"tradehistory", 'keys':"market priceNQTA priceNQTB NXT triggerhash", 'firstKey':"tradehistory", 'isDataTable':true},
 		"balancesTable": {'method':"getAccountAssets", 'keys':"name assetID availableBalance unconfirmedBalance change", 'firstKey':false, 'isDataTable':true}
