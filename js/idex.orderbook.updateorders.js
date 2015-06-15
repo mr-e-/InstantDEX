@@ -6,13 +6,13 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.updateOrders = function($book, orderData)
 	{
 		var isAsk = $book.parent().attr("id") == "buyBook";
-		//console.log("IS ASK: " + String(isAsk))
-		//console.log($book)
+
 		if ($.isEmptyObject(orderData))
 			$book.parent().find(".empty-orderbook").show()
 		else
 			$book.parent().find(".empty-orderbook").hide()
-						
+					
+					
 		if (!($book.find(".order-row").length))
 		{
 			for (var i = 0; i < orderData.newOrders.length; i++)
@@ -26,8 +26,9 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var rowData = IDEX.getRowData($(this), index)
 				
-				updateSum($(this), index, orderData, rowData);
+				//updateSum($(this), index, orderData, rowData);
 				removeOrders($(this), orderData, index);
+				
 				if (isAsk)
 					addNewOrders($(this), orderData, rowData, index);
 				else
@@ -42,17 +43,12 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < orderData['oldOrders'].length; i++)
 		{
 			var oldOrder = orderData['oldOrders'][i];
-			//console.log(String(index)+"   "+String(oldOrder['index']))
-			//console.log(oldOrder)
+
 			if (index == oldOrder['index'] && (Number(oldOrder['sum']) != Number(rowData['sum'])))
 			{
-				//console.log(oldOrder)
-				//console.log(String(oldOrder['sum'])+"   "+String(rowData['sum']))
 				$row.find(".order-col").eq(3).text(String(oldOrder.sum));
 			}
-		}
-		
-		//console.log(orderData['oldOrders'])
+		}		
 	}
 
 
@@ -72,7 +68,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 	function addNewOrders($row, orderData, rowData, index, isAsk)
 	{
-
 		for (var i = 0; i < orderData.newOrders.length; i++)
 		{
 			var newOrder = orderData.newOrders[i];
@@ -102,6 +97,7 @@ var IDEX = (function(IDEX, $, undefined)
 			--i;
 		}
 	}
+	
 	
 	function addNewOrdersAsk($row, orderData, rowData, index)
 	{

@@ -17,20 +17,6 @@ var IDEX = (function(IDEX, $, undefined)
 	var skynetKeys = [3,4,5,6,7]
 	
 	
-	IDEX.loadMiniCharts = function()
-	{
-		$('.fav-market-chart-cell').each(function()
-		{
-			var baseID = $(this).find(".fav-pair span").first().attr("data-asset")
-			var relID = $(this).find(".fav-pair span").first().next().attr("data-asset");
-			var divid = $(this).find(".fav-market-chart-indicator").attr('id');
-			
-			//if (baseID != "-1" && relID != "-1")
-			return
-			IDEX.makeMiniChart(baseID, relID, divid);
-		})
-	}
-	
 	
 	function getData(options)
 	{

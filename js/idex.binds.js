@@ -9,18 +9,6 @@
 var IDEX = (function(IDEX, $, undefined) 
 {	
 
-	$(".curr-pair").on("click", function()
-	{
-		//$("#tempBuyClick").trigger("click");
-		var params = {"requestType":"allorderbooks"}
-		params['plugin'] = "InstantDEX";
-		//console.log(params)
-		IDEX.sendPost(params).done(function(data)
-		{
-			//ssconsole.log(data)
-		});
-	})
-
 	
 	$(".chart-style").on("mouseover", function()
 	{
@@ -32,13 +20,14 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$(this).find(".dropdown-wrap").removeClass("active");
 		$(this).find(".dropdown-title").removeClass("active");
-
 	})
 	
 	
 
 	$(".browseArea-navbar-cell").on("mouseup", function()
 	{
+		return
+		
 		if (!($(this).hasClass("active")))
 		{
 			$(this).parent().find(".browseArea-navbar-cell").removeClass("active");
@@ -48,7 +37,6 @@ var IDEX = (function(IDEX, $, undefined)
 			var $parent = $(".browseArea-body")
 			$parent.find(".browseArea-tab").removeClass("active");
 			$parent.find(".browseArea-tab[data-tab='"+tab+"']").addClass("active");
-			//$(".util-title").text($(this).find("span").text())
 		}
 	})
 	
@@ -56,11 +44,11 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(".util-min").on("click", function()
 	{
-		console.log("a")
+		return
+
 		var $browseArea = $(".browseArea")
 		var $utilArea = $("#utilArea")
 		var $utilBody = $(".util-body")
-		//console.log($el)
 		
 		var utilExpanded = $utilBody.hasClass("active");
 		
@@ -78,13 +66,14 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 		$(window).trigger("resize")
-		
 	})
 	
 	
 	
 	$(".footer-menu-nav-cell").on("click", function()
 	{
+		return;
+		
 		var $browseArea = $(".browseArea")
 		var $utilArea = $("#utilArea")
 		var $utilBody = $(".util-body")
@@ -107,14 +96,9 @@ var IDEX = (function(IDEX, $, undefined)
 		$tab.addClass("active")
 	})
 	
-
-	
-	IDEX.isSearchPopup = false;
-	IDEX.$searchTrig = null;
-	
+		
 	$("#cm_search_trig").on("click", function()
 	{
-		IDEX.$searchTrig = $(this)
 		
 		var $popup = $(".cm-search-popup");
 		var isActive = $popup.hasClass("active");
@@ -129,9 +113,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(".cm-search-popup-button").on("click", function()
 	{
-		//var $form = $("#" + $(this).attr("data-form"));
-		//var params = getPostPayload($(this), "orderbook");
-
 		var $popup = $(".cm-search-popup");
 		var $parent = $(this).parent()
 		var $base = $popup.find("input[name=baseid]")
@@ -143,12 +124,11 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (IDEX.changeMarket(baseid, relid))
 		{
-			//$form.trigger("reset");
 			$popup.removeClass("active")
 		}
 		else
 		{
-			//$popup.removeClass("active")
+
 		}
 	})
 	
@@ -191,14 +171,12 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!($(this).hasClass("active")))
 		{
 			$(this).parent().find(".cm-info-header-menu-cell").removeClass("active");
-			//$(this).removeClass("idex-mousedown");
 			$(this).addClass("active");
 
 			var tab = $(this).attr('data-tab');
 			var $parent = $(".cm-info-body")
 			$parent.find(".cm-info-tab").hide();
 			$parent.find(".cm-info-tab[data-tab='"+tab+"']").show();
-			//$(".util-title").text($(this).find("span").text())
 		}
 	})
 	
@@ -269,6 +247,10 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 
 
+	
+	IDEX.$searchTrig = null;
+	IDEX.isSearchPopup = false;
+
 	$(".mm-search-trig").on("click", function()
 	{
 		IDEX.$searchTrig = $(this)
@@ -296,12 +278,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 			if (field == "ex")
 			{
-				console.log('ex')
 				//$popup.css("height","300px");
 			}
 			else if (field == "pair")
 			{
-				console.log("pair")
+				
 			}
 		}
 	})
@@ -333,10 +314,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$popup.find(".mm-search-popup-field").removeClass("active")
 		$popup.find(".mm-search-popup-input").removeClass("active");
 		$popup.css("display", "none");
-		IDEX.isSearchPopup = false;
-		
-		//getPoloData();
-		
+		IDEX.isSearchPopup = false;		
 	})
 	
 	
@@ -351,7 +329,6 @@ var IDEX = (function(IDEX, $, undefined)
 			var $parent = $(this).closest(".main-menu-tab-wrap");
 			$parent.find(".mm-sub-tab-wrap").hide();
 			$parent.find(".mm-sub-tab-wrap[data-tab='"+tab+"']").show();
-			//$(".util-title").text($(this).find("span").text())
 		}
 	})
 	

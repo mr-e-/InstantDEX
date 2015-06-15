@@ -6,7 +6,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 	var tables = {
 		"openOrdersTable": {'method':"openorders", 'keys':"askoffer market price volume total quoteid age", 'firstKey':false, 'isDataTable':true},
-		//"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total quoteid age", 'firstKey':false, 'isDataTable':false},
 		"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total exchange", 'firstKey':false, 'isDataTable':false},
 		"allOrderbooksTable": {'method':"allorderbooks", 'keys':"base rel last high low volume exchange", 'firstKey':"orderbooks", 'isDataTable':true},
 		"tradeHistoryTable": {'method':"tradehistory", 'keys':"market priceNQTA priceNQTB NXT triggerhash", 'firstKey':"tradehistory", 'isDataTable':true},
@@ -17,15 +16,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.makeTable = function(tableName, callback)
 	{
 		var table = tables[tableName];
-		/*if (table.isDataTable)
-		{
-			var $modalTable = $("#"+tableName);
-			var newDataTable = $modalTable.DataTable();
-			setTimeout(function(){
-				newDataTable.clear();
-				newDataTable.columns.adjust();
-			}, 1)
-		}*/
 		getTableData(table).done(function(tableData)
 		{
 			buildTable(table, tableName, tableData);
@@ -60,8 +50,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			IDEX.account.updateOpenOrders().done(function()
 			{
-				//if (!table.isDataTable)
-				//console.log(IDEX.account)
 				dfd.resolve(IDEX.account.marketOpenOrders);
 			})
 		}
@@ -241,18 +229,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return row;
 	}
 
-	
-	$("#openOrdersTable tbody").on("click", "tr td.cancelOrder", function()
-	{
-		var quoteid = $(this).parent().attr("data-quoteid");
-		var $thisScope = $(this);
-		
-		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
-		{
-			$thisScope.closest(".md-content").find(".tab-tables .nav.active").trigger("click");
-		})
-	})
-	
+
 	
 	$("#marketOpenOrdersTable tbody").on("click", "tr td.cancelOrder", function(e)
 	{
@@ -262,19 +239,17 @@ var IDEX = (function(IDEX, $, undefined)
 		console.log(quoteid)
 		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
 		{
-			IDEX.makeTable("marketOpenOrdersTable", function()
-			{
-				
-			});
+			IDEX.updateUserState();
 			console.log(data)
-			//IDEX.currentOpenOrders();
 		})
 	})
+	
 	
 	$("#marketOpenOrdersTable tbody").on("mouseover", "tr td.cancelOrder", function(e)
 	{
 		$(this).parent().addClass("cancel-hover")
 	})
+	
 	
 	$("#marketOpenOrdersTable tbody").on("mouseleave", "tr td.cancelOrder", function(e)
 	{
@@ -285,7 +260,6 @@ var IDEX = (function(IDEX, $, undefined)
 	$("#allOrderbooksTable tbody").on("click", "tr", function()
 	{
 		IDEX.changeMarket($(this).attr("data-baseid"), $(this).attr("data-relid"));
-		$(".md-overlay").trigger("click");
 	})
 	
 

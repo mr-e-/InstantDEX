@@ -73,34 +73,7 @@ var IDEX = (function(IDEX, $, undefined)
 				i++
 			}
 			
-		})
-		
-
-		/*var headerClass = "market-chart-header chart-wrap tile-chart-bar";
-		
-			var searchWrapClass = "mm-chart-search-wrap";
-				var searchInputWrapClass = "mm-chart-search-input vert-align";
-					var searchInputClass = "skynet-search";
-					
-			var dropdownClass = "chart-style dropdown-chart";
-				var dropdownTitleClass = "dropdown-title dropdown-title-main vert-align"
-		
-		
-		var $header = $("<div/>", {'class':headerClass} );
-		
-			var $searchWrap = $("<div/>", {'class':searchWrapClass} );
-				var $searchInputWrap = $("<div/>", {'class':searchInputWrapClass} );
-					var $searchInput = $("<input/>", {'class':searchInputClass, 'type':"text", 'name':"pair"} );
-			
-			//var $searchEl = $searchWrap.append($searchInputWrap.append($searchInput))
-		
-		
-			var $dropdown = $("<div/>", {'class':dropdownClass} )
-				var $searchInputWrap = $("<div/>", {'class':"mm-chart-search-input vert-align"} )
-					var $searchInput = $("<input/>", {'class':"skynet-search", 'type':"text", 'name':"pair"} )*/
-					
-					
-		
+		})			
 	}
 	
 	
@@ -179,6 +152,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$(this).removeClass("tile-hover")
 			$(this).find(".tile-create").addClass("active");
 			$(this).addClass("all-border")
+			
 			//var $modal = $("#modal-tile")
 			//var tileNum = $(this).attr("data-tile")
 			//$("#current-tile").val(tileNum);
@@ -192,7 +166,6 @@ var IDEX = (function(IDEX, $, undefined)
 			//else
 			//	$modal.addClass("md-show");
 			
-				
 
 			//console.log($(this))
 			//$(".idex-tab-content").prepend($(this).clone())
@@ -227,13 +200,9 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			
 		}
-
-
 	})
 	
 	
-	
-
 	$(".tile-orderbook-search-input").on("click", function()
 	{
 		console.log('in')
@@ -253,9 +222,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(".tile-orderbook-search-popup-button").on("click", function()
 	{
-		//var $form = $("#" + $(this).attr("data-form"));
-		//var params = getPostPayload($(this), "orderbook");
-
 		var $popup = $(this).closest(".tile-orderbook-search-popup");
 		var $base = $popup.find("input[name=baseid]")
 		var $rel = $popup.find("input[name=relid]")
@@ -363,8 +329,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
 		{
-			//console.log(orderbookData);
-
 			retDFD.resolve(orderbookData);
 		})
 		
@@ -414,11 +378,9 @@ var IDEX = (function(IDEX, $, undefined)
 			newBids = IDEX.setListObjVals(newBids, key, bids);
 			newAsks = IDEX.setListObjVals(newAsks, key, asks);
 		}
-
 	}
 	
 	
-
 	
 	$(".tiles").on("mouseover", ".tile-header-overlay-trig", function()
 	{
@@ -452,176 +414,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 
-	
-	IDEX.makeSVG = function()
-	{
-		//var $svg = $("<svg></svg>")
-		var svg = document.createElementNS(d3.ns.prefix.svg, 'svg');
-		svg = d3.select($(svg).get()[0])
-		//console.log(svg)
-		
-		svg
-		.attr("height", "100%")
-		.attr("width", "100%")
-		.attr("class", "unselectable")
-		//.style({"background":"#090909"});
-		//.style({"background":"black"});
 
-		svg.append("g")
-		.attr("class", "candleseries");
-		
-		svg.append("text")
-		.attr("class", "candleInfo")
-		.attr("data-axisnum", "1");
-		
-		
-		var xAxis = 
-		svg.append("g")
-		.attr("class", "sleuthXAxis")
-		.attr("data-axisnum", "1");
-		
-		xAxis.append("g")
-		.attr("class", "xLabels");	
-		
-		xAxis.append("g")
-		.attr("class", "xTicks");
-		
-		xAxis.append("g")
-		.attr("class", "xAxisLines");
-		
-		var yAxis = 
-		svg.append("g")
-		.attr("class", "sleuthYAxis")
-		.attr("data-axisnum", "1");
-		
-		yAxis.append("g")
-		.attr("class", "yLabels");	
-		
-		yAxis.append("g")
-		.attr("class", "yTicksLeft");
-		
-		yAxis.append("g")
-		.attr("class", "yTicksRight");
-		
-		yAxis.append("g")
-		.attr("class", "yGridLines");
-		
-		yAxis.append("g")
-		.attr("class", "yAxisLines");
-		
-		var yAxis = 
-		svg.append("g")
-		.attr("class", "sleuthYAxis")
-		.attr("data-axisnum", "2");
-		
-		yAxis.append("g")
-		.attr("class", "yLabels");	
-		
-		yAxis.append("g")
-		.attr("class", "yTicksLeft");
-		
-		yAxis.append("g")
-		.attr("class", "yTicksRight");
-		
-		yAxis.append("g")
-		.attr("class", "yGridLines");
-		
-		yAxis.append("g")
-		.attr("class", "yAxisLines");
-		
-		
-		
-		svg.append("g")
-		.attr("class", "volbars");
-		
-		svg.append("g")
-		.attr("class", "seriesLine");
-		
-		svg.append("g")
-		.attr("class", "mainline");
-		
-		svg.append("g")
-		.attr("class", "boxes");
-		
-		
-		var candleInd = 
-		svg.append("g")
-		.attr("class", "candleInd")
-		
-		candleInd.append("g")
-		.attr("class", "ind");
-		
-		candleInd.append("g")
-		.attr("class", "ind");
-		
-		
-		var volInd = 
-		svg.append("g")
-		.attr("class", "volInd")
-		
-		volInd.append("g")
-		.attr("class", "ind");
-		
-		volInd.append("g")
-		.attr("class", "ind");
-		
-		
-		
-		var cursor = svg.append("g")
-		.attr("class", "cursor_follow");
-		
-		cursor.append("line")
-		.attr("class", "cursor_follow_x");
-		
-		cursor.append("line")
-		.attr("class", "cursor_follow_y");
-
-		var priceFollow = cursor.append("g")
-		.attr("class", "yAxis-follow")
-		.attr("data-axisnum", "1");
-		
-		priceFollow.append("path")
-		.attr("class", "yAxis-follow-backbox");
-		
-		priceFollow.append("text")
-		.attr("class", "yAxis-follow-text");
-		
-		
-		var volFollow = cursor.append("g")
-		.attr("class", "yAxis-follow")
-		.attr("data-axisnum", "2");
-		
-		volFollow.append("path")
-		.attr("class", "yAxis-follow-backbox");
-		
-		volFollow.append("text")
-		.attr("class", "yAxis-follow-text");
-		
-		
-		var timeFollow = cursor.append("g")
-		.attr("class", "xAxis-follow");
-		
-		timeFollow.append("rect")
-		.attr("class", "xAxis-follow-backbox");
-		
-		timeFollow.append("text")
-		.attr("class", "xAxis-follow-text");
-		
-		
-		svg.append("text")
-		.attr("class", "highestPrice");
-		
-		svg.append("text")
-		.attr("class", "lowestPrice");
-		
-		svg.append("text")
-		.attr("class", "cur-market");
-
-		
-		return svg
-	}
-	
-	
 	
 	
 	
@@ -665,12 +458,16 @@ var IDEX = (function(IDEX, $, undefined)
 
 	});	
 	
+	
 	$(".modal-cancel").on("click", function()
 	{
 		var $modal = $(this).closest(".md-modal");
 		$modal.removeClass("md-show");
 		//setTimeout(function(){$modal.trigger("idexHide")}, 300)
 	})
+	
+	
+	
 	
 	
 	return IDEX;

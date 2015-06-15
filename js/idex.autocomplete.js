@@ -8,6 +8,8 @@ var IDEX = (function(IDEX, $, undefined)
 	var autoSearchSkynet = [];
 	var autoSearchOrderbookExchange = ["nxtae", "unconf", "InstantDEX", "nxtae_nxtae"];
 	
+	
+	
 	IDEX.initAutocomplete = function()
 	{
 		var assets = IDEX.user.allAssets;
@@ -28,6 +30,7 @@ var IDEX = (function(IDEX, $, undefined)
 		source: function(request,response) { autocompleteMatcher(request, response, autoSearchAsset) }
 	});
 	
+	
 	$('.skynet-search').autocomplete(
 	{
 		delay:0,
@@ -38,11 +41,10 @@ var IDEX = (function(IDEX, $, undefined)
 		select: function(e, ui) { skynetSelection($(this), e, ui) }
 	});
 	
+	
 	$('.auto-label-exchange').autocomplete(
 	{
 		delay:0,
-		//html:true,
-		//open: function(e, ui) { $(this).autocomplete('widget').css({'width':"450px","margin-top":"14px"})},
 		source: function(request,response) { labelExchangeMatcher(request, response, autoSearchOrderbookExchange) },
 		change: function(e, ui) { labelExchangeSelection($(this), e, ui) },
 		select: function(e, ui) { labelExchangeSelection($(this), e, ui) }
@@ -74,6 +76,7 @@ var IDEX = (function(IDEX, $, undefined)
 		response(a);
 	}
 	
+	
 	function labelExchangeSelection($thisScope, e, ui)
 	{
 		var exchange = ""
@@ -82,8 +85,8 @@ var IDEX = (function(IDEX, $, undefined)
 			exchange = ui.item.value
 		}
 		console.log(exchange)
-		//IDEX.colorOrderbook(exchange)
 	}
+	
 	
 	function skynetMatcher(request, response, auto)
 	{
@@ -114,10 +117,11 @@ var IDEX = (function(IDEX, $, undefined)
 		response(a.slice(0, 20));
 	}
 	
+	
 	function skynetSelection($thisScope, e, ui)
 	{
-		//console.log(e)
-		//console.log(ui)
+		console.log(ui)
+		
 		if (!ui.item)
 		{
 			$thisScope.attr('data-pair', "-1");
@@ -132,17 +136,7 @@ var IDEX = (function(IDEX, $, undefined)
 			pair = $el.attr("data-pair")
 			idPair = $el.attr("data-idpair")
 			exchange = $el.attr("data-exchange")
-			/*$el.each(function()
-			{
-				
-				if ($(this).hasClass("sky-pair"))
-					pair = $(this).text()
-				if ($(this).hasClass("sky-idPair"))
-					idPair = $(this).text()
-				if ($(this).hasClass("sky-exchange"))
-					exchange = $(this).text()
-				
-			})*/
+
 			if (idPair.split("_").length == 2 && exchange == "nxtae")
 				$thisScope.attr('data-pair', idPair);
 			else
@@ -151,7 +145,6 @@ var IDEX = (function(IDEX, $, undefined)
 			$thisScope.attr('data-exchange', exchange);
 			
 			IDEX.chartClick($thisScope)
-			//$("#temp_chart_click").trigger("click")
 		}
 	}
 	
@@ -263,13 +256,14 @@ var IDEX = (function(IDEX, $, undefined)
 				wrap += "<div class='sky-auto-cell'>" + idPairSpan + "</div>"
 				wrap += "<div class='sky-auto-cell sky-cell-ex'>" + exchangeSpan + "</div>"
 				wrap += "</div>"
-				autoSearchSkynet.push({"label":wrap, "value":obj['pair']});
+				autoSearchSkynet.push({"label":wrap, "value":obj['pair'], "test":"a"});
 			}
 			dfd.resolve(parsed)	
 		})
 		
 		return dfd.promise()
 	}
+	
 	
 	function loadSkynetData()
 	{
@@ -299,7 +293,6 @@ var IDEX = (function(IDEX, $, undefined)
 				console.log(data)
 				var parsed = parseSkynetSearch(data.results)
 				var len = parsed.length;
-				//console.log(parsed)
 				localStorage.setItem('skynetMarkets', JSON.stringify(parsed));
 				dfd.resolve(parsed);
 			})
@@ -308,13 +301,13 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		dfd.done(function(markets)
 		{
-			//assets.sort(IDEX.compareProp('name'));
-			//user.allAssets = assets;
 			retdfd.resolve(markets);
 		})
 		
 		return retdfd.promise();
 	}
+	
+	
 	function parseSkynetSearch(data)
 	{
 		var exchanges = {}
@@ -325,9 +318,6 @@ var IDEX = (function(IDEX, $, undefined)
 		for (pair in data)
 		{
 			var pairExchanges = data[pair].split('|');
-			
-			//if (counter < 10)
-			//	console.log(pairExchanges)
 			
 			for (var i = 0; i < pairExchanges.length; i++)
 			{
@@ -341,6 +331,7 @@ var IDEX = (function(IDEX, $, undefined)
 		console.log(parsed)
 		return parsed;
 	}
+	
 
     IDEX.makeSkynetURL = function(obj)
     {
@@ -356,6 +347,9 @@ var IDEX = (function(IDEX, $, undefined)
         return baseurl+s
     }
 
+	
+	
+	
 	return IDEX;
 	
 	

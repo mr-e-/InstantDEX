@@ -8,9 +8,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.isInspect = false
 
 	$("#inspect-trig img").on("mouseup", function()
-	{
-		//$("#tileModalTrig").trigger("click");
-		
+	{		
 		if (!IDEX.isInspect)
 		{
 			//$("body").css("cursor", "url('img/dropper.png') 4 30, pointer");
@@ -27,6 +25,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.isInspect = !IDEX.isInspect;
 	})
 	
+	
 	$(".inspectable").on("mouseover", function()
 	{
 		if (IDEX.isInspect)
@@ -37,6 +36,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 	
+	
 	$(".inspectable").on("mouseout", function()
 	{
 		if (IDEX.isInspect)
@@ -44,6 +44,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$(this).removeClass("inspectedHover");
 		}
 	})
+	
 	
 	$(".inspectable").on("click", function()
 	{
@@ -148,6 +149,7 @@ var IDEX = (function(IDEX, $, undefined)
 		settings.pair = String(baseID) + "_" + relID
 		var market = base.name + "_" + rel.name
 		$(".inspect-area-middle-title").find("span").text(market);
+		
 		getTicker(settings).done(function(data)
 		{
 			console.log(data)
@@ -260,6 +262,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return row;
 	}
 	
+	
 	function orderbookPost(baseID, relID)
 	{
 		var retDFD = new $.Deferred();
@@ -274,23 +277,18 @@ var IDEX = (function(IDEX, $, undefined)
 			'showAll':0
 		};
 		
-		//var time = Date.now()
-		//console.log('starting inspect orderbook ajax');
 		
 		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
 		{
-			//console.log(orderbookData);
-			//console.log("finished orderbook ajax " + String((Date.now() - time)/1000) + "s");
-
 			retDFD.resolve(orderbookData);
 		})
 		
 		return retDFD.promise();
 	}
 	
+	
 	function formatOrderData(orders)
 	{
-
 		var len = orders.length;
 		var isAsk = len && orders[0].askoffer;
 		orders.sort(IDEX.compareProp('price'))

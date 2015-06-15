@@ -3,8 +3,6 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	/*******************		INIT		********************/
-
 	
 	$(".orderbook-label-color-input").each(function()
 	{
@@ -23,8 +21,6 @@ var IDEX = (function(IDEX, $, undefined)
 			replacerClassName:'orderbook-label-color-replacer',
 			preferredFormat: "rgb",
 			appendTo: $el,
-			//disabled:true,
-			//allowEmpty:true
 		})
 	});
 	
@@ -189,8 +185,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var $rows = $book.find(".order-row")
 			var $style = $("#temp_label_style");
 
-			
-			
+
 			$rows.each(function()
 			{
 				var order = IDEX.getRowData($(this), $(this).index());
@@ -408,10 +403,12 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 	}
 	
+	
 	function unloadVis()
 	{
 		
 	}
+	
 	
 	IDEX.getVisibleMap = function(vis)
 	{
@@ -425,6 +422,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return exchanges
 	}
+	
 	
 	IDEX.getVisibleLabels = function()
 	{
@@ -444,6 +442,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return vis;
 	}
 	
+	
 	function getActiveLabel()
 	{
 		var ret = false;
@@ -462,6 +461,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return ret;
 	}
 	
+	
 	function removeActiveLabel()
 	{
 		for (var i = 0; i < IDEX.labels.length; i++)
@@ -469,6 +469,7 @@ var IDEX = (function(IDEX, $, undefined)
 			IDEX.labels[i].isActive = false;
 		}
 	}
+	
 	
 	function getInputValues()
 	{
@@ -483,6 +484,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return obj
 	}
+	
 	
 	function setInputValues(label)
 	{
@@ -500,6 +502,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return obj
 	}
+	
 	
 	IDEX.buildLabelRow = function(name)
 	{

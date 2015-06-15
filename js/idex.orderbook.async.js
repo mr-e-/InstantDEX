@@ -10,16 +10,13 @@ var IDEX = (function(IDEX, $, undefined)
 
 		thisScope.counter = true;
 		thisScope.lastUpdatedHandler(0);
-		/*IDEX.makeTable("marketOpenOrdersTable", function()
-		{
-			
-		});*/
+		
+		//IDEX.updateUserState();
+		
 		thisScope.setTimeout(timeout).then(function(wasCleared)
 		{
-			/*IDEX.makeTable("marketOpenOrdersTable", function()
-			{
-				
-			});*/
+			//IDEX.updateUserState();
+			
 			if (wasCleared)
 			{
 				thisScope.counter = false;
@@ -98,7 +95,6 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (this.timeoutDFD)
 		{
-			//console.log("clearTimeout")
 			clearTimeout(this.orderbookTimeout);
 			this.timeoutDFD.resolve(true);
 			this.timeoutDFD = false;
@@ -122,22 +118,21 @@ var IDEX = (function(IDEX, $, undefined)
 		return this.timeoutDFD.promise();
 	}
 	
+	
 	IDEX.Orderbook.prototype.lastUpdatedHandler = function(seconds)
 	{
 		var orderbook = this;
-		//console.log(seconds)
 		
 		orderbook.lastUpdatedCounter().done(function()
 		{
-			//console.log(orderbook.counter)
 			var $el = $(".orderbook-last-updated");
 			
 			if (orderbook.counter)
 			{
 				seconds++;
+				
 				if (orderbook.isWaitingForOrderbook)
 					var text = String(seconds) + "s..."
-					//var text = "Updating...(" + String(seconds) + "s)"
 				else
 					var text = String(seconds) + "s"
 				
@@ -152,6 +147,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		})
 	}
+	
 	
 	IDEX.Orderbook.prototype.lastUpdatedCounter = function()
 	{
@@ -170,11 +166,11 @@ var IDEX = (function(IDEX, $, undefined)
 		return this.lastUpdatedDFD.promise();
 	}
 	
+	
 	IDEX.Orderbook.prototype.clearUpdatedTimeout = function()
 	{
 		if (this.lastUpdatedDFD)
 		{
-			//console.log("clearTimeout")
 			clearTimeout(this.lastUpdatedTimeout);
 			this.lastUpdatedDFD.resolve(true);
 			this.lastUpdatedDFD = false;

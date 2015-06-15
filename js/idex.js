@@ -2,7 +2,6 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-
 	IDEX.orderbook;
 	IDEX.account;
 	IDEX.user;
@@ -11,8 +10,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.isSNRunning = false;
 	IDEX.chartInit = false;
 	IDEX.isOrderbookExpanded = false;
-	
-	IDEX.logs = []
 
 	IDEX.snPostParams = 
 	{
@@ -26,6 +23,7 @@ var IDEX = (function(IDEX, $, undefined)
 		'makeoffer3':["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset","offerNXT"]
 	};
 
+	
 	
 	IDEX.Order = function(obj) 
 	{
@@ -102,6 +100,7 @@ var IDEX = (function(IDEX, $, undefined)
 				that.availableBalance = avail / Math.pow(10, asset.decimals);
 				that.unconfirmedBalance = unconf / Math.pow(10, asset.decimals);				
 			}
+			
 		}(this, constructorObj)
 	};
 	
@@ -142,35 +141,35 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.init = function()
 	{
-		IDEX.initScrollbar();
-		//IDEX.initDataTable();
+		var dfd = new $.Deferred();
 		
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
 		IDEX.orderbook = new IDEX.Orderbook();
 		IDEX.chart = new IDEX.Chart();
 		
-		IDEX.account.updateNXTRS();
+		IDEX.initScrollbar();
+		//IDEX.initDataTable();
+		
+		IDEX.account.updateNXTRS().done(function(nxtRSID)
+		{
+			console.log(nxtRSID)
+		});
+		
 		IDEX.user.initAllAssets().done(function()
 		{
 			IDEX.initAutocomplete();
+			
 			IDEX.getSkynet().done(function(data)
 			{
-			
+				IDEX.hideLoading();
 			})
 		});
 
-		
-		//IDEX.user.initChartFavorites();
-		//IDEX.user.initOptions();
-		IDEX.user.updateFavoritesDom();
-		
-		IDEX.loadMiniCharts();
-		//IDEX.getPoloData();
-		
+				
 		IDEX.buildTilesDom();
 		IDEX.buildMainChartDom();
-
+		IDEX.updateChart("main_menu_chart");
 	}
 	
 
@@ -183,10 +182,5 @@ var IDEX = (function(IDEX, $, undefined)
 
 $(window).load(function()
 {
-	$('.tooltip').tooltipster({
-		delay: 1200,
-		position: 'bottom'
-	});
-		
 	IDEX.init();
 })

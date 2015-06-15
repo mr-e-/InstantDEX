@@ -47,10 +47,12 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			//this.xhr.abort();
 			this.isStoppingOrderbook = true;
+			
 			setTimeout(function()
 			{ 
 				thisScope.stopPollingOrderbook(callback);
 			}, 100);
+			
 			return false;
 		}
 		

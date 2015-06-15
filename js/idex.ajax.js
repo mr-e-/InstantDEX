@@ -2,59 +2,43 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var snURL = "http://127.0.0.1:7777/InstantDEX?";
-	//var snURL = "http://127.0.0.1:7777";
+	
 	var nxtURL = "http://127.0.0.1:7777/nxt?";
+	var snURL = "http://127.0.0.1:7777/InstantDEX?";
 	
 
+	
+	
 	IDEX.sendPost = function(params, isNXT, callback) 
 	{
 		var dfd = new $.Deferred();
 		var url = isNXT ? nxtURL : snURL;
+		
 		//params = isNXT ? params : JSON.stringify(params);
-		var ajaxSettings = {
+		if (!isNXT)
+			params['plugin'] = "InstantDEX";
+
+		
+		var ajaxSettings = 
+		{
 			type: "POST",
 			url: url,
 			data: params,
+			contentType: 'application/x-www-form-urlencoded',
+			xhrFields: {
+				withCredentials: true
+			}
 		};
 		
-		if (!isNXT)
-		{
-			params['plugin'] = "InstantDEX";
-	        ajaxSettings = {
-		        type: "POST",
-		        url: url,
-		        data: params,
-		        contentType: 'application/x-www-form-urlencoded',
-                //headers: {"X-Requested-With":"XMLHttpRequest"},
-                xhrFields: {
-                  withCredentials: true
-                },
-	        };
-		}
-		else
-		{
-	        ajaxSettings = {
-		        type: "POST",
-		        url: url,
-		        data: params,
-		        contentType: 'application/x-www-form-urlencoded',
-                //headers: {"X-Requested-With":"XMLHttpRequest"},
-                xhrFields: {
-                  withCredentials: true
-                },
-	        };
-		}
-		//console.log(params)
 		var xhr = $.ajax(ajaxSettings);
+		
+		//console.log(params)
 		
 		xhr.done(function(data)
 		{
-
 			data = $.parseJSON(data);
 			//console.log(data)
-			//console.log(params)
-			//console.log(JSON.stringify(data))
+			
 			dfd.resolve(data);
 			if (callback)
 				callback(data);
@@ -62,20 +46,13 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		xhr.fail(function(data)
 		{
+			console.log(data)
+			//$.growl.error({'message':message, 'location':"tl"});
+			
 			if (data.statusText == "abort")
 			{
-				data = "abort";
+				//data = "abort";
 			}
-			else
-			{
-				var name = isNXT ? "NXT" : "SuperNET";
-				var message = "Could not connect to " + name;
-				//$.growl.error({'message':message, 'location':"tl"});
-			}
-
-
-			//console.log(params);
-			//console.log(data);
 			
 			dfd.reject(data);
 			if (callback)
@@ -90,6 +67,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 
+	
 	
 	
 

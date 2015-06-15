@@ -17,8 +17,6 @@ var IDEX = (function(IDEX, $, undefined)
 			this.nxtID = nxtIDAndRS[0];
 			this.nxtRS = nxtIDAndRS[1];
 		}
-		
-		$(".option-nxtrs").val(this.nxtRS);
 	}
 
 	
@@ -40,7 +38,11 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 			account.setNXTRS(nxtIDAndRS);
+			
+			dfd.resolve([account.nxtID, account.nxtRS])
 		})
+		
+		return dfd.promise()
 	}
 
 
@@ -134,12 +136,12 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			account.openOrders = data;
 			account.marketOpenOrders = temp;
-			//console.log(account)*/
 			dfd.resolve();
 		})
 		
 		return dfd.promise();
 	}
+	
 	
 	IDEX.Account.prototype.pollOpenOrders = function(timeout)
 	{
@@ -156,21 +158,23 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 	}
 	
+	
 	IDEX.Account.prototype.stopPollingOpenOrders = function()
 	{
 		
 	}
+	
 	
 	IDEX.Account.prototype.refreshOpenOrdersPoll = function()
 	{
 		
 	}
 	
+	
 	IDEX.Account.prototype.setTimeout = function(timeout)
 	{
 		this.timeoutDFD = new $.Deferred();
 		var account = this;
-		//console.log(account.timeoutDFD);
 
 		this.openOrdersTimeout = setTimeout(function() 
 		{
@@ -182,19 +186,17 @@ var IDEX = (function(IDEX, $, undefined)
 		return this.timeoutDFD.promise();
 	}
 	
+	
 	IDEX.Account.prototype.clearTimeout = function()
 	{
 		if (this.timeoutDFD)
 		{
-			//console.log("clearTimeout")
 			clearTimeout(this.openOrdersTimeout);
 			this.timeoutDFD.resolve(true);
 			this.timeoutDFD = false;
 		}
 	}
 	
-	//$(".info-tabs li").on("click", IDEX.currentOpenOrders)	
-
 	
 	function addAssetID(assets)
 	{

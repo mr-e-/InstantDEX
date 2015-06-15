@@ -3,9 +3,11 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	IDEX.snAssets = {
+	IDEX.snAssets = 
+	{
 		'nxt':{'name':"NXT",'assetID':"5527630", 'decimals':8}
 	};
+	
 	
 	
 	IDEX.User.prototype.initAllAssets = function()
@@ -23,10 +25,11 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			IDEX.sendPost({'requestType':"getAllAssets"}, 1).then(function(data)
 			{
-				console.log(data)
 				var assets = [];
+				
 				if ("assets" in data)
 				{
+					console.log(data.assets.length)
 					assets = parseAllAssets(data.assets);
 					localStorage.setItem('allAssets', JSON.stringify(assets));
 				}
@@ -40,7 +43,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			assets.sort(IDEX.compareProp('name'));
 			user.allAssets = assets;
-			retdfd.resolve();
+			retdfd.resolve(assets);
 		})
 		
 		return retdfd.promise();
@@ -52,6 +55,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var arr = [];
 		var assetInfo = {};
 		var len = this.allAssets.length;
+		
 		for (var i = 0; i < len; i++)
 		{
 			if (this.allAssets[i][key] == val)
@@ -108,6 +112,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return parsed
 	}
+	
+	
 	
 	
 	return IDEX;

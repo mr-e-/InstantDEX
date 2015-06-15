@@ -2,9 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	
-//	IDEX.currentOpenOrders();
-//	IDEX.refreshOrderbook();
+
 
 	$(".cm-orderbox-config-popup-close").on("mouseup", function()
 	{
@@ -35,6 +33,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		$popup.removeClass("active");
 	})
+	
 	
 	
 	$(".cm-orderbox-exchange-trig").on("mouseup", function()
@@ -70,8 +69,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 
-	/*******************ORDER BUTTON*******************/
-
 	$(".place-order-button").on("mousedown", function()
 	{
 		$(this).addClass("order-button-mousedown")
@@ -101,12 +98,10 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var duration = $wrap.find(".cm-orderbox-config-popup-duration").val()
 			var minperc = $wrap.find(".cm-orderbox-config-popup-minperc").val()
-			//params['duration'] = IDEX.user.options['duration'];
-			//params['minperc'] = Number(IDEX.user.options['minperc']);
 			params['duration'] = duration;
 			params['minperc'] = minperc
-			params['timeout'] = 10000
 		}
+		
 		params['timeout'] = 10000
 		
 		IDEX.placeOrder(params);
@@ -136,10 +131,8 @@ var IDEX = (function(IDEX, $, undefined)
 		//{
 			IDEX.sendPost(params).done(function(data)
 			{
-				/*IDEX.makeTable("marketOpenOrdersTable", function()
-				{
-					
-				});*/
+				IDEX.updateUserState();
+				
 				console.log(data);
 
 				var log = {}
@@ -180,6 +173,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$("#placeAskForm").trigger("reset");
 	}
 	
+	
 	IDEX.updateOrderBoxBalance = function()
 	{
 		var $buy = $("#balance_buy");
@@ -200,6 +194,7 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 	}
 
+	
 	function parseBalance(balance)
 	{
 		var whole = "0";
@@ -217,6 +212,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return [whole, dec];
 	}
+	
 
 	$("input[name='price'], input[name='volume']").on("keyup", function() 
 	{
