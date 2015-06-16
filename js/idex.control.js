@@ -5,6 +5,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.changeMarket = function(baseid, relid)
 	{
+		var dfd = new $.Deferred();
 		var retBool = false;
 
 		if (IDEX.user.updatePair(baseid, relid))
@@ -18,12 +19,17 @@ var IDEX = (function(IDEX, $, undefined)
 			//IDEX.account.pollOpenOrders();
 
 			//IDEX.killChart();
-			IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID, 'basename':IDEX.user.curBase.name, 'relname':IDEX.user.curRel.name});
+			IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID});
 			IDEX.orderbook.loadNewOrderbook(IDEX.user.curBase, IDEX.user.curRel);
-			retBool = true;
+			
+			dfd.resolve();
+		}
+		else
+		{
+			dfd.reject();
 		}
 		
-		return retBool;
+		return dfd.promise();
 	}
 	
 	
@@ -38,6 +44,18 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$labeldom = $(".orderbook-label-conf input[name='market']")
 		$labeldom.val(market)
+	}
+	
+	
+	
+	IDEX.updateUserState = function()
+	{
+		IDEX.makeTable("marketOpenOrdersTable", function()
+		{
+			
+		});
+		
+		IDEX.updateOrderBoxBalance();
 	}
 	
 	

@@ -16,14 +16,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{	
 		params = IDEX.buildPostPayload("makeoffer3", IDEX.user.pendingOrder)
 		params['perc'] = $(".conf-perc").val();
-		params['plugin'] = "InstantDEX"
+		
 		console.log(params);
-		//console.log(JSON.stringify(params, null, 4))
 		
 		IDEX.sendPost(params).done(function(data)
 		{
 			console.log(data);
-			//console.log(JSON.stringify(data, null, 4))
 			
 			if ("error" in data && data.error.length)
 			{
@@ -40,6 +38,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		})
 	}
+	
 	
 	$(".makeofferPopup-close").on("click", function()
 	{
@@ -123,6 +122,8 @@ var IDEX = (function(IDEX, $, undefined)
 			$(".conf-jumbotron").show().find("div").text(check);
 		}
 	});
+	
+	
 
 	
 	return IDEX;

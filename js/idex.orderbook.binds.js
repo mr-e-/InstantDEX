@@ -10,7 +10,8 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
+//	$("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
+	$("#buyBook, #sellBook").on("click", ".order-row:not(.expiredRow)", function(e)
 	{
 		var bookID = $(this).closest(".bookname").attr("id")
 		var rowIndex = $(this).index("#"+bookID+" .order-row")

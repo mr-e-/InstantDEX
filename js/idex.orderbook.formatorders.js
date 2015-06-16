@@ -144,7 +144,6 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var exchange in visMap)
 		{
 			var label = visMap[exchange]
-			//console.log(exchange)
 			
 			if (order.exchange == exchange)
 			{

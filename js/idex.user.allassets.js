@@ -3,9 +3,11 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	IDEX.snAssets = {
+	IDEX.snAssets = 
+	{
 		'nxt':{'name':"NXT",'assetID':"5527630", 'decimals':8}
 	};
+	
 	
 	
 	IDEX.User.prototype.initAllAssets = function()
@@ -21,16 +23,16 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			IDEX.sendPost({'requestType':"getAllAssets"}, 1).then(function(data)
+			var firstIndex = 1;
+			var lastIndex = 99;
+			
+
+			getAssetsLoop([], 0, 99, function(assets)
 			{
-				console.log(data)
-				var assets = [];
-				if ("assets" in data)
-				{
-					assets = parseAllAssets(data.assets);
-					localStorage.setItem('allAssets', JSON.stringify(assets));
-				}
-				
+
+				assets = parseAllAssets(assets);
+				localStorage.setItem('allAssets', JSON.stringify(assets));
+				console.log(assets.length)
 				dfd.resolve(assets);
 			})
 		}
@@ -40,10 +42,39 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			assets.sort(IDEX.compareProp('name'));
 			user.allAssets = assets;
-			retdfd.resolve();
+			retdfd.resolve(assets);
 		})
 		
 		return retdfd.promise();
+	}
+	
+	
+	function getAssetsLoop(assets, firstIndex, lastIndex, callback)
+	{
+		var params = {}
+		params['requestType'] = "getAllAssets";
+		params['firstIndex'] = firstIndex;
+		params['lastIndex'] = lastIndex;
+		
+		IDEX.sendPost(params, true).then(function(data)
+		{
+			if ("assets" in data)
+			{
+				if (data.assets.length)
+				{
+					var addedAssets = assets.concat(data.assets)
+					getAssetsLoop(addedAssets, firstIndex+100, lastIndex+100, callback)
+				}
+				else
+				{
+					callback(assets)
+				}
+			}
+			else
+			{
+				callback(assets)
+			}
+		})		
 	}
 
 	
@@ -52,6 +83,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var arr = [];
 		var assetInfo = {};
 		var len = this.allAssets.length;
+		
 		for (var i = 0; i < len; i++)
 		{
 			if (this.allAssets[i][key] == val)
@@ -108,6 +140,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return parsed
 	}
+	
+	
 	
 	
 	return IDEX;

@@ -117,7 +117,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.makeChart = function(obj)
 	{
+		var dfd = new $.Deferred();
+		
 		var node = "ex_chart";
+		
 		var chart = allCharts[node];
 		var settings = chart.settings
 		
@@ -130,7 +133,15 @@ var IDEX = (function(IDEX, $, undefined)
 		settings.pair = pair;
 		settings.exchange = exchange;
 		
-		updateChart(node)
+		var $el = $(node);
+		var isVisible = $el.is(":visible")
+		
+		IDEX.updateChart(node).done(function()
+		{
+			dfd.resolve();
+		})
+		
+		return dfd.promise();
 	}
 	
 	IDEX.chartClick = function($el)
@@ -152,30 +163,9 @@ var IDEX = (function(IDEX, $, undefined)
 		settings.exchange = exchange;
 		
 
-		updateChart(node)
+		IDEX.updateChart(node)
 	}
 
-	$("#temp_chart_click").on("click", function(e)
-	{
-		var $inputEl = $(".skynet-search")
-		var $wrap = $(this).closest(".chart-wrap")
-		
-		var pair = $inputEl.attr("data-pair")
-		var exchange = $inputEl.attr("data-exchange")
-		
-		var node = $wrap.attr("data-chart");
-		var barWidth = $wrap.find(".num-ticks span.active").text();
-		
-		var chart = allCharts[node];
-		var settings = chart.settings;
-		
-		settings.pair = pair;
-		settings.exchange = exchange;
-		
-
-		updateChart(node)
-	})
-	
 	
 	$(".num-ticks div").on("click", function(e)
 	{	
@@ -192,7 +182,7 @@ var IDEX = (function(IDEX, $, undefined)
 		settings.bars = "tick"
 		
 		
-		updateChart(node)
+		IDEX.updateChart(node)
 	})
 	
 	
@@ -220,8 +210,9 @@ var IDEX = (function(IDEX, $, undefined)
 		settings.barWidth = String(num);
 		settings.bars = "time"
 		
-		updateChart(node)
+		IDEX.updateChart(node)
 	})
+	
 	
 	$(".mm-chart-bartype li").on("click", function()
 	{
@@ -272,16 +263,13 @@ var IDEX = (function(IDEX, $, undefined)
 				settings.candleInd[1].type = indicatorType
 				settings.volInd[0].type = indicatorType
 				settings.volInd[1].type = indicatorType
+				
 				if (indicatorType == "bollin")
 				{
 					settings.candleInd[0].len = "1|2"
 					settings.candleInd[1].len = "1|2"
 					settings.volInd[0].len = "1|2"
 					settings.volInd[1].len = "1|2"
-					/*settings.candleInd[0].price = "bar"
-					settings.candleInd[1].price = "bar"
-					settings.volInd[0].price = "bar"
-					settings.volInd[1].price = "bar"*/
 				}
 				else
 				{
@@ -290,6 +278,7 @@ var IDEX = (function(IDEX, $, undefined)
 					settings.volInd[0].len = "7"
 					settings.volInd[1].len = "20"
 				}
+				
 				sleuthchart.settings = settings
 				toggleLoading(node, true)
 				IDEX.getBothInds(sleuthchart, settings).done(function()
@@ -297,44 +286,14 @@ var IDEX = (function(IDEX, $, undefined)
 					toggleLoading(node, false)
 					redraw(sleuthchart)
 				});
-
-				/*var color1 = "#FFB669"
-				var color2 = "#D4F6FF"
-				
-				var len1 = "7";
-				var len2 = "20";
-					
-				var obj = {}
-				
-				obj['type'] = indicatorType
-				
-				obj['price'] = "cl"
-				obj['indlen'] = len1
-				obj['color'] = color1;
-				var cl1 = new IDEX.Indicator(obj)
-				
-				obj['indlen'] = len2
-				obj['color'] = color2
-				var cl2 = new IDEX.Indicator(obj)
-				
-				obj['price'] = "vol"
-				obj['indlen'] = len1
-				obj['color'] = color1
-				var vol1 = new IDEX.Indicator(obj)
-				
-				obj['price'] = "vol"
-				obj['indlen'] = len2
-				obj['color'] = color2
-				var vol2 = new IDEX.Indicator(obj)*/
 			}
-			
-			
 		}
 		else
 		{
-			updateChart(node)
+			IDEX.updateChart(node)
 		}
 	})
+	
 	
 	$(".mm-chart-charttype li").on("click", function()
 	{	
@@ -382,7 +341,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			updateChart(node)
+			IDEX.updateChart(node)
 		}
 	})
 	
@@ -435,7 +394,6 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 
 		var d = lineFunc(positions)
-		//console.log(d)
 		
 		d3.select(rawSelector)
 		.append("path")
@@ -443,16 +401,16 @@ var IDEX = (function(IDEX, $, undefined)
 		.attr("stroke", colortwo)
 		.attr("stroke-width", "1.5px")
 		.attr("fill", "none")
-		
 		//.attr("shape-rendering", "crispEdges");
 	}
 
 	
-	function updateChart(node)
+	IDEX.updateChart = function(node)
 	{
-		console.log(node)
 		$("#"+node).unbind()
 
+		var dfd = new $.Deferred();
+		
 		var chartWrap = allCharts[node];
 		var settings = chartWrap.settings;
 		var barWidth = settings.barWidth;
@@ -464,11 +422,8 @@ var IDEX = (function(IDEX, $, undefined)
 		chart.settings = settings
 		IDEX.getData(settings).done(function(data)
 		{	
-			//console.log(data)
 			IDEX.getBothInds(chart, settings).done(function(indData)
-			{
-				//console.log(data)
-				
+			{			
 				data = data.results
 				
 				var both = IDEX.getStepOHLC(data, isTime);
@@ -523,7 +478,6 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.addMouseout(chart);
 				IDEX.addMouseup(chart);
 				IDEX.addMousedown(chart);
-				//IDEX.addResize(chart)
 				
 				resizeAxis(chart);
 				updateAxisPos(chart)
@@ -540,8 +494,12 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				toggleLoading(node, false)
 				resetDropdown();
+				
+				dfd.resolve();
 			})
 		})
+		
+		return dfd.promise()
 	}
 	
 	
@@ -677,8 +635,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var $el = $(chart.node);
 			var isVisible = $el.is(":visible")
-			//console.log(isVisible)
-			//console.log(chart.node)
+
 			if (!isVisible)
 			{
 
@@ -1344,20 +1301,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.formatNumWidth = function(num)
 	{
 		var maxDec = 8;
-		var sind = String(num).search("e")
-		/*if (sind != -1)
-		{
-			var partwhole = String(num).slice(0, sind)
-			var partall = partwhole.split(".")
-			if (partall.length == 1)
-				partall.push("0")
-			var exnum = String(num).slice(sind+1)
-			var isneg = Number(exnum) < 0
-			var pow = exnum.slice(1)
-			//partall[0].length + partall[1].length
-			num = "0." + (Array(Number(pow) - (0)).join("0")) + partall[0] + partall[1]
-
-		}*/
 		var all = String(num).split(".")
 		var numDec = 0;
 		var startDec = 0;
@@ -1388,7 +1331,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var paddedDec = 3;
 		var endDec = startDec + paddedDec
-		//var avail = maxDec - numDec;
+
 		if (endDec > maxDec)
 			endDec = maxDec
 		
@@ -1445,7 +1388,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var insideY = mouseY - offsetY
 
 		var height = xAxis.pos['bottom'];
-		var width = priceAxis.pos['left']; //+ priceAxis.width
+		var width = priceAxis.pos['left'];
 
 		
 		var topAxis = chart.yAxis[0]
