@@ -848,36 +848,117 @@
 					<div class="cm-favs-popup">
 					
 						<div class="cm-favs-popup-header">
-							<span>Favorites</span>
+							<div class="cm-favs-popup-header-title">
+								<span>Favorites</span>
+							</div>
+							
+							<div class="cm-favs-popup-close">
+								<img src="img/close.png"></img>
+							</div>
 						</div>
 						
 						<div class="cm-favs-popup-body">
 						
-							<div class="cm-favs-popup-list-wrap always-visible">
-								<div class="cm-favs-popup-row">
-									<span>jl777hodl_SkyNET</span>
+						
+							<div class="cm-favs-popup-nav">
+							
+								<div class="cm-favs-popup-nav-row active" data-tab="1">
+									<span class="vert-align">ALL</span>
 								</div>
-								<div class="cm-favs-popup-row">
-									<span>InstantDEX_NXT</span>
+								
+								<div class="cm-favs-popup-nav-row" data-tab="2">
+									<span class="vert-align">ADD</span>
 								</div>
-								<div class="cm-favs-popup-row">
-									<span>mgwBTC_InstantDEX</span>
-								</div>
-								<div class="cm-favs-popup-row">
-									<span>LIQUID_NXT</span>
-								</div>
-								<div class="cm-favs-popup-row">
-									<span>SuperNET_NXT</span>
-								</div>
-								<div class="cm-favs-popup-row">
-									<span>mgwBTCD_NXT</span>
-								</div>
+							
 							</div>
 							
-
-							<div class="cm-favs-popup-bottom">
-								<div class="cm-favs-popup-button">
-									<span class="vert-align">OPEN</span>
+							<div class="cm-favs-popup-tabWrap active" data-tab="1">
+								<div class="cm-favs-popup-allFavs always-visible">
+									<table id="marketFavorites" class="cm-favs-popup-allFavs-table">
+										<thead>
+											<tr>
+												<th>Market</th>
+												<th>BaseID</th>
+												<th>RelID</th>
+												<th>DELETE</th>
+											</tr>
+										</thead>
+										<tbody>
+										</tbody>
+									</table>
+								</div>
+								<!--<div class="cm-favs-popup-allFavs always-visible">
+									<div class="cm-favs-popup-allFavs-row">
+										<span>jl777hodl_NXT</span>
+									</div>
+									<div class="cm-favs-popup-allFavs">
+										<span>InstantDEX_NXT</span>
+									</div>
+								</div>-->
+								
+							</div>
+							
+							<div class="cm-favs-popup-tabWrap" data-tab="2">
+								<div class="cm-favs-popup-add">
+								
+									<div class="cm-favs-popup-banner">
+										<span class="vert-align"></span>
+									</div>
+									
+									<div class="cm-favs-popup-add-inputArea">
+									
+										<div class="cm-favs-popup-add-inputRow">
+											<div class="cm-favs-popup-add-select">
+												<div class="cm-favs-popup-add-inputLabel">
+													<span>Base: </span>
+												</div>
+												
+												<div class="cm-favs-popup-add-input assets-fav">
+													<input type="text" name="baseid" data-asset="-1"></input>
+												</div>
+											</div>
+											
+											<div class="cm-favs-popup-add-fill">
+												<div class="cm-favs-popup-add-inputLabel">
+													<span>Base ID: </span>
+												</div>
+												
+												<div class="cm-favs-popup-add-input">
+													<input disabled type="text" name="baseidd"></input>
+												</div>
+											</div>
+										</div>
+										
+										<div class="cm-favs-popup-add-inputRow">
+											<div class="cm-favs-popup-add-select">
+												<div class="cm-favs-popup-add-inputLabel">
+													<span>Rel: </span>
+												</div>
+												
+												<div class="cm-favs-popup-add-input assets-fav">
+													<input type="text" name="relid" data-asset="-1"></input>
+												</div>
+											</div>
+											
+											<div class="cm-favs-popup-add-fill">
+												<div class="cm-favs-popup-add-inputLabel">
+													<span>Rel ID: </span>
+												</div>
+												
+												<div class="cm-favs-popup-add-input">
+													<input disabled type="text" name="relidd"></input>
+												</div>
+											</div>
+										</div>
+										
+									</div>
+									
+									<div class="cm-favs-popup-add-confirmArea">
+										<div class="cm-favs-popup-add-button">
+											<span>ADD</span>
+										</div>
+									</div>
+									
 								</div>
 							</div>
 							
@@ -889,10 +970,10 @@
 						<div class="cm-header-middle">
 							<div class="cm-header-middle-icons">
 								<div id="cm_search_trig" class="cm-header-middle-ico">
-									<img id="" src="img/search.png" class="vert-align"></img>
+									<img src="img/search.png" class="cm-header-middle-ico-search"></img>
 								</div>
 								<div id="cm_favs_trig" class="cm-header-middle-ico">
-									<img src="img/fav.png" class="vert-align"></img>
+									<img src="img/fav.png" class="cm-header-middle-ico-fav"></img>
 								</div>
 							</div>
 							<div class="cm-header-middle-title inspectable curr-pair" data-inspecttype="pair" data-inspect="">

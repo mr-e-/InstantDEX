@@ -9,7 +9,9 @@ var IDEX = (function(IDEX, $, undefined)
 		"marketOpenOrdersTable": {'method':"openorders", 'keys':"askoffer price volume total exchange", 'firstKey':false, 'isDataTable':false},
 		"allOrderbooksTable": {'method':"allorderbooks", 'keys':"base rel last high low volume exchange", 'firstKey':"orderbooks", 'isDataTable':true},
 		"tradeHistoryTable": {'method':"tradehistory", 'keys':"market priceNQTA priceNQTB NXT triggerhash", 'firstKey':"tradehistory", 'isDataTable':true},
-		"balancesTable": {'method':"getAccountAssets", 'keys':"name assetID availableBalance unconfirmedBalance change", 'firstKey':false, 'isDataTable':true}
+		"balancesTable": {'method':"getAccountAssets", 'keys':"name assetID availableBalance unconfirmedBalance change", 'firstKey':false, 'isDataTable':true},
+		"marketFavorites": {'method':"marketFavs", 'keys':"market baseID relID", 'firstKey':false, 'isDataTable':false}
+
 	};
 
 	

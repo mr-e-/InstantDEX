@@ -156,6 +156,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.buildTilesDom();
 		IDEX.buildMainChartDom();
 		
+		IDEX.user.initFavorites();
 		
 		IDEX.pingSupernet().done(function()
 		{

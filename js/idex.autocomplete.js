@@ -4,7 +4,6 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	
 	var autoSearchName = [];
-	var autoSearchAsset = [];
 	var autoSearchSkynet = [];
 	var autoSearchOrderbookExchange = ["nxtae", "unconf", "InstantDEX", "nxtae_nxtae"];
 	
@@ -17,18 +16,13 @@ var IDEX = (function(IDEX, $, undefined)
 
 		for (var i = 0; i < len; i++)
 		{
-			autoSearchName.push({"label":assets[i].name+" <span>("+assets[i].assetID+")</span>","value":assets[i].name});
-			autoSearchAsset.push({"label":assets[i].name+" <span>("+assets[i].assetID+")</span>","value":assets[i].asset});
+			var vals = {}
+			vals['name'] = assets[i].name;
+			vals['assetid'] = assets[i].assetID
+			
+			autoSearchName.push({"label":assets[i].name+" <span>("+assets[i].assetID+")</span>","value":assets[i].name, "vals":vals});
 		}
 	}
-	
-
-	$('.assets-search').autocomplete(
-	{
-		delay:0,
-		html:true,
-		source: function(request,response) { autocompleteMatcher(request, response, autoSearchAsset) }
-	});
 	
 	
 	$('.skynet-search').autocomplete(
@@ -147,10 +141,9 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var both = ui.item.label.split(' ');
-			var a = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"));
+			var assetid = ui.item.vals.assetid;
 			
-			$thisScope.attr('data-asset', a);
+			$thisScope.attr('data-asset', assetid);
 		}
 	}
 
@@ -160,11 +153,10 @@ var IDEX = (function(IDEX, $, undefined)
 		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
 		var a = $.grep(auto, function( item )
 		{
-			var both = item.label.split(' ');
-			var a = both[0];
-			var b = both[1].substring(both[1].indexOf("<span>(")+7, both[1].lastIndexOf(")</span>"));
+			var assetid = item.vals.assetid;
+			var assetname = item.vals.name;
 
-			return (matcher.test(a) || matcher.test(b));
+			return (matcher.test(assetid) || matcher.test(assetname));
 		});
 
 		response(a);

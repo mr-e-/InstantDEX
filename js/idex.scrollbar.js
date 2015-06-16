@@ -8,7 +8,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$("#sellBook").perfectScrollbar();
 		$("#buyBook").perfectScrollbar();	
 
-		$(".right-favs-popup-list-wrap").perfectScrollbar();
+		$(".cm-favs-popup-allFavs").perfectScrollbar();
 		
 		$(".inspect-area-orderbook-bids").perfectScrollbar();
 		$(".inspect-area-orderbook-asks").perfectScrollbar();

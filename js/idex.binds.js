@@ -97,7 +97,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 		
-	$("#cm_search_trig").on("click", function()
+	$("#cm_search_trig img").on("click", function()
 	{
 		
 		var $popup = $(".cm-search-popup");
@@ -131,37 +131,6 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 	})
 	
-	
-	
-	$("#cm_favs_trig").on("click", function()
-	{
-		IDEX.$favstrig = $(this)
-		
-		var $popup = $(".cm-favs-popup");
-		var isActive = $popup.hasClass("active");
-		
-		if (!isActive)
-			$popup.addClass("active")
-		else
-			$popup.removeClass("active")
-	})
-	
-	
-	
-	$(".cm-favs-popup-row").on("click", function()
-	{
-	
-		var $el = $(this).find("span");
-		var both = $el.text().split("_");
-		var base = both[0]
-		var rel = both[1]
-		
-		base = IDEX.user.getAssetInfo("name", base)
-		rel = IDEX.user.getAssetInfo("name", rel)
-		
-		IDEX.changeMarket(base.assetID, rel.assetID);
-		$("#cm_favs_trig").trigger("click");
-	})
 	
 	
 	
