@@ -7,14 +7,11 @@ var IDEX = (function(IDEX, $, undefined)
 	var snURL = "http://127.0.0.1:7777/InstantDEX?";
 	
 
-	
-	
 	IDEX.sendPost = function(params, isNXT, callback) 
 	{
 		var dfd = new $.Deferred();
 		var url = isNXT ? nxtURL : snURL;
 		
-		//params = isNXT ? params : JSON.stringify(params);
 		if (!isNXT)
 			params['plugin'] = "InstantDEX";
 
@@ -46,7 +43,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		xhr.fail(function(data)
 		{
-			console.log(data)
+			//console.log(data)
 			//$.growl.error({'message':message, 'location':"tl"});
 			
 			if (data.statusText == "abort")
@@ -56,7 +53,7 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			dfd.reject(data);
 			if (callback)
-				callback("fail");
+				callback(data);
 		})
 		
 		

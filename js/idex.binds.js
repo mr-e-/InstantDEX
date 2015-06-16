@@ -122,14 +122,13 @@ var IDEX = (function(IDEX, $, undefined)
 		var relid = $rel.attr("data-asset")
 		
 		
-		if (IDEX.changeMarket(baseid, relid))
+		IDEX.changeMarket(baseid, relid).done(function()
 		{
 			$popup.removeClass("active")
-		}
-		else
+		}).fail(function()
 		{
 
-		}
+		})
 	})
 	
 	

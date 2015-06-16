@@ -117,6 +117,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.makeChart = function(obj)
 	{
+		var dfd = new $.Deferred();
+		
 		var node = "ex_chart";
 		
 		var chart = allCharts[node];
@@ -134,7 +136,12 @@ var IDEX = (function(IDEX, $, undefined)
 		var $el = $(node);
 		var isVisible = $el.is(":visible")
 		
-		IDEX.updateChart(node)
+		IDEX.updateChart(node).done(function()
+		{
+			dfd.resolve();
+		})
+		
+		return dfd.promise();
 	}
 	
 	IDEX.chartClick = function($el)
@@ -402,6 +409,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$("#"+node).unbind()
 
+		var dfd = new $.Deferred();
+		
 		var chartWrap = allCharts[node];
 		var settings = chartWrap.settings;
 		var barWidth = settings.barWidth;
@@ -414,7 +423,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.getData(settings).done(function(data)
 		{	
 			IDEX.getBothInds(chart, settings).done(function(indData)
-			{				
+			{			
 				data = data.results
 				
 				var both = IDEX.getStepOHLC(data, isTime);
@@ -485,8 +494,12 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				toggleLoading(node, false)
 				resetDropdown();
+				
+				dfd.resolve();
 			})
 		})
+		
+		return dfd.promise()
 	}
 	
 	

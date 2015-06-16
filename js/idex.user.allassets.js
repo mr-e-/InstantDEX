@@ -23,17 +23,16 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			IDEX.sendPost({'requestType':"getAllAssets"}, 1).then(function(data)
+			var firstIndex = 1;
+			var lastIndex = 99;
+			
+
+			getAssetsLoop([], 0, 99, function(assets)
 			{
-				var assets = [];
-				
-				if ("assets" in data)
-				{
-					console.log(data.assets.length)
-					assets = parseAllAssets(data.assets);
-					localStorage.setItem('allAssets', JSON.stringify(assets));
-				}
-				
+
+				assets = parseAllAssets(assets);
+				localStorage.setItem('allAssets', JSON.stringify(assets));
+				console.log(assets.length)
 				dfd.resolve(assets);
 			})
 		}
@@ -47,6 +46,35 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		return retdfd.promise();
+	}
+	
+	
+	function getAssetsLoop(assets, firstIndex, lastIndex, callback)
+	{
+		var params = {}
+		params['requestType'] = "getAllAssets";
+		params['firstIndex'] = firstIndex;
+		params['lastIndex'] = lastIndex;
+		
+		IDEX.sendPost(params, true).then(function(data)
+		{
+			if ("assets" in data)
+			{
+				if (data.assets.length)
+				{
+					var addedAssets = assets.concat(data.assets)
+					getAssetsLoop(addedAssets, firstIndex+100, lastIndex+100, callback)
+				}
+				else
+				{
+					callback(assets)
+				}
+			}
+			else
+			{
+				callback(assets)
+			}
+		})		
 	}
 
 	

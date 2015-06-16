@@ -91,37 +91,27 @@ var IDEX = (function(IDEX, $, undefined)
 	function skynetMatcher(request, response, auto)
 	{
 		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
-		var counter = 0;
+
 		var a = $.grep(auto, function( item )
 		{
-			if (counter > 10)
-				return false;
-			var $el = $(item.label)
-			var pair = ""
-			var exchange = ""
-			var idPair = ""
-			
+			var vals = item.vals
 
-			pair = $el.attr("data-pair")
-			idPair = $el.attr("data-idpair")
-			exchange = $el.attr("data-exchange")
+			var pair = vals.pair
+			var idPair = vals.idPair
+			var exchange = vals.exchange
 
 			var ret = matcher.test(pair) || matcher.test(idPair) || matcher.test(exchange)
-			
-			if (ret)
-				counter++
 			
 			return (ret);
 		});
 
-		response(a.slice(0, 20));
+		response(a.slice(0, 60));
 	}
 	
 	
 	function skynetSelection($thisScope, e, ui)
-	{
-		console.log(ui)
-		
+	{	
+		console.log(ui.item)
 		if (!ui.item)
 		{
 			$thisScope.attr('data-pair', "-1");
@@ -189,9 +179,9 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var parsed = markets
 			var len = parsed.length;
-			console.log(parsed)
 			
 			var formatted = []
+			
 			for (var i = 0; i < len; i++)
 			{
 				var obj = {}
@@ -256,7 +246,7 @@ var IDEX = (function(IDEX, $, undefined)
 				wrap += "<div class='sky-auto-cell'>" + idPairSpan + "</div>"
 				wrap += "<div class='sky-auto-cell sky-cell-ex'>" + exchangeSpan + "</div>"
 				wrap += "</div>"
-				autoSearchSkynet.push({"label":wrap, "value":obj['pair'], "test":"a"});
+				autoSearchSkynet.push({"label":wrap, "value":obj['pair'], "vals":obj});
 			}
 			dfd.resolve(parsed)	
 		})
@@ -328,7 +318,6 @@ var IDEX = (function(IDEX, $, undefined)
 			counter++;
 		}
 
-		console.log(parsed)
 		return parsed;
 	}
 	

@@ -5,7 +5,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	var $loadingOverlay = $(".loading-overlay")
 	var $loadingPopup = $(".loading-screen")
-	
+	var $loadingText = $(".loading-text").find("span");
+
 	
 	IDEX.buildMainChartDom = function()
 	{
@@ -34,6 +35,11 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$loadingOverlay.removeClass("active");
 		$loadingPopup.removeClass("active");
+	}
+	
+	IDEX.editLoading = function(text)
+	{
+		$loadingText.text(text);
 	}
 	
 	

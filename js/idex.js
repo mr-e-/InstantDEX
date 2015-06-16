@@ -141,8 +141,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.init = function()
 	{
-		var dfd = new $.Deferred();
-		
+		var initializedAssets = new $.Deferred();
+		var loadedChart = new $.Deferred();
+		var timeoutFinished = new $.Deferred();
+
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
 		IDEX.orderbook = new IDEX.Orderbook();
@@ -151,25 +153,92 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.initScrollbar();
 		//IDEX.initDataTable();
 		
-		IDEX.account.updateNXTRS().done(function(nxtRSID)
-		{
-			console.log(nxtRSID)
-		});
-		
-		IDEX.user.initAllAssets().done(function()
-		{
-			IDEX.initAutocomplete();
-			
-			IDEX.getSkynet().done(function(data)
-			{
-				IDEX.hideLoading();
-			})
-		});
-
-				
 		IDEX.buildTilesDom();
 		IDEX.buildMainChartDom();
-		IDEX.updateChart("main_menu_chart");
+		
+		
+		IDEX.pingSupernet().done(function()
+		{
+			
+			IDEX.initTimer().done(function()
+			{
+				timeoutFinished.resolve();
+			})
+			
+			
+			IDEX.account.updateNXTRS().done(function(nxtRSID)
+			{
+				//console.log(nxtRSID)
+			});
+			
+			
+			IDEX.user.initAllAssets().done(function()
+			{
+				IDEX.initAutocomplete();
+				
+				IDEX.getSkynet().done(function(data)
+				{
+					initializedAssets.resolve()
+				})
+			});
+			
+			
+			IDEX.updateChart("main_menu_chart").then(function()
+			{
+				loadedChart.resolve();
+				
+			})
+			
+			
+			
+			$.when(timeoutFinished, initializedAssets, loadedChart).done(function()
+			{
+				var baseid = "17554243582654188572"
+				var relid = "5527630"
+				
+				IDEX.changeMarket(baseid, relid);
+				IDEX.hideLoading();
+			})
+			
+					
+			
+		}).fail(function()
+		{
+			IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
+		})
+	}
+	
+	
+	
+	
+	IDEX.initTimer = function()
+	{
+		var timeoutDFD = new $.Deferred();
+		
+		var timeout = setTimeout(function() 
+		{
+			timeoutDFD.resolve()
+		}, 1000)
+		
+		return timeoutDFD.promise();
+	}
+	
+	
+	IDEX.pingSupernet = function()
+	{
+		var dfd = new $.Deferred();
+		var params = {"requestType":"getState"};
+		
+		IDEX.sendPost(params, true).done(function()
+		{
+			dfd.resolve()
+			
+		}).fail(function()
+		{
+			dfd.reject()
+		})
+		
+		return dfd.promise()
 	}
 	
 
