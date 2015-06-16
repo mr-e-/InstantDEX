@@ -36,6 +36,7 @@ var IDEX = (function(IDEX, $, undefined)
 			this.isDragging = false;
 			
 			this.isMain = false;
+			this.isVolInd = false;
 			this.chartType = "candlestick";
 			
 			this.settings = {};
@@ -94,14 +95,16 @@ var IDEX = (function(IDEX, $, undefined)
 			var obj = IDEX.getXAxisNodes(chart.node, 1)
 			if (chart.isMain)
 			{
-				var volAxisHeight = "25%"
-				var priceAxisHeight = "75%"
+				var priceAxisTopPadding = 35;
+				chart.isVolInd = true;
 			}
 			else
 			{
-				var volAxisHeight = "30%"
-				var priceAxisHeight = "70%"
+				var priceAxisTopPadding = 20;
 			}
+			
+			var volAxisHeight = "25%"
+			var priceAxisHeight = "75%"
 			
 			var xAxisOpt = {
 				"chart":chart,
@@ -138,7 +141,7 @@ var IDEX = (function(IDEX, $, undefined)
 				"widthInit":50,
 				
 				"padding":{
-					"top":35,
+					"top":priceAxisTopPadding,
 					"left":20,
 				},
 				

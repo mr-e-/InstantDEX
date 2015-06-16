@@ -2534,6 +2534,11 @@ table.dataTable tbody th, table.dataTable tbody td{
 	display:block;
 }
 
+.orderbook-label-row-input input {
+	color:black;
+	padding-left:5px;
+}
+
 .orderbook-label-conf {
 	padding-top:5px;
 }

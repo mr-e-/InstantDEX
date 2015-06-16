@@ -1245,6 +1245,12 @@ var IDEX = (function(IDEX, $, undefined)
 		//var insideTimeX = insideX - xAxis.padding.left;
 		//var time = xAxis.getXVal(insideTimeX);
 		//time = Math.floor(time);
+		var $marketNameEl = $(chart.node).find(".cur-market")
+		var marketNameBbox = d3.select($marketNameEl.get()[0]).node().getBBox();
+		var leftPos = marketNameBbox.x + marketNameBbox.width + 10;
+		var topPos = marketNameBbox.y + marketNameBbox.height - 3;
+
+		console.log(marketNameBbox)
 		
 		var fontSize = chart.marketInfoFontSize
 		var textAttr = {
@@ -1255,8 +1261,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var priceAxis = chart.yAxis[0];
 		var $candleInfoEl = $(chart.node).find(".candleInfo");
-		var topPos = priceAxis.pos.top;
-
+		
 		var pad = 7
 		//"Date: " + String("a") + 
 		var openStr = "O: " + IDEX.formatNumWidth(Number(closestPoint.phase.open))
@@ -1279,8 +1284,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		d3.select($candleInfoEl.get()[0])
 		.text(str)
-		.attr("y", topPos + 7)
-		.attr("x", 20)
+		.attr("y", topPos)
+		.attr("x", leftPos)
 		.attr(textAttr)
 	}
 		

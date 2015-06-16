@@ -26,7 +26,6 @@ var IDEX = (function(IDEX, $, undefined)
 			var firstIndex = 1;
 			var lastIndex = 99;
 			
-
 			getAssetsLoop([], 0, 99, function(assets)
 			{
 

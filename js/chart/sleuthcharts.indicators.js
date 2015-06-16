@@ -128,7 +128,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var volInd2 = chart.settings.volInd[1]
 		
 		IDEX.drawCandleInd(chart)
-		IDEX.drawVolInd(chart)
+		if (chart.isVolInd)
+			IDEX.drawVolInd(chart)
 	}
 	
 	
