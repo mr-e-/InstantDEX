@@ -244,7 +244,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!has)
 		{
 			IDEX.changeMarket(baseID, relID);
-			$("#cm_favs_trig").trigger("click");
+			$("#cm_favs_trig img").trigger("click");
 		}
 		else
 		{
