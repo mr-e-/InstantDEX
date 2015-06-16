@@ -7,10 +7,28 @@ var IDEX = (function(IDEX, $, undefined)
 	//"perc":$(".conf-perc").val();
 	//$button.prop('disabled', false);
 	
+	var $makeofferPopup = $(".makeofferPopup");
+	var $makeofferPopupOverlay = $(".makeofferPopup-overlay")
+	
+	
+	function showMakeofferPopup()
+	{
+		$makeofferPopup.addClass("active");
+		$makeofferPopupOverlay.addClass("active");
+	}
+	
+	function hideMakeofferPopup()
+	{
+		$makeofferPopup.removeClass("active");
+		$makeofferPopupOverlay.removeClass("active");
+	}
+	
+	
 	$(".makeofferPopup-confirm").on("click", function()
 	{
-		IDEX.makeOffer() 
+		IDEX.makeOffer()
 	})
+	
 	
 	IDEX.makeOffer = function()
 	{	
@@ -33,8 +51,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var message = "makeoffer placed!"
 				$.growl.notice({'message':message, 'location':"tl"});
 				
-				console.log("success");
-				$(".makeofferPopup").removeClass("active");
+				hideMakeofferPopup();
 			}
 		})
 	}
@@ -42,8 +59,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(".makeofferPopup-close").on("click", function()
 	{
-		var $popup = $(this).closest(".makeofferPopup");
-		$popup.removeClass("active");
+		//var $popup = $(this).closest(".makeofferPopup");
+		hideMakeofferPopup();
 	})
 	
 
@@ -61,6 +78,8 @@ var IDEX = (function(IDEX, $, undefined)
 		$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"));
 		$(".conf-confirm").prop('disabled', false);
 		$(".conf-jumbotron").hide().find("div").empty();
+		
+		showMakeofferPopup();
 	}
 
 	

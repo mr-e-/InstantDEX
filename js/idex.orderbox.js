@@ -147,6 +147,10 @@ var IDEX = (function(IDEX, $, undefined)
 					log['msg'] = "order placed"
 					$.growl.notice({'message':"Order placed", 'location':"tl"});
 				}
+			}).fail(function(data)
+			{
+				console.log(data);
+				$.growl.error({'message':"Error calling SuperNET", 'location':"tl"});
 			})
 		//}
 		//else
@@ -154,6 +158,16 @@ var IDEX = (function(IDEX, $, undefined)
 		//	$.growl.error({'message':"Not enough funds", 'location':"tl"});
 		//}
 
+	}
+	
+	
+	IDEX.clearOrderBox = function()
+	{
+		IDEX.resetOrderBoxForm();
+		IDEX.clearOrderBoxBalance();
+		
+		$(".refcur-base").text("Base");
+		$(".refcur-rel").text("Quote");
 	}
 	
 	
@@ -192,6 +206,20 @@ var IDEX = (function(IDEX, $, undefined)
 			$buy.find(".bal-val").first().text(relBal[0] + relBal[1])
 			$sell.find(".bal-val").first().text(baseBal[0] + baseBal[1]);
 		})
+	}
+	
+	IDEX.clearOrderBoxBalance = function()
+	{
+		var $buy = $("#balance_buy");
+		var $sell = $("#balance_sell");
+		var baseBal = ["0", ".0"];
+		var relBal = ["0", ".0"];
+
+		$buy.find(".bal-cur").first().text("Base: ");
+		$sell.find(".bal-cur").first().text("Quote: ");
+
+		$buy.find(".bal-val").first().text(relBal[0] + relBal[1])
+		$sell.find(".bal-val").first().text(baseBal[0] + baseBal[1]);
 	}
 
 	

@@ -23,7 +23,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var $popup = $("#makeoffer_popup")
 		IDEX.buildMakeofferModal($popup, order);
-		$popup.addClass("active");
 
 		$("#place"+isAsk+"Price").val(order.price);
 		$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");

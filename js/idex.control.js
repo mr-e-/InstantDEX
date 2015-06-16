@@ -33,6 +33,13 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.unloadMarket = function()
+	{
+		IDEX.user.clearPair();
+		IDEX.clearOrderBox();
+	}
+	
+	
 	IDEX.currPairDom = function(base, rel)
 	{
 		var $pairdom = $(".curr-pair")

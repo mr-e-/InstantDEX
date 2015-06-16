@@ -5,7 +5,6 @@ var IDEX = (function(IDEX, $, undefined)
 	(function(Sleuthcharts) 
 	{
 		
-		console.log(Sleuthcharts)
 		IDEX.Chart = function(obj) 
 		{
 			this.baseid = "6854596569382794790"

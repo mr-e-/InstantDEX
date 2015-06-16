@@ -73,9 +73,10 @@ var IDEX = (function(IDEX, $, undefined)
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
 		//console.log('starting orderbook ajax');
-		
+
 		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
 		{
+			//console.log(orderbookData);
 			//orderbookData = $.parseJSON(orderbookData);
 			//console.log(orderbookData);
 			//console.log("finished orderbook ajax " + String((Date.now() - time)/1000) + "s");

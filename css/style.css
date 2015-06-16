@@ -167,165 +167,6 @@ table.dataTable tbody th, table.dataTable tbody td{
 }
 
 
-/* ------------------------- MODALS STRUCTURE ------------------------- */
-
-
-
-.makeofferPopup {
-	width:95%;
-	position:absolute;
-	display:none;
-	background: rgba(0,0,0,0.8);
-	border:1px solid #505050;
-	border-radius:4px;
-	z-index:300;
-	padding-bottom:10px;
-	padding-left:20px;
-	padding-right:20px;
-	padding-top:10px;
-	left:50%;
-	transform:translateX(-50%);
-	margin-top:50px;
-	box-shadow:0 5px 15px rgba(0,0,0,.5);
-	webkit-box-shadow:0 5px 15px rgba(0,0,0,.5);
-}
-
-.makeofferPopup.active {
-	display:block;
-}
-
-.makeofferPopup-header {
-	height:30px;
-	width:100%;
-	position:relative;
-	display:block;
-	font-size:16px;
-	border-bottom:1px solid #505050;
-}
-
-.makeofferPopup-header-left {
-	height:100%;
-	position:relative;
-	float:left;
-}
-
-.makeofferPopup-header-right {
-	height:100%;
-	position:relative;
-	float:right;
-}
-
-.makeofferPopup-content {
-	width:100%;
-	position:relative;
-	display:block;
-	padding-top:10px;
-	padding-left:10px;
-	padding-right:10px;
-}
-
-.conf-jumbotron {
-    margin: 10px;
-	margin-bottom:5px;
-	margin-top:5px;
-    padding: 10px;
-	padding-top:10px;
-	padding-bottom:10px;
-    border-left: solid 5px #ff8040;
-    background: rgba(255,128,64,0.1);
-	display:none;
-}
-
-.conf-jumbotron div {
-    font-size: 16px;
-    color: #ff8040;
-}
-
-.conf-jumbotron p {
-    font-size: 14px;
-}
-
-.makeofferPopup-form {
-	width:100%;
-	position:relative;
-	display:block;
-	padding-top:10px;
-	padding-left:10px;
-	padding-right:10px;
-}
-
-.makeofferPopup-form-row {
-	width:100%;
-	height:30px;
-	position:relative;
-	display:block;
-	font-size:14px;
-}
-
-.makeofferPopup-form-label {
-	width:20%;
-	position:relative;
-	float:left;
-}
-
-.makeofferPopup-form-input {
-	width:80%;
-	position:relative;
-	float:right;
-}
-
-.makeofferPopup-form-input input{
-	background-color:#444444;
-	color:#e5e5e5;
-	width:80%;
-	text-align:right;
-	padding-right:3px;
-}
-
-.makeofferPopup-footer {
-	height:40px;
-	width:100%;
-	position:relative;
-	display:block;
-	border-top:1px solid #505050;
-	padding-top:15px;
-}
-
-.makeofferPopup-button {
-	font-size:13px;
-}
-
-.makeofferPopup-button:hover {
-	cursor:pointer;
-}
-
-.makeofferPopup-close {
-	float:left;
-	position:relative;
-}
-
-.makeofferPopup-confirm {
-	float:right;
-	position:relative;
-}
-
-
-.conf-footer {
-    border-top: solid 1px;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 20px;
-    height: 40px;
-}
-
-.conf-footer button {
-    font-size: 14px;
-    padding: 3px 5px;
-    float: right;
-    margin-left: 10px;
-}
-
-
 /* ------------------------- CHART BAR ------------------------- */
 
 
@@ -1796,6 +1637,190 @@ table.dataTable tbody th, table.dataTable tbody td{
 	background-color:black;
 	margin-top:5px;
 }
+
+
+/* ------------------------- MAKEOFFER POPUP ------------------------- */
+
+
+.makeofferPopup-overlay {
+    overflow: hidden;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	visibility: hidden;
+	top: 0;
+	left: 0;
+	z-index: 1950;
+	opacity: 0;
+	background: rgba(0,0,0,0.5);
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+.makeofferPopup-overlay.active {
+	opacity: 1;
+	visibility: visible;
+}
+
+.makeofferPopup {
+	width:95%;
+	position:absolute;
+	display:none;
+	
+	z-index:2000;
+	left:50%;
+	top:50%;
+	transform:translateX(-50%) translateY(-50%);
+	
+	padding-bottom:10px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-top:10px;
+	
+	background: rgba(0,0,0,0.8);
+	border:1px solid #505050;
+	border-radius:4px;
+	webkit-box-shadow:0 5px 15px rgba(0,0,0,.5);
+	box-shadow:0 5px 15px rgba(0,0,0,.5);
+}
+
+.makeofferPopup.active {
+	display:block;
+}
+
+.makeofferPopup-header {
+	height:30px;
+	width:100%;
+	position:relative;
+	display:block;
+	font-size:16px;
+	border-bottom:1px solid #505050;
+}
+
+.makeofferPopup-header-left {
+	height:100%;
+	position:relative;
+	float:left;
+}
+
+.makeofferPopup-header-right {
+	height:100%;
+	position:relative;
+	float:right;
+}
+
+.makeofferPopup-content {
+	width:100%;
+	position:relative;
+	display:block;
+	padding-top:10px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.conf-jumbotron {
+    margin: 10px;
+	margin-bottom:5px;
+	margin-top:5px;
+    padding: 10px;
+	padding-top:10px;
+	padding-bottom:10px;
+    border-left: solid 5px #ff8040;
+    background: rgba(255,128,64,0.1);
+	display:none;
+}
+
+.conf-jumbotron div {
+    font-size: 16px;
+    color: #ff8040;
+}
+
+.conf-jumbotron p {
+    font-size: 14px;
+}
+
+.makeofferPopup-form {
+	width:100%;
+	position:relative;
+	display:block;
+	padding-top:10px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.makeofferPopup-form-row {
+	width:100%;
+	height:30px;
+	position:relative;
+	display:block;
+	font-size:14px;
+}
+
+.makeofferPopup-form-label {
+	width:20%;
+	position:relative;
+	float:left;
+}
+
+.makeofferPopup-form-input {
+	width:80%;
+	position:relative;
+	float:right;
+}
+
+.makeofferPopup-form-input input{
+	background-color:#444444;
+	color:#e5e5e5;
+	width:80%;
+	text-align:right;
+	padding-right:3px;
+}
+
+.makeofferPopup-footer {
+	height:40px;
+	width:100%;
+	position:relative;
+	display:block;
+	border-top:1px solid #505050;
+	padding-top:15px;
+}
+
+.makeofferPopup-button {
+	font-size:13px;
+}
+
+.makeofferPopup-button:hover {
+	cursor:pointer;
+}
+
+.makeofferPopup-close {
+	float:left;
+	position:relative;
+}
+
+.makeofferPopup-confirm {
+	float:right;
+	position:relative;
+}
+
+
+.conf-footer {
+    border-top: solid 1px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 20px;
+    height: 40px;
+}
+
+.conf-footer button {
+    font-size: 14px;
+    padding: 3px 5px;
+    float: right;
+    margin-left: 10px;
+}
+
+/* ------------------------- END MAKEOFFER POPUP ------------------------- */
 
 .currentMarketPanel-inner {
 	height:100%;

@@ -20,6 +20,14 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.User.prototype.clearPair = function()
+	{	
+		this.curBase = curBase;
+		this.curRel = curRel;
+	}
+	
+	
+	
 	
 
 	return IDEX;
