@@ -1250,7 +1250,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var leftPos = marketNameBbox.x + marketNameBbox.width + 10;
 		var topPos = marketNameBbox.y + marketNameBbox.height - 3;
 
-		console.log(marketNameBbox)
+		//console.log(marketNameBbox)
 		
 		var fontSize = chart.marketInfoFontSize
 		var textAttr = {
