@@ -25,9 +25,9 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred();
 		var nxtIDAndRS = [];
 		var account = this;
-		var params = {"requestType":"openorders"};
+		var params = {"method":"openorders"};
 		
-		IDEX.sendPost(params).then(function(data)
+		IDEX.sendPost(params, false).then(function(data)
 		{
 			if ('NXT' in data && data['NXT'].length)
 			{
@@ -50,10 +50,10 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Account.prototype.updateOpenOrders = function()
 	{
 		var dfd = new $.Deferred();
-		var params = {"requestType":"openorders"};
+		var params = {"method":"openorders"};
 		var account = this;
 		
-		IDEX.sendPost(params).then(function(data)
+		IDEX.sendPost(params, false).then(function(data)
 		{
 			var temp = [];
 

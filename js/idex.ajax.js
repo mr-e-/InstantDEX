@@ -17,7 +17,7 @@ var IDEX = (function(IDEX, $, undefined)
 			params['plugin'] = "InstantDEX";
 			
 		}
-
+		console.log(params);
 		//params['timeout'] = 20000;
 		var ajaxSettings = 
 		{
