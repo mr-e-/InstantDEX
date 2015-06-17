@@ -219,6 +219,26 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	})
 
+	
+	
+	IDEX.isChartLocked = false;
+	
+	$(".browse-chart-lock").on("click", function()
+	{
+		var isActive = $(this).hasClass("active");
+		
+		if (isActive)
+		{
+			$(this).removeClass("active");
+		}
+		else
+		{
+			$(this).addClass("active");
+		}
+		
+		IDEX.isChartLocked = !IDEX.isChartLocked;
+	})
+	
 
 	
 	IDEX.$searchTrig = null;
@@ -304,6 +324,8 @@ var IDEX = (function(IDEX, $, undefined)
 			$parent.find(".mm-sub-tab-wrap[data-tab='"+tab+"']").show();
 		}
 	})
+	
+	
 	
 
 	

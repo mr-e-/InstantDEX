@@ -154,6 +154,7 @@ input {
 
 .dataTables_filter input {
 	color:black !important;
+	height:13px !important;
 }
 
 .dataTables_info {
@@ -171,8 +172,13 @@ input {
 	cursor: pointer;
 }
 
+.dataTables_scrollHeadInner {
+	border-top:1px solid #303030;
+	border-bottom:1px solid #303030;
+}
+
 table.dataTable {
-	border-bottom:1px solid #303030 !important;
+
 }
 
 table.dataTable tbody th, table.dataTable tbody td{
@@ -180,10 +186,26 @@ table.dataTable tbody th, table.dataTable tbody td{
 	font-size:0.75rem;
 }
 
-
-
 table.dataTable tbody tr {
 	background:black;
+}
+
+table.dataTable thead {
+
+}
+
+
+table.dataTable thead th {
+	border-left:1px solid #303030;
+	border-bottom:none !important;
+}
+
+table.dataTable thead th:last-child {
+	border-right:1px solid #303030;
+}
+
+.dataTables_scroll {
+	padding-top:5px;
 }
 
 
@@ -619,6 +641,28 @@ table.dataTable tbody tr {
 	border-bottom:1px solid #303030;
 	background-color:#0a0a0a;
 }
+
+.browse-chart-lock {
+	height:100%;
+	position:absolute;
+	right:15px;
+	opacity:0.7;
+}
+
+.browse-chart-lock:hover {
+	cursor:pointer;
+}
+
+.browse-chart-lock.active {
+	opacity:1;
+}
+
+.browse-chart-lock img {
+	height:20px;
+	width:20px;
+}
+
+
 
 .browse-chart-search-wrap {
 	padding-left:40px;
@@ -1185,7 +1229,7 @@ table.dataTable tbody tr {
 }
 
 .browse-balances-nxt-rs {
-	height:40px;
+	height:30px;
 	width:100%;
 	position:relative;
 	display:block;
