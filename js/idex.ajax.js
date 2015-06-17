@@ -13,9 +13,12 @@ var IDEX = (function(IDEX, $, undefined)
 		var url = isNXT ? nxtURL : snURL;
 		
 		if (!isNXT)
+		{
 			params['plugin'] = "InstantDEX";
+			
+		}
 
-		
+		//params['timeout'] = 20000;
 		var ajaxSettings = 
 		{
 			type: "POST",

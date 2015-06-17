@@ -74,9 +74,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var time = Date.now()
 		//console.log('starting orderbook ajax');
 
-		this.xhr = IDEX.sendPost(params, false, function(orderbookData)
+		IDEX.sendPost(params, false).done(function(orderbookData)
 		{
-			//console.log(orderbookData);
 			//orderbookData = $.parseJSON(orderbookData);
 			//console.log(orderbookData);
 			//console.log("finished orderbook ajax " + String((Date.now() - time)/1000) + "s");
@@ -86,6 +85,9 @@ var IDEX = (function(IDEX, $, undefined)
 
 			thisScope.isWaitingForOrderbook = false;
 			retDFD.resolve(orderbookData);
+		}).fail(function(data)
+		{
+			retDFD.resolve("fail")
 		})
 		
 		return retDFD.promise();

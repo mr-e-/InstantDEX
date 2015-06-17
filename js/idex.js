@@ -151,12 +151,13 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.chart = new IDEX.Chart();
 		
 		IDEX.initScrollbar();
-		//IDEX.initDataTable();
+		IDEX.initDataTable();
 		
 		IDEX.buildTilesDom();
 		IDEX.buildMainChartDom();
 		
 		IDEX.user.initFavorites();
+		
 		
 		IDEX.pingSupernet().done(function()
 		{

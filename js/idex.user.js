@@ -22,8 +22,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.User.prototype.clearPair = function()
 	{	
-		this.curBase = curBase;
-		this.curRel = curRel;
+		this.curBase = "";
+		this.curRel = "";
 	}
 	
 	

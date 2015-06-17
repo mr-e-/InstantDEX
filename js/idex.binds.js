@@ -25,16 +25,21 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	$(".browseArea-navbar-cell").on("mouseup", function()
-	{
-		return
-		
+	{		
 		if (!($(this).hasClass("active")))
 		{
+			var tab = $(this).attr('data-tab');
+			var $parent = $(".browseArea-body")
+			
+			if (tab != "3" && tab != "4")
+				return;
+			
+			if (tab == "3")
+				IDEX.makeTable("balancesTable");
+			
 			$(this).parent().find(".browseArea-navbar-cell").removeClass("active");
 			$(this).addClass("active");
 
-			var tab = $(this).attr('data-tab');
-			var $parent = $(".browseArea-body")
 			$parent.find(".browseArea-tab").removeClass("active");
 			$parent.find(".browseArea-tab[data-tab='"+tab+"']").addClass("active");
 		}

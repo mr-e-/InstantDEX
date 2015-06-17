@@ -7,16 +7,18 @@ var IDEX = (function(IDEX, $, undefined)
 		"pagingType":"simple_numbers",
 		"pageLength":20,
 		"lengthChange":false,
+		"info":false
 	};
 	
 	IDEX.initDataTable = function()
 	{
-		$(".modal-table-body table").each(function()
+		$(".idextable").each(function()
 		{
-			$(this).DataTable(dataTableSettings).on("page.dt draw.dt column-sizing.dt", function() 
+			$(this).DataTable(dataTableSettings)
+			/*.on("page.dt draw.dt column-sizing.dt", function() 
 			{ 
 				adjustDataTableHeight($(this)) 
-			})
+			})*/
 		})
 	}
 	

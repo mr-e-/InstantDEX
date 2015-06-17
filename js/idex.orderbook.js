@@ -82,6 +82,12 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				$(".empty-orderbook").hide();
 				_this.emptyOrderbook("Error loading orderbook");
+				
+				//$(".empty-orderbook").hide();
+				//$("#buyBook .twrap").empty();
+				//$("#sellBook .twrap").empty();
+				
+				//IDEX.unloadMarket()
 			}
 			else
 			{

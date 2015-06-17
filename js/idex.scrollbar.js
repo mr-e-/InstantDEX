@@ -18,6 +18,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$(".tile-cell-orderbook-orders-bids").perfectScrollbar();
 		$(".tile-cell-orderbook-orders-asks").perfectScrollbar();
+		
+		$(".browse-balances-nxt").perfectScrollbar();
 	}
 
 	IDEX.updateScrollbar = function(toBottom)
