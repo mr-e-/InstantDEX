@@ -10,6 +10,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		if (IDEX.user.updatePair(baseid, relid))
 		{
+			IDEX.user.setLastMarket(baseid, relid);
 			var base = IDEX.user.curBase.name
 			var rel = IDEX.user.curRel.name
 			IDEX.currPairDom(IDEX.user.curBase, IDEX.user.curRel);

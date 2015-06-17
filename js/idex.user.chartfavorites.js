@@ -35,9 +35,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	
-	
-	
 	$("#cm_favs_trig img").on("click", function()
 	{		
 		var $popup = $(".cm-favs-popup");

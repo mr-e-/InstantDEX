@@ -94,16 +94,18 @@ var IDEX = (function(IDEX, $, undefined)
 			var obj = IDEX.getXAxisNodes(chart.node, 1)
 			if (chart.isMain)
 			{
+				var volAxisHeight = "25%"
+				var priceAxisHeight = "75%"
 				var priceAxisTopPadding = 35;
 				chart.isVolInd = true;
 			}
 			else
 			{
+				var volAxisHeight = "30%"
+				var priceAxisHeight = "70%"
 				var priceAxisTopPadding = 20;
 			}
 			
-			var volAxisHeight = "25%"
-			var priceAxisHeight = "75%"
 			
 			var xAxisOpt = {
 				"chart":chart,

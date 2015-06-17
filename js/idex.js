@@ -194,10 +194,11 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			$.when(timeoutFinished, initializedAssets, loadedChart).done(function()
 			{
-				var baseid = "17554243582654188572"
-				var relid = "5527630"
+				var lastMarket = IDEX.user.getLastMarket()
+				var baseID = lastMarket.baseID;
+				var relID = lastMarket.relID;
 				
-				IDEX.changeMarket(baseid, relid);
+				IDEX.changeMarket(baseID, relID);
 				IDEX.hideLoading();
 			})
 			

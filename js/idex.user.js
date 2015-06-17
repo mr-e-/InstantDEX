@@ -27,6 +27,37 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.User.prototype.getLastMarket = function()
+	{
+		var lastMarket = {}
+	
+		if (localStorage.lastMarket)
+		{
+			lastMarket = JSON.parse(localStorage.getItem('lastMarket'));
+		}
+		else
+		{
+			var baseid = "17554243582654188572"
+			var relid = "5527630"
+			
+			lastMarket['baseID'] = baseid
+			lastMarket['relID'] = relid
+		}
+		
+		return lastMarket
+	}
+	
+	IDEX.User.prototype.setLastMarket = function(baseID, relID)
+	{
+		var lastMarket = {}
+		
+		lastMarket['baseID'] = baseID
+		lastMarket['relID'] = relID
+		
+		localStorage.setItem('lastMarket', JSON.stringify(lastMarket));
+	}
+	
+	
 	
 	
 
