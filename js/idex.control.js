@@ -60,7 +60,6 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
 	IDEX.updateUserState = function()
 	{
 		IDEX.makeTable("marketOpenOrdersTable", function()

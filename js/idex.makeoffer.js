@@ -9,6 +9,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	var $makeofferPopup = $(".makeofferPopup");
 	var $makeofferPopupOverlay = $(".makeofferPopup-overlay")
+	var $makeofferPopupConfirm = $(".makeofferPopup-confirm");
 	
 	
 	function showMakeofferPopup()
@@ -26,7 +27,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(".makeofferPopup-confirm").on("click", function()
 	{
-		IDEX.makeOffer()
+		var isDisabled = $(this).hasClass("disabled")
+		
+		if (!isDisabled)
+			IDEX.makeOffer()
 	})
 	
 	
@@ -36,6 +40,8 @@ var IDEX = (function(IDEX, $, undefined)
 		params['perc'] = $(".conf-perc").val();
 		
 		console.log(params);
+		
+		$makeofferPopupConfirm.addClass('disabled');
 		
 		IDEX.sendPost(params).done(function(data)
 		{
@@ -53,6 +59,12 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				hideMakeofferPopup();
 			}
+			
+			$makeofferPopupConfirm.removeClass('disabled');
+
+		}).fail(function()
+		{
+			$makeofferPopupConfirm.removeClass('disabled');
 		})
 	}
 	
@@ -66,6 +78,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.buildMakeofferModal = function($modal, order)
 	{
+		$makeofferPopupConfirm.removeClass('disabled');
+
 		$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order");
 		console.log(order)
 		$modal.find(".conf-pair").text(IDEX.user.curBase.name+"/"+IDEX.user.curRel.name);
@@ -76,7 +90,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$modal.find(".conf-minperc").val(order.minperc);
 		$modal.find(".conf-perc").val("100");
 		$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"));
-		$(".conf-confirm").prop('disabled', false);
 		$(".conf-jumbotron").hide().find("div").empty();
 		
 		showMakeofferPopup();
@@ -132,12 +145,12 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (!check.length)
 		{
-			$("button.conf-confirm").prop('disabled', false);
+			$makeofferPopupConfirm.removeClass('disabled');
 			$(".conf-jumbotron").hide().find("div").empty();
 		}
 		else
 		{
-			$("button.conf-confirm").prop('disabled', true);
+			$makeofferPopupConfirm.addClass('disabled');
 			$(".conf-jumbotron").show().find("div").text(check);
 		}
 	});

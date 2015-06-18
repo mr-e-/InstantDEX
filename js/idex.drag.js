@@ -14,6 +14,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	});
 
+	
 	function dragMoveListener (event) 
 	{
 		var target = event.target

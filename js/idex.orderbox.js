@@ -82,33 +82,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).removeClass("order-button-mousedown")
 	})
 	
-
-	$(".place-order-button").on("click", function()
-	{
-		var $wrap = $(this).closest(".cm-orderbox-body");
-		var $form = $("#" + $(this).attr("data-form"));
-		var params = getPostPayload($(this));
-		var exchange = $wrap.find(".cm-orderbox-exchange-trig").text();
-		
-		params['exchange'] = exchange;
-		params['baseid'] = IDEX.user.curBase.assetID;
-		params['relid'] = IDEX.user.curRel.assetID;
-		
-		if (exchange == "InstantDEX")
-		{
-			var duration = $wrap.find(".cm-orderbox-config-popup-duration").val()
-			var minperc = $wrap.find(".cm-orderbox-config-popup-minperc").val()
-			params['duration'] = duration;
-			params['minperc'] = minperc
-		}
-		
-		params['timeout'] = 10000
-		
-		IDEX.placeOrder(params);
-		
-		$form.trigger("reset");
-	})
-	
 	
 	function getPostPayload($element, method)
 	{
@@ -120,44 +93,109 @@ var IDEX = (function(IDEX, $, undefined)
 		return params;
 	}	
 	
+
+	$(".place-order-button:not(.disabled)").on("click", function()
+	{
+		var $button = $(this);
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $form = $("#" + $(this).attr("data-form"));
+		var params = getPostPayload($(this));
+		var exchange = $wrap.find(".cm-orderbox-exchange-trig").text();
+		
+		if (params['method'] == "placeask")
+			var str = "Ask";
+		else
+			var str = "Bid";
+				
+		if (checkOrderboxInputValues(str))
+		{
+		
+			params['exchange'] = exchange;
+			params['baseid'] = IDEX.user.curBase.assetID;
+			params['relid'] = IDEX.user.curRel.assetID;
+			
+			if (exchange == "InstantDEX")
+			{
+				var duration = $wrap.find(".cm-orderbox-config-popup-duration").val()
+				var minperc = $wrap.find(".cm-orderbox-config-popup-minperc").val()
+				params['duration'] = duration;
+				params['minperc'] = minperc
+			}
+					
+					
+			$form.trigger("reset");
+			$button.addClass("disabled");
+			
+			IDEX.placeOrder(params).then(function()
+			{
+				$button.removeClass("disabled")
+			});
+		}
+		
+	})
+	
+	
+	function checkOrderboxInputValues(typeOrder)
+	{
+		var retbool = false;
+		var formName = "place" + typeOrder + "Form";
+		var $form = $("#"+formName);
+		
+		//var balanceToCheck = (params['requestType'] == "placebid") ? params['relid'] : params['baseid'];
+		//if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
+		//else
+		//	$.growl.error({'message':"Not enough funds", 'location':"tl"});
+	
+		var formVals = IDEX.getFormData($form);
+		console.log(formVals);
+
+		if (formVals.price.length && formVals.volume.length && formVals.total.length)
+			retbool = true;
+		
+		
+		return retbool;
+	}
+	
+
+	
 	
 	IDEX.placeOrder = function(params)
 	{
-		var balanceToCheck = (params['requestType'] == "placebid") ? params['relid'] : params['baseid'];
+		var dfd = new $.Deferred()
 		
 		console.log(params);
 		params['plugin'] = "InstantDEX"
-		//if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
-		//{
-			IDEX.sendPost(params).done(function(data)
-			{
-				IDEX.updateUserState();
-				
-				console.log(data);
 
-				var log = {}
-				log['type'] = "order"
-				if ('error' in data && data['error'])
-				{
-					log['msg'] = data['error']
-					$.growl.error({'message':data['error'], 'location':"tl"});				
-				}
-				else
-				{
-					log['msg'] = "order placed"
-					$.growl.notice({'message':"Order placed", 'location':"tl"});
-				}
-			}).fail(function(data)
-			{
-				console.log(data);
-				$.growl.error({'message':"Error calling SuperNET", 'location':"tl"});
-			})
-		//}
-		//else
-		//{
-		//	$.growl.error({'message':"Not enough funds", 'location':"tl"});
-		//}
+		IDEX.sendPost(params).done(function(data)
+		{
+			IDEX.updateUserState();
+			
+			console.log(data);
 
+			var log = {}
+			log['type'] = "order"
+			if ('error' in data && data['error'])
+			{
+				log['msg'] = data['error']
+				$.growl.error({'message':data['error'], 'location':"tl"});				
+			}
+			else
+			{
+				log['msg'] = "order placed"
+				$.growl.notice({'message':"Order placed", 'location':"tl"});
+			}
+			
+			dfd.resolve();
+			
+		}).fail(function(data)
+		{
+			console.log(data);
+			$.growl.error({'message':"Error calling SuperNET", 'location':"tl"});
+			
+			dfd.resolve();
+		})
+
+		return dfd.promise()
 	}
 	
 	
@@ -203,10 +241,11 @@ var IDEX = (function(IDEX, $, undefined)
 			baseBal = parseBalance(IDEX.account.getBalance(IDEX.user.curBase.assetID));
 			relBal = parseBalance(IDEX.account.getBalance(IDEX.user.curRel.assetID));
 
-			$buy.find(".bal-val").first().text(relBal[0] + relBal[1])
+			$buy.find(".bal-val").first().text(relBal[0] + relBal[1]);
 			$sell.find(".bal-val").first().text(baseBal[0] + baseBal[1]);
 		})
 	}
+	
 	
 	IDEX.clearOrderBoxBalance = function()
 	{
@@ -251,6 +290,92 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$form.find("input[name='total']").val(String(total));
 	});
+	
+
+	$("input[name='total']").on("keyup", function() 
+	{
+		var $form = $(this).closest("form");
+		var price = $form.find("input[name='price']").val();
+		var total = $form.find("input[name='total']").val();
+		
+		if (price.length)
+		{
+			var amount = Number(total) / Number(price);
+			$form.find("input[name='volume']").val(String(amount));
+		}
+	});
+	
+	
+	$("#balance_buy .bal-val").on("click", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var total = $(this).text();
+		
+		var $totalInput = $wrap.find("input[name='total']");
+		
+		$totalInput.val(total);
+		$totalInput.trigger("keyup");
+	})
+	
+	
+	$("#balance_sell .bal-val").on("click", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var total = $(this).text();
+		
+		var $amountInput = $wrap.find("input[name='volume']");
+		
+		$amountInput.val(total);
+		$amountInput.trigger("keyup");
+	})
+	
+	
+	$("input[name='price'], input[name='volume'], input[name='total']").on("keydown", function(e) 
+	{
+		var $input = $(this);
+		
+		orderboxInputValidator($input, e);
+	});
+	
+	
+	function orderboxInputValidator($input, e)
+	{	
+        // Allow: backspace, delete, tab, escape, enter and .
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+             // Allow: Ctrl+A
+            (e.keyCode == 65 && e.ctrlKey === true) ||
+             // Allow: Ctrl+C
+            (e.keyCode == 67 && e.ctrlKey === true) ||
+             // Allow: Ctrl+X
+            (e.keyCode == 88 && e.ctrlKey === true) ||
+             // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39))
+		{
+			if (e.keyCode == 190)
+			{
+				var hasDecimal = $input.val().search("\\.");
+				
+				if (hasDecimal != -1)
+				{
+					e.preventDefault();
+				}
+				else
+				{
+					return
+				}
+			}
+			else
+			{
+				return;
+			}
+        }
+
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105))
+		{
+            e.preventDefault();
+        }
+    };
+	
 
 
 	return IDEX;

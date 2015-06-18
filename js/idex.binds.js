@@ -9,7 +9,6 @@
 var IDEX = (function(IDEX, $, undefined) 
 {	
 
-	
 	$(".chart-style").on("mouseover", function()
 	{
 		$(this).find(".dropdown-wrap").addClass("active");
@@ -23,7 +22,6 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-
 	$(".browseArea-navbar-cell").on("mouseup", function()
 	{		
 		if (!($(this).hasClass("active")))
@@ -44,7 +42,6 @@ var IDEX = (function(IDEX, $, undefined)
 			$parent.find(".browseArea-tab[data-tab='"+tab+"']").addClass("active");
 		}
 	})
-	
 	
 	
 	$(".util-min").on("click", function()
@@ -73,8 +70,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$(window).trigger("resize")
 	})
 	
-	
-	
+		
 	$(".footer-menu-nav-cell").on("click", function()
 	{
 		return;
@@ -135,8 +131,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 		})
 	})
-	
-	
 	
 	
 	$(".cm-info-header-menu-cell").on("mouseup", function()

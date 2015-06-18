@@ -212,8 +212,6 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
-	
 	IDEX.initTimer = function()
 	{
 		var timeoutDFD = new $.Deferred();

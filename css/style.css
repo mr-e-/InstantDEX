@@ -1958,11 +1958,20 @@ table.dataTable thead th:last-child {
 }
 
 .makeofferPopup-button {
+	height:25px;
+	width:80px;
+	position:relative;
+	display:block;
 	font-size:13px;
+	text-align:center;
+	border:1px solid #303030;
+	background-color:#333333;
 }
 
 .makeofferPopup-button:hover {
 	cursor:pointer;
+	background-color:#191919;
+	border-color:#252525;
 }
 
 .makeofferPopup-close {
@@ -1975,6 +1984,10 @@ table.dataTable thead th:last-child {
 	position:relative;
 }
 
+.makeofferPopup-confirm.disabled {
+	background-color:#191919;
+	border-color:#252525;
+}
 
 .conf-footer {
     border-top: solid 1px;
@@ -2006,8 +2019,7 @@ table.dataTable thead th:last-child {
 	position:relative;
 	border:1px solid #303030;
 	border-radius:0px;
-	background-image:linear-gradient(#151515, #222222 8%, #121212 85%);
-	background-image:linear-gradient(#151515, #222222 8%, #151515 85%);
+	background-image:linear-gradient(#151515, #262626 8%, #171717 85%);
 
 }
 
@@ -2320,6 +2332,56 @@ table.dataTable thead th:last-child {
 .cancel-hover {
 	background: rgba(50, 157, 220, 0.4);
 	cursor:pointer;
+}
+
+/* ------------------------- CURRENT MARKET ORDERBOOK HEAD ------------------------- */
+
+.cm-balances-wrap {
+	height:100%;
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.cm-balances-balanceSection {
+	height:50%;
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.cm-balances-header {
+	height:25px;
+	width:100%;
+	position:relative;
+	display:block;
+	border-bottom:1px solid #303030;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.cm-balances-header-title {
+	height:100%;
+	position:relative;
+	float:left;
+	font-size:13px;
+}
+
+.cm-balances-header-totalBalance {
+	height:100%;
+	position:relative;
+	float:right;
+}
+
+.cm-balances-balanceTable {
+	height:calc(100% - 30px);
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.cm-balances-base {
+	border-bottom:1px solid #303030;
 }
 
 /* ------------------------- CURRENT MARKET ORDERBOOK HEAD ------------------------- */
@@ -3157,6 +3219,10 @@ table.dataTable thead th:last-child {
 	color:#329ddc;
 }
 
+.bal-val:hover {
+	cursor:pointer;
+}
+
 .cm-orderbox-body.active {
 	display:block;
 }
@@ -3270,13 +3336,18 @@ table.dataTable thead th:last-child {
 }
 
 #tab_buy_button:hover {
-	background:#074A1C;
-	border-color:#0B7A2E;
+	background-color:#115927;
+	border-color:#0A5C23;
+}
+
+#tab_buy_button.disabled {
+	background-color:#115927;
+	border-color:#0A5C23;
 }
 
 #tab_buy_button.order-button-mousedown {
-	background-color:#0D5423;
-	border-color:#085720;
+	background:#074A1C;
+	border:none;
 }
 
 #tab_sell_button {
@@ -3287,6 +3358,10 @@ table.dataTable thead th:last-child {
 }
 
 #tab_sell_button:hover {
+	background:#A12B1B;
+}
+
+#tab_sell_button.disabled {
 	background:#A12B1B;
 }
 

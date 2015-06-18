@@ -69,7 +69,6 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
 	function addAssetID(assets)
 	{
 		for (var i = 0; i < assets.length; i++)

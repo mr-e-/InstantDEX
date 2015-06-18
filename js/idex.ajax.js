@@ -15,9 +15,8 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!isNXT)
 		{
 			params['plugin'] = "InstantDEX";
-			
 		}
-		console.log(params);
+		
 		//params['timeout'] = 20000;
 		var ajaxSettings = 
 		{
