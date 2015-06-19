@@ -239,7 +239,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var $thisScope = $(this);
 
 		console.log(quoteid)
-		IDEX.sendPost({'requestType':"cancelquote",'quoteid':quoteid}).done(function(data)
+		IDEX.sendPost({'method':"cancelquote",'quoteid':quoteid}).done(function(data)
 		{
 			IDEX.updateUserState();
 			console.log(data)
