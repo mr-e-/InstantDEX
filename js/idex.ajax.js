@@ -48,7 +48,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			data = $.parseJSON(data);
 			//console.log(data)
-			console.log(data)
 			dfd.resolve(data);
 			if (callback)
 				callback(data);
@@ -58,7 +57,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			//console.log(data)
 			//$.growl.error({'message':message, 'location':"tl"});
-			console.log(data)
+
 			if (data.statusText == "abort")
 			{
 				//data = "abort";
