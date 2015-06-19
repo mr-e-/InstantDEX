@@ -97,7 +97,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var pairBoth = pair.split("_")
 			
 
-			var ret = matcher.test(pairBoth[0]) || matcher.test(pairBoth[1]) || matcher.test(idPair) || matcher.test(exchange)
+			var ret = matcher.test(pair) || matcher.test(pairBoth[0]) || matcher.test(pairBoth[1]) || matcher.test(idPair) || matcher.test(exchange)
 			
 			return (ret);
 		});
@@ -272,7 +272,7 @@ var IDEX = (function(IDEX, $, undefined)
 			obj['filter'] = "";
 
 			var url = IDEX.makeSkynetURL(obj)
-			console.log(url)
+			//console.log(url)
 			$.getJSON(url, function(data)
 			{
 				console.log(data)
