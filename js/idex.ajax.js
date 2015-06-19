@@ -14,7 +14,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (!isNXT)
 		{
-			params['timeout'] = 30000;
+			params['timeout'] = 20000;
 			params['plugin'] = "InstantDEX";
 		}
 		
@@ -42,7 +42,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var xhr = $.ajax(ajaxSettings);
 		
-		console.log(params)
+		//console.log(params)
 		
 		xhr.done(function(data)
 		{

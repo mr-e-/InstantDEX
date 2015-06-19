@@ -233,6 +233,11 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.isChartLocked = !IDEX.isChartLocked;
 	})
 	
+	
+	$("#topLogoWrap").on("click", function()
+	{
+		window.location.reload()
+	})
 
 	
 	IDEX.$searchTrig = null;
