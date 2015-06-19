@@ -14,10 +14,10 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (!isNXT)
 		{
+			params['timeout'] = 10000;
 			params['plugin'] = "InstantDEX";
 		}
 		
-		//params['timeout'] = 20000;
 		var ajaxSettings = 
 		{
 			type: "POST",
@@ -29,15 +29,26 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		};
 		
+		/*
+			//accepts:'text/plain',
+			//dataType:'json',
+			beforeSend:function(xhr)
+			{
+				console.log(xhr)
+				xhr.setRequestHeader('authorization', '1');
+			},
+			//cache:false,
+		*/
+		
 		var xhr = $.ajax(ajaxSettings);
 		
-		//console.log(params)
+		console.log(params)
 		
 		xhr.done(function(data)
 		{
 			data = $.parseJSON(data);
 			//console.log(data)
-			
+			console.log(data)
 			dfd.resolve(data);
 			if (callback)
 				callback(data);
@@ -47,7 +58,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			//console.log(data)
 			//$.growl.error({'message':message, 'location':"tl"});
-			
+			console.log(data)
 			if (data.statusText == "abort")
 			{
 				//data = "abort";

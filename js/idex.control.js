@@ -8,6 +8,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred();
 		var retBool = false;
 
+			console.log(baseid)
 		if (IDEX.user.updatePair(baseid, relid))
 		{
 			IDEX.user.setLastMarket(baseid, relid);
@@ -22,7 +23,7 @@ var IDEX = (function(IDEX, $, undefined)
 			//IDEX.killChart();
 			IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID});
 			IDEX.orderbook.loadNewOrderbook(IDEX.user.curBase, IDEX.user.curRel);
-			
+
 			dfd.resolve();
 		}
 		else

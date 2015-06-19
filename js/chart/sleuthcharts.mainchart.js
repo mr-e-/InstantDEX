@@ -1478,7 +1478,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 		var axisNum = String(chart.yAxis.indexOf(axis) + 1)
 
-		var $followWrap = $(chart.node).find(".yAxis-follow[data-axisNum='"+axisNum+"']");
+		var $followWrap = $(chart.node).find(".yAxis-follow[data-axisnum='"+axisNum+"']");
 		var $followBackbox = $followWrap.find(".yAxis-follow-backbox");
 		var $followText = $followWrap.find(".yAxis-follow-text");
 		

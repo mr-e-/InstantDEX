@@ -198,7 +198,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var lastMarket = IDEX.user.getLastMarket()
 				var baseID = lastMarket.baseID;
 				var relID = lastMarket.relID;
-				
+				console.log(lastMarket)
 				IDEX.changeMarket(baseID, relID);
 				IDEX.hideLoading();
 			})
