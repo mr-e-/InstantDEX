@@ -8,20 +8,25 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred();
 		var retBool = false;
 
-			console.log(baseid)
 		if (IDEX.user.updatePair(baseid, relid))
 		{
-			IDEX.user.setLastMarket(baseid, relid);
 			var base = IDEX.user.curBase.name
 			var rel = IDEX.user.curRel.name
+			
+			IDEX.user.setLastMarket(baseid, relid);
+			
 			IDEX.currPairDom(IDEX.user.curBase, IDEX.user.curRel);
 			
 			IDEX.updateOrderBox();
-			
+			IDEX.makeTable("marketOpenOrdersTable", function()
+			{
+				
+			});
 			//IDEX.account.pollOpenOrders();
 
 			//IDEX.killChart();
 			IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID});
+			
 			IDEX.orderbook.loadNewOrderbook(IDEX.user.curBase, IDEX.user.curRel);
 
 			dfd.resolve();
@@ -61,14 +66,18 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.updateUserState = function()
+	//var counter = 0;
+	
+	IDEX.updateUserState = function(force)
 	{
+		//console.log(counter++)
+		
 		IDEX.makeTable("marketOpenOrdersTable", function()
 		{
 			
 		});
 		
-		IDEX.updateOrderBoxBalance();
+		IDEX.updateOrderBoxBalance(force);
 	}
 	
 	

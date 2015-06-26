@@ -94,8 +94,11 @@ var IDEX = (function(IDEX, $, undefined)
 	}	
 	
 
-	$(".place-order-button:not(.disabled)").on("click", function()
+	$(".place-order-button").on("click", function()
 	{
+		if ($(this).hasClass("disabled"))
+			return;
+		
 		var $button = $(this);
 		var $wrap = $(this).closest(".cm-orderbox-body");
 		var $form = $("#" + $(this).attr("data-form"));
@@ -168,7 +171,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		IDEX.sendPost(params).done(function(data)
 		{
-			IDEX.updateUserState();
+			IDEX.updateUserState(true);
 			
 			console.log(data);
 
@@ -226,7 +229,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.updateOrderBoxBalance = function()
+	IDEX.updateOrderBoxBalance = function(force)
 	{
 		var $buy = $("#balance_buy");
 		var $sell = $("#balance_sell");
@@ -236,7 +239,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$buy.find(".bal-cur").first().text(IDEX.user.curRel.name + ": ");
 		$sell.find(".bal-cur").first().text(IDEX.user.curBase.name + ": ");
 		
-		IDEX.account.updateBalances().done(function()
+		IDEX.account.updateBalances(force).done(function()
 		{
 			baseBal = parseBalance(IDEX.account.getBalance(IDEX.user.curBase.assetID));
 			relBal = parseBalance(IDEX.account.getBalance(IDEX.user.curRel.assetID));
