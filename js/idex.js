@@ -113,7 +113,9 @@ var IDEX = (function(IDEX, $, undefined)
 		this.openOrders = [];
 		this.timeoutDFD = false;
 		this.openOrdersTimeout;
-		
+		this.openOrdersLastUpdated = 0;
+		this.balancesLastUpdated = 0;
+
 		IDEX.constructFromObject(this, obj);
 	};
 	
@@ -128,6 +130,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.User = function(obj)
 	{
 		this.allAssets = [];
+		this.labels = [];
 		this.options = {};
 		this.favorites = {};
 		
@@ -144,6 +147,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var initializedAssets = new $.Deferred();
 		var loadedChart = new $.Deferred();
 		var timeoutFinished = new $.Deferred();
+		var updatedNXT = new $.Deferred();
 
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
@@ -157,7 +161,14 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.buildMainChartDom();
 		
 		IDEX.user.initFavorites();
-		
+		/*IDEX.user.initLabels();
+
+		IDEX.user.options = 
+		{
+			"duration":6000,
+			"minperc":75
+		}*/
+	
 		
 		IDEX.pingSupernet().done(function()
 		{
@@ -171,6 +182,7 @@ var IDEX = (function(IDEX, $, undefined)
 			IDEX.account.updateNXTRS().done(function(nxtRSID)
 			{
 				//console.log(nxtRSID)
+				updatedNXT.resolve();
 			});
 			
 			
@@ -193,7 +205,7 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			
 			
-			$.when(timeoutFinished, initializedAssets, loadedChart).done(function()
+			$.when(timeoutFinished, initializedAssets, loadedChart, updatedNXT).done(function()
 			{
 				var lastMarket = IDEX.user.getLastMarket()
 				var baseID = lastMarket.baseID;

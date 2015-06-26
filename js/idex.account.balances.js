@@ -7,7 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Account.prototype.getBalance = function(assetID)
 	{
 		var balance = {};
-
+		
 		if (assetID in this.balances)
 			balance = this.balances[assetID];
 			
@@ -36,35 +36,46 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 
-	IDEX.Account.prototype.updateBalances = function()
+	IDEX.Account.prototype.updateBalances = function(forceUpdate)
 	{
-		this.balances = {};
+		//this.balances = {};
 		
 		var balances = [];
 		var dfd = new $.Deferred();
 		var account = this;
-		//var postObj = {'requestType':"getAccount",'account':IDEX.account.nxtID, 'includeAssets':true};
-		var postObj = {'requestType':"getAccountAssets",'account':account.nxtID};
-		
-		IDEX.sendPost(postObj, 1).then(function(data)
+		var time = new Date().getTime()
+
+		if (!forceUpdate && time - this.balancesLastUpdated < 1000)
 		{
-			if (!("errorCode" in data) && ("accountAssets" in data))
-				balances = data['accountAssets'];
-				
-			IDEX.sendPost({'requestType':"getBalance", 'account':account.nxtID}, 1).then(function(nxtBal)
+			dfd.resolve()
+		}
+		else
+		{
+			//var postObj = {'requestType':"getAccount",'account':IDEX.account.nxtID, 'includeAssets':true};
+			var postObj = {'requestType':"getAccountAssets",'account':account.nxtID};
+			
+			IDEX.sendPost(postObj, 1).then(function(data)
 			{
-				if (!("errorCode" in nxtBal))
+				if (!("errorCode" in data) && ("accountAssets" in data))
+					balances = data['accountAssets'];
+					
+				IDEX.sendPost({'requestType':"getBalance", 'account':account.nxtID}, 1).then(function(nxtBal)
 				{
-					nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
-					balances.push(nxtBal);
-				}
-				
-				balances = addAssetID(balances);
-				account.setBalances(balances);
-				dfd.resolve();
+					if (!("errorCode" in nxtBal))
+					{
+						nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
+						balances.push(nxtBal);
+					}
+					
+					balances = addAssetID(balances);
+					account.balances = {};
+					account.setBalances(balances);
+					dfd.resolve();
+				})
 			})
-		})
+		}
 		
+		this.balancesLastUpdated = time;
 		return dfd.promise();
 	}
 	

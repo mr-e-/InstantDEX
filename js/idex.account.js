@@ -46,35 +46,43 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise()
 	}
 	
-	
-	IDEX.Account.prototype.updateOpenOrders = function()
+	IDEX.Account.prototype.updateOpenOrders = function(forceUpdate)
 	{
 		var dfd = new $.Deferred();
 		var params = {"method":"openorders"};
 		var account = this;
-		
-		IDEX.sendPost(params, false).then(function(data)
-		{
-			var temp = [];
-
-			if ("openorders" in data)
-			{
-				data = data.openorders;
+		var time = new Date().getTime()
 				
-				for (var i = 0; i < data.length; i++)
-					if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
-						temp.push(data[i]);
-			}
-			else
+		if (!forceUpdate && time - this.openOrdersLastUpdated < 1000)
+		{
+			dfd.resolve()
+		}
+		else
+		{
+			IDEX.sendPost(params, false).then(function(data)
 			{
-				data = [];
-			}
-			
-			account.openOrders = data;
-			account.marketOpenOrders = temp;
-			dfd.resolve();
-		})
+				var temp = [];
+
+				if ("openorders" in data)
+				{
+					data = data.openorders;
+					
+					for (var i = 0; i < data.length; i++)
+						if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
+							temp.push(data[i]);
+				}
+				else
+				{
+					data = [];
+				}
+				
+				account.openOrders = data;
+				account.marketOpenOrders = temp;
+				dfd.resolve();
+			})
+		}
 		
+		this.openOrdersLastUpdated = time;
 		return dfd.promise();
 	}
 	
