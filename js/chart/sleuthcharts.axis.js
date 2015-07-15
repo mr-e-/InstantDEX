@@ -171,7 +171,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var lineAttr = {
 			"stroke-width": 1,
-			"stroke": "#303030"
+			"stroke": "#555555"
 		}
 		
 		$axisLinesGroup.empty();
@@ -203,7 +203,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var lineAttr = {
 			"stroke-width": 1,
-			"stroke": "#303030"
+			"stroke": "#555555"
 		}
 		
 		d3.select(rawgroup).append("line")

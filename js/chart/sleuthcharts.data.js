@@ -89,6 +89,7 @@ var IDEX = (function(IDEX, $, undefined)
         var params = new IDEX.SkyNETParams(obj)
         var url = params.makeURL()
 		//console.log(url)
+		
 		$.getJSON(url, function(data)
 		{
 			dfd.resolve(data)	

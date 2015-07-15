@@ -59,12 +59,11 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		]
 		
-
 		
 		IDEX.constructFromObject(this, obj);
 	}
 
-	var allCharts = {
+	IDEX.allcharts = {
 		"main_menu_chart":{
 			"sleuthchart":null,
 			"settings":new IDEX.ChartSettings()
@@ -87,54 +86,208 @@ var IDEX = (function(IDEX, $, undefined)
 		"stroke-width":1
 	}
 	
+	
 	IDEX.makeTile = function(node)
 	{
 		var obj = {
 			"sleuthchart":null,
 			"settings":new IDEX.ChartSettings()
 		}
-		allCharts[node] = obj;
+		IDEX.allcharts[node] = obj;
 		
 		//updateChart(node)
 	}
 	
-	function toggleLoading(node, isLoading)
+	
+	$("#main_grid").on("click", ".chart-interval-trig div", function(e)
 	{
-		if (node[0] != "#")
-			node = "#"+node
-		var $parent = $(node).parent();
-		var $loading = $parent.find(".chart-loading")
-		if (isLoading)
+		var $cell = $(this).find("span")
+		
+		$(this).parent().find("span").removeClass("active");
+		$cell.addClass("active");
+		
+		var node = $(this).closest(".chart-header").attr("data-chart")
+		var chart = IDEX.allcharts[node];
+		var settings = chart.settings;
+		var confVal = $cell.attr("data-confval");
+		var confType = $(this).closest(".mm-interval-type").attr("data-inttype");
+		
+		settings.barWidth = confVal;
+		settings.bars = confType;
+		
+		IDEX.updateChart(node)
+	})
+	
+	$("#main_grid").on("click", ".chart-time-dropdown-wrap li", function()
+	{
+		var $wrap = $(this).closest(".chart-time-wrap");
+		var isSwitch = $(this).hasClass("time-change");		
+		var val = $(this).attr("data-val");	
+	
+		if (isSwitch)
 		{
-			$loading.show();
+			var confType = val;
+			$wrap.find("ul").removeClass("active");
+			var $otherList = $wrap.find("ul[data-inttype='"+val+"']")
+			var $otherCell = $otherList.find("li.active")
+			val = $otherCell.attr("data-val");
+			var title = $otherCell.text();
+			$otherList.addClass("active");
+			
 		}
 		else
 		{
-			$loading.hide()
-		}
-	}
-	
+			var $list = $(this).closest("ul");
+			var title = $(this).text();
+			var confType = $list.attr("data-inttype");
 
-	IDEX.makeChart = function(obj)
+
+			$list.find("li").removeClass("active");
+			$(this).addClass("active");
+		}
+		
+		$wrap.find(".chart-time-button-title span").text(title);
+
+		var node = $(this).closest(".chart-header").attr("data-chart")
+		var chart = IDEX.allcharts[node];
+		var settings = chart.settings;
+		var confVal = val
+		
+		settings.barWidth = confVal;
+		settings.bars = confType;
+		
+		IDEX.updateChart(node)
+	})
+	
+	
+	$("#main_grid").on("click", ".chart-header .mm-chart-config li", function(e)
+	{
+		$(this).parent().find("li").removeClass("active");
+		$(this).addClass("active");
+		
+		var confType = $(this).parent().attr("data-config")
+		var confVal = $(this).attr("data-val")
+		
+		var $wrap = $(this).closest(".chart-header");
+		var node = $wrap.attr("data-chart");
+		
+		var chart = IDEX.allcharts[node];
+		var settings = chart.settings;
+		var sleuthchart = chart.sleuthchart
+		
+		
+		if (sleuthchart !== null)
+		{
+			console.log(confType)
+			console.log(confVal)
+			
+			if (confType == "charttype")
+			{
+				settings.chartType = confVal
+				sleuthchart.chartType = settings.chartType
+					
+				if (settings.chartType == "line")
+				{
+					$("#" + node).find(".boxes").empty()
+					sleuthchart.drawCandleSticks = drawInd
+					sleuthchart.chartType = "line"
+				}
+				else if (settings.chartType == "candlestick")
+				{
+					$("#" + node).find(".mainline").empty()
+					sleuthchart.drawCandleSticks = drawCandleSticks
+				}
+				else if (settings.chartType == "ohlc")
+				{
+					$("#" + node).find(".mainline").empty()
+					sleuthchart.drawCandleSticks = drawCandleSticks
+				}
+				else if (settings.chartType == "area")
+				{
+					$("#" + node).find(".boxes").empty()
+					sleuthchart.drawCandleSticks = drawInd
+					sleuthchart.chartType = "area"
+				}
+				
+				redraw(sleuthchart)
+				
+			}
+			else if (confType == "bartype")
+			{
+				$wrap.find(".mm-interval-type").removeClass("active")
+				var $intervalList = $wrap.find(".mm-interval-type[data-inttype='"+confVal+"']")
+				$intervalList.addClass("active")
+				$intervalList.find("span.active").trigger("click")
+			}
+			else if (confType == "indicator")
+			{
+				var indicatorType = confVal
+				
+				if (indicatorType == "none")
+				{
+					$(sleuthchart.node).find(".volInd").empty()
+					$(sleuthchart.node).find(".candleInd").empty()
+
+					sleuthchart.settings.isInd = false;
+					toggleLoading(node, false)
+					redraw(sleuthchart)
+				}
+				else
+				{
+					sleuthchart.settings.isInd = true;
+					settings.candleInd[0].type = indicatorType
+					settings.candleInd[1].type = indicatorType
+					settings.volInd[0].type = indicatorType
+					settings.volInd[1].type = indicatorType
+					
+					if (indicatorType == "bollin")
+					{
+						settings.candleInd[0].len = "1|2"
+						settings.candleInd[1].len = "1|2"
+						settings.volInd[0].len = "1|2"
+						settings.volInd[1].len = "1|2"
+					}
+					else
+					{
+						settings.candleInd[0].len = "7"
+						settings.candleInd[1].len = "20"
+						settings.volInd[0].len = "7"
+						settings.volInd[1].len = "20"
+					}
+					
+					sleuthchart.settings = settings
+					toggleLoading(node, true)
+					IDEX.getBothInds(sleuthchart, settings).done(function()
+					{
+						toggleLoading(node, false)
+						redraw(sleuthchart)
+					});
+				}
+				
+			}
+			else if (confType == "timescale")
+			{
+				
+			}
+			else if (confType == "depth")
+			{
+				sleuthchart.yAxis[0].minPadding = confVal;
+				sleuthchart.yAxis[0].maxPadding = confVal;
+				sleuthchart.redraw(sleuthchart)	
+			}			
+		}
+		
+	})
+
+	
+	IDEX.makeChartDefault = function(node)
 	{
 		var dfd = new $.Deferred();
 		
-		var node = "ex_chart";
-		
-		var chart = allCharts[node];
-		var settings = chart.settings
-		
-		var pair = obj.baseid + "_" + obj.relid
-		var exchange = "nxtae"
-		
-		if (obj.relid == 5527630)
-			pair = obj.baseid + "_" + "NXT"
-		
-		settings.pair = pair;
-		settings.exchange = exchange;
-		
-		var $el = $(node);
-		var isVisible = $el.is(":visible")
+		IDEX.allcharts[node] = {
+			"sleuthchart":null,
+			"settings":new IDEX.ChartSettings()
+		}
 		
 		IDEX.updateChart(node).done(function()
 		{
@@ -144,206 +297,50 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise();
 	}
 	
-	IDEX.chartClick = function($el)
+	IDEX.makeChart = function(obj)
 	{
-		var $wrap = $el.closest(".chart-wrap")	
-		var $inputEl = $wrap.find(".skynet-search")
-
+		var dfd = new $.Deferred();
 		
-		var pair = $inputEl.attr("data-pair")
-		var exchange = $inputEl.attr("data-exchange")
+		var node = obj.node
 		
-		var node = $wrap.attr("data-chart");
-		var barWidth = $wrap.find(".num-ticks span.active").text();
+		if (!node in IDEX.allcharts)
+		{
+			
+			IDEX.allcharts[node] = {
+				"sleuthchart":null,
+				"settings":new IDEX.ChartSettings()
+			}
+		}
+		var chart = IDEX.allcharts[node];
+		var settings = chart.settings
 		
-		var chart = allCharts[node];
-		var settings = chart.settings;
+		var pair = obj.baseid + "_" + obj.relid
+		
+		if (obj.relid == 5527630)
+			pair = obj.baseid + "_" + "NXT"
 		
 		settings.pair = pair;
-		settings.exchange = exchange;
+		settings.exchange = obj.exchange;
 		
-
-		IDEX.updateChart(node)
+		IDEX.updateChart(node).done(function()
+		{
+			dfd.resolve();
+		})
+		
+		//console.log(pair)
+		//console.log(node)
+		//var $el = $(node);
+		//var isVisible = $el.is(":visible")
+		
+		return dfd.promise();
 	}
-
-	
-	$(".num-ticks div").on("click", function(e)
-	{	
-		$(this).parent().find("span").removeClass("active");
-		$(this).find("span").addClass("active");
-		
-		var node = $(this).closest(".chart-wrap").attr("data-chart")
-		var barWidth = $(this).text()
-		
-		var chart = allCharts[node];
-		var settings = chart.settings;
-		
-		settings.barWidth = barWidth;
-		settings.bars = "tick"
-		
-		
-		IDEX.updateChart(node)
-	})
 	
 	
-	$(".time-interval div").on("click", function(e)
-	{	
-		$(this).parent().find("span").removeClass("active");
-		$(this).find("span").addClass("active");
-		
-		var node = $(this).closest(".chart-wrap").attr("data-chart")
-		var barWidth = $(this).text()
-		
-		var chart = allCharts[node];
-		var settings = chart.settings;
-		
-		var mult = barWidth.charAt(barWidth.length-1)
-		var num = parseInt(barWidth)
-		if (mult == "m")
-			num *= 60
-		else if (mult == "h")
-			num *= (60 * 60)
-		else if (mult == "d")
-			num *= (60 * 60 * 24)
-		
-		
-		settings.barWidth = String(num);
-		settings.bars = "time"
-		
-		IDEX.updateChart(node)
-	})
-	
-	
-	$(".mm-chart-bartype li").on("click", function()
+	IDEX.killChart = function()
 	{
-		$(this).parent().find("li").removeClass("active");
-		$(this).addClass("active");
 		
-		var intervalType = $(this).text()
-		var $wrap = $(this).closest(".chart-wrap")
-		
-		$wrap.find(".mm-interval-type").removeClass("active")
-		var $intervalList = $wrap.find(".mm-interval-type[data-inttype='"+intervalType+"']")
-		$intervalList.addClass("active")
-	})
+	}
 	
-
-	
-	$(".mm-chart-indicator li").on("click", function()
-	{	
-		$(this).parent().find("li").removeClass("active");
-		$(this).addClass("active");
-		
-		var node = $(this).closest(".chart-wrap").attr("data-chart")
-		var indicatorType = $(this).text().toLowerCase();
-		if (indicatorType == "bbands")
-			indicatorType = "bollin"
-
-		var chart = allCharts[node];
-		var settings = chart.settings;
-		
-		
-		var sleuthchart = chart.sleuthchart
-		
-		if (sleuthchart !== null)
-		{
-			if (indicatorType == "none")
-			{
-				$(sleuthchart.node).find(".volInd").empty()
-				$(sleuthchart.node).find(".candleInd").empty()
-
-				sleuthchart.settings.isInd = false;
-				toggleLoading(node, false)
-				redraw(sleuthchart)
-			}
-			else
-			{
-				sleuthchart.settings.isInd = true;
-				settings.candleInd[0].type = indicatorType
-				settings.candleInd[1].type = indicatorType
-				settings.volInd[0].type = indicatorType
-				settings.volInd[1].type = indicatorType
-				
-				if (indicatorType == "bollin")
-				{
-					settings.candleInd[0].len = "1|2"
-					settings.candleInd[1].len = "1|2"
-					settings.volInd[0].len = "1|2"
-					settings.volInd[1].len = "1|2"
-				}
-				else
-				{
-					settings.candleInd[0].len = "7"
-					settings.candleInd[1].len = "20"
-					settings.volInd[0].len = "7"
-					settings.volInd[1].len = "20"
-				}
-				
-				sleuthchart.settings = settings
-				toggleLoading(node, true)
-				IDEX.getBothInds(sleuthchart, settings).done(function()
-				{
-					toggleLoading(node, false)
-					redraw(sleuthchart)
-				});
-			}
-		}
-		else
-		{
-			IDEX.updateChart(node)
-		}
-	})
-	
-	
-	$(".mm-chart-charttype li").on("click", function()
-	{	
-		$(this).parent().find("li").removeClass("active");
-		$(this).addClass("active");
-		
-		var node = $(this).closest(".chart-wrap").attr("data-chart")
-		var chartType = $(this).text()
-		
-		var chart = allCharts[node];
-		var settings = chart.settings;
-		
-		settings.chartType = chartType.toLowerCase();
-		
-		var sleuthchart = chart.sleuthchart
-		
-		if (sleuthchart !== null)
-		{
-			sleuthchart.chartType = settings.chartType
-				
-			if (settings.chartType == "line")
-			{
-				$("#" + node).find(".boxes").empty()
-				sleuthchart.drawCandleSticks = drawInd
-				sleuthchart.chartType = "line"
-			}
-			else if (settings.chartType == "candlestick")
-			{
-				$("#" + node).find(".mainline").empty()
-				sleuthchart.drawCandleSticks = drawCandleSticks
-			}
-			else if (settings.chartType == "ohlc")
-			{
-				$("#" + node).find(".mainline").empty()
-				sleuthchart.drawCandleSticks = drawCandleSticks
-			}
-			else if (settings.chartType == "area")
-			{
-				$("#" + node).find(".boxes").empty()
-				sleuthchart.drawCandleSticks = drawInd
-				sleuthchart.chartType = "area"
-			}
-			
-			redraw(sleuthchart)
-		}
-		else
-		{
-			IDEX.updateChart(node)
-		}
-	})
 	
 	function drawInd(chart)
 	{
@@ -411,7 +408,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var dfd = new $.Deferred();
 		
-		var chartWrap = allCharts[node];
+		var chartWrap = IDEX.allcharts[node];
 		var settings = chartWrap.settings;
 		var barWidth = settings.barWidth;
 		var isMain = node == "main_menu_chart";
@@ -420,6 +417,9 @@ var IDEX = (function(IDEX, $, undefined)
 		toggleLoading(node, true)
 		var chart = new IDEX.Chart();
 		chart.settings = settings
+		var $drawingGroup = $(node).find(".drawingLines");
+		$drawingGroup.empty();
+		
 		IDEX.getData(settings).done(function(data)
 		{	
 			IDEX.getBothInds(chart, settings).done(function(indData)
@@ -432,7 +432,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				
 				chart.barWidth = barWidth;
-				allCharts[node].sleuthchart = chart;
+				IDEX.allcharts[node].sleuthchart = chart;
 				chart.isMain = isMain
 
 				chart.node = "#" + node;
@@ -478,6 +478,7 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.addMouseout(chart);
 				IDEX.addMouseup(chart);
 				IDEX.addMousedown(chart);
+				IDEX.addDrawing(chart);
 				
 				resizeAxis(chart);
 				updateAxisPos(chart)
@@ -567,6 +568,86 @@ var IDEX = (function(IDEX, $, undefined)
 		drawAxisLines(chart);
 		
 		highLowPrice(chart);
+		redrawLines(chart);
+	}
+	
+	
+	function redrawLines(chart)
+	{
+		var node = chart.node;
+		var $drawingGroup = $(node).find(".drawingLines");
+		$drawingGroup.empty();
+		
+		var d3DrawingGroup = d3.select($drawingGroup.get()[0])
+		
+		var lineAttr = {
+			"stroke-width": 1.5,
+			"stroke": "#999999"
+		}
+		
+		var priceAxis = chart.yAxis[0];
+		var xAxis = chart.xAxis[0];
+		
+		for (var i = 0; i < chart.drawPoints.length; i++)
+		{
+			var drawPoint = chart.drawPoints[i];
+			
+			if (drawPoint.length != 2)
+				continue;
+			
+			var positions = [];
+			
+			for (var j = 0; j < drawPoint.length; j++)
+			{
+				var linePoint = drawPoint[j];
+				var yPos = priceAxis.getPos(linePoint.price);
+				var xPoint = IDEX.getXPoint(chart.pointData, linePoint.time);
+				
+				var xPos = xPoint.pos.middle;
+				
+				positions.push({"x":xPos, "y":yPos});
+			}
+			
+			d3DrawingGroup.append("line")
+			.attr("x1", positions[0].x)
+			.attr("y1", positions[0].y)
+			.attr("x2", positions[1].x)
+			.attr("y2", positions[1].y)
+			.attr(lineAttr);
+		}
+					
+	}
+	
+	IDEX.getXPoint = function(points, value)
+	{
+		var val = null;
+		//var points = curChart.pointData;
+
+		if (value >= points[points.length-1].phase.startTime)
+		{
+			val = points[points.length-1]
+		}
+		else if (value <= points[0].phase.startTime)
+		{
+			val = points[0]
+		}
+		else
+		{
+			for (var i = 0; i < points.length; i++) 
+			{
+				point = points[i]
+				if ( point.phase.startTime >= value) 
+				{
+					val = points[i-1]
+					break;
+				}
+			}
+		}
+		
+		//console.log(value)
+		//console.log(val)
+		//console.log(points)
+		return val;
 	}
 	
 	
@@ -614,9 +695,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(window).resize(function(e)
 	{
-		for (key in allCharts)
+		for (key in IDEX.allcharts)
 		{
-			var chart = allCharts[key].sleuthchart
+			var chart = IDEX.allcharts[key].sleuthchart
 
 			if (!chart || !chart.xAxis.length)
 			{
@@ -926,7 +1007,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var node = $(this).closest("svg").attr("id")
 				//console.log(node)
 				
-				var chart = allCharts[node]
+				var chart = IDEX.allcharts[node]
 				//console.log(chart)
 				var sleuthchart = chart.sleuthchart
 				var settings = chart.settings;
@@ -1187,8 +1268,8 @@ var IDEX = (function(IDEX, $, undefined)
 		.attr("y", 20)
 		.attr("x", 20)
 		.attr(textAttr)
-		.attr("fill", "#D3D3D3")
-		.attr("font-size", "12px")
+		.attr("fill", "#bbbbbb")
+		.attr("font-size", "11px")
 	}
 	
 	
@@ -1197,7 +1278,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var node = $(this).closest("svg").attr("id")
 		//console.log(node)
 		
-		var chart = allCharts[node]
+		var chart = IDEX.allcharts[node]
 		//console.log(chart)
 		var sleuthchart = chart.sleuthchart
 		var settings = chart.settings;
@@ -1254,7 +1335,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var fontSize = chart.marketInfoFontSize
 		var textAttr = {
-			"fill":"#D3D3D3",
+			"fill":"#bbbbbb",
 			"font-family":"Roboto",
 			"font-size":fontSize
 		}
@@ -1442,6 +1523,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function drawXLine(chart, yPos)
 	{
+		if (!chart.isCrosshair)
+			return
+		
 		var priceAxis = chart.yAxis[0];
 		var width = priceAxis.pos['left']; //+ priceAxis.width
 		var $cursor_follow_x = $(chart.node).find(".cursor_follow_x");
@@ -1458,6 +1542,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function drawYLine(chart, closestPoint)
 	{
+		if (!chart.isCrosshair)
+			return
+		
 		var xAxis = chart.xAxis[0];
 		var height = xAxis.pos['bottom'];
 		var $cursor_follow_y = $(chart.node).find(".cursor_follow_y");
@@ -1658,13 +1745,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.killChart = function()
-	{
-		
-	}
-	
-	
-	$(".dropdown-option").on("click", function(e)
+	$("#main_grid").on("click", ".dropdown-option", function(e)
 	{
 		$(this).closest("ul").find(".dropdown-option").removeClass("active")
 		$(this).addClass("active")		
@@ -1680,6 +1761,22 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
+	function toggleLoading(node, isLoading)
+	{
+		if (node[0] != "#")
+			node = "#"+node
+		var $parent = $(node).parent();
+		var $loading = $parent.find(".chart-loading")
+		if (isLoading)
+		{
+			$loading.show();
+		}
+		else
+		{
+			$loading.hide()
+		}
+	}
 	
 	
 	

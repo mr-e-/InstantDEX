@@ -43,6 +43,20 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			this.colorone = "#410947"
 			this.colortwo = "#B726C7"
+			
+			
+			this.isCrosshair = true;
+			this.isDrawing = false;
+			this.isDrawingLine = false;
+			this.isFib = false;
+			this.isFibDrawing = false;
+			
+			this.drawFib = [];
+			
+			this.drawingLine;
+			this.drawPoints = [];
+			this.curDrawPoint = [];
+			
 			IDEX.constructFromObject(this, obj);
 			//this.addChart(this);
 
@@ -92,19 +106,13 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			
 			var obj = IDEX.getXAxisNodes(chart.node, 1)
-			if (chart.isMain)
-			{
-				var volAxisHeight = "25%"
-				var priceAxisHeight = "75%"
-				var priceAxisTopPadding = 35;
-				chart.isVolInd = true;
-			}
-			else
-			{
-				var volAxisHeight = "30%"
-				var priceAxisHeight = "70%"
-				var priceAxisTopPadding = 20;
-			}
+			
+
+			var volAxisHeight = "20%"
+			var priceAxisHeight = "80%"
+			var priceAxisTopPadding = 35;
+			//chart.isVolInd = true;
+
 			
 			
 			var xAxisOpt = {
