@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="en">
 
 <head>
 	<meta charset="UTF-8">
@@ -14,65 +14,30 @@
 	<link rel="stylesheet" href="css/style.css">
 
     <link rel="icon" href="img/favicon.ico" type="img/x-icon" />
+	
+	
 	<style type="text/css" id="temp_label_style" data-ctext="" data-cbg="">
 
 	</style>
 	
-	<style type="text/css" id="Label-1" class="style-orderbook-label" data-label="1" data-lclass="label-style-1" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-2" class="style-orderbook-label" data-label="2" data-lclass="label-style-2" data-ctext="" data-cbg="">
-	
-	</style>
-	
-	<style type="text/css" id="Label-3" class="style-orderbook-label" data-label="3" data-lclass="label-style-3" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-4" class="style-orderbook-label" data-label="4" data-lclass="label-style-4" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-5" class="style-orderbook-label" data-label="5" data-lclass="label-style-1" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-6" class="style-orderbook-label" data-label="6" data-lclass="label-style-2" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-7" class="style-orderbook-label" data-label="7" data-lclass="label-style-3" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-8" class="style-orderbook-label" data-label="8" data-lclass="label-style-4" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-9" class="style-orderbook-label" data-label="9" data-lclass="label-style-3" data-ctext="" data-cbg="">
-
-	</style>
-	
-	<style type="text/css" id="Label-10" class="style-orderbook-label" data-label="10" data-lclass="label-style-4" data-ctext="" data-cbg="">
-
-	</style>
 	
 	<title>instantDEX Beta</title>
+	
 </head>
 
 <body>
 
+		
+
 	<div id="body_wrap">
 
-		<!--------------------------- HEADER AREA ---------------------->
 
-
-		<!------------------------- BODY WRAPPER -------------------------------->
-
-		<div id="main_wrap">
+		<div id="main_wrap" class="unselectable">
 
 		
+		
+			<!------------------------- START LOADING OVERLAY ----------------------------->
+
 			<div class="loading-overlay active">
 			
 			</div>
@@ -82,1315 +47,458 @@
 					<span class="vert-align">Loading...</span>
 				</div>
 			</div>
+			<!------------------------- END LOADING OVERLAY ----------------------------->
 
-			<div id="left_wrap">
 			
-				<div class="mainHeader" class="unselectable">
-
-					<div id="topLogoWrap">
-						<img id="topLogo" src="img/logo-hor.svg"></img>
-					</div>
-
-					<div class="mainHeader-menu">
-
-						<div class="mainHeader-menu-right">
-							<div class="mainHeader-menu-cell mainHeader-menu-cellIcon">
-								<img src="img/gear.png" class="vert-align" style="height:26px;width:24px"></img>
-							</div>
-							<div class="mainHeader-menu-cell mainHeader-menu-cellIcon">
-								<img src="img/bell.png" class="vert-align"></img>
-							</div>
-							<div class="mainHeader-menu-cell mainHeader-menu-cellIcon">
-								<img src="img/alarm.png" class="vert-align" style="height:22px;width:22px"></img>
-							</div>
-						</div>
-						
-					</div>
-				</div>
 			
-				<div class="browseArea browseExpanded">
-											
-					<div class="browseArea-header browseArea-navbar">
-					
-						<div class="browseArea-navbar-cell active" data-tab="4">
-							<span class="vert-align">CHART</span>
-						</div>
-					
-						<div class="browseArea-navbar-cell" data-tab="5">
-							<span class="vert-align">TILES</span>
-						</div>
-					
-						<div class="browseArea-navbar-cell" data-tab="1">
-							<span class="vert-align">MARKETS</span>
-						</div>
-						
-						<div class="browseArea-navbar-cell" data-tab="2">
-							<span class="vert-align">ORDERS</span>
-						</div>
-						
-						<div class="browseArea-navbar-cell" data-tab="3">
-							<span class="vert-align">BALANCES</span>
-						</div>
-						
-					
-					</div>
-				
-					<div class="browseArea-body">
-										
-						
-						<div class="browseArea-tab active" data-tab="4">
-						
-							
-							<div class="browse-chart-header chart-wrap" data-chart="main_menu_chart">
+			<!------------------------- START HEADER ----------------------------->
+			<div class="mainHeader" class="unselectable">
 
-								<div class="browse-chart-lock">
-									<img class="vert-align" src="img/lock.png"></img>
-								</div>
-							
-								<div class="browse-chart-search-wrap">
-									<div class="browse-chart-search-input vert-align">
-										<input type="text" name="pair" class="skynet-search" id="main_chart_pair_input"></input>
-									</div>
-								</div>
-									
-								<div class="horiz-list horiz-list-main mm-interval-type active" data-inttype="Tick">
-									<div class ="horiz-list-title">
-										<span class="vert-align" id="temp_chart_click">Tick Interval: </span>
-									</div>
-									<div class="num-ticks horiz-list-options">
-										<div class="horiz-list-option"><span class="vert-align">5</span></div>
-										<div class="horiz-list-option"><span class="vert-align">10</span></div>
-										<div class="horiz-list-option"><span class="vert-align">25</span></div>
-										<div class="horiz-list-option"><span class="vert-align active">100</span></div>
-										<div class="horiz-list-option"><span class="vert-align">300</span></div>
-										<div class="horiz-list-option"><span class="vert-align">500</span></div>
-									</div>
-								</div>
-								
-								<div class="horiz-list horiz-list-main mm-interval-type" data-inttype="Time">
-									<div class ="horiz-list-title">
-										<span class="vert-align">Time Interval: </span>
-									</div>
-									<div class="time-interval horiz-list-options">
-										<div class="horiz-list-option"><span class="vert-align">5m</span></div>
-										<div class="horiz-list-option"><span class="vert-align">15m</span></div>
-										<div class="horiz-list-option"><span class="vert-align">30m</span></div>
-										<div class="horiz-list-option"><span class="vert-align">1h</span></div>
-										<div class="horiz-list-option"><span class="vert-align">6h</span></div>
-										<div class="horiz-list-option"><span class="vert-align">12h</span></div>
-										<div class="horiz-list-option"><span class="vert-align">1d</span></div>
-									</div>
-								</div>
-								
-								<div class="chart-style dropdown-chart">
-									<div class="dropdown-title dropdown-title-main vert-align">
-										<span>Config &#9662;</span>
-									</div>
-
-									<div class="dropdown-wrap dropdown-wrap-main">
-									
-										<table class="chart-table">
-											<tbody>
-												<tr>
-													<td>Bar Type</td>
-													<td>
-														<ul class="mm-chart-config mm-chart-bartype">
-															<li>Time</li>
-															<li class="active">Tick</li>
-														</ul>
-													</td>
-												</tr>
-												<tr>
-													<td>Chart Type</td>
-													<td>
-														<ul class="mm-chart-config mm-chart-charttype">
-															<li class="active">Candlestick</li>
-															<li>OHLC</li>
-															<li>Line</li>
-															<li>Area</li>
-														</ul>
-													</td>
-												</tr>
-												<tr>
-													<td>Indicator</td>
-													<td>
-														<ul class="mm-chart-config mm-chart-indicator">
-															<li class="active">EMA</li>
-															<li>SMA</li>
-															<li>BBands</li>
-															<li>None</li>
-														</ul>
-													</td>
-												</tr>
-												<tr>
-													<td>Time Scale</td>
-													<td>
-														<ul class="mm-chart-config mm-chart-timescale">
-															<li class="active">Linear</li>
-															<li>Logarithmic</li>
-														</ul>
-													</td>
-												</tr>
-												<tr>
-													<td>Depth</td>
-													<td>
-														<ul class="mm-chart-config mm-chart-depth">
-															<li>1%</li>
-															<li>2%</li>
-															<li>5%</li>
-															<li class="active">10%</li>
-														</ul>
-													</td>
-												</tr>
-											</tbody>
-										</table>
-										
-									</div>
-								</div>
-								
-							</div>
-							
-							<div class="browse-chart-wrap" style="cursor:none !important">
-								<div class="chart-loading">
-									<span>Loading</span>
-								</div>
-
-							</div>
-						</div>
-						
-						<div class="browseArea-tab" data-tab="5">
-							
-							<div class="tiles">
-							
-								<div class="tiles-header">
-									<div class="tiles-header-pageWrap">
-										<div class="tiles-header-page-num">
-											<span>Page 1</span>
-										</div>
-									</div>
-									<div class="tiles-header-iconWrap">
-										<div class="tiles-header-icon">
-											<span>DESTROY</span>
-										</div>
-										<div class="tiles-header-icon">
-											<span>EDIT</span>
-										</div>
-										<div class="tiles-header-icon" id="dropper">
-											<span>CREATE</span>
-										</div>
-									</div>
-								</div>
-								
-								<div class="tiles-grid">
-									<div class="tiles-grid-wrap">
-									
-										<div class="tiles-row">
-
-										</div>
-										<div class="tiles-row">
-
-										</div>
-										<div class="tiles-row">
-
-										</div>
-										
-									</div>
-								</div>
-								
-							</div>
-						
-						</div>
-						
-						<div class="browseArea-tab" data-tab="3">
-							
-							<div class="browse-balances">
-							
-								<div class="browse-balances-header">
-									<div class="browse-balances-header-nav">
-										<div class="browse-balances-header-nav-row" data-tab="1">
-											<span class="vert-align active">NXT</span>
-										</div>
-										<div class="browse-balances-header-nav-row">
-											<span class="vert-align">MGW</span>
-										</div>
-										<div class="browse-balances-header-nav-row">
-											<span class="vert-align">EXTERNAL</span>
-										</div>
-									</div>
-								</div>
-								
-								<div class="browse-balances-tab active" data-tab="1">
-								
-									<div class="browse-balances-nxt">
-									
-										<div class="browse-balances-nxt-rs">
-											<span class="nxtrs vert-align"></span>
-										</div>
-										
-										<div class="browse-balances-nxt-balArea">
-											<table id="balancesTable" class="idextable" cellspacing=0>
-												<thead>
-													<tr>
-														<th>Name</th>
-														<th>Asset ID</th>
-														<th>Available Balance</th>
-														<th>Unconfirmed Balance</th>
-														<th>% Change</th>
-													</tr>
-												</thead>
-												
-												<tbody>
-												</tbody>
-											</table>
-										</div>
-									
-									</div>
-								
-								</div>
-								
-							</div>
-						
-						</div>
-					</div>
+				<div id="topLogoWrap">
+					<img id="topLogo" src="img/logo-hor.svg"></img>
 				</div>
 
-				<div id="utilArea" class="">
-				
-					<div class="util-header">
-						
-						<div class="footer-menu-left-wrap">
-							<div class="footer-menu-nav-cell" data-tab="1">
-								<span class="vert-align">INSPECT M</span>
-							</div>
-						
-							<div class="footer-menu-nav-cell" data-tab="2">
-								<span class="vert-align">INSPECT C</span>
-							</div>
-						
-							<div class="footer-menu-nav-cell" data-tab="3">
-								<span class="vert-align">CHAT</span>
-							</div>
-						</div>
-					
-					
-						<div class="footer-right-wrap">
-							<div class="footer-right-icon util-min">
-								<img src="img/min.png" style="height:32px; width:32px;" class="vert-align-horiz-align"></img>
-							</div>
-							<div class="footer-right-icon" id="inspect-trig">
-								<img src="img/glasses1.png" style="height:24px; width:24px;" class="vert-align-horiz-align fadeSlowIndy"></img>
-							</div>
-						</div>
-						
+				<div class="mainHeader-grid-icons">
+					<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-watchlist tooltip" title="favorite" data-grid="watchlist">
+						<img class="vert-align mainHeader-grid-ico-watchlist" src="img/favorite.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig" data-grid="chart">
+						<img class="vert-align mainHeader-grid-ico-chart" src="img/amount.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig" data-grid="orderbook">
+						<img class="vert-align mainHeader-grid-ico-orderbook" src="img/clipboard.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-orders" data-grid="orders">
+						<img class="vert-align mainHeader-grid-ico-orders" src="img/orders.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-marketHistory" data-grid="trades">
+						<img class="vert-align mainHeader-grid-ico-marketHistory" src="img/history.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-balances" data-grid="balances">
+						<img class="vert-align mainHeader-grid-ico-balances" src="img/wallet.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-alarms" data-grid="alarms">
+						<img class="vert-align mainHeader-grid-ico-alarms" src="img/alarm.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig" data-grid="logs">
+						<img class="vert-align mainHeader-grid-ico-logs" src="img/notebook.png"></img>
+					</div>
+					<div class="mainHeader-grid-ico-wrap grid-trig" data-grid="info">
+						<img class="vert-align mainHeader-grid-ico-info" src="img/info.png"></img>
 					</div>
 				
-				
-					<div class="util-body">
-				
-						<div class="util-tab tab-wrap" data-tab="1">	
-							<div class="util-tab-body">
-							
-								<div class="inspect-area">
-								
-									<div class="inspect-area-left">
-
-										<div class="inspect-area-chart">
-											<div id="inspect_temp_chart" class="inspect-area-chart-wrap">
-												<div class="chart-loading">
-													<span>Loading</span>
-												</div>
-												<svg id="inspect_chart" width="100%" height="100%" class="unselectable" style="background:black">
-													<g class="candleseries"></g>
-													<text class="candleInfo"></text>
-													
-													<g class="sleuthXAxis" data-axisnum="1">
-														<g class="xLabels"></g>
-														<g class="xTicks"></g>
-														<g class="xAxisLines"></g>
-													</g>
-													
-													<g class="sleuthYAxis" data-axisnum="1">
-														<g class="yLabels"></g>
-														<g class="yTicksLeft"></g>
-														<g class="yTicksRight"></g>
-														<g class="yGridLines"></g>	
-														<g class="yAxisLines"></g>										
-													</g>
-													
-													
-													<g class="volbars"></g>
-													
-													<g class="seriesLine"></g>
-													
-													<g class="mainline"></g>
-													<g class="boxes"></g>
-													
-													<g class="candleInd">
-														<g class="ind"></g>
-														<g class="ind"></g>
-													</g>
-
-													<g class="volInd">
-														<g class="ind"></g>
-														<g class="ind"></g>
-													</g>
-													
-													
-													<g class="cursor_follow">
-														<line class="cursor_follow_x"/>
-														<line class="cursor_follow_y"/>
-														<rect class="backbox_time"/>
-														<rect class="backbox_price"/>
-														<rect class="backbox_vol"/>
-														<text class="cursor_follow_time"></text>
-														<text class="cursor_follow_price"></text>
-														<text class="cursor_follow_vol"></text>
-													</g>
-													
-													
-													<text class="highestPrice"></text>
-													<text class="lowestPrice"></text>
-													<text class="cur-market"></text>
-													
-												</svg>
-											</div>
-										
-										</div>
-									</div>
-							
-									
-									<div class="inspect-area-right">
-									
-										<div class="inspect-area-orderbook">
-										
-											<div class="inspect-area-orderbook-top inspect-area-orderbook-asks">
-											
-											</div>
-											
-											<div class="inspect-area-orderbook-middle inspect-area-orderbook-last">
-											
-												<span class="vert-align text-green"></span>
-											
-											</div>
-											
-											<div class="inspect-area-orderbook-bottom inspect-area-orderbook-bids">
-											
-											</div>
-										
-										</div>
-									
-									</div>
-									
-									<div class="inspect-area-middle">
-									
-										<div class="inspect-area-middle-title">
-										
-											<span>MARKET:</span>
-											
-										</div>
-
-										<div class="inspect-area-middle-body">
-										
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>BID</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span id="inspect-area-high-bid"></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>ASK</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span id="inspect-area-low-ask"></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>HIGH</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>LOW</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>VOL</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>%CHANGE</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span></span>
-												</div>
-											
-											</div>
-										
-										</div>
-									
-									</div>
-								
-								</div>
-
-							</div>
-						</div>
+				</div>
 						
-					
-						<div class="util-tab tab-wrap" data-tab="2">	
-							<div class="util-tab-body">
-							
-								<div class="inspect-area-wrap">
-								
-									<div class="inspect-area-middle">
-									
-										<div class="inspect-area-middle-title">
-										
-											<div class="inspect-area-middle-title-left">
-												<span class="inspect-candle-pair vert-align">MARKET:</span>
-											</div>
-											<div class="inspect-area-middle-title-right">
-												<span class="inspect-candle-perc vert-align">0.00%</span>
-											</div>
-										</div>
+				<div class="mainHeader-menu">
 
-										<div class="inspect-area-middle-body">
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>OPEN</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span class="inspect-candle-open-d"></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>HIGH</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span class="inspect-candle-high-d"></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>LOW</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span class="inspect-candle-low-d"></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>CLOSE</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span class="inspect-candle-close-d"></span>
-												</div>
-											
-											</div>
-											
-											<div class="inspect-area-middle-row">
-											
-												<div class="inspect-area-middle-row-left">
-													<span>VOLUME</span>
-												</div>
-												
-												<div class="inspect-area-middle-row-right">
-													<span class="inspect-candle-vol-d"></span>
-												</div>
-											
-											</div>
-										
-										</div>
-									
-									</div>
-								
-									<div class="inspect-candle-left">
-										<div class="inspect-candle-stick-wrap">
-											<div class="inspect-candle-stick">
-												<svg id="inspect_candle_stick" width="100%" height="100%" class="unselectable" style="background:black;">
-
-													<text class="candleInfo"></text>
-													
-													<line class="yAxisLine"/>
-													
-													<line class="openLine"/>
-													<line class="highLine"/>
-													<line class="lowLine"/>
-													<line class="closeLine"/>
-													<g class="stick"/>
-													
-												</svg>
-											</div>
-										
-										</div>
-									</div>
-							
-									<div class="inspect-candle-right">
-									
-										<div class="inspect-candle-trades">
-										
-											<div class="inspect-candle-trades-top">
-												<span class="vert-align">TRADES</span>
-											</div>
-											
-											<div class="inspect-candle-trades-body">
-												<table id="inspectTradesTable">
-													<thead>
-														<tr>
-															<th>PRICE</th>
-															<th>AMOUNT</th>
-															<th>TOTAL</th>
-															<th>TIME</th>
-														</tr>
-													</thead>
-													<tbody>
-													</tbody>
-												</table>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+					<div class="mainHeader-menu-right">
+						<div class="mainHeader-menu-cell mainHeader-menu-cellIcon">
+							<img src="img/settings2.png" class="vert-align mainHeader-menu-ico-settings"></img>
 						</div>
-						
-						<div class="util-tab tab-wrap active" data-tab="3">	
-							<div class="util-tab-body">
-							
-								<div class="slack-chatArea">
-								
-									<div class="slack-chat-header">
-									
-									</div>
-								
-									<div class="slack-chat-logs">
-									
-									</div>
-								
-									<div class="slack-chat-type">
-									
-										<div class="slack-chat-type-input">
-										
-											<input type="text" id="slack_type">
-										
-										
-										</div>
-									
-									</div>
-								
-								</div>
-								
-								<div class="slack-channelArea">
-								
-									<div class="slack-channel-search">
-									
-									</div>
-									
-									<div class="slack-channel-list">
-									
-									</div>
-								
-								</div>
-							
-							</div>
+						<div class="mainHeader-menu-cell mainHeader-menu-cellIcon">
+							<img src="img/markets.svg" class="vert-align mainHeader-menu-ico-markets"></img>
 						</div>
-					
+						<div class="mainHeader-menu-cell mainHeader-menu-cellIcon">
+							<img src="img/orders.svg" class="vert-align mainHeader-menu-ico-orders"></img>
+						</div>
 					</div>
 					
 				</div>
-				
 			</div>
-
-		<!-----draggable drag-drop----------------------->
-
-			<div class="currentMarketPanel">
 			
+			<!------------------------- END HEADER ----------------------------->
 
-				<div class="makeofferPopup-overlay">
-				
-				</div>
-				
-					
-				<div class="makeofferPopup" id="makeoffer_popup">
-				
-					<div class="makeofferPopup-header">
-					
-						<div class="makeofferPopup-header-left">
-							<span class="makeofferPopup-orderType conf-title">Confirm Sell Order</span>
-						</div>
-						
-						<div class="makeofferPopup-header-right">
-							<span class="conf-exchange">test</span>
-						</div>
-					
-					</div>
-				
-					<div class="makeofferPopup-content">
-					
-						<div class="conf-jumbotron">
-							<div>Disclaimer</div>
-						</div>	
-						
-						<div class="makeofferPopup-form">
-						
-						
-							<div class="makeofferPopup-form-row">
-								<div class="makeofferPopup-form-label">
-									<span>Price</span>
-								</div>
-								<div class="makeofferPopup-form-input">
-									<input disabled type="text" class="conf-input conf-price">
-									<span class="conf-input-addon refcur-rel"></span>
-								</div>
-							</div>
-						
-							<div class="makeofferPopup-form-row">
-								<div class="makeofferPopup-form-label">
-									<span>Amount</span>
-								</div>
-								<div class="makeofferPopup-form-input">
-									<input disabled type="text" class="conf-input conf-amount">
-									<span class="conf-input-addon refcur-base"></span>
-								</div>
-							</div>
-							
-							
-							<div class="makeofferPopup-form-row">
-								<div class="makeofferPopup-form-label">
-									<span>Total</span>
-								</div>
-								<div class="makeofferPopup-form-input">
-									<input disabled type="text" class="conf-input conf-total">
-									<span class="conf-input-addon refcur-rel"></span>
-								</div>
-							</div>
-							
-							<div class="makeofferPopup-form-row">
-								<div class="makeofferPopup-form-label">
-									<span>Fee</span>
-								</div>
-								<div class="makeofferPopup-form-input">
-									<input disabled type="text" class="conf-input conf-fee">
-									<span class="conf-input-addon">NXT</span>
-								</div>
-							</div>
-							
-							
-							<div class="makeofferPopup-form-row">
-								<div class="makeofferPopup-form-label">
-									<span>Min Perc</span>
-								</div>
-								<div class="makeofferPopup-form-input">
-									<input disabled type="text" class="conf-input conf-minperc">
-									<span class="conf-input-addon">%</span>
-								</div>
-							</div>
-							
-							<div class="makeofferPopup-form-row">
-								<div class="makeofferPopup-form-label">
-									<span>Perc</span>
-								</div>
-								<div class="makeofferPopup-form-input">
-									<input type="text" class="conf-input conf-perc">
-									<span class="conf-input-addon">%</span>
-								</div>
-							</div>
-						
-						</div>
-						
-					</div>
-					
-					<div class="makeofferPopup-footer">
-						<div class="makeofferPopup-close makeofferPopup-button">
-							<span class="vert-align">Cancel</span>
-						</div>
-						
-						<div class="makeofferPopup-confirm makeofferPopup-button">
-							<span class="vert-align">Confirm</span>
-						</div>
-					</div>
-				
-				</div>
-				
 			
-				<div class="currentMarketPanel-inner">
+			<!------------------------- START CONTENT WRAP ----------------------------->
 
-					<div class="cm-search-popup">
-						
-						<div class="cm-search-popup-body">
-						
-							<div class="cm-search-popup-input-wrap">
-								<div class="cm-search-popup-row">
-									<div class="cm-search-popup-label">
-										<span>Base</span>
-									</div>
-									<div class="cm-search-popup-base cm-search-popup-input assets-fav">
-										<input type="text" name="baseid"></input>
-									</div>
-								</div>
-								<div class="cm-search-popup-row">
-									<div class="cm-search-popup-label">
-										<span>Quote</span>
-									</div>
-									<div class="cm-search-popup-rel cm-search-popup-input assets-fav">
-										<input type="text" name="relid"></input>
-									</div>
-								</div>
-							</div>
-							
+			<div id="content_wrap">
 
-							<div class="cm-search-popup-bottom">
-								<div class="cm-search-popup-button">
-									<span class="vert-align">OPEN</span>
-								</div>
-							</div>
-							
-						</div>
+			
+				<div id="main_grid" class="main-grid">
+
+					<div id="main_grid_arrow_left" class="main-grid-arrow" data-arrow="left">
+						<img src="img/trileft.png"></img>
 					</div>
-					
-					
-					<div class="cm-favs-popup">
-					
-						<div class="cm-favs-popup-header">
-							<div class="cm-favs-popup-header-title">
-								<span>Favorites</span>
-							</div>
-							
-							<div class="cm-favs-popup-close">
-								<img src="img/close.png"></img>
-							</div>
-						</div>
-						
-						<div class="cm-favs-popup-body">
-						
-						
-							<div class="cm-favs-popup-nav">
-							
-								<div class="cm-favs-popup-nav-row active" data-tab="1">
-									<span class="vert-align">ALL</span>
-								</div>
-								
-								<div class="cm-favs-popup-nav-row" data-tab="2">
-									<span class="vert-align">ADD</span>
-								</div>
-							
-							</div>
-							
-							<div class="cm-favs-popup-tabWrap active" data-tab="1">
-								<div class="cm-favs-popup-allFavs always-visible">
-									<table id="marketFavorites" class="cm-favs-popup-allFavs-table">
-										<thead>
-											<tr>
-												<th>Market</th>
-												<th>BaseID</th>
-												<th>RelID</th>
-												<th>DELETE</th>
-											</tr>
-										</thead>
-										<tbody>
-										</tbody>
-									</table>
-								</div>
-								<!--<div class="cm-favs-popup-allFavs always-visible">
-									<div class="cm-favs-popup-allFavs-row">
-										<span>jl777hodl_NXT</span>
-									</div>
-									<div class="cm-favs-popup-allFavs">
-										<span>InstantDEX_NXT</span>
-									</div>
-								</div>-->
-								
-							</div>
-							
-							<div class="cm-favs-popup-tabWrap" data-tab="2">
-								<div class="cm-favs-popup-add">
-								
-									<div class="cm-favs-popup-banner">
-										<span class="vert-align"></span>
-									</div>
-									
-									<div class="cm-favs-popup-add-inputArea">
-									
-										<div class="cm-favs-popup-add-inputRow">
-											<div class="cm-favs-popup-add-select">
-												<div class="cm-favs-popup-add-inputLabel">
-													<span>Base: </span>
-												</div>
-												
-												<div class="cm-favs-popup-add-input assets-fav">
-													<input type="text" name="baseid" data-asset="-1"></input>
-												</div>
-											</div>
-											
-											<div class="cm-favs-popup-add-fill">
-												<div class="cm-favs-popup-add-inputLabel">
-													<span>Base ID: </span>
-												</div>
-												
-												<div class="cm-favs-popup-add-input">
-													<input disabled type="text" name="baseidd"></input>
-												</div>
-											</div>
-										</div>
-										
-										<div class="cm-favs-popup-add-inputRow">
-											<div class="cm-favs-popup-add-select">
-												<div class="cm-favs-popup-add-inputLabel">
-													<span>Rel: </span>
-												</div>
-												
-												<div class="cm-favs-popup-add-input assets-fav">
-													<input type="text" name="relid" data-asset="-1"></input>
-												</div>
-											</div>
-											
-											<div class="cm-favs-popup-add-fill">
-												<div class="cm-favs-popup-add-inputLabel">
-													<span>Rel ID: </span>
-												</div>
-												
-												<div class="cm-favs-popup-add-input">
-													<input disabled type="text" name="relidd"></input>
-												</div>
-											</div>
-										</div>
-										
-									</div>
-									
-									<div class="cm-favs-popup-add-confirmArea">
-										<div class="cm-favs-popup-add-button">
-											<span>ADD</span>
-										</div>
-									</div>
-									
-								</div>
-							</div>
-							
-						</div>
+					<div id="main_grid_arrow_right" class="main-grid-arrow" data-arrow="right">
+						<img src="img/triright.png"></img>
 					</div>
+					<div id="main_grid_arrow_top" class="main-grid-arrow" data-arrow="top">
+						<img src="img/triup.png"></img>
+					</div>
+					<div id="main_grid_arrow_bottom" class="main-grid-arrow" data-arrow="bottom">
+						<img src="img/tridown.png"></img>
+					</div>
+					<div id="main_grid_arrow_middle" class="main-grid-arrow-middle" data-arrow="middle">
+					</div>
+
 
 				
-					<div class="cm-header">
-						<div class="cm-header-middle">
-							<div class="cm-header-middle-icons">
-								<div id="cm_search_trig" class="cm-header-middle-ico">
-									<img src="img/search.png" class="cm-header-middle-ico-search"></img>
-								</div>
-								<div id="cm_favs_trig" class="cm-header-middle-ico">
-									<img src="img/fav.png" class="cm-header-middle-ico-fav"></img>
-								</div>
-							</div>
-							<div class="cm-header-middle-title inspectable curr-pair" data-inspecttype="pair" data-inspect="">
-								<span class="vert-align">No market loaded</span>
-							</div>
+					<div id="tile_add">
+						<div class="tile-add-header">
+							
+						</div>
+						<div class="tile-add-body">
+						
 						</div>
 					</div>
-								
-								
-					<div class="cm-info">
 					
-						<div class="cm-info-inner">
-						
-							<div class="cm-info-header">
-
-								<div class="cm-info-header-menu">
-								
-									<div class="cm-info-header-menu-cell active" data-tab="1">
-										<span class="vert-align">CHART</span>
-									</div>
-									
-									<div class="cm-info-header-menu-cell" data-tab="2" id="temp_click_one">
-										<span class="vert-align">ORDERS</span>
-									</div>
-									
-									<div class="cm-info-header-menu-cell" data-tab="3">
-										<span class="vert-align">BALANCES</span>
-									</div>
-									
-								</div>
-								
-								<div class="cm-info-header-menu-min">
-									<img src="img/min.png" style="height:30px; width:28px;" class="vert-align"></img>
+					<div id="orderbookSearch_popup" class="popup">
+					
+						<div class="popup-header">
+							<div class="popup-header-icons">
+								<div class="popup-header-ico">
+									<img class="popup-header-close vert-align" src="img/close.png"></img>
 								</div>
 							</div>
+						</div>
+						
+						<div class="orderbookSearch-popup-content">
+						
+							<div class="banner">
+								<span class="vert-align"></span>
+							</div>
 							
-							<div class="cm-info-body active">
+							<div class="orderbookSearch-popup-inputArea">
+								<form role="form" class="orderbookSearch-popup-form" autocomplete="off">
 
-								<div class="market-chart-wrap cm-info-tab active" data-tab="1">
-								
-									<div class="cm-chart-header chart-wrap" data-chart="ex_chart">
-
-											
-										<div class="horiz-list horiz-list-cm mm-interval-type no-marg active" data-inttype="Tick">
-											<div class ="horiz-list-title">
-												<span class="vert-align" id="temp_chart_click">Tick Interval: </span>
-											</div>
-											<div class="num-ticks horiz-list-options">
-												<div class="horiz-list-option"><span class="vert-align">5</span></div>
-												<div class="horiz-list-option"><span class="vert-align">10</span></div>
-												<div class="horiz-list-option"><span class="vert-align">25</span></div>
-												<div class="horiz-list-option"><span class="vert-align active">100</span></div>
-												<div class="horiz-list-option"><span class="vert-align">300</span></div>
-												<div class="horiz-list-option"><span class="vert-align">500</span></div>
-											</div>
+									<div class="form-row">
+										<div class="form-label">
+											<span>BASE</span>
 										</div>
-										
-										<div class="horiz-list horiz-list-cm no-marg mm-interval-type" data-inttype="Time">
-											<div class ="horiz-list-title">
-												<span class="vert-align">Time Interval: </span>
-											</div>
-											<div class="time-interval horiz-list-options">
-												<div class="horiz-list-option"><span class="vert-align">5m</span></div>
-												<div class="horiz-list-option"><span class="vert-align">15m</span></div>
-												<div class="horiz-list-option"><span class="vert-align">30m</span></div>
-												<div class="horiz-list-option"><span class="vert-align">1h</span></div>
-												<div class="horiz-list-option"><span class="vert-align">6h</span></div>
-												<div class="horiz-list-option"><span class="vert-align">12h</span></div>
-												<div class="horiz-list-option"><span class="vert-align">1d</span></div>
-											</div>
-										</div>
-										
-										<div class="chart-style dropdown-chart">
-											<div class="dropdown-title dropdown-title-cm vert-align">
-												<span>Config &#9662;</span>
-											</div>
-
-											<div class="dropdown-wrap tile-dropdown-wrap">
-											
-												<table class="chart-table">
-													<tbody>
-														<tr>
-															<td>Bar Type</td>
-															<td>
-																<ul class="mm-chart-config mm-chart-bartype">
-																	<li>Time</li>
-																	<li class="active">Tick</li>
-																</ul>
-															</td>
-														</tr>
-														<tr>
-															<td>Chart Type</td>
-															<td>
-																<ul class="mm-chart-config mm-chart-charttype">
-																	<li class="active">Candlestick</li>
-																	<li>OHLC</li>
-																	<li>Line</li>
-																	<li>Area</li>
-																</ul>
-															</td>
-														</tr>
-														<tr>
-															<td>Indicator</td>
-															<td>
-																<ul class="mm-chart-config mm-chart-indicator">
-																	<li class="active">EMA</li>
-																	<li>SMA</li>
-																	<li>BBands</li>
-																	<li>None</li>
-																</ul>
-															</td>
-														</tr>
-														<tr>
-															<td>Time Scale</td>
-															<td>
-																<ul class="mm-chart-config mm-chart-timescale">
-																	<li class="active">Linear</li>
-																	<li>Logarithmic</li>
-																</ul>
-															</td>
-														</tr>
-														<tr>
-															<td>Depth</td>
-															<td>
-																<ul class="mm-chart-config mm-chart-depth">
-																	<li>1%</li>
-																	<li>2%</li>
-																	<li>5%</li>
-																	<li class="active">10%</li>
-																</ul>
-															</td>
-														</tr>
-													</tbody>
-												</table>
-											
-												
-											</div>
-										</div>
-
-									
-									</div>
-								
-									<div class="cm-chart-body">
-										<div id="chartArea">
-											<div class="chart-loading">
-												<span>Loading</span>
+										<div class="form-input-outer">
+											<div class="form-input">
+												<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
 											</div>
 										</div>
 									</div>
-								</div>
-								
-								<div class="cm-info-tab" data-tab="2">
-									<div class="cm-open-orders-wrap">
-										<div class="cm-open-orders-top cm-open-orders-bids">
-											<div class="cm-open-orders-header">
-												<div class="cm-open-orders-header-left">
-													<div class="cm-open-orders-header-title vert-align">
-														<span>OPEN ORDERS</span>
+
+									<div class="form-row">
+										<div class="form-label">
+											<span>QUOTE</span>
+										</div>
+										<div class="form-input-outer">
+											<div class="form-input">
+												<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
+											</div>
+										</div>
+									</div>
+
+								</form>
+							</div>
+							
+							<div class="orderbookSearch-popup-buttonArea">
+								<div>
+									<div class="nbutton-text-wrap">
+										<div class="nbutton-text-outer vert-align">
+											<div class="nbutton-text orderbookSearch-search-trig">
+												<div class="nbutton-text-inner">
+													<div class="nbutton-text-title">
+														<span class="vert-align">ADD</span>
 													</div>
 												</div>
 											</div>
-											<div class="cm-open-orders-table-wrap">
-												<table id="marketOpenOrdersTable" class="sortable">
-													<thead>
-														<tr>
-															<th>TYPE</th>
-															<th>PRICE</th>
-															<th>AMOUNT</th>
-															<th>TOTAL</th>
-															<th>EXCHANGE</th>
-															<th>STATUS</th>
-														</tr>
-													</thead>
-													<tbody>
-													</tbody>
-												</table>
-											</div>
 										</div>
+									</div>
+								</div>
+							</div>
+						
+						</div>
+					
+					</div>
+					
+					
+					<div id="marketSearch_popup" class="popup">
+					
+						<div class="marketSearch-popup-header">
+							<div class="popup-header-icons">
+								<div class="popup-header-ico">
+									<img class="popup-header-close vert-align" src="img/close.png"></img>
+								</div>
+							</div>
+						</div>
+						
+						<div class="marketSearch-popup-content">
+						
+							<div class="banner">
+								<span class="vert-align"></span>
+							</div>
+							
+							<div class="marketSearch-popup-inputArea">
+								<form role="form" class="marketSearch-popup-form" autocomplete="off">
 
+									<div class="form-row">
+										<div class="form-label">
+											<span>BASE</span>
+										</div>
+										<div class="form-input-outer">
+											<div class="form-input">
+												<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-row">
+										<div class="form-label">
+											<span>QUOTE</span>
+										</div>
+										<div class="form-input-outer">
+											<div class="form-input">
+												<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
+											</div>
+										</div>
+									</div>
+
+								</form>
+							</div>
+							
+							<div class="marketSearch-popup-buttonArea">
+								<div>
+									<div class="nbutton-text-wrap">
+										<div class="nbutton-text-outer vert-align">
+											<div class="nbutton-text marketSearch-add-trig">
+												<div class="nbutton-text-inner">
+													<div class="nbutton-text-title">
+														<span class="vert-align">ADD</span>
+													</div>
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
-								
-								<div class="cm-info-tab" data-tab="3">
-								
-									<div class="cm-balances-wrap">
-									
-										<div class="cm-balances-base cm-balances-balanceSection">
-										
-											<div class="cm-balances-header">
-											
-												<div class="cm-balances-header-title">
-													<span class="vert-align refcur-base"></span>
-												</div>
-												
-												<div class="cm-balances-header-totalBalance">
-													<span class="vert-align"></span>
-												</div>
-											
-											</div>
-											
-											<div class="cm-balances-balanceTable">
-											
-											</div>
-										
-										</div>
-										
-										<div class="cm-balances-rel cm-balances-balanceSection">
-										
-											<div class="cm-balances-header">
-											
-												<div class="cm-balances-header-title">
-													<span class="vert-align refcur-rel"></span>
-												</div>
-												
-												<div class="cm-balances-header-totalBalance">
-													<span class="vert-align"></span>
-												</div>
-											
-											</div>
-											
-											<div class="cm-balances-balanceTable">
-											
-											</div>
-										
-										</div>
-										
-										
-									
-									</div>
-								
-								</div>
-								
+							</div>
+						
+						</div>
+					
+					</div>
+					
+					
+					
+				</div>
+			</div>
+			
+				
+			<div id="grid_template" class="template">
+				<div class="grid">
+					<div class="grid-arrow-wrap">
+						<div id="grid_arrow_left" class="grid-arrow" data-arrow="left">
+							<img src="img/trileft.png"></img>
+						</div>
+						<div id="grid_arrow_right" class="grid-arrow" data-arrow="right">
+							<img src="img/triright.png"></img>
+						</div>
+						<div id="grid_arrow_top" class="grid-arrow" data-arrow="top">
+							<img src="img/triup.png"></img>
+						</div>
+						<div id="grid_arrow_bottom" class="grid-arrow" data-arrow="bottom">
+							<img src="img/tridown.png"></img>
+						</div>
+						<div id="grid_arrow_middle" class="grid-arrow" data-arrow="middle">
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div id="tile_template" class="template">
+				<div class="tile">
+				
+					<div class="tile-header">
+						<div class="tile-header-title-wrap">
+							<span class="tile-header-title vert-align"></span>
+						</div>
+						<div class="tile-header-icons">
+							<div class="tile-header-ico">
+								<img class="tile-header-close vert-align" src="img/close.png"></img>
 							</div>
 						</div>
 					</div>
-				
-				
-					<div class="cm-orderbook-header">
+	
+					<div class="tile-content">
 					
-						<div class="orderbook-label-popup">
+					</div>
+					
+				</div>
+			</div>
+			
+			<div id="tile_header_template" class="template">
+				<div class="tile-header-tab" data-tab="1">
+					<div class="tile-header-title-wrap">
+						<span class="tile-header-title vert-align"></span>
+					</div>
+					<div class="tile-header-icons">
+						<div class="tile-header-ico">
+							<img class="tile-header-close tile-header-tab-close vert-align" src="img/close.png"></img>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="preview_tile_template" class="template">
+				<div class="preview-tile grid">
+				
+					<div class="preview-tile-header">
+					</div>
+	
+					<div class="preview-tile-content">
 						
-							<div class="orderbook-label-popup-header draggable">
-								<div class="orderbook-label-popup-header-cell">
-									<span class="vert-align" id="temp_label_add">LABEL</span>
-								</div>
-								<div class="cm-orderbook-label-popup-close">
-									<img src="img/close.png"></img>
-								</div>
-							</div>
-							
-							<div class="orderbook-label-popup-main">
-							
-								<div class="orderbook-label-popup-left">
-								
-									<div class="label-left-overlay active">
-										<div class="label-left-overlay-title">
-											<span>Load a label</span>
-										</div>
-									</div>
-									
-									<div class="label-example-row label-example">
-										<span id="label_example" class="vert-align"></span>
-									</div>
-									<div class="orderbook-label-popup-row">
-										<div class="orderbook-label-row-title">
-											<span>Label:</span>
-										</div>
-										<div class="orderbook-label-row-input orderbook-label-conf">
-											<input class="auto-label-exchange" type="text" name="ex" placeholder="Exchange"></input>
-										</div>
-										<div class="orderbook-label-row-input orderbook-label-conf">
-											<input type="text" name="rs" placeholder="NXT RS"></input>
-										</div>
-										<div class="orderbook-label-row-input orderbook-label-conf">
-											<input disabled type="text" name="market" placeholder="Market"></input>
-										</div>
-									</div>
-									<div class="orderbook-label-popup-row">
-										<div class="orderbook-label-row-title">
-											<span>Text Color</span>
-										</div>
-										<div class="orderbook-label-row-input" data-lower="0">
-											<input type="text" id="" class="orderbook-label-color-trig" data-ltype="text" name="ctext"></input>
-											<input type="hidden" id="orderbook_label_textcolor" class="orderbook-label-color-input" data-ltype="text"></input>
-											<div class="orderbook-label-color-box-wrap">
-											
-											</div>
-										</div>
-									</div>
-									<div class="orderbook-label-popup-row">
-										<div class="orderbook-label-row-title">
-											<span>Background Color</span>
-										</div>
-										<div class="orderbook-label-row-input" data-lower="1">
-											<input type="text" id="" class="orderbook-label-color-trig" data-ltype="bg" name="cbg"></input>
-											<input type="hidden" id="orderbook_label_bgcolor" class="orderbook-label-color-input" data-ltype="bg"></input>
-											<div class="orderbook-label-color-box-wrap">
-											
-											</div>
-										</div>
-									</div>
-									
-									<div class="orderbook-label-popup-left-bottom">
-										<div class="orderbook-label-popup-confirm-wrap">
-											<span>CONFIRM</span>
-										</div>
-									</div>
-
-								</div>
-									
-									
-								<div class="orderbook-label-popup-right">
-									<div class="orderbook-label-popup-all-header">
-										<div class="orderbook-label-popup-all-header-right">
-											<div class="orderbook-label-popup-all-header-cell">
-												<span>DELETE</span>
-											</div>
-											<div id="add_orderbook_label" class="orderbook-label-popup-all-header-cell">
-												<span>ADD</span>
-											</div>
-										</div>
-									</div>
-									
-									<div class="orderbook-label-popup-table">
-										<!--<div class="orderbook-label-popup-all-row">
-											<div class="orderbook-label-popup-all-row-cell label-popup-all-name">
-												<span>Label 1</span>
-											</div>
-											<div class="orderbook-label-popup-all-row-cell label-popup-all-vis">
-												<img src="img/eye.png"></img>
-											</div>
-										</div>-->
-									</div>
-								</div>
-								
-							</div>
-						</div>
+					</div>
 					
-						<div class="cm-orderbook-header-icons unselectable">
-							<div class="cm-orderbook-header-icons-label cm-orderbook-label-trig">
-								<img class="cm-orderbook-header-icons-label-img vert-align" src="img/paint1.png"></img>
-							</div>
-							<div class="cm-orderbook-header-icons-filter">
-								<img class="cm-orderbook-header-icons-filter-img vert-align" src="img/filter.png"></img>
+				</div>
+			</div>
+			
+			
+
+			
+			<!------------------------- START CHART ----------------------------->
+
+			<div id="chart_template" class="template grid-trig-template" data-grid="chart">
+			
+				<div class="chart-header" data-chart="">
+					
+				
+					<div class="chart-search-wrap">
+						<div class="chart-search-input vert-align">
+							<input type="text" name="pair" class="skynet-search" id="main_chart_pair_input"></input>
+							<div class="chart-search-input-img">
+								<div class="chart-search-input-img-inner">
+									<img src="img/list.png" class="vert-align"></img>
+								</div>
 							</div>
 						</div>
-						<div class="cm-orderbook-header-title">
-							<span class="vert-align">ORDERBOOK</span>
+					</div>
+					
+					<!-- mm-chart-config mm-chart-bartype -->
+					<div class="chart-time-wrap">
+						<div class="chart-time-button-outer vert-align">
+							<div class="chart-time-button">
+								<div class="chart-time-button-inner">
+									<div class="chart-time-button-title">
+										<span class="vert-align">5 Minute</span>
+									</div>
+									<div class="chart-time-button-img">
+										<img src="img/tridownwhite.png" class="vert-align"></img>
+									</div>
+								</div>
+							</div>
+							
+							<div class="chart-time-dropdown-wrap">
+
+								<ul class="active" data-inttype="time">
+									<li class="active" data-val="300">5 minutes</li>
+									<li data-val="900">15 minutes</li>
+									<li data-val="1800">30 minutes</li>
+									<li data-val="3600">1 hour</li>
+									<li data-val="21600">6 hours</li>
+									<li data-val="43200">12 hours</li>
+									<li data-val="86400">1 day</li>
+									<li class="time-change" data-val="tick">Ticks</li>
+								</ul>
+								
+								<ul class="" data-inttype="tick">
+									<li class="active" data-val="5">5 ticks</li>
+									<li data-val="10">10 ticks</li>
+									<li data-val="25">25 ticks</li>
+									<li data-val="100">100 ticks</li>
+									<li data-val="300">300 ticks</li>
+									<li data-val="500">500 ticks</li>
+									<li class="time-change" data-val="time">Time</li>
+								</ul>
+								
+							</div>
+							
 						</div>
+					</div>
+					
+
+					
+					<div class="chart-config-wrap chart-style">
+						<div class="chart-config-outer vert-align">
+							<div class="chart-config">
+								<div class="chart-config-inner">
+									<div class="chart-config-title">
+										<span class="vert-align ">Config</span>
+									</div>
+									<div class="chart-config-img">
+										<img src="img/tridownwhite.png" class="vert-align"></img>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="dropdown-wrap">
+						
+						</div>
+					</div>
+					
+					<div class="chart-tools-wrap">
+						<div class="chart-tools-img chart-tools-crosshair">
+							<img class="vert-align" src="img/cross.png"></img>
+						</div>	
+						<div class="chart-tools-img chart-tools-line">
+							<img class="vert-align" src="img/squiggle.png"></img>
+						</div>
+						<div class="chart-tools-img chart-tools-fib">
+							<img class="vert-align" src="img/list.png"></img>
+						</div>	
+					</div>
+					
+				</div>
+				
+				<div class="chart-wrap">
+					<div class="chart-loading">
+						<span>Loading</span>
+					</div>
+
+				</div>
+				
+			</div>
+				
+			<!------------------------- END CHART ----------------------------->
+			
+				
+
+			<!------------------------- START ORDERBOOK WRAP----------------------------->
+
+			<div id="orderbook_template" class="template grid-trig-template" data-grid="orderbook">
+			
+				<div class="orderbook-wrap">
+					<div class="cm-orderbook-header">
+						<div class="cm-orderbook-search-wrap">
+							<div class="cm-orderbook-search-input vert-align">
+								<input type="text" name="pair" class="skynet-search" id="main_chart_pair_input"></input>
+								<div class="cm-orderbook-search-input-img">
+									<div class="cm-orderbook-search-input-img-inner">
+										<img src="img/list.png" class="vert-align"></img>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						
+						<div class="cm-orderbook-header-icons-wrap">
+							<div class="cm-orderbook-header-icons vert-align unselectable">
+								<div class="cm-orderbook-header-ico cm-orderbook-header-icons-label cm-orderbook-label-trig">
+									<img class="cm-orderbook-header-icons-label-img vert-align" src="img/paint1.png"></img>
+								</div>
+								<div class="cm-orderbook-header-ico cm-orderbook-header-icons-filter">
+									<img class="cm-orderbook-header-icons-filter-img vert-align" src="img/filter.png"></img>
+								</div>
+							</div>
+						</div>
+						
 						<div class="cm-orderbook-header-status">
 							<span class="vert-align"><span>Last updated: </span><span class="orderbook-last-updated">0s</span></span>
 						</div>
 					</div>
 					
-					<div class="orderbook-orderbox-wrap">
+					
+					<div class="cm-orderbook-summary">
+					
+					</div>
+					
+					<div class="cm-orderbook-body">
+					
 						<div class="cm-orderbook cm-buybook orderbookMin">
-						
-							<div class="cm-orderbook-header-sub">
-								<div class="cm-orderbook-header-sub-inner">
-									<span class="vert-align">BIDS</span>
-								</div>							
-							</div>
 							
 							<div class="cm-orderbook-labels">
 								<div class="labels-row">
@@ -1401,165 +509,17 @@
 								</div>
 							</div>
 									
-							<div id="buyBook" class="bookname">
+							<div class="bookname bookname-buybook" data-book="buyBook">
 								<div class="empty-orderbook">
 									<span>No bids</span>
 								</div>
 								<div class="twrap"></div>
 							</div>
+							
 						</div>
 						
 						
-						<div class="cm-orderbox-buy cm-orderbox active">
-											
-							<div class="cm-orderbox-header">
-								<div class="cm-orderbox-header-title">
-									<span class="vert-align">PLACE BID</span>
-								</div>
-							</div>
-											
-							<div class="cm-orderbox-body active">
-							
-								<div class="cm-orderbox-config-popup">
-								
-									<div class="cm-orderbox-config-popup-header">
-										<div class="cm-orderbox-config-popup-header-cell">
-											<span class="vert-align">CONFIG</span>
-										</div>
-										<div class="cm-orderbox-config-popup-close">
-											<img src="img/close.png"></img>
-										</div>
-									</div>
-									
-
-									<div class="cm-orderbox-config-popup-main">	
-
-										<div class="cm-orderbox-config-popup-confirm">
-											<span class="cm-orderbox-config-popup-confirm-trig vert-align">CONFIRM</span>
-										</div>
-										
-										<div class="cm-orderbox-config-popup-row">
-											<div class="cm-orderbox-config-popup-row-label">
-												<span class="vert-align">MIN PERC</span>
-											</div>
-											<div class="cm-orderbox-config-popup-row-input">
-												<input class="cm-orderbox-config-popup-minperc" type="text">
-											</div>
-										</div>
-										<div class="cm-orderbox-config-popup-row">
-											<div class="cm-orderbox-config-popup-row-label">
-												<span class="vert-align">DURATION</span>
-											</div>
-											<div class="cm-orderbox-config-popup-row-input">
-												<input class="cm-orderbox-config-popup-duration" type="text">
-											</div>
-										</div>
-										<div class="cm-orderbox-config-popup-row">
-											<div class="cm-orderbox-config-popup-row-label">
-												<span class="vert-align">AUTOMATCH</span>
-											</div>
-											<div class="cm-orderbox-config-popup-row-input">
-												<input class="cm-orderbox-config-popup-automatch" type="checkbox">
-											</div>
-										</div>		
-										
-									</div>
-								
-								</div>
-								
-								<div class="cm-orderbox-exchange-popup">
-									<div class="cm-orderbox-exchange-popup-body">
-										<div class="cm-orderbox-exchange-popup-listWrap">
-											<div class="cm-orderbox-exchange-popup-row">
-												<span>nxtae</span>
-											</div>
-											<div class="cm-orderbox-exchange-popup-row">
-												<span>InstantDEX</span>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<div class="cm-orderbox-header-sub">
-								
-									<div class="cm-orderbox-config">
-										<div class="cm-orderbox-exchange">
-											<span class="vert-align  cm-orderbox-exchange-trig">InstantDEX</span>
-										</div>
-										<div class="cm-orderbox-exchange-config">
-											<img src="img/gear.png" class="vert-align cm-orderbox-config-trig"></img>
-										</div>
-									</div>
-									
-									<div id="balance_buy" class="cm-orderbox-bal">
-										<span class="vert-align"><span class="refcur-rel">Quote</span><span>: </span><span class="bal-val">0.00</span></span>
-									</div>
-								
-								</div>
-							
-								<div class="cm-orderbox-formWrap cm-orderbox-inputArea">
-									<form role="form" id="placeBidForm" autocomplete="off">
-
-										<div class="order-form-col">
-
-											<div class="order-form-row order-form-price">
-												<div class="order-form-label">
-													<span>PRICE</span>
-												</div>
-												<div class="order-form-input">
-													<input type="text" name="price" id="placeBidPrice" placeholder=""></input>
-												</div>
-												<div class="order-form-refcur">
-													<span class="refcur-rel"></span>
-												</div>
-											</div>
-
-											<div class="order-form-row order-form-amount">
-												<div class="order-form-label">
-													<span>AMOUNT</span>
-												</div>
-												<div class="order-form-input">
-													<input type="text" name="volume" id="placeBidAmount" placeholder=""></input>
-												</div>
-												<div class="order-form-refcur">
-													<span class="refcur-base"></span>
-												</div>
-											</div>
-
-											<div class="order-form-row order-form-total">
-												<div class="order-form-label">
-													<span>TOTAL</span>
-												</div>
-												<div class="order-form-input">
-													<input type="text" name="total" id="placeBidTotal" placeholder=""></input>
-												</div>
-												<div class="order-form-refcur">
-													<span class="refcur-rel"></span>
-												</div>
-											</div>
-										</div>
-
-									</form>
-								</div>
-								
-								<div class="cm-orderbox-buttonArea">
-									<div id="tab_buy_button" class="cm-orderbox-order-button place-order-button fadeSlowIndy unselectable" data-method="placebid" data-form="placeBidForm">
-										<span class="vert-align">BUY</span>
-									</div>
-								</div>
-								
-							</div>
-						</div>
-					</div>		
-							
-					<div class="orderbook-orderbox-wrap">	
 						<div class="cm-orderbook cm-sellbook orderbookMin">
-
-							<div class="cm-orderbook-header-sub">
-								<div class="cm-orderbook-header-sub-inner">
-									<span class="vert-align">ASKS</span>
-								</div>									
-							</div>
 							
 							<div class="cm-orderbook-labels">
 								<div class="labels-row">
@@ -1570,169 +530,355 @@
 								</div>
 							</div>
 									
-							<div id="sellBook" class="bookname">
+							<div class="bookname bookname-sellbook" data-book="sellBook">
 								<div class="empty-orderbook">
 									<span>No asks</span>
 								</div>
 								<div class="twrap"></div>
 							</div>
+							
 								
 						</div>
-
-
-						<div class="cm-orderbox-sell cm-orderbox active">
 						
+					</div>
+					
+						<div class="orderbox-wrap orderbox-wrap-buy">
+						
+							<div class="orderbox-buy orderbox">
+												
+								<div class="orderbox-body">
+								
+								
+									<div class="orderbox-config">
+										<div class="orderbox-balance">
+											<div class="orderbox-balance-title">
+												<span class="refcur-rel vert-align">SuperNET:</span>
+											</div>
 											
-							<div class="cm-orderbox-header">
-								<div class="cm-orderbox-header-title">
-									<span class="vert-align">PLACE ASK</span>
+											<div class="orderbox-balance-val">
+												<span class="balance-rel vert-align">1393.323579</span>
+											</div>
+										</div>
+										<div class="dropdown-list-wrap orderbox-exchange-dropdown">
+											<div class="dropdown-outer vert-align">
+												<div class="dropdown">
+													<div class="dropdown-inner">
+														<div class="dropdown-title">
+															<span class="vert-align orderbox-exchange-title">InstantDEX</span>
+														</div>
+														<div class="dropdown-img">
+															<img src="img/tridownwhite.png" class="vert-align"></img>
+														</div>
+													</div>
+												</div>
+												
+												<div class="dropdown-list">
+													<ul class="active" data-inttype="exchange">
+														<li class="active" data-val="InstantDEX">InstantDEX</li>
+														<li data-val="nxtae">nxtae</li>
+													</ul>
+												</div>
+											</div>
+										</div>
+									</div>
+								
+									<div class="orderbox-formWrap orderbox-inputArea">
+										<form role="form" id="placeBidForm" autocomplete="off">
+
+											<div class="order-form-row-outer">
+												<div class="order-form-row order-form-price">
+													<div class="order-form-label">
+														<span>PRICE</span>
+												</div>
+													<div class="order-form-input">
+														<input type="text" name="price" id="placeBidPrice" placeholder=""></input>
+													</div>
+													<div class="order-form-refcur">
+														<span class="refcur-rel"></span>
+													</div>
+												</div>
+											</div>
+
+											<div class="order-form-row-outer">
+												<div class="order-form-row order-form-amount">
+													<div class="order-form-label">
+														<span>AMOUNT</span>
+													</div>
+													<div class="order-form-input">
+														<input type="text" name="volume" id="placeBidAmount" placeholder=""></input>
+													</div>
+													<div class="order-form-refcur">
+														<span class="refcur-base"></span>
+													</div>
+												</div>
+											</div>
+
+											<div class="order-form-row-outer">
+												<div class="order-form-row order-form-total">
+													<div class="order-form-label">
+														<span>TOTAL</span>
+													</div>
+													<div class="order-form-input">
+														<input type="text" name="total" id="placeBidTotal" placeholder=""></input>
+													</div>
+													<div class="order-form-refcur">
+														<span class="refcur-rel"></span>
+													</div>
+												</div>
+											</div>
+
+										</form>
+									</div>
+									
+									<div class="orderbox-buttonArea">
+										<div class="orderbox-order-button orderbox-order-button-buy fadeSlowIndy unselectable" data-method="placebid" data-form="placeBidForm">
+											<span class="vert-align">BUY</span>
+										</div>
+									</div>
+									
 								</div>
 							</div>
-											
-							<div class="cm-orderbox-body active">
-
-								<div class="cm-orderbox-config-popup">
-								
-									<div class="cm-orderbox-config-popup-header">
-										<div class="cm-orderbox-config-popup-header-cell">
-											<span class="vert-align">CONFIG</span>
-										</div>
-										<div class="cm-orderbox-config-popup-close">
-											<img src="img/close.png"></img>
-										</div>
-									</div>
-									
-
-									<div class="cm-orderbox-config-popup-main">	
-
-										<div class="cm-orderbox-config-popup-confirm">
-											<span class="cm-orderbox-config-popup-confirm-trig vert-align">CONFIRM</span>
-										</div>
-										
-										<div class="cm-orderbox-config-popup-row">
-											<div class="cm-orderbox-config-popup-row-label">
-												<span class="vert-align">MIN PERC</span>
-											</div>
-											<div class="cm-orderbox-config-popup-row-input">
-												<input class="cm-orderbox-config-popup-minperc" type="text">
-											</div>
-										</div>
-										<div class="cm-orderbox-config-popup-row">
-											<div class="cm-orderbox-config-popup-row-label">
-												<span class="vert-align">DURATION</span>
-											</div>
-											<div class="cm-orderbox-config-popup-row-input">
-												<input class="cm-orderbox-config-popup-duration" type="text">
-											</div>
-										</div>
-										<div class="cm-orderbox-config-popup-row">
-											<div class="cm-orderbox-config-popup-row-label">
-												<span class="vert-align">AUTOMATCH</span>
-											</div>
-											<div class="cm-orderbox-config-popup-row-input">
-												<input class="cm-orderbox-config-popup-automatch" type="checkbox">
-											</div>
-										</div>		
-										
-									</div>
-								
-								</div>
-								
-								
-								<div class="cm-orderbox-exchange-popup">
-									<div class="cm-orderbox-exchange-popup-body">
-										<div class="cm-orderbox-exchange-popup-listWrap">
-											<div class="cm-orderbox-exchange-popup-row">
-												<span>nxtae</span>
-											</div>
-											<div class="cm-orderbox-exchange-popup-row">
-												<span>InstantDEX</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								
-								
-								<div class="cm-orderbox-header-sub">
-								
-									<div class="cm-orderbox-config">
-										<div class="cm-orderbox-exchange">
-											<span class="vert-align cm-orderbox-exchange-trig">InstantDEX</span>
-										</div>
-										<div class="cm-orderbox-exchange-config">
-											<img src="img/gear.png" class="vert-align cm-orderbox-config-trig"></img>
-										</div>
-									</div>
-									
-									<div id="balance_sell" class="cm-orderbox-bal">
-										<span class="vert-align"><span class="refcur-base">Base</span><span>: </span><span class="bal-val">0.00</span></span>
-									</div>
-								
-								</div>
 							
-								<div class="cm-orderbox-formWrap cm-orderbox-inputArea">
-									<form role="form" id="placeAskForm" autocomplete="off">
-
-										<div class="order-form-col">
-
-											<div class="order-form-row order-form-price">
-												<div class="order-form-label">
-													<span>PRICE</span>
-												</div>
-												<div class="order-form-input">
-													<input type="text" name="price" id="placeAskPrice" placeholder=""></input>
-												</div>
-												<div class="order-form-refcur">
-													<span class="refcur-rel"></span>
-												</div>
+						</div>
+						
+						<div class="orderbox-wrap orderbox-wrap-sell">
+						
+							<div class="orderbox-sell orderbox">
+									
+										
+								<div class="orderbox-body">
+								
+									<div class="orderbox-config">
+										<div class="orderbox-balance">
+											<div class="orderbox-balance-title">
+												<span class="refcur-rel vert-align">SuperNET:</span>
 											</div>
-
-											<div class="order-form-row order-form-amount">
-												<div class="order-form-label">
-													<span>AMOUNT</span>
-												</div>
-												<div class="order-form-input">
-													<input type="text" name="volume" id="placeAskAmount" placeholder=""></input>
-												</div>
-												<div class="order-form-refcur">
-													<span class="refcur-base"></span>
-												</div>
+											
+											<div class="orderbox-balance-val">
+												<span class="balance-rel vert-align">1393.323579</span>
 											</div>
-
-											<div class="order-form-row order-form-total">
-												<div class="order-form-label">
-													<span>TOTAL</span>
+										</div>
+										<div class="dropdown-list-wrap orderbox-exchange-dropdown">
+											<div class="dropdown-outer vert-align">
+												<div class="dropdown">
+													<div class="dropdown-inner">
+														<div class="dropdown-title">
+															<span class="vert-align orderbox-exchange-title">InstantDEX</span>
+														</div>
+														<div class="dropdown-img">
+															<img src="img/tridownwhite.png" class="vert-align"></img>
+														</div>
+													</div>
 												</div>
-												<div class="order-form-input">
-													<input type="text" name="total" id="placeAskTotal" placeholder=""></input>
-												</div>
-												<div class="order-form-refcur">
-													<span class="refcur-rel"></span>
+												
+												<div class="dropdown-list">
+													<ul class="active" data-inttype="exchange">
+														<li class="active" data-val="InstantDEX">InstantDEX</li>
+														<li data-val="nxtae">nxtae</li>
+													</ul>
 												</div>
 											</div>
 										</div>
-
-									</form>
-								</div>
+									</div>
 								
-								<div class="cm-orderbox-buttonArea">
-									<div id="tab_sell_button" class="cm-orderbox-order-button place-order-button fadeSlowIndy unselectable" data-method="placeask" data-form="placeAskForm">
-										<span class="vert-align">SELL</span>
+									<div class="orderbox-formWrap orderbox-inputArea">
+										<form role="form" id="placeAskForm" autocomplete="off">
+
+											<div class="order-form-row-outer">
+												<div class="order-form-row order-form-price">
+													<div class="order-form-label">
+														<span>PRICE</span>
+													</div>
+													<div class="order-form-input">
+														<input type="text" name="price" id="placeAskPrice" placeholder=""></input>
+													</div>
+													<div class="order-form-refcur">
+														<span class="refcur-rel"></span>
+													</div>
+												</div>
+											</div>
+
+											<div class="order-form-row-outer">
+												<div class="order-form-row order-form-amount">
+													<div class="order-form-label">
+														<span>AMOUNT</span>
+													</div>
+													<div class="order-form-input">
+														<input type="text" name="volume" id="placeAskAmount" placeholder=""></input>
+													</div>
+													<div class="order-form-refcur">
+														<span class="refcur-base"></span>
+													</div>
+												</div>
+											</div>
+
+											<div class="order-form-row-outer">
+												<div class="order-form-row order-form-total">
+													<div class="order-form-label">
+														<span>TOTAL</span>
+													</div>
+													<div class="order-form-input">
+														<input type="text" name="total" id="placeAskTotal" placeholder=""></input>
+													</div>
+													<div class="order-form-refcur">
+														<span class="refcur-rel"></span>
+													</div>
+												</div>
+											</div>
+
+										</form>
+									</div>
+									
+									<div class="orderbox-buttonArea">
+										<div class="orderbox-order-button orderbox-order-button-sell fadeSlowIndy unselectable" data-method="placeask" data-form="placeAskForm">
+											<span class="vert-align">SELL</span>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+					
+				</div>
+				
+			</div>
+			
+			<!------------------------- END ORDERBOOK WRAP----------------------------->
+
+			
+			<div id="orders_template" class="template grid-trig-template" data-grid="orders">
+			
+				<div class="cm-open-orders-wrap">
+					<!--<div class="cm-open-orders-header">
+						<div class="cm-open-orders-header-title vert-align">
+							<span>OPEN ORDERS</span>
+						</div>
+					</div>-->
+					<div class="cm-open-orders-table-wrap">
+						<table id="marketOpenOrdersTable" class="sortable">
+							<thead>
+								<tr>
+									<th>TYPE</th>
+									<th>PRICE</th>
+									<th>AMOUNT</th>
+									<th>TOTAL</th>
+									<th>EXCHANGE</th>
+									<th>STATUS</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+			
+			</div>
+			
+			
+			
+			<div id="trades_template" class="template grid-trig-template" data-grid="trades">
+			
+				<div class="cm-trades-wrap">
+
+					<div class="cm-trades-table-wrap">
+
+					</div>
+
+				</div>
+			
+			</div>
+					
+			
+			
+			<div id="watchlist_template" class="template grid-trig-template" data-grid="watchlist">
+				<div class="watchlist-wrap">
+				
+					<div class="watchlist-header">
+
+						<div class="nbutton-icon-wrap watchlist-add">
+						
+							<div class="nbutton-icon-outer vert-align">
+								<div class="nbutton-icon">
+									<div class="nbutton-icon-inner">
+										<div class="nbutton-icon-img">
+											<img src="img/cross.png" class="vert-align"></img>
+										</div>
 									</div>
 								</div>
-								
 							</div>
 						</div>
 					</div>
-
-									
+					
+					<div class="watchlist-table-wrap">
+					
+						<table class="nTable" data-table="watchlist">
+							<thead>
+								<tr>
+									<th>MARKET</th>
+									<th>BID</th>
+									<th>ASK</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					
+					</div>
+					
 				</div>
-
 			</div>
+			
+			
+			
+			<div id="balances_template" class="template grid-trig-template" data-grid="balances">
+			
+				<div class="cm-balances-wrap">
+					<!--<div class="cm-open-orders-header">
+						<div class="cm-open-orders-header-title vert-align">
+							<span>OPEN ORDERS</span>
+						</div>
+					</div>-->
+					<div class="cm-balances-table-wrap">
+						<!--<table id="currentMakretBalances" class="sortable">
+							<thead>
+								<tr>
+									<th>TYPE</th>
+									<th>PRICE</th>
+									<th>AMOUNT</th>
+									<th>TOTAL</th>
+									<th>EXCHANGE</th>
+									<th>STATUS</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>-->
+					</div>
 
+				</div>
+			
+			</div>
+				
+			<!------------------------- END CONTENT WRAP ----------------------------->
+
+			
+			
+			<!------------------------- START FOOTER ----------------------------->
+			<div id="utilArea">
+			
+				<div class="util-grid-cell">
+					<span class="vert-align">Grid-1</span>
+				</div>
+			
+			</div>
+			<!------------------------- END FOOTER ----------------------------->
+			
 		</div>
-
 		
+		
+		
+
 		<div id="chartSearchTemplate" class="template">
 			<div class="mm-chart-search-wrap">
 				<div class="mm-chart-search-input vert-align">
@@ -1741,224 +887,58 @@
 			</div>
 		</div>
 		
-		<div id="dropdownTemplate" class="template">
-		
-			<div class="chart-style dropdown-chart">
-				<div class="dropdown-title dropdown-title-main vert-align">
-					<span>Config &#9662;</span>
-				</div>
-				
-				<div class="dropdown-wrap tile-dropdown-wrap">
-
-					<table class="chart-table">
-						<tbody>
-							<tr>
-								<td>Bar Type</td>
-								<td>
-									<ul class="mm-chart-config mm-chart-bartype">
-										<li>Time</li>
-										<li class="active">Tick</li>
-									</ul>
-								</td>
-							</tr>
-							<tr>
-								<td>Chart Type</td>
-								<td>
-									<ul class="mm-chart-config mm-chart-charttype">
-										<li class="active">Candlestick</li>
-										<li>OHLC</li>
-										<li>Line</li>
-										<li>Area</li>
-									</ul>
-								</td>
-							</tr>
-							<tr>
-								<td>Indicator</td>
-								<td>
-									<ul class="mm-chart-config mm-chart-indicator">
-										<li class="active">EMA</li>
-										<li>SMA</li>
-										<li>BBands</li>
-										<li>None</li>
-									</ul>
-								</td>
-							</tr>
-							<tr>
-								<td>Time Scale</td>
-								<td>
-									<ul class="mm-chart-config mm-chart-timescale">
-										<li class="active">Linear</li>
-										<li>Logarithmic</li>
-									</ul>
-								</td>
-							</tr>
-							<tr>
-								<td>Depth</td>
-								<td>
-									<ul class="mm-chart-config mm-chart-depth">
-										<li>1%</li>
-										<li>2%</li>
-										<li>5%</li>
-										<li class="active">10%</li>
-									</ul>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
 
 		
-		<div id="tickIntervalTemplate" class="template">
-			<div class="horiz-list horiz-list-main mm-interval-type active tile-pad-wrap" data-inttype="Tick">
-				<div class ="horiz-list-title">
-					<!--<span class="vert-align" id="">Tick Interval: </span>-->
-				</div>
-				<div class="num-ticks horiz-list-options">
-					<div class="horiz-list-option"><span class="vert-align">5</span></div>
-					<div class="horiz-list-option"><span class="vert-align">10</span></div>
-					<div class="horiz-list-option"><span class="vert-align">25</span></div>
-					<div class="horiz-list-option"><span class="vert-align active">100</span></div>
-					<div class="horiz-list-option"><span class="vert-align">300</span></div>
-					<div class="horiz-list-option"><span class="vert-align">500</span></div>
-				</div>
-			</div>
-		</div>
 		
-			
-		<div id="timeIntervalTemplate" class="template">
-			<div class="horiz-list horiz-list-main mm-interval-type tile-pad-wrap" data-inttype="Time">
-				<div class ="horiz-list-title">
-					<!--<span class="vert-align">Time Interval: </span>-->
-				</div>
-				<div class="time-interval horiz-list-options">
-					<div class="horiz-list-option"><span class="vert-align">5m</span></div>
-					<div class="horiz-list-option"><span class="vert-align">15m</span></div>
-					<div class="horiz-list-option"><span class="vert-align">30m</span></div>
-					<div class="horiz-list-option"><span class="vert-align">1h</span></div>
-					<div class="horiz-list-option"><span class="vert-align">6h</span></div>
-					<div class="horiz-list-option"><span class="vert-align">12h</span></div>
-					<div class="horiz-list-option"><span class="vert-align">1d</span></div>
-				</div>
-			</div>
-		</div>
-		
-		
-		
-		<div id="tileOrderbookSearchTemplate" class="template">
-			<div class="tile-orderbook-search-popup">
-				<div class="tile-orderbook-search-popup-body">
-				
-					<div class="tile-orderbook-search-popup-input-wrap">
-					
-						<div class="tile-orderbook-search-popup-row">
-							<div class="tile-orderbook-search-popup-label">
-								<span>Base</span>
-							</div>
-							<div class="tile-orderbook-search-popup-base tile-orderbook-search-popup-input assets-fav">
-								<input type="text" name="baseid"></input>
-							</div>
-						</div>
-						
-						<div class="tile-orderbook-search-popup-row">
-							<div class="tile-orderbook-search-popup-label">
-								<span>Quote</span>
-							</div>
-							<div class="tile-orderbook-search-popup-rel tile-orderbook-search-popup-input assets-fav">
-								<input type="text" name="relid"></input>
-							</div>
-						</div>
-						
-					</div>
-					
-					<div class="tile-orderbook-search-popup-bottom">
-						<div class="tile-orderbook-search-popup-button">
-							<span class="vert-align">OPEN</span>
-						</div>
-					</div>
-					
-				</div>
-			</div>
-		</div>
-		
-		
-		<div id="tileOrderbookTemplate" class="template">										
-			<div class="tile-orderbook-top">
-			
-				<div class="tile-orderbook-search">
-					<div class="tile-orderbook-search-input vert-align assets-fav">
-						<span>SEARCH</span>
-					</div>
-				</div>
-			
-				<div class="tile-orderbook-pair">
-					<span class="tile-orderbook-curpair vert-align">No Orderbook Loaded</span>
-				</div>
-			
-			</div>
-			
-			<div class="tile-orderbook-body">
-			
-				<div class="tile-orderbook-bids">
-				
-					<div class="tile-orderbook-labels">
-						<div class="tile-orderbook-labels-row">
-							<span class="tile-orderbook-labels-col">Total</span>
-							<span class="tile-orderbook-labels-col">Volume</span>
-							<span class="tile-orderbook-labels-col">Price</span>																		
-						</div>
-					</div>
-					
-					<div class="tile-orderbook-orders tile-orderbook-orders-bids">
-					
-					</div>
-				
-				</div>
-				
-				<div class="tile-orderbook-asks">
-				
-					<div class="tile-orderbook-labels">
-						<div class="tile-orderbook-labels-row">
-							<span class="tile-orderbook-labels-col">Price</span>
-							<span class="tile-orderbook-labels-col">Volume</span>
-							<span class="tile-orderbook-labels-col">Total</span>																		
-						</div>
-					</div>
-					
-					<div class="tile-orderbook-orders tile-orderbook-orders-asks">
+		<div id="chartTableTemplate" class="template">										
 
-					</div>
-				
-				</div>
-			
-			</div>
-			
-			<div class="tile-cell-orderbook-footer">
-			
-			</div>
-		</div>
-		
-		<div id="tileCreateTemplate" class="template">										
-
-			<div class="tile-create">
-				<div class="tile-create-close">
-					<img src="img/close.png"></img>
-				</div>
-				<div class="tile-create-options">
-					<div class="tile-create-options-wrap vert-align">
-						<div class="tile-create-option tile-create-chart" data-tiletype="chart">
-							<span>Chart</span>
-						</div>
-						<div class="tile-create-option" data-tiletype="orderbook">
-							<span>Orderbook</span>
-						</div>
-						<div class="tile-create-option">
-							<span>Ticker</span>
-						</div>
-					</div>
-				</div>
-			</div>
+			<table class="chart-table">
+				<tbody>
+					<tr>
+						<td>Chart Type</td>
+						<td>
+							<ul class="mm-chart-config mm-chart-charttype" data-config="charttype">
+								<li class="active" data-val="candlestick">Candlestick</li>
+								<li data-val="ohlc">OHLC</li>
+								<li data-val="line">Line</li>
+								<li data-val="area">Area</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>Indicator</td>
+						<td>
+							<ul class="mm-chart-config mm-chart-indicator" data-config="indicator">
+								<li class="active" data-val="ema">EMA</li>
+								<li data-val="sma">SMA</li>
+								<li data-val="bollin">BBands</li>
+								<li data-val="none">None</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>Time Scale</td>
+						<td>
+							<ul class="mm-chart-config mm-chart-timescale" data-config="timescale">
+								<li class="active" data-val="linear">Linear</li>
+								<li data-val="logarithmic">Logarithmic</li>
+							</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>Depth</td>
+						<td>
+							<ul class="mm-chart-config mm-chart-depth" data-config="depth">
+								<li data-val="0.00">0%</li>
+								<li data-val="0.01">1%</li>
+								<li data-val="0.02">2%</li>
+								<li data-val="0.05">5%</li>
+								<li class="active" data-val="0.10">10%</li>
+							</ul>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
 
@@ -2022,6 +1002,7 @@
 	<script src="js/chart/sleuthcharts.utils.js" type="text/javascript"></script>
 	<script src="js/chart/sleuthcharts.init.js" type="text/javascript"></script>
 	<script src="js/chart/sleuthcharts.indicators.js" type="text/javascript"></script>
+	<script src="js/chart/sleuthcharts.drawing.js" type="text/javascript"></script>
 
 	
 	<script src="js/idex.autocomplete.js" type="text/javascript"></script>
@@ -2029,6 +1010,7 @@
 	<script src="js/idex.scrollbar.js" type="text/javascript"></script>
 	<script src="js/idex.drag.js" type="text/javascript"></script>
 	<script src="js/idex.dom.js" type="text/javascript"></script>
+	<!--<script src="js/idex.slack.js" type="text/javascript"></script>-->
 
 
 
