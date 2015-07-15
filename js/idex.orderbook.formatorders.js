@@ -129,6 +129,10 @@ var IDEX = (function(IDEX, $, undefined)
 					$(this).addClass(extraClasses);
 				}
 			}).parent()[0].outerHTML;
+			
+			//trString = orderTooltip(trString, order);
+			trString = $(trString).prepend("<div class='order-row-inspect-trig'><img class='vert-align' src='img/eye.png'></div>")[0].outerHTML;
+			
 			order['row'] = trString;
 		}	
 	}
@@ -137,18 +141,20 @@ var IDEX = (function(IDEX, $, undefined)
 	function getLabelClass(order)
 	{
 		var labelClass = "";
-		var vis = IDEX.getVisibleLabels()
-		var visMap = IDEX.getVisibleMap(vis)
+		var vis = IDEX.getItemsByProp(IDEX.user.labels, "isVisible", false)
+		//var visMap = IDEX.getVisibleMap(vis)
 
-
-		for (var exchange in visMap)
-		{
-			var label = visMap[exchange]
+		for (var i = 0; i < vis.length; i++)
+		{				
+			var label = vis[i]
 			
-			if (order.exchange == exchange)
+			if (order.exchange == label.exchange)
 			{
-				labelClass = label.name
-				break;
+				labelClass = "label-" + label.name
+			}
+			else if ("NXT" in order && label.nxtrs == IDEX.toRS(order.NXT))
+			{
+				labelClass = "label-" + label.name
 			}
 		}
 		
@@ -178,6 +184,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}*/
 		})
 	}
+	
 	
 	
 	return IDEX;

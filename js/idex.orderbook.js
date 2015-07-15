@@ -7,25 +7,41 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.TIMEOUT_CLEARED = 2;
 	IDEX.AJAX_ABORT = 3;
 	
+	IDEX.allOrderbooks = [];
 	
-	IDEX.Orderbook.prototype.loadNewOrderbook = function(base, rel)
+	
+	IDEX.newOrderbook = function(base, rel, $el)
 	{
-		this.baseAsset = base;
-		this.relAsset = rel;
-		this.currentOrderbook = new IDEX.OrderbookVar();
-		this.emptyOrderbook("Loading...");
-		IDEX.updateScrollbar(false);
-		var thisScope = this;
+		var orderbook = IDEX.getOrderbookByElement($el);
 		
-		if (!this.isStoppingOrderbook)
+		console.log(orderbook);
+		
+		if (!orderbook)
 		{
-			this.stopPollingOrderbook(function()
+			orderbook = new IDEX.Orderbook();
+
+			orderbook.orderbookDom = $el
+			orderbook.buyBookDom = $el.find(".bookname-buybook");
+			orderbook.sellBookDom = $el.find(".bookname-sellbook");
+			IDEX.allOrderbooks.push(orderbook)
+		}
+		
+		orderbook.baseAsset = base;
+		orderbook.relAsset = rel;
+		orderbook.currentOrderbook = new IDEX.OrderbookVar();
+		orderbook.emptyOrderbook("Loading...");
+		//IDEX.updateScrollbar(false);
+			
+		if (!orderbook.isStoppingOrderbook)
+		{
+			orderbook.stopPollingOrderbook(function()
 			{
 				$(".empty-orderbook").hide();
-				thisScope.orderbookHandler(1);
+				orderbook.orderbookHandler(1);
 			});
 		}
-	}
+	};
+	
 	
 	
 	IDEX.Orderbook.prototype.refreshOrderbook = function()
@@ -80,7 +96,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else if (errorLevel == IDEX.AJAX_ERROR)
 			{
-				$(".empty-orderbook").hide();
+				_this.orderbookDom.find(".empty-orderbook").hide();
 				_this.emptyOrderbook("Error loading orderbook");
 				
 				//$(".empty-orderbook").hide();
@@ -96,14 +112,14 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
 					_this.emptyOrderbook();
-					$(".empty-orderbook").show();
+					_this.orderbookDom.find(".empty-orderbook").show();
 					IDEX.updateScrollbar(false);
 				}
 				else
 				{
 					_this.formatOrderbookData(orderbookData);
-					_this.updateOrders($("#buyBook .twrap"), _this.groupedBids);
-					_this.updateOrders($("#sellBook .twrap"), _this.groupedAsks);
+					_this.updateOrders(_this.buyBookDom.find(".twrap"), _this.groupedBids);
+					_this.updateOrders(_this.sellBookDom.find(".twrap"), _this.groupedAsks);
 					
 					_this.updateLastPrice(orderbookData);
 					_this.animateOrderbook();

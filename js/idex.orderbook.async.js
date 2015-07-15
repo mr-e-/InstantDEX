@@ -14,9 +14,7 @@ var IDEX = (function(IDEX, $, undefined)
 		//IDEX.updateUserState();
 		
 		thisScope.setTimeout(timeout).then(function(wasCleared)
-		{
-			//IDEX.updateUserState();
-			
+		{			
 			if (wasCleared)
 			{
 				thisScope.counter = false;
@@ -27,6 +25,8 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				thisScope.orderbookPost().done(function(orderbookData)
 				{
+					IDEX.updateUserState();
+
 					thisScope.counter = false;
 					thisScope.clearUpdatedTimeout()
 					
@@ -128,7 +128,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		orderbook.lastUpdatedCounter().done(function()
 		{
-			var $el = $(".orderbook-last-updated");
+			var $el = orderbook.orderbookDom.find(".orderbook-last-updated");
 			
 			if (orderbook.counter)
 			{

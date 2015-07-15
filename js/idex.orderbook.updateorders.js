@@ -5,7 +5,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.updateOrders = function($book, orderData)
 	{
-		var isAsk = $book.parent().attr("id") == "buyBook";
+		var orderbook = this;
+		var isAsk = $book.parent().attr("data-book") == "buyBook";
 
 		if ($.isEmptyObject(orderData))
 			$book.parent().find(".empty-orderbook").show()
@@ -30,9 +31,9 @@ var IDEX = (function(IDEX, $, undefined)
 				removeOrders($(this), orderData, index);
 				
 				if (isAsk)
-					addNewOrders($(this), orderData, rowData, index);
+					orderbook.addNewOrders($(this), orderData, rowData, index);
 				else
-					addNewOrdersAsk($(this), orderData, rowData, index);
+					orderbook.addNewOrdersAsk($(this), orderData, rowData, index);
 			})
 		}
 	}
@@ -66,8 +67,10 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 
-	function addNewOrders($row, orderData, rowData, index, isAsk)
+	IDEX.Orderbook.prototype.addNewOrders = function($row, orderData, rowData, index, isAsk)
 	{
+		var orderbook = this;
+
 		for (var i = 0; i < orderData.newOrders.length; i++)
 		{
 			var newOrder = orderData.newOrders[i];
@@ -99,8 +102,10 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	function addNewOrdersAsk($row, orderData, rowData, index)
+	IDEX.Orderbook.prototype.addNewOrdersAsk = function($row, orderData, rowData, index)
 	{
+		var orderbook = this;
+		
 		for (var i = 0; i < orderData.newOrders.length; i++)
 		{
 			var newOrder = orderData.newOrders[i];

@@ -3,11 +3,40 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
+	IDEX.getOrderbookByElement = function($orderbook)
+	{
+		var ret = false;
+		
+		for (var i = 0; i < IDEX.allOrderbooks.length; i++)
+		{
+			var loopOrderbook = IDEX.allOrderbooks[i];
+			var $loopOrderbook = loopOrderbook.orderbookDom
+			
+			//var isSame = $orderbook.is($loopOrderbook);
+			
+			if ($orderbook.is($loopOrderbook))
+			{
+				ret = loopOrderbook;
+				break;
+			}
+		}
+		
+		return ret;
+	}
+	
+	
 	IDEX.getRowData = function($row, index)
 	{
-		var isAsk = ($row.closest(".bookname").attr('id') == "buyBook") ? "bids" : "asks";
-		var rowData = index >= IDEX.orderbook.currentOrderbook[isAsk].length ? null : IDEX.orderbook.currentOrderbook[isAsk][index];
-
+		var $orderbook = $row.closest(".orderbook-wrap");
+		var orderbook = IDEX.getOrderbookByElement($orderbook);
+		var rowData = null;
+		
+		if (orderbook)
+		{
+			var isAsk = ($row.closest(".bookname").attr('data-book') == "buyBook") ? "bids" : "asks";
+			rowData = index >= orderbook.currentOrderbook[isAsk].length ? null : orderbook.currentOrderbook[isAsk][index];
+		}
+		
 		return rowData;
 	}
 	
@@ -16,10 +45,11 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		price = (typeof price === "undefined") ? '0.0' : price;
 		
-		$("#buyBook .twrap").empty();
-		$("#sellBook .twrap").empty();
-		$("#currPair .order-text").text(this.baseAsset.name+"_"+this.relAsset.name);
-		$("#currLast .order-text").empty().text(price);
+		this.buyBookDom.find(".twrap").empty();
+		this.sellBookDom.find(".twrap").empty();
+		
+		//$("#currPair .order-text").text(this.baseAsset.name+"_"+this.relAsset.name);
+		//$("#currLast .order-text").empty().text(price);
 	}
 	
 
@@ -28,16 +58,16 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
 		
-		$("#currLast .order-text").text(Number(lastPrice).toFixed(8));	
+		//$("#currLast .order-text").text(Number(lastPrice).toFixed(8));	
 	}
 	
 
 	IDEX.Orderbook.prototype.animateOrderbook = function()
 	{
-		$(".twrap").find(".order-row.expiredRow").remove();
+		this.orderbookDom.find(".twrap .order-row.expiredRow").remove();
 		IDEX.updateScrollbar(false)
-		$(".newrow").find(".order-col").addClass("fadeSlowIndy")
-		$(".newrow").removeClass("newrow");
+		this.orderbookDom.find(".newrow .order-col").addClass("fadeSlowIndy")
+		this.orderbookDom.find(".newrow").removeClass("newrow");
 	}
 	
 	
