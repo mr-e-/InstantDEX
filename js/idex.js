@@ -2,7 +2,6 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	IDEX.orderbook;
 	IDEX.account;
 	IDEX.user;
 	IDEX.chart;
@@ -145,29 +144,25 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.init = function()
 	{
 		var initializedAssets = new $.Deferred();
-		var loadedChart = new $.Deferred();
 		var timeoutFinished = new $.Deferred();
 		var updatedNXT = new $.Deferred();
 
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
-		IDEX.orderbook = new IDEX.Orderbook();
 		IDEX.chart = new IDEX.Chart();
 		
-		IDEX.initScrollbar();
-		IDEX.initDataTable();
-		
-		IDEX.buildTilesDom();
-		IDEX.buildMainChartDom();
+		//IDEX.initScrollbar();
+		//IDEX.initDataTable();
 		
 		IDEX.user.initFavorites();
-		/*IDEX.user.initLabels();
+		IDEX.user.initLabels();
 
+		
 		IDEX.user.options = 
 		{
 			"duration":6000,
 			"minperc":75
-		}*/
+		}
 	
 		
 		IDEX.pingSupernet().done(function()
@@ -197,21 +192,10 @@ var IDEX = (function(IDEX, $, undefined)
 			});
 			
 			
-			IDEX.updateChart("main_menu_chart").then(function()
+			$.when(timeoutFinished, initializedAssets, updatedNXT).done(function()
 			{
-				loadedChart.resolve();
-				
-			})
-			
-			
-			
-			$.when(timeoutFinished, initializedAssets, loadedChart, updatedNXT).done(function()
-			{
-				var lastMarket = IDEX.user.getLastMarket()
-				var baseID = lastMarket.baseID;
-				var relID = lastMarket.relID;
+				//var lastMarket = IDEX.user.getLastMarket()
 
-				IDEX.changeMarket(baseID, relID);
 				IDEX.hideLoading();
 			})
 			

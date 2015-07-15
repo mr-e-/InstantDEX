@@ -242,7 +242,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.sendPost({'method':"cancelquote",'quoteid':quoteid}).done(function(data)
 		{
 			IDEX.updateUserState();
-			console.log(data)
+			//console.log(data)
 		})
 	})
 	

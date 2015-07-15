@@ -62,6 +62,8 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
+
+	
 	$(window).resize(function()
 	{	
 		var $modal = $(".md-modal.md-show")
