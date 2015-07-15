@@ -7,6 +7,10 @@ var IDEX = (function(IDEX, $, undefined)
 	//var GENESIS_TIMESTAMP = 1385294400;
 
 	
+	IDEX.sortNumber = function(a, b)
+	{
+		return a - b;
+	}
 	
 	IDEX.compareProp = function(prop)
 	{
@@ -76,6 +80,17 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		return s;
+	}
+	
+	
+	IDEX.flipClass = function($el, cssClass)
+	{
+		var has = $el.hasClass(cssClass);
+		
+		if (has)
+			$el.removeClass(cssClass);
+		else
+			$el.addClass(cssClass);
 	}
 
 	
@@ -195,6 +210,27 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 
 		return params;
+	}
+	
+	
+	IDEX.getItemsByProp = function(arr, prop, getAll)
+	{
+		var items = [];
+
+		for (var i = 0; i < arr.length; i++)
+		{
+			var item = arr[i]
+			
+			if (item[prop])
+			{
+				items.push(item);
+				
+				if (!getAll)
+					break;
+			}
+		}
+		
+		return items;	
 	}
 
 

@@ -2,6 +2,8 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
+	IDEX.mainChartNode = "main_menu_chart";
+	IDEX.cmChartNode = "ex_chart"
 	
 	IDEX.changeMarket = function(baseid, relid)
 	{
@@ -25,7 +27,14 @@ var IDEX = (function(IDEX, $, undefined)
 			//IDEX.account.pollOpenOrders();
 
 			//IDEX.killChart();
-			IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID});
+			var exchange = "nxtae";
+			
+			IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID, "exchange":exchange, "node":IDEX.cmChartNode});
+			
+			if (IDEX.isChartLocked)
+			{
+				IDEX.makeChart({'baseid':IDEX.user.curBase.assetID, 'relid':IDEX.user.curRel.assetID, "exchange":exchange, "node":IDEX.mainChartNode});
+			}
 			
 			IDEX.orderbook.loadNewOrderbook(IDEX.user.curBase, IDEX.user.curRel);
 

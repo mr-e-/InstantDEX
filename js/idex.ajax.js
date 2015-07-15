@@ -27,8 +27,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (!isNXT)
 		{
-			//params['timeout'] = 0;
-			//params['plugin'] = "InstantDEX";
+			params['plugin'] = "InstantDEX";
 		}
 		
 		var ajaxSettings = 
@@ -40,7 +39,6 @@ var IDEX = (function(IDEX, $, undefined)
 			xhrFields: {
 				withCredentials: true
 			},
-			//timeout:10000,
 		};
 		
 		var obj = {}
@@ -50,21 +48,16 @@ var IDEX = (function(IDEX, $, undefined)
 		obj.params = params;
 		q.push(obj)
 		
-		var index = q.length - 1;
-		//console.log(waitTime)
-		//console.log(JSON.stringify(params))
-		console.log(params)
+		//var index = q.length - 1;
 		
 		setTimeout(function()
 		{
 			var xhr = $.ajax(ajaxSettings);
-
-			//console.log(new Date().getTime())
 			
 			xhr.done(function(data)
 			{
 				data = $.parseJSON(data);
-				//console.log(data)
+				console.log(data)
 				
 				dfd.resolve(data);
 				
@@ -92,11 +85,6 @@ var IDEX = (function(IDEX, $, undefined)
 				q.pop()
 			})
 			
-			
-			/*if (callback)
-				return xhr;
-			else
-				return dfd.promise();*/
 			
 		}, waitTime)
 		
