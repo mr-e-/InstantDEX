@@ -131,7 +131,6 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			console.log(base);
 			console.log(rel);
-	
 
 			//var orderbook = new IDEX.Orderbook();
 			IDEX.newOrderbook(base, rel, $orderbook);

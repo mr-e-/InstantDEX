@@ -19,7 +19,7 @@ var IDEX = (function(IDEX, $, undefined)
 			for (var i = 0; i < orderData.newOrders.length; i++)
 				$book.append(orderData.newOrders[i]['row'])
 
-			IDEX.updateScrollbar(true);
+			orderbook.updateScrollbar(true);
 		}
 		else
 		{

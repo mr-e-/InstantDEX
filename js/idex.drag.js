@@ -807,7 +807,10 @@ var IDEX = (function(IDEX, $, undefined)
 			var $search = $grid.find('.skynet-search');
 			IDEX.initSkyNETAuto($search)
 		}
-		
+		else if (gridType == "orderbook")
+		{
+
+		}
 		else if (gridType == "watchlist")
 		{
 			IDEX.initFavorites($grid);
@@ -1104,8 +1107,29 @@ var IDEX = (function(IDEX, $, undefined)
 			$el.css(sizeKey, size)
 		}
 
+		closeGridType($grid);
 		$grid.remove();
 	})
+	
+	function closeGridType($grid)
+	{
+		var gridType = $grid.attr("data-grid")
+		
+		if (gridType == "chart")
+		{
+			
+		}
+		else if (gridType == "orderbook")
+		{
+			//console.log(IDEX.allOrderbooks);
+			var $orderbook = $grid.find(".orderbook-wrap");
+			IDEX.removeOrderbook($orderbook)
+		}
+		else if (gridType == "watchlist")
+		{
+
+		}
+	}
 	
 	function closeTab($tabHeader)
 	{

@@ -1352,7 +1352,7 @@ table.dataTable thead th:last-child {
 }
 
 .cm-orderbook-body {
-	height:calc(100% - 30px - 130px - 50px);
+	height:calc(100% - 30px - 130px);
 	width:100%;
 	position:relative;
 	display:block;

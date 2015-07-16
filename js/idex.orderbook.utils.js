@@ -65,11 +65,18 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.animateOrderbook = function()
 	{
 		this.orderbookDom.find(".twrap .order-row.expiredRow").remove();
-		IDEX.updateScrollbar(false)
+		this.updateScrollbar(false)
 		this.orderbookDom.find(".newrow .order-col").addClass("fadeSlowIndy")
 		this.orderbookDom.find(".newrow").removeClass("newrow");
 	}
 	
+	IDEX.Orderbook.prototype.updateScrollbar = function(toBottom)
+	{
+		//if (toBottom)
+			//$("#sellBook").scrollTop($("#sellBook").prop("scrollHeight"));
+		this.buyBookDom.perfectScrollbar('update');
+		this.sellBookDom.perfectScrollbar('update');
+	}
 	
 	return IDEX;
 	

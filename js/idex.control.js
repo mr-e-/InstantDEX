@@ -74,19 +74,10 @@ var IDEX = (function(IDEX, $, undefined)
 		$labeldom.val(market)
 	}
 	
-	
-	//var counter = 0;
-	
+		
 	IDEX.updateUserState = function(force)
 	{
-		//console.log(counter++)
-		
-		IDEX.makeTable("marketOpenOrdersTable", function()
-		{
-			
-		});
-		
-		IDEX.updateOrderBoxBalance(force);
+		//IDEX.updateOrderBoxBalance(force);
 	}
 	
 	

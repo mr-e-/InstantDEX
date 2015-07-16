@@ -16,6 +16,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		console.log(orderbook);
 		
+		IDEX.updateOrderBox($el, base, rel);
+
 		if (!orderbook)
 		{
 			orderbook = new IDEX.Orderbook();
@@ -23,6 +25,8 @@ var IDEX = (function(IDEX, $, undefined)
 			orderbook.orderbookDom = $el
 			orderbook.buyBookDom = $el.find(".bookname-buybook");
 			orderbook.sellBookDom = $el.find(".bookname-sellbook");
+			orderbook.buyBookDom.perfectScrollbar();
+			orderbook.sellBookDom.perfectScrollbar();
 			IDEX.allOrderbooks.push(orderbook)
 		}
 		
@@ -74,7 +78,34 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		this.clearTimeout();
 		this.isStoppingOrderbook = false;
-		callback();
+		
+		if (callback)
+			callback();
+	}
+	
+	IDEX.removeOrderbook = function($orderbook)
+	{
+		var orderbook = false;
+		
+		for (var i = 0; i < IDEX.allOrderbooks.length; i++)
+		{
+			var loopOrderbook = IDEX.allOrderbooks[i];
+			var $loopOrderbook = loopOrderbook.orderbookDom
+						
+			if ($orderbook.is($loopOrderbook))
+			{
+				orderbook = loopOrderbook;
+				break;
+			}
+		}
+		
+		//console.log(orderbook);
+		
+		if (orderbook)
+		{
+			orderbook.stopPollingOrderbook();
+			IDEX.allOrderbooks.splice(i, 1);
+		}
 	}
 	
 	
@@ -113,7 +144,7 @@ var IDEX = (function(IDEX, $, undefined)
 					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
 					_this.emptyOrderbook();
 					_this.orderbookDom.find(".empty-orderbook").show();
-					IDEX.updateScrollbar(false);
+					_this.updateScrollbar(false);
 				}
 				else
 				{

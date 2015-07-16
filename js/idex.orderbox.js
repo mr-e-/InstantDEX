@@ -212,40 +212,49 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.updateOrderBox = function()
+	IDEX.updateOrderBox = function($wrap, base, rel)
 	{
-		IDEX.resetOrderBoxForm();
-		IDEX.updateOrderBoxBalance();
+		IDEX.resetOrderBoxForm($wrap);
+		IDEX.updateOrderBoxBalance($wrap, base, rel);
 		
-		$(".refcur-base").text(IDEX.user.curBase.name);
-		$(".refcur-rel").text(IDEX.user.curRel.name);
+		//$(".refcur-base").text(IDEX.user.curBase.name);
+		//$(".refcur-rel").text(IDEX.user.curRel.name);
 	}
 	
 
-	IDEX.resetOrderBoxForm = function()
+	IDEX.resetOrderBoxForm = function($wrap)
 	{
-		$("#placeBidForm").trigger("reset");
-		$("#placeAskForm").trigger("reset");
+		var $placeBidForm = $wrap.find(".placeBidForm");
+		var $placeAskForm = $wrap.find(".placeAskForm");
+		
+		$placeBidForm.trigger("reset");
+		$placeAskForm.trigger("reset");
 	}
 	
 	
-	IDEX.updateOrderBoxBalance = function(force)
+	IDEX.updateOrderBoxBalance = function($wrap, base, rel, force)
 	{
-		var $buy = $("#balance_buy");
-		var $sell = $("#balance_sell");
+		var $baseWrap = $wrap.find(".orderbox-sell .orderbox-balance");
+		var $baseTitle = $baseWrap.find(".orderbox-balance-title span");
+		var $baseBal = $baseWrap.find(".orderbox-balance-val span");
+		
+		var $relWrap = $wrap.find(".orderbox-buy .orderbox-balance");
+		var $relTitle = $relWrap.find(".orderbox-balance-title span");
+		var $relBal = $relWrap.find(".orderbox-balance-val span");
+
 		var baseBal = ["0", ".0"];
 		var relBal = ["0", ".0"];
 
-		$buy.find(".bal-cur").first().text(IDEX.user.curRel.name + ": ");
-		$sell.find(".bal-cur").first().text(IDEX.user.curBase.name + ": ");
+		$baseTitle.text(base.name + ": ");
+		$relTitle.text(rel.name + ": ");
 		
 		IDEX.account.updateBalances(force).done(function()
 		{
-			baseBal = parseBalance(IDEX.account.getBalance(IDEX.user.curBase.assetID));
-			relBal = parseBalance(IDEX.account.getBalance(IDEX.user.curRel.assetID));
+			baseBal = parseBalance(IDEX.account.getBalance(base.assetID));
+			relBal = parseBalance(IDEX.account.getBalance(rel.assetID));
 
-			$buy.find(".bal-val").first().text(relBal[0] + relBal[1]);
-			$sell.find(".bal-val").first().text(baseBal[0] + baseBal[1]);
+			$relBal.text(relBal[0] + relBal[1]);
+			$baseBal.text(baseBal[0] + baseBal[1]);
 		})
 	}
 	
