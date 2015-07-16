@@ -2,82 +2,19 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-
-
-	$(".cm-orderbox-config-popup-close").on("mouseup", function()
-	{
-		var $popup = $(this).closest(".cm-orderbox-config-popup")
-		
-		$popup.removeClass("active");
-		
-	})
-	
-	$(".cm-orderbox-config-trig").on("mouseup", function()
-	{
-		var $wrap = $(this).closest(".cm-orderbox-body");
-		var $popup = $wrap.find(".cm-orderbox-config-popup");
-		var isActive = $popup.hasClass("active");
-
-		if (isActive)
-			$popup.removeClass("active");
-		else
-			$popup.addClass("active");
-		
-		var $exchangePopup = $wrap.find(".cm-orderbox-exchange-popup");
-		$exchangePopup.removeClass("active");
-	})
-	
-	$(".cm-orderbox-config-popup-confirm-trig").on("click", function()
-	{
-		var $popup = $(this).closest(".cm-orderbox-config-popup")
-
-		$popup.removeClass("active");
-	})
-	
-	
-	
-	$(".cm-orderbox-exchange-trig").on("mouseup", function()
-	{
-		var $wrap = $(this).closest(".cm-orderbox-body");
-		var $popup = $wrap.find(".cm-orderbox-exchange-popup");
-		var isActive = $popup.hasClass("active");
-
-		if (isActive)
-			$popup.removeClass("active");
-		else
-			$popup.addClass("active");
-		
-	})
-	
-	$(".cm-orderbox-exchange-popup-row").on("click", function()
-	{
-		var $wrap = $(this).closest(".cm-orderbox-body");
-		var $popup = $(this).closest(".cm-orderbox-exchange-popup")
-		var text = $(this).find("span").text();
-		var $exTrig = $wrap.find(".cm-orderbox-exchange-trig");
-		var $config = $wrap.find(".cm-orderbox-exchange-config");
-		
-		if (text == "InstantDEX")
-			$config.show()
-		else
-			$config.hide();
-		
-		$exTrig.text(text);
-		$popup.removeClass("active");
-		
-	})
+	var $mainGrid = $("#main_grid");
 	
 	
 
-	$(".place-order-button").on("mousedown", function()
+	$mainGrid.on("mousedown", ".orderbox-order-button", function()
 	{
 		$(this).addClass("order-button-mousedown")
 	})
-	$(".place-order-button").on("mouseup", function()
+	$mainGrid.on("mouseup", ".orderbox-order-button", function()
 	{
 		$(this).removeClass("order-button-mousedown")
 	})
-	$(".place-order-button").on("mouseleave", function()
+	$mainGrid.on("mouseleave", ".orderbox-order-button", function()
 	{
 		$(this).removeClass("order-button-mousedown")
 	})
@@ -94,7 +31,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}	
 	
 
-	$(".place-order-button").on("click", function()
+	$mainGrid.on("click", ".orderbox-order-button", function()
 	{
 		if ($(this).hasClass("disabled"))
 			return;
@@ -217,8 +154,8 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.resetOrderBoxForm($wrap);
 		IDEX.updateOrderBoxBalance($wrap, base, rel);
 		
-		//$(".refcur-base").text(IDEX.user.curBase.name);
-		//$(".refcur-rel").text(IDEX.user.curRel.name);
+		$wrap.find(".refcur-base").text(base.name);
+		$wrap.find(".refcur-rel").text(rel.name);
 	}
 	
 
@@ -245,8 +182,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var baseBal = ["0", ".0"];
 		var relBal = ["0", ".0"];
 
-		$baseTitle.text(base.name + ": ");
-		$relTitle.text(rel.name + ": ");
+		$baseTitle.html(base.name + ":&nbsp;");
+		$relTitle.html(rel.name + ":&nbsp;");
 		
 		IDEX.account.updateBalances(force).done(function()
 		{
@@ -266,8 +203,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var baseBal = ["0", ".0"];
 		var relBal = ["0", ".0"];
 
-		$buy.find(".bal-cur").first().text("Base: ");
-		$sell.find(".bal-cur").first().text("Quote: ");
+		$buy.find(".bal-cur").first().text("Base:&nbsp;");
+		$sell.find(".bal-cur").first().text("Quote:&nbsp;");
 
 		$buy.find(".bal-val").first().text(relBal[0] + relBal[1])
 		$sell.find(".bal-val").first().text(baseBal[0] + baseBal[1]);
@@ -293,7 +230,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 
-	$("input[name='price'], input[name='volume']").on("keyup", function() 
+	$mainGrid.on("keyup", "input[name='price'], input[name='volume']", function() 
 	{
 		var $form = $(this).closest("form");
 		var price = $form.find("input[name='price']").val();
@@ -304,7 +241,7 @@ var IDEX = (function(IDEX, $, undefined)
 	});
 	
 
-	$("input[name='total']").on("keyup", function() 
+	$mainGrid.on("keyup", "input[name='total']", function() 
 	{
 		var $form = $(this).closest("form");
 		var price = $form.find("input[name='price']").val();
@@ -318,9 +255,9 @@ var IDEX = (function(IDEX, $, undefined)
 	});
 	
 	
-	$("#balance_buy .bal-val").on("click", function()
+	$mainGrid.on("click", ".orderbox-buy .orderbox-balance-val span", function() 
 	{
-		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $wrap = $(this).closest(".orderbox-body");
 		var total = $(this).text();
 		
 		var $totalInput = $wrap.find("input[name='total']");
@@ -330,9 +267,9 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$("#balance_sell .bal-val").on("click", function()
+	$mainGrid.on("click", ".orderbox-sell .orderbox-balance-val span", function() 
 	{
-		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $wrap = $(this).closest(".orderbox-body");
 		var total = $(this).text();
 		
 		var $amountInput = $wrap.find("input[name='volume']");
@@ -342,7 +279,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$("input[name='price'], input[name='volume'], input[name='total']").on("keydown", function(e) 
+	$mainGrid.on("keydown", "input[name='price'], input[name='volume'], input[name='total']", function(e) 
 	{
 		var $input = $(this);
 		
@@ -388,6 +325,72 @@ var IDEX = (function(IDEX, $, undefined)
         }
     };
 	
+	
+	
+	/*$(".cm-orderbox-config-popup-close").on("mouseup", function()
+	{
+		var $popup = $(this).closest(".cm-orderbox-config-popup")
+		
+		$popup.removeClass("active");
+		
+	})
+	
+	$(".cm-orderbox-config-trig").on("mouseup", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $popup = $wrap.find(".cm-orderbox-config-popup");
+		var isActive = $popup.hasClass("active");
+
+		if (isActive)
+			$popup.removeClass("active");
+		else
+			$popup.addClass("active");
+		
+		var $exchangePopup = $wrap.find(".cm-orderbox-exchange-popup");
+		$exchangePopup.removeClass("active");
+	})
+	
+	$(".cm-orderbox-config-popup-confirm-trig").on("click", function()
+	{
+		var $popup = $(this).closest(".cm-orderbox-config-popup")
+
+		$popup.removeClass("active");
+	})
+	
+	
+	
+	$(".cm-orderbox-exchange-trig").on("mouseup", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $popup = $wrap.find(".cm-orderbox-exchange-popup");
+		var isActive = $popup.hasClass("active");
+
+		if (isActive)
+			$popup.removeClass("active");
+		else
+			$popup.addClass("active");
+		
+	})
+	
+	$(".cm-orderbox-exchange-popup-row").on("click", function()
+	{
+		var $wrap = $(this).closest(".cm-orderbox-body");
+		var $popup = $(this).closest(".cm-orderbox-exchange-popup")
+		var text = $(this).find("span").text();
+		var $exTrig = $wrap.find(".cm-orderbox-exchange-trig");
+		var $config = $wrap.find(".cm-orderbox-exchange-config");
+		
+		if (text == "InstantDEX")
+			$config.show()
+		else
+			$config.hide();
+		
+		$exTrig.text(text);
+		$popup.removeClass("active");
+		
+	})
+	
+	*/
 
 
 	return IDEX;

@@ -1214,81 +1214,16 @@ table.dataTable thead th:last-child {
 	display:block;
 }
 
-.cm-orderbook-search-wrap {
+.orderbook-title-wrap {
 	height:100%;
-	width:200px;
-	position:relative;
-	float:left;
-}
-
-.cm-orderbook-search-input {
-	height:20px;
-	width:calc(100%);
-	position:relative;
-	float:left;
-	border-bottom:1px solid #444444;
-}
-
-.chart-search-input:hover {
-	background-color:#151515;
-}
-
-.cm-orderbook-search-input-img {
-	height:100%;
-	width:25px;
-	position:relative;
-	float:left;
-	text-align:center;
-	border:1px solid black;
-	border-left:none;
-	border-radius:4px;
-	border-top-left-radius:0px;
-	border-bottom-left-radius:0px;
-}
-
-.cm-orderbook-search-input-img-inner {
-	height:100%;
-	width:100%;
-	position:relative;
-	border-top:1px solid #444444;
-	background-color:#333333;
-}
-
-.cm-orderbook-search-input-img img {
-	height:8px;
-	width:8px;
+	position:absolute;
 	left:50%;
-	transform:translateX(-50%) translateY(-50%);
+	transform:translateX(-50%);
 }
 
-.cm-orderbook-search-input-img-inner:hover {
-	border-top:1px solid #555555;
-	background-color:#444444
-}
-
-.cm-orderbook-search-input input {
-	width:calc(100% - 25px);
+.orderbook-title {
 	height:100%;
-	position:relative;
-	float:left;
-	font-size: 12px;
-	padding-left:6px;
-	background-color:#222222;
-	border:1px solid black;
-	border-radius:2px;
-	border-top-right-radius:0px;
-	border-bottom-right-radius:0px;
-	outline:none;
-}
-
-.cm-orderbook-search-input input:focus {
-	outline:none;
-	border:1px solid #329ddc !important;
-	background-color:#111111;
-}
-
-.cm-orderbook-search-input input:hover {
-	background-color:#151515;
+	font-size:13px;
 }
 
 .cm-orderbook-header-icons-wrap {
@@ -1731,7 +1666,7 @@ table.dataTable thead th:last-child {
 	padding-left:5px;
 	border-top:1px solid #444444;
 	font-size:9px;
-	color: #999999;
+	color: #bbbbbb;
 }
 
 .order-form-label span, .order-form-refcur span {
@@ -1768,7 +1703,7 @@ table.dataTable thead th:last-child {
 	position:relative;
 	float:left;
 	padding-left:6px;
-	color: #999999;
+	color: #bbbbbb;
 	border-top:1px solid #444444;
 }
 
@@ -1783,21 +1718,20 @@ table.dataTable thead th:last-child {
 
 .orderbox-order-button {
 	width:100%;
-	height: 20px;
+	height: 18px;
 	position:relative;
-	text-decoration: none;
 	left:50%;
 	top:50%;
 	transform:translateY(-50%) translateX(-50%);
-	font-size:13px;
+	font-size:12px;
 	text-align:center;
+	color:#cccccc;
+	border:1px solid black;
+	border-radius:2px;
 }
 
 .orderbox-order-button-buy {
-	color: #e5e5e5;
 	background-color:#0B732C;
-	border:1px solid #0d8d35;
-	border:1px solid black;
 }
 
 .orderbox-order-button-buy:hover {
@@ -1817,10 +1751,7 @@ table.dataTable thead th:last-child {
 }
 
 .orderbox-order-button-sell {
-	color: #e5e5e5;
 	background-color: #DA3B26;
-	border:1px solid rgba(218, 59, 38, 0.85);
-	border:1px solid black;
 }
 
 .orderbox-order-button-sell:hover {

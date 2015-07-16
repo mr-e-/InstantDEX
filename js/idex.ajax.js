@@ -57,7 +57,7 @@ var IDEX = (function(IDEX, $, undefined)
 			xhr.done(function(data)
 			{
 				data = $.parseJSON(data);
-				console.log(data)
+				//console.log(data)
 				
 				dfd.resolve(data);
 				
