@@ -17,6 +17,10 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 
 	
+	$(".popup-trig").on("click", function(e)
+	{
+
+	})
 	
 
 	$("#main_grid").on("mouseover", ".chart-style", function()

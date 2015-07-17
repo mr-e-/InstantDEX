@@ -372,6 +372,10 @@ var IDEX = (function(IDEX, $, undefined)
 		return Number(strAll)
 	}
 
+	IDEX.capitalizeFirstLetter = function(string) 
+	{
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
 	
 	return IDEX;
 	

@@ -19,11 +19,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
-	$(".grid-trig").each(function()
+	$(".mainHeader-grid-ico-wrap").each(function()
 	{
 		var gridType = $(this).attr("data-grid");
 		$(this).tooltipster({
-			content:gridType,
+			content:IDEX.capitalizeFirstLetter(gridType),
 			arrow:false,
 			offsetY:-15
 		})
@@ -556,7 +556,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var $template = $(".grid-trig-template[data-grid='"+gridType+"']").html();
 		var $grid = $($("#grid_template").html())
 		var $tile = $($("#tile_template").html())
-		$tile.find(".tile-header-title").text(gridType)
+		$tile.find(".tile-header-title").text(IDEX.capitalizeFirstLetter(gridType))
 		$tile.find(".tile-content").append($template);
 		$grid.append($tile);
 		$grid.attr("data-grid", gridType);
