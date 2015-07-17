@@ -87,6 +87,8 @@ var IDEX = (function(IDEX, $, undefined)
 	$("#main_grid").on("click", ".orderbook-search-popup-trig", function()
 	{
 		var $orderbook = $(this).closest(".orderbook-wrap")
+		var $banner = $popup.find(".banner");
+		$banner.removeClass("active");
 
 		var isActive = $popup.hasClass("active");
 		
@@ -100,8 +102,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$popup.removeClass("active")
 		}
-		
-		
 	})
 	
 	
@@ -122,22 +122,20 @@ var IDEX = (function(IDEX, $, undefined)
 		$banner.removeClass("success")
 		$banner.addClass("active");
 		
-		console.log([baseid, relid])
+		//console.log([baseid, relid])
 
 		if (baseid != "-1" && relid != "-1")
 		{
 			var base = IDEX.user.getAssetInfo("assetID", baseid);	
 			var rel = IDEX.user.getAssetInfo("assetID", relid);
-			
-			console.log(base);
-			console.log(rel);
 
 			//var orderbook = new IDEX.Orderbook();
 			IDEX.newOrderbook(base, rel, $orderbook);
 		
-			$banner.addClass("success")
-			$banner.find("span").text("Success: " + base.name + "_" + rel.name + " added to favorite markets.")
+			//$banner.addClass("success")
+			//$banner.find("span").text("Success: " + base.name + "_" + rel.name + " added to favorite markets.")
 			clearAssetInput($wrap);
+			$popup.find(".popup-header-close").trigger("click");
 		}
 		else
 		{

@@ -4,7 +4,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
+	<!--<link href='http://fonts.googleapis.com/css?family=Roboto:400,700,500' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500' rel='stylesheet' type='text/css'>-->
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/jquery.growl.css" />
 	<link rel="stylesheet" type="text/css" href="css/perfect-scrollbar/perfect-scrollbar.css" />
@@ -156,14 +162,13 @@
 									<img class="popup-header-close vert-align" src="img/close.png"></img>
 								</div>
 							</div>
-							
 						</div>
 						
 						<div class="banner">
-							<span class="vert-align"></span>
+							<span></span>
 						</div>
 						
-						<div class="orderbookSearch-popup-content">
+						<div class="popup-content orderbookSearch-popup-content">
 						
 							<div class="orderbookSearch-popup-inputArea">
 								<form role="form" class="orderbookSearch-popup-form" autocomplete="off">
@@ -193,13 +198,13 @@
 								</form>
 							</div>
 							
-							<div class="orderbookSearch-popup-buttonArea">
+							<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
 								<div class="nbutton-text-wrap">
-									<div class="nbutton-text-outer vert-align">
+									<div class="nbutton-text-outer">
 										<div class="nbutton-text orderbookSearch-search-trig">
 											<div class="nbutton-text-inner">
 												<div class="nbutton-text-title">
-													<span class="vert-align">Search</span>
+													<span class="vert-align">Open orderbook</span>
 												</div>
 											</div>
 										</div>
@@ -212,9 +217,12 @@
 					</div>
 					
 					
-					<div id="marketSearch_popup" class="popup">
+					<div id="marketSearch_popup" class="popup marketSearchPopup">
 					
-						<div class="marketSearch-popup-header">
+						<div class="popup-header">
+							<div class="popup-header-title">
+								<span class="vert-align">Market search</span>
+							</div>
 							<div class="popup-header-icons">
 								<div class="popup-header-ico">
 									<img class="popup-header-close vert-align" src="img/close.png"></img>
@@ -222,18 +230,18 @@
 							</div>
 						</div>
 						
-						<div class="marketSearch-popup-content">
+						<div class="banner">
+							<span></span>
+						</div>
 						
-							<div class="banner">
-								<span class="vert-align"></span>
-							</div>
-							
+						<div class="popup-content marketSearch-popup-content">
+					
 							<div class="marketSearch-popup-inputArea">
 								<form role="form" class="marketSearch-popup-form" autocomplete="off">
 
 									<div class="form-row">
 										<div class="form-label">
-											<span>BASE</span>
+											<span>Base</span>
 										</div>
 										<div class="form-input-outer">
 											<div class="form-input">
@@ -244,7 +252,7 @@
 
 									<div class="form-row">
 										<div class="form-label">
-											<span>QUOTE</span>
+											<span>Quote</span>
 										</div>
 										<div class="form-input-outer">
 											<div class="form-input">
@@ -256,15 +264,13 @@
 								</form>
 							</div>
 							
-							<div class="marketSearch-popup-buttonArea">
-								<div>
-									<div class="nbutton-text-wrap">
-										<div class="nbutton-text-outer vert-align">
-											<div class="nbutton-text marketSearch-add-trig">
-												<div class="nbutton-text-inner">
-													<div class="nbutton-text-title">
-														<span class="vert-align">ADD</span>
-													</div>
+							<div class="popup-buttonArea marketSearch-popup-buttonArea">
+								<div class="nbutton-text-wrap">
+									<div class="nbutton-text-outer">
+										<div class="nbutton-text marketSearch-add-trig">
+											<div class="nbutton-text-inner">
+												<div class="nbutton-text-title">
+													<span class="vert-align">Add</span>
 												</div>
 											</div>
 										</div>

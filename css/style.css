@@ -31,7 +31,7 @@ html {
 
 body {
 	font-size: .7rem;
-    font-family: 'Roboto', Fallback, sans-serif;
+    font-family: 'Roboto', sans-serif;
 	color: #bbbbbb;
 	-webkit-font-smoothing: antialiased;
 	background-color: black;
@@ -1504,6 +1504,7 @@ table.dataTable thead th:last-child {
 	width:100%;
 	position:relative;
 	display:block;
+	overflow:hidden;
 }
 
 .orderbook-search-wrap .nSearch-input input:focus {
@@ -1737,6 +1738,7 @@ table.dataTable thead th:last-child {
 	width:50%;
 	position:relative;
 	float:left;
+	overflow:hidden;
 }
 
 .orderbox-wrap-buy {
@@ -1865,6 +1867,12 @@ table.dataTable thead th:last-child {
 	text-align:right;
 	padding-right:3px;
 	font-size:11px;
+}
+
+.order-form-input input:focus {
+	outline:none;
+	border:1px solid #329ddc !important;
+	background-color:#111111;
 }
 
 .order-form-refcur {
@@ -2015,6 +2023,9 @@ table.dataTable thead th:last-child {
 	background:black;
 }
 
+.watchlist-table-wrap tr:nth-child(even) {
+	background-color:#111111;
+}
 .nTable {
 	width:100%;
 	border-collapse: collapse;
@@ -2030,6 +2041,8 @@ table.dataTable thead th:last-child {
 .nTable td {
 	text-align:left;
 	font-size:11px;
+	padding-top:3px;
+	padding-bottom:3px;
 }
 
 .nTable thead {
@@ -2162,26 +2175,21 @@ table.dataTable thead th:last-child {
 	background:black;
 }
 
+/* ------------------------- SEARCH POPUP ------------------------- */
 
-/* ------------------------- MARKET SEARCH POPUP ------------------------- */
 
-
-#marketSearch_popup {
-	height:375px;
-	width:325px;
-	position:fixed;
+.popup {
 	display:none;
+	position:fixed;
 	background-color:#333333;
-	border:1px solid #329ddc;
 	border-radius:4px;
 	z-index:2000;
-	
 	left:50%;
 	top:50%;
 	transform:translateX(-50%) translateY(-50%);
 }
 
-#marketSearch_popup.active{
+.popup.active {
 	display:block;
 }
 
@@ -2192,6 +2200,15 @@ table.dataTable thead th:last-child {
 	display:block;
 	background-color:#444444;
 	border-bottom:1px solid black;
+}
+
+.popup-header-title {
+	height:100%;
+	position:relative;
+	float:left;
+	padding-left:5px;
+	font-size:11.5px;
+	color:#bbbbbb;
 }
 
 .popup-header-icons {
@@ -2212,27 +2229,25 @@ table.dataTable thead th:last-child {
 	width:9px;
 }
 
-.popup-close:hover {
+.popup-header-close:hover {
 	cursor:pointer;
 }
 
-
-.marketSearch-popup-content {
-	height:calc(100% - 20px);
+.popup-content {
 	width:100%;
 	position:relative;
 	display:block;
 }
 
 .banner {
-	height:18px;
+	min-height:18px;
 	width:100%;
 	position:relative;
 	display:none;
 	padding-left:10px;
 	padding-right:10px;
 	text-align:center;
-	font-size:11.6px;
+	font-size:11.5px;
 	color:#bbbbbb;
 	margin-top:4px;
 	border-top:1px solid black;
@@ -2244,19 +2259,12 @@ table.dataTable thead th:last-child {
 }
 
 .banner.success {
+	color:black;
 	background:rgba(124, 181, 236, 0.7);
 }
 
 .banner.error {
 	background:rgba(156, 5, 5, 0.7);
-}
-
-.marketSearch-popup-inputArea {
-	height:calc(100% - 50px);
-	width:100%;
-	position:relative;
-	display:block;
-	padding-top:10px;
 }
 
 .form-row {
@@ -2277,6 +2285,7 @@ table.dataTable thead th:last-child {
 .form-input-outer {
 	position:relative;
 	display:block;
+	border-bottom:1px solid #444444;
 }
 
 .form-input {
@@ -2291,7 +2300,7 @@ table.dataTable thead th:last-child {
 	width:100%;
 	position:relative;
 	padding-left:6px;
-	background-color:#222222;
+	background-color:#151515;
 	
 	border:1px solid black;
 	border-radius:2px;
@@ -2309,75 +2318,36 @@ table.dataTable thead th:last-child {
 	background-color:#111111;
 }
 
-
-/* ------------------------- ORDERBOOK SEARCH POPUP ------------------------- */
-
-
-#orderbookSearch_popup {
-	width:325px;
-	position:fixed;
-	display:none;
-	background-color:#333333;
-	border:1px solid #329ddc;
-	border-radius:4px;
-	z-index:2000;
-	left:50%;
-	top:50%;
-	transform:translateX(-50%) translateY(-50%);
-}
-
-#orderbookSearch_popup.active{
-	display:block;
-}
-
-.popup-header-title {
-	height:100%;
-	position:relative;
-	float:left;
-	padding-left:5px;
-	font-size:11.5px;
-	color:#bbbbbb;
-}
-
-.orderbookSearch-popup-content {
+.popup-buttonArea {
 	width:100%;
 	position:relative;
 	display:block;
+	padding-top:8px;
+	padding-bottom:8px;
+	overflow:hidden;
+	background-color:#222222;
 	padding-left:12px;
 	padding-right:12px;
+	border-top:1px solid #666666;
 }
 
-.orderbookSearch-popup-inputArea {
-	position:relative;
-	display:block;
-	padding-top:10px;
-}
-
-.orderbookSearch-popup-buttonArea {
-	width:100%;
-	position:relative;
-	display:block;
-	padding-top:15px;
-}
-
-
-
-.orderbookSearchPopup .nbutton-text-wrap {
-	height:100%;
+.popup-buttonArea .nbutton-text-wrap {
+	height:initial;
 	position:relative;
 	float:right;
+	background-color:#444444;
 }
 
-.orderbookSearchPopup .nbutton-text-outer {
+.popup-buttonArea .nbutton-text-outer {
 	height:20px;
 	width:initial;
 	position:relative;
 	display:block;
-	border-bottom:1px solid #444444;
+	border-bottom:1px solid #555555;
 	z-index:101;
 }
 
-.orderbookSearchPopup .nbutton-text {
+.popup-buttonArea .nbutton-text {
 	height:100%;
 	position:relative;
 	display:block;
@@ -2387,16 +2357,48 @@ table.dataTable thead th:last-child {
 	padding-right:4px;
 }
 
-.orderbookSearchPopup .nbutton-text-inner {
+.popup-buttonArea .nbutton-text-inner {
 	height:100%;
 	position:relative;
 	display:block;
 	padding:5px;
-	padding-left:12px;
-	padding-right:12px;
-	border-top:1px solid #444444;
+	padding-left:14px;
+	padding-right:14px;
+	border-top:1px solid #666666;
 }
 
+
+/* ------------------------- MARKET SEARCH POPUP ------------------------- */
+
+#marketSearch_popup {
+	width:375px;
+}
+
+.marketSearch-popup-inputArea {
+	position:relative;
+	display:block;
+	padding-top:10px;
+	padding-left:22px;
+	padding-right:22px;
+	padding-bottom:5px;
+}
+
+
+/* ------------------------- ORDERBOOK SEARCH POPUP ------------------------- */
+
+
+#orderbookSearch_popup {
+	width:375px;
+}
+
+.orderbookSearch-popup-inputArea {
+	position:relative;
+	display:block;
+	padding-top:10px;
+	padding-left:22px;
+	padding-right:22px;
+	padding-bottom:5px;
+}
 
 
 
