@@ -1,34 +1,24 @@
 
 
 var IDEX = (function(IDEX, $, undefined) 
-{	
-
-	$("#main_grid").on("click", ".tile-header-tab", function()
+{
+	
+	
+	$(".popup-header-close").on("click", function()
 	{
-		var $tabHeader = $(this)
-		var tab = $tabHeader.attr("data-tab");
-		var $wrap = $tabHeader.closest(".tile");
-		var $tabContent = $wrap.find(".tile-content[data-tab='"+tab+"']")
-		
-		$wrap.find(".tile-header-tab").removeClass("active");
-		$wrap.find(".tile-content").addClass("tab-hidden");
-		
-		$tabHeader.addClass("active");
-		$tabContent.removeClass("tab-hidden");
+		var $popup = $(this).closest(".popup");
+		$popup.removeClass("active");
 	})
 	
-
-	$(".grid-trig").each(function()
+	
+	$("#topLogoWrap").on("click", function()
 	{
-		var gridType = $(this).attr("data-grid");
-		$(this).tooltipster({
-			content:gridType,
-			arrow:false,
-			offsetY:-15
-		})
+		window.location.reload()
 	})
 
 	
+	
+
 	$("#main_grid").on("mouseover", ".chart-style", function()
 	{
 		$(this).find(".dropdown-wrap").addClass("active");
@@ -46,14 +36,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var $wrap = $(this).closest(".chart-time-wrap");
 		$wrap.find(".chart-time-dropdown-wrap").addClass("active");
-		//$wrap.find(".chart-time-dropdown").addClass("active");
 	})
 	
 	$("#main_grid").on("mouseleave", ".chart-time-button-outer", function()
 	{
 		var $wrap = $(this).closest(".chart-time-wrap");
 		$wrap.find(".chart-time-dropdown-wrap").removeClass("active");
-		//$wrap.find(".chart-time-dropdown").addClass("active");
 	})
 	
 	$("#main_grid").on("click", ".chart-time-dropdown-wrap li", function()
@@ -84,27 +72,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	})
 	
-	
-	
-	
-	$(".popup-header-close").on("click", function()
-	{
-		var $popup = $(this).closest(".popup");
-		$popup.removeClass("active");
-	})
-	
-	
-	
-	
-	
-	$("#topLogoWrap").on("click", function()
-	{
-		window.location.reload()
-	})
 
-	
-	
-	
 	
 	
 	return IDEX;

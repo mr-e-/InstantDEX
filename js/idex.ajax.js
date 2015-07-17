@@ -48,7 +48,8 @@ var IDEX = (function(IDEX, $, undefined)
 		q.push(obj)
 		
 		//var index = q.length - 1;
-		console.log(params)
+		//console.log(params)
+		
 		setTimeout(function()
 		{
 			var xhr = $.ajax(ajaxSettings);

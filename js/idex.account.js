@@ -40,7 +40,6 @@ var IDEX = (function(IDEX, $, undefined)
 				nxtIDAndRS.push(rs);
 			}
 
-			$(".nxtrs").text(nxtIDAndRS[1])
 			account.setNXTRS(nxtIDAndRS);
 			
 			dfd.resolve([account.nxtID, account.nxtRS])

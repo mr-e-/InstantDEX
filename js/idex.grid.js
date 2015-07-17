@@ -18,6 +18,34 @@ var IDEX = (function(IDEX, $, undefined)
 	var counter = 0;
 
 	
+	
+	$(".grid-trig").each(function()
+	{
+		var gridType = $(this).attr("data-grid");
+		$(this).tooltipster({
+			content:gridType,
+			arrow:false,
+			offsetY:-15
+		})
+	})
+	
+	
+	$("#main_grid").on("click", ".tile-header-tab", function()
+	{
+		var $tabHeader = $(this)
+		var tab = $tabHeader.attr("data-tab");
+		var $wrap = $tabHeader.closest(".tile");
+		var $tabContent = $wrap.find(".tile-content[data-tab='"+tab+"']")
+		
+		$wrap.find(".tile-header-tab").removeClass("active");
+		$wrap.find(".tile-content").addClass("tab-hidden");
+		
+		$tabHeader.addClass("active");
+		$tabContent.removeClass("tab-hidden");
+	})
+	
+	
+	
 	function removeResizeClass()
 	{
 		$contentWrap.removeClass("tileResizeW tileResizeN tileResizeE tileResizeS")

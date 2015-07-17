@@ -83,6 +83,19 @@ var IDEX = (function(IDEX, $, undefined)
 			callback();
 	}
 	
+	
+	/*IDEX.unloadMarket = function()
+	{
+		IDEX.user.clearPair();
+		IDEX.clearOrderBox();
+		
+		var $pairdom = $(".curr-pair")
+		var market = "No market loaded"
+		$pairdom.find("span").empty().text(market)
+	}*/
+	
+	
+	
 	IDEX.removeOrderbook = function($orderbook)
 	{
 		var orderbook = false;

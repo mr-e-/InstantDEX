@@ -4,11 +4,6 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	IDEX.account;
 	IDEX.user;
-	IDEX.chart;
-
-	IDEX.isSNRunning = false;
-	IDEX.chartInit = false;
-	IDEX.isOrderbookExpanded = false;
 
 	IDEX.snPostParams = 
 	{
@@ -149,7 +144,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
-		IDEX.chart = new IDEX.Chart();
 		
 		//IDEX.initScrollbar();
 		//IDEX.initDataTable();
@@ -166,8 +160,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 		
 		IDEX.pingSupernet().done(function()
-		{
-			
+		{	
 			IDEX.initTimer().done(function()
 			{
 				timeoutFinished.resolve();
@@ -194,8 +187,6 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			$.when(timeoutFinished, initializedAssets, updatedNXT).done(function()
 			{
-				//var lastMarket = IDEX.user.getLastMarket()
-
 				IDEX.hideLoading();
 			})
 			

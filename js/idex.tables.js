@@ -258,11 +258,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).parent().removeClass("cancel-hover")
 	})
 	
-
-	$("#allOrderbooksTable tbody").on("click", "tr", function()
-	{
-		IDEX.changeMarket($(this).attr("data-baseid"), $(this).attr("data-relid"));
-	})
 	
 
 	return IDEX;

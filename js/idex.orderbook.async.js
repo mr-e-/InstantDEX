@@ -25,7 +25,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				thisScope.orderbookPost().done(function(orderbookData)
 				{
-					IDEX.updateUserState();
+					//IDEX.updateUserState();
 
 					thisScope.counter = false;
 					thisScope.clearUpdatedTimeout()
