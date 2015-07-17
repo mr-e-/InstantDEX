@@ -306,7 +306,6 @@ input:focused {
 
 /* ------------------------- BUTTON-TEXT ------------------------- */
 
-
 .nbutton-text-wrap {
 	height:100%;
 	position:relative;
@@ -355,6 +354,86 @@ input:focused {
 	display:block;
 	text-align:middle;
 }
+
+/* ------------------------- BUTTON-SEARCH ------------------------- */
+
+.nSearch-wrap {
+	height:100%;
+	width:200px;
+	position:relative;
+	float:left;
+}
+
+.nSearch-input {
+	height:20px;
+	width:calc(100%);
+	position:relative;
+	float:left;
+	border-bottom:1px solid #444444;
+}
+
+.nSearch-input:hover {
+	background-color:#151515;
+}
+
+.nSearch-input-img {
+	height:100%;
+	width:25px;
+	position:relative;
+	float:left;
+	text-align:center;
+	border:1px solid black;
+	border-left:none;
+	border-radius:4px;
+	border-top-left-radius:0px;
+	border-bottom-left-radius:0px;
+}
+
+.nSearch-input-img-inner {
+	height:100%;
+	width:100%;
+	position:relative;
+	border-top:1px solid #444444;
+	background-color:#333333;
+}
+
+.nSearch-input-img img {
+	height:8px;
+	width:8px;
+	left:50%;
+	transform:translateX(-50%) translateY(-50%);
+}
+
+.nSearch-input-img-inner:hover {
+	border-top:1px solid #555555;
+	background-color:#444444;
+}
+
+.nSearch-input input {
+	width:calc(100% - 25px);
+	height:100%;
+	position:relative;
+	float:left;
+	font-size: 12px;
+	padding-left:6px;
+	background-color:#222222;
+	border:1px solid black;
+	border-radius:2px;
+	border-top-right-radius:0px;
+	border-bottom-right-radius:0px;
+	outline:none;
+}
+
+.nSearch-input input:focus {
+	outline:none;
+	border:1px solid #329ddc !important;
+	background-color:#111111;
+}
+
+.nSearch-input input:hover {
+	background-color:#151515;
+}
+
 
 /* ------------------------- TABS ------------------------- */
 
@@ -1427,24 +1506,31 @@ table.dataTable thead th:last-child {
 	display:block;
 }
 
-.orderbook-title-wrap {
-	height:100%;
-	position:absolute;
-	left:50%;
-	transform:translateX(-50%);
+.orderbook-search-wrap .nSearch-input input:focus {
+	outline:none;
+	border:1px solid #329ddc !important;
+	background-color:#111111;
 }
 
-.orderbook-title {
-	height:100%;
-	font-size:13px;
+.orderbook-search-wrap .nSearch-input input:hover {
+	background-color:#222222;
+}
+
+
+.orderbook-search-wrap .nSearch-input-img-inner:hover {
+	border-top:1px solid #555555;
+	background-color:#444444;
+	cursor:pointer;
 }
 
 .orderbook-label-dropdown {
 	float:left;
+	padding-left:10px;
 }
 
 .orderbook-exchange-dropdown {
 	float:left;
+	padding-left:10px;
 }
 
 .orderbook-header-status {
