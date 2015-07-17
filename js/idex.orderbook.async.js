@@ -128,7 +128,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		orderbook.lastUpdatedCounter().done(function()
 		{
-			var $el = orderbook.orderbookDom.find(".orderbook-last-updated");
+			var $el = orderbook.orderbookDom.find(".orderbook-lastUpdated");
 			
 			if (orderbook.counter)
 			{

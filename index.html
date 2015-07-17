@@ -461,7 +461,7 @@
 			<div id="orderbook_template" class="template grid-trig-template" data-grid="orderbook">
 			
 				<div class="orderbook-wrap">
-					<div class="cm-orderbook-header">
+					<div class="orderbook-header">
 					
 						
 						<!--
@@ -476,6 +476,13 @@
 							</div>
 						</div>-->
 						
+						
+						<div class="orderbook-title-wrap">
+							<div class="orderbook-title">
+								<span class="vert-align">No market loaded</span>
+							</div>
+						</div>
+						
 						<div class="nbutton-icon-wrap orderbook-search-popup-trig">
 							<div class="nbutton-icon-outer vert-align">
 								<div class="nbutton-icon">
@@ -487,46 +494,74 @@
 								</div>
 							</div>
 						</div>
+					
 						
-						<div class="orderbook-title-wrap">
-							<div class="orderbook-title">
-								<span class="vert-align">No market loaded</span>
+						<div class="dropdown-list-wrap orderbook-label-dropdown">
+							<div class="dropdown-outer vert-align">
+								<div class="dropdown">
+									<div class="dropdown-inner">
+										<div class="dropdown-title">
+											<span class="vert-align orderbook-exchange-dropdown-title">Label 1</span>
+										</div>
+										<div class="dropdown-img">
+											<img src="img/tridownwhite.png" class="vert-align"></img>
+										</div>
+									</div>
+								</div>
+								
+								<div class="dropdown-list">
+									<ul class="active">
+										<li class="active" data-val="label1">Label 1</li>
+										<li data-val="label2">Label 2</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 						
 						
-						
-						<div class="cm-orderbook-header-icons-wrap">
-							<div class="cm-orderbook-header-icons vert-align unselectable">
-								<div class="cm-orderbook-header-ico cm-orderbook-header-icons-label cm-orderbook-label-trig">
-									<img class="cm-orderbook-header-icons-label-img vert-align" src="img/paint1.png"></img>
+						<div class="dropdown-list-wrap orderbook-exchange-dropdown">
+							<div class="dropdown-outer vert-align">
+								<div class="dropdown">
+									<div class="dropdown-inner">
+										<div class="dropdown-title">
+											<span class="vert-align orderbook-exchange-dropdown-title">InstantDEX</span>
+										</div>
+										<div class="dropdown-img">
+											<img src="img/tridownwhite.png" class="vert-align"></img>
+										</div>
+									</div>
 								</div>
-								<div class="cm-orderbook-header-ico cm-orderbook-header-icons-filter">
-									<img class="cm-orderbook-header-icons-filter-img vert-align" src="img/filter.png"></img>
+								
+								<div class="dropdown-list">
+									<ul class="active">
+										<li class="active" data-val="InstantDEX">InstantDEX</li>
+										<li data-val="nxtae">nxtae</li>
+									</ul>
 								</div>
 							</div>
 						</div>
 						
-						<div class="cm-orderbook-header-status">
-							<span class="vert-align"><span>Last updated: </span><span class="orderbook-last-updated">0s</span></span>
+						
+						<div class="orderbook-header-status">
+							<span class="vert-align"><span>Last updated: </span><span class="orderbook-lastUpdated">0s</span></span>
 						</div>
 					</div>
 					
 					
-					<!--<div class="cm-orderbook-summary">
+					<!--<div class="orderbook-summary">
 					
 					</div>-->
 					
-					<div class="cm-orderbook-body">
+					<div class="orderbook-body">
 					
-						<div class="cm-orderbook cm-buybook orderbookMin">
+						<div class="orderbook buybook">
 							
-							<div class="cm-orderbook-labels">
-								<div class="labels-row">
-									<span class="labels-col refcur-rel">Total</span>
-									<span class="labels-col refcur-base">Volume</span>
-									<span class="labels-col">Price</span>
-									<span class="labels-col labels-col-extra">Sum</span>
+							<div class="orderbook-bookLabels">
+								<div class="orderbook-bookLabels-row">
+									<span class="orderbook-bookLabels-col refcur-rel">Total</span>
+									<span class="orderbook-bookLabels-col refcur-base">Volume</span>
+									<span class="orderbook-bookLabels-col">Price</span>
+									<span class="orderbook-bookLabels-col orderbook-bookLabels-col-extra">Sum</span>
 								</div>
 							</div>
 									
@@ -540,14 +575,14 @@
 						</div>
 						
 						
-						<div class="cm-orderbook cm-sellbook orderbookMin">
+						<div class="orderbook sellbook">
 							
-							<div class="cm-orderbook-labels">
-								<div class="labels-row">
-									<span class="labels-col">Price</span>
-									<span class="labels-col refcur-base">Volume</span>
-									<span class="labels-col refcur-rel">Total</span>
-									<span class="labels-col labels-col-extra">Sum</span>
+							<div class="orderbook-bookLabels">
+								<div class="orderbook-bookLabels-row">
+									<span class="orderbook-bookLabels-col">Price</span>
+									<span class="orderbook-bookLabels-col refcur-base">Volume</span>
+									<span class="orderbook-bookLabels-col refcur-rel">Total</span>
+									<span class="orderbook-bookLabels-col orderbook-bookLabels-col-extra">Sum</span>
 								</div>
 							</div>
 									
