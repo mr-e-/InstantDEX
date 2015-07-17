@@ -49,6 +49,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise()
 	}
 	
+	
 	IDEX.Account.prototype.updateOpenOrders = function(forceUpdate)
 	{
 		var dfd = new $.Deferred();

@@ -25,14 +25,9 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	$('.skynet-search').autocomplete(
+	$('.skynet-search').each(function(index, element)
 	{
-		delay:0,
-		html:true,
-		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"450px","margin-top":"14px"})},
-		source: function(request,response) { skynetMatcher(request, response, autoSearchSkynet) },
-		//change: function(e, ui) { skynetSelection($(this), e, ui) },
-		select: function(e, ui) { skynetSelection($(this), e, ui) }
+		IDEX.initSkyNETAuto($(element));
 	});
 	
 	
@@ -50,7 +45,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	$('.auto-label-exchange').autocomplete(
+	$('.exchange-search').autocomplete(
 	{
 		delay:0,
 		source: function(request,response) { labelExchangeMatcher(request, response, autoSearchOrderbookExchange) },
@@ -58,17 +53,6 @@ var IDEX = (function(IDEX, $, undefined)
 		select: function(e, ui) { labelExchangeSelection($(this), e, ui) }
 	});
 
-	
-	$('.assets-fav input').autocomplete(
-	{
-		delay: 0,
-		html: true,
-		create: function(e, ui) { },
-		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"180px"})},
-		source: function(request,response) { autocompleteMatcher(request, response, autoSearchName) },
-		change: function(e, ui) { autocompleteSelection($(this), e, ui) },
-		select: function(e, ui) { autocompleteSelection($(this), e, ui) }
-	});
 
 	$('.asset-search').autocomplete(
 	{
@@ -80,6 +64,7 @@ var IDEX = (function(IDEX, $, undefined)
 		change: function(e, ui) { autocompleteSelection($(this), e, ui) },
 		select: function(e, ui) { autocompleteSelection($(this), e, ui) }
 	});
+	
 	
 	function labelExchangeMatcher(request, response, auto)
 	{

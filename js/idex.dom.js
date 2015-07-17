@@ -25,12 +25,9 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$loadingText.text(text);
 	}
-	
-	
-	
-	
 
-	
+
+
 	IDEX.makeSVG = function()
 	{
 		//var $svg = $("<svg></svg>")

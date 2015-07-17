@@ -1321,12 +1321,20 @@ table.dataTable thead th:last-child {
 }
 
 .bookname {
-	height:calc(100% - 25px);
+	height:calc(100% - 20px);
 	width:100%;
 	display:block;
 	position:relative;
 	background:black;
 	overflow:hidden;
+}
+
+.bookname-buybook {
+	border-right:1px solid #333333;
+}
+
+.bookname-sellbook {
+	border-left:1px solid #111111;
 }
 
 .bookname-sellbook > .twrap, .bookname-buybook  > .twrap {

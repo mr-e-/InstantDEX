@@ -9,26 +9,23 @@ var IDEX = (function(IDEX, $, undefined)
 	var lastTime = new Date().getTime()
 	var q = []
 
+	
+	
 	IDEX.sendPost = function(params, isNXT, callback) 
 	{
-		var time = new Date().getTime()
-		
-		var waitTime = 0;
-		
-		if (time - lastTime < 300)
-		{
-			waitTime = 300 + (q.length * 300)
-		}
-		
-		lastTime = time
-				
 		var dfd = new $.Deferred();
 		var url = isNXT ? nxtURL : snURL;
+
+		var time = new Date().getTime()
+		lastTime = time
+		var waitTime = 0;
+
+		if (time - lastTime < 300)
+			waitTime = 300 + (q.length * 300)
+						
 		
 		if (!isNXT)
-		{
 			params['plugin'] = "InstantDEX";
-		}
 		
 		var ajaxSettings = 
 		{
@@ -73,9 +70,7 @@ var IDEX = (function(IDEX, $, undefined)
 				//$.growl.error({'message':message, 'location':"tl"});
 
 				if (data.statusText == "abort")
-				{
 					//data = "abort";
-				}
 				
 				dfd.reject(data);
 				
