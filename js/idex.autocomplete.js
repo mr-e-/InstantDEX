@@ -22,8 +22,8 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var asset = assets[i];
 			var vals = {}
-			vals.name = assets[i].name;
-			vals.assetID = assets[i].assetID
+			vals.name = asset.name;
+			vals.assetID = asset.assetID
 			
 			autoSearchName.push({"label":asset.name+" <span>("+asset.assetID+")</span>", "value":asset.name, "vals":vals});
 		}
@@ -49,9 +49,9 @@ var IDEX = (function(IDEX, $, undefined)
 		var a = $.grep(auto, function( item )
 		{
 			var assetID = item.vals.assetID;
-			var assetname = item.vals.name;
+			var assetName = item.vals.name;
 
-			return (matcher.test(assetID) || matcher.test(assetname));
+			return (matcher.test(assetID) || matcher.test(assetName));
 		});
 
 		response(a);
@@ -65,9 +65,9 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var assetid = ui.item.vals.assetid;
+			var assetID = ui.item.vals.assetID;
 			
-			$thisScope.attr('data-asset', assetid);
+			$thisScope.attr('data-asset', assetID);
 		}
 	}
 	

@@ -82,7 +82,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$wrap.find(".chart-time-button-title span").text(title);
 
-		console.log(val)
 	})
 	
 	
