@@ -3,9 +3,9 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-		var market = JSON.parse(localStorage.getItem('lastMarket'));
+		//var market = JSON.parse(localStorage.getItem('lastMarket'));
 
-		localStorage.setItem('lastMarket', JSON.stringify(lastMarket));
+		//localStorage.setItem('lastMarket', JSON.stringify(lastMarket));
 
 	
 	

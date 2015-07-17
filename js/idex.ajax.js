@@ -24,6 +24,8 @@ var IDEX = (function(IDEX, $, undefined)
 			waitTime = 300 + (q.length * 300)
 						
 		
+		//params = isNXT ? params : JSON.
+		
 		if (!isNXT)
 			params['plugin'] = "InstantDEX";
 		
@@ -46,7 +48,7 @@ var IDEX = (function(IDEX, $, undefined)
 		q.push(obj)
 		
 		//var index = q.length - 1;
-		
+		console.log(params)
 		setTimeout(function()
 		{
 			var xhr = $.ajax(ajaxSettings);
@@ -70,7 +72,9 @@ var IDEX = (function(IDEX, $, undefined)
 				//$.growl.error({'message':message, 'location':"tl"});
 
 				if (data.statusText == "abort")
+				{
 					//data = "abort";
+				}
 				
 				dfd.reject(data);
 				
