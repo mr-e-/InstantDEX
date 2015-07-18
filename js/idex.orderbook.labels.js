@@ -46,13 +46,13 @@ var IDEX = (function(IDEX, $, undefined)
 		
 	
 	
-	$(".grid-trig-labels, .cm-orderbook-label-popup-close").on("click", function()
+	$(".grid-trig-labels").on("click", function()
 	{
 		var flipClassName = "active"
 
 		IDEX.flipClass($labelPopup, flipClassName)
 		
-		$(".order-row").removeClass("label-temp")
+		//$(".order-row").removeClass("label-temp")
 		$banner.removeClass("active")
 	})
 	
@@ -158,8 +158,12 @@ var IDEX = (function(IDEX, $, undefined)
 
 			var name = "Label-"+String(num)
 			var newRow = IDEX.buildLabelRow(name)
-			
+						
 			$table.append($(newRow))
+			
+			var li = "<li data-val='"+name+"'>"+name+"</li>"
+			$(".orderbook-label-dropdown ul").append($(li))
+			
 			var newLabel = new IDEX.OrderbookLabel({"name":name});
 			IDEX.user.labels.push(newLabel)
 			
@@ -186,7 +190,7 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			IDEX.makeLabelStyle(label)
 			initStyle(label)
-			IDEX.loadVis()
+			IDEX.loadAllVis()
 			editBanner("success", label.name + " saved")
 			localStorage.setItem('orderbookLabels', JSON.stringify(IDEX.user.labels));			
 		}
@@ -208,18 +212,33 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			var index = IDEX.user.labels.indexOf(label)
 
-			unloadLabel();
-
 			IDEX.user.labels.splice(index, 1)
-			localStorage.setItem('orderbookLabels', JSON.stringify(IDEX.user.labels));
 			
 			var $table = $(".orderbook-label-popup-table")
 			var $row = $(".orderbook-label-popup-all-row.active")
 			$row.remove();
 			
 
+			$(".orderbook-label-dropdown ul li[data-val='"+label.name+"']").remove();
+
+						
+			for (var i = 0; i < IDEX.allOrderbooks.length; i++)
+			{
+				var orderbook = IDEX.allOrderbook[i];
+				var orderbookLabel = IDEX.searchListOfObjects(orderbook.labels, "name", label.name)
+				
+				if (orderbookLabel)
+				{
+					orderbook.labels.splice(orderbookLabel.index, 1);
+				}
+			}
 			
-			IDEX.loadVis()
+			
+			unloadLabel();
+			
+			IDEX.loadAllVis()
+			
+			localStorage.setItem('orderbookLabels', JSON.stringify(IDEX.user.labels));
 			
 			editBanner("success", label.name + " deleted")
 		}
@@ -315,6 +334,21 @@ var IDEX = (function(IDEX, $, undefined)
 
 		colorBook($sellBook, vis);
 		colorBook($buyBook, vis);
+	}
+	
+	IDEX.loadAllVis = function()
+	{	
+		for (var i = 0; i < IDEX.allOrderbooks.length; i++)
+		{
+			var orderbook = IDEX.allOrderbooks[i];
+			var vis = orderbook.labels
+			
+			var $buyBook = orderbook.buyBookDom
+			var $sellBook = orderbook.sellBookDom
+
+			colorBook($sellBook, vis);
+			colorBook($buyBook, vis);
+		}
 	}
 	
 	
