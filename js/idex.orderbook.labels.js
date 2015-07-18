@@ -317,8 +317,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var vis = IDEX.getItemsByProp(IDEX.user.labels, "isVisible", false)
 		var visMap = IDEX.getVisibleMap(vis)
-		var $sellBook = $("#sellBook");
-		var $buyBook = $("#buyBook");
+		var $sellBook = $(".sellbook");
+		var $buyBook = $(".buybook");
 
 		colorBook($sellBook, vis);
 		colorBook($buyBook, vis);
