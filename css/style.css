@@ -2002,7 +2002,7 @@ table.dataTable thead th:last-child {
     margin-bottom: 15px;
 }
 
-/* ------------------------- WATCHLIST WRAP ------------------------- */
+/* ------------------------- WATCHLIST ------------------------- */
 
 .watchlist-wrap {
 	height:100%;
@@ -2060,7 +2060,7 @@ table.dataTable thead th:last-child {
 	background: rgba(50, 157, 220, 0.4);
 	cursor:pointer;
 }
-/* ------------------------- CURRENT MARKET INFO OPENORDERS ------------------------- */
+/* -------------------------  OPEN ORDERS ------------------------- */
 
 
 .cm-open-orders-wrap {
@@ -2118,7 +2118,7 @@ table.dataTable thead th:last-child {
 }
 
 
-/* ------------------------- CURRENT MARKET INFO TRADE HISTORY ------------------------- */
+/* ------------------------- TRADE HISTORY ------------------------- */
 
 
 .cm-trades-wrap {
@@ -2151,7 +2151,7 @@ table.dataTable thead th:last-child {
 
 
 
-/* ------------------------- CURRENT MARKET INFO BALANCES ------------------------- */
+/* ------------------------- BALANCES ------------------------- */
 
 
 .cm-balances-wrap {
@@ -2182,7 +2182,7 @@ table.dataTable thead th:last-child {
 	background:black;
 }
 
-/* ------------------------- SEARCH POPUP ------------------------- */
+/* ------------------------- POPUP GENERIC (SEARCH POPUP) ------------------------- */
 
 
 .popup {
@@ -2408,6 +2408,304 @@ table.dataTable thead th:last-child {
 }
 
 
+
+
+/* ------------------------- ORDERBOOK LABEL POPUP ------------------------- */
+
+
+/*.temp_label_style {
+	color:initial; 
+	background-color:initial; 
+}*/
+
+.orderbook-label-color-box-wrap {
+	position:absolute;
+	width:300px;
+}
+.orderbook-label-color-box {
+	background:transparent;
+	border:none;
+	width:300px;
+	display:none;
+	position:absolute !important;
+	left:160px;
+	transform:translateY(-50%);
+}
+
+.orderbook-label-color-box.lower {
+	transform:translateY(-76%);
+}
+
+.orderbook-label-color-box .sp-picker-container {
+	border:none !important;
+}
+
+.orderbook-label-color-box.active {
+	display:block;
+}
+
+.orderbook-label-color-replacer {
+	display:none;
+}
+
+.orderbook-label-color-replacer.active {
+	display:none;
+}
+
+.orderbook-label-color-input {
+	display:none;
+}
+
+.orderbook-label-popup {
+	width:450px;
+	padding-bottom:10px;
+	cursor:default !important;
+}
+
+.orderbook-label-popup-main {
+	height:calc(100% - 30px);
+	width:100%;
+	position:relative;
+	display:block;
+	padding:10px;
+}
+
+/* ------------------------- ORDERBOOK LABEL POPUP LEFT ------------------------- */
+
+.orderbook-label-popup-banner {
+	width:100%;
+	height:17px;
+	display:none;
+	margin-bottom:8px;
+	font-size:14px;
+}
+
+.orderbook-label-popup-banner.active {
+	display:block;
+}
+
+.orderbook-label-popup-banner.success {
+	background-color:rgba(124, 181, 236, 0.7);
+}
+
+.orderbook-label-popup-banner.error {
+	background:rgba(156, 5, 5, 0.7);
+}
+
+.orderbook-label-popup-left {
+	width:40%;
+	float:left;
+	position:relative;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.label-left-overlay {
+	height:100%;
+	width:calc(100% - 20px);
+	display:none;
+	position:absolute;
+	z-index:99999;
+	vertical-align:middle;
+	background-color: rgba(0,0,0,0.8);
+}
+
+.label-left-overlay.active {
+	display:block;
+}
+
+.label-left-overlay-title {
+	text-align:center;
+	display:block;
+	font-size:1rem;
+	position:relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.label-example-row {
+	position:relative;
+	text-align:center;
+	font-size:14px;
+	height:20px;
+}
+
+.label-example {
+	text-align:center;
+	font-size:14px;
+}
+
+.label-example-input {
+	width:100%;
+	height:100%;
+	background:transparent;
+}
+
+#label_example {
+	width:100%;
+	height:100%;
+}
+
+.orderbook-label-popup-row {
+	width:100%;
+	position:relative;
+	display:block;
+	padding-bottom:10px;
+}
+
+.orderbook-label-row-title {
+	width:100%;
+	position:relative;
+	display:block;
+	margin-bottom:7px;
+	font-size:14px;
+	text-align:left;
+}
+
+.orderbook-label-row-input {
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.orderbook-label-row-input input {
+	color:black;
+	padding-left:5px;
+	padding-right:5px;
+	width:100%;
+}
+
+.orderbook-label-color-trig:hover {
+	cursor:pointer;
+}
+
+.orderbook-label-conf {
+	padding-top:5px;
+}
+
+.orderbook-label-popup-left-bottom {
+	width:100%;
+	display:block;
+	position:relative;
+	text-align:center;
+}
+
+.orderbook-label-popup-confirm-wrap {
+	display:inline-block;
+	position:relative;
+	font-size:14px;
+}
+
+.orderbook-label-popup-confirm-wrap:hover {
+	cursor:pointer;
+	color:#EDB379;
+}
+
+/* ------------------------- ORDERBOOK LABEL POPUP RIGHT ------------------------- */
+
+.orderbook-label-popup-right {
+	width:60%;
+	display:inline-block;
+	float:left;
+	position:relative;
+}
+
+.orderbook-label-popup-all-header {
+	height:25px;
+	width:100%;
+	position:relative;
+	display:block;
+	font-size:13px;
+}
+
+.orderbook-label-popup-all-header-right {
+	height:100%;
+	position:relative;
+	float:right;
+	padding-right:10px;
+}
+
+.orderbook-label-popup-all-header-cell {
+	height:100%;
+	position:relative;
+	float:right;
+	padding-left:7px;
+}
+
+.orderbook-label-popup-all-header-cell:hover {
+	color:#EDB379;
+	cursor:pointer;
+}
+
+.orderbook-label-popup-all-header-cell.active {
+	color:#EDB379;
+}
+
+.orderbook-label-popup-table {
+	width:100%;
+	max-height:170px;
+	position:relative;
+	display:block;
+	padding-right:10px;
+}
+
+.orderbook-label-popup-all-row {
+	width:100%;
+	position:relative;
+	display:block;
+	font-size:12px;
+	height:15px;
+	margin-top:3px;
+	margin-bottom:3px;
+}
+
+.orderbook-label-popup-all-row.active .label-popup-all-name{
+	background:rgba(50, 157, 220, 0.6);
+}
+
+.label-popup-all-name {
+	float:left;
+	position:relative;
+	padding-left:10px;
+	height:100%;
+	width:calc(100% - 30px);
+	text-align:left;
+}
+
+.label-popup-all-name:hover {
+	background:rgba(50, 157, 220, 0.6);
+	cursor:pointer;
+}
+
+.labelHover {
+	background:rgba(50, 157, 220, 0.6);
+	cursor:pointer;
+}
+
+.label-popup-all-vis {
+	height:100%;
+	width:30px;
+	float:right;
+	position:relative;
+	opacity:0.5;
+	z-index:10;
+	text-align:center;
+}
+
+.label-popup-all-vis:hover {
+	cursor:pointer;
+	opacity:1;
+}
+
+.label-popup-all-vis.active {
+	opacity:1;
+}
+
+.label-popup-all-vis img {
+	float:right;
+	height:20px;
+	width:20px;
+}
 
 
 /* ------------------------- LIB OVERRIDE ------------------------- */

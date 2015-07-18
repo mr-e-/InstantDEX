@@ -145,7 +145,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
 		
-		//IDEX.initScrollbar();
+		IDEX.initScrollbar();
 		//IDEX.initDataTable();
 		
 		IDEX.user.initFavorites();

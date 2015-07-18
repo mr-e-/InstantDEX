@@ -72,7 +72,7 @@ var IDEX = (function(IDEX, $, undefined)
 	});*/
 	
 	
-	$(".cm-orderbook-label-trig, .cm-orderbook-label-popup-close").on("mouseup", function()
+	$(".grid-trig-labels, .cm-orderbook-label-popup-close").on("click", function()
 	{
 		var flipClassName = "active"
 
@@ -261,11 +261,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{		
 		var $ex = $("#label_example")
 		var label = IDEX.user.labels[index]
-		
+
 		toggleOverlay(false)
 		removeActiveLabel()
 		label.isActive = true;	
-		
 		$ex.text(label.name)
 		setInputValues(label)
 		loadColorBox(label)
