@@ -276,15 +276,14 @@ input:focused {
 	display:block;
 	border:1px solid black;
 	border-radius:2px;
-	padding-left:4px;
-	padding-right:4px;
+	padding-left:2px;
+	padding-right:2px;
 }
 
 .nbutton-icon-inner {
 	height:100%;
 	position:relative;
 	display:block;
-	padding:5px;
 	border-top:1px solid #444444;
 }
 
@@ -293,15 +292,13 @@ input:focused {
 }
 
 .nbutton-icon-img {
-	height:100%;
-	width:100%;
 	position:relative;
 	text-align:center;
 }
 
 .nbutton-icon-img img {
 	height:10px;
-	width:8px;
+	width:12px;
 }
 
 /* ------------------------- BUTTON-TEXT ------------------------- */
@@ -1098,24 +1095,35 @@ table.dataTable thead th:last-child {
 .chart-tools-wrap {
 	height:100%;
 	position:relative;
-	float:left;
-	padding-left:15px;
+	float:right;
 }
 
-.chart-tools-img {
-	height:100%;
-	position:relative;
-	float:left;
-	padding-right:15px;
+.chart-tools-wrap .nbutton-icon-wrap {
+	padding-right:5px;
 }
 
-.chart-tools-wrap img {
-	height:14px;
-	width:14px;
-}
-
-.chart-tools-img img:hover {
+.chart-tools-wrap .nbutton-icon-wrap:hover {
 	cursor:pointer;
+}
+
+.chart-tools-wrap .nbutton-icon-outer {
+	height:20px;
+	width:initial;
+}
+
+.chart-tools-wrap .nbutton-icon-inner {
+	padding-left:6px;
+	padding-right:6px;
+}
+
+.chart-tools-line  img{
+	height:10px;
+	width:12px;
+}
+
+.chart-tools-fib img {
+	height:10px;
+	width:12px;
 }
 
 .chart-search-wrap {
@@ -2001,7 +2009,6 @@ table.dataTable thead th:last-child {
 	width:100%;
 	position:relative;
 	display:block;
-	padding-top:5px;
 }
 
 .watchlist-header {
