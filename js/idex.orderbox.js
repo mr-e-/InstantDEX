@@ -20,10 +20,9 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	function getPostPayload($element, method)
+	function getPostPayload($element, $form, method)
 	{
 		method = typeof method === "undefined" ? $element.attr("data-method") : method;
-		var $form = $("#" + $element.attr("data-form"));
 		var params = IDEX.getFormData($form);
 		params = IDEX.buildPostPayload(method, params);
 		
@@ -36,30 +35,29 @@ var IDEX = (function(IDEX, $, undefined)
 		if ($(this).hasClass("disabled"))
 			return;
 		
+		var $orderbook = $(this).closest(".orderbook-wrap");
+		var orderbook = IDEX.getOrderbookByElement($orderbook);
+		
+		if (!orderbook)
+			return;
+		
 		var $button = $(this);
-		var $wrap = $(this).closest(".cm-orderbox-body");
-		var $form = $("#" + $(this).attr("data-form"));
-		var params = getPostPayload($(this));
-		var exchange = $wrap.find(".cm-orderbox-exchange-trig").text();
+		var $wrap = $(this).closest(".orderbox");
+		var $form = $wrap.find("form");
+		var params = getPostPayload($(this), $form);
+		var exchange = $wrap.find(".orderbox-exchange-title").text();
 		
-		if (params['method'] == "placeask")
-			var str = "Ask";
-		else
-			var str = "Bid";
 				
-		if (checkOrderboxInputValues(str))
+		if (checkOrderboxInputValues($form))
 		{
-		
-			params['exchange'] = exchange;
-			params['baseid'] = IDEX.user.curBase.assetID;
-			params['relid'] = IDEX.user.curRel.assetID;
+			params.exchange = exchange;
+			params.baseid = orderbook.baseAsset.assetID;
+			params.relid = orderbook.relAsset.assetID;
 			
 			if (exchange == "InstantDEX")
 			{
-				var duration = $wrap.find(".cm-orderbox-config-popup-duration").val()
-				var minperc = $wrap.find(".cm-orderbox-config-popup-minperc").val()
-				params['duration'] = duration;
-				params['minperc'] = minperc
+				//params['duration'] = "30";
+				//params['minperc'] = minperc
 			}
 					
 					
@@ -75,11 +73,9 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	function checkOrderboxInputValues(typeOrder)
+	function checkOrderboxInputValues($form)
 	{
 		var retbool = false;
-		var formName = "place" + typeOrder + "Form";
-		var $form = $("#"+formName);
 		
 		//var balanceToCheck = (params['requestType'] == "placebid") ? params['relid'] : params['baseid'];
 		//if (IDEX.account.checkBalance(balanceToCheck, params['volume']))
@@ -87,7 +83,7 @@ var IDEX = (function(IDEX, $, undefined)
 		//	$.growl.error({'message':"Not enough funds", 'location':"tl"});
 	
 		var formVals = IDEX.getFormData($form);
-		console.log(formVals);
+		//console.log(formVals);
 
 		if (formVals.price.length && formVals.volume.length && formVals.total.length)
 			retbool = true;
@@ -104,11 +100,10 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred()
 		
 		console.log(params);
-		params['plugin'] = "InstantDEX"
 
 		IDEX.sendPost(params).done(function(data)
 		{
-			IDEX.updateUserState(true);
+			//IDEX.updateUserState(true);
 			
 			console.log(data);
 

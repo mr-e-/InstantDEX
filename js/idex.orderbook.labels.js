@@ -162,7 +162,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$table.append($(newRow))
 			
 			var li = "<li data-val='"+name+"'>"+name+"</li>"
-			$(".orderbook-label-dropdown ul").append($(li))
+			$("#main_grid").find(".orderbook-label-dropdown ul").append($(li))
 			
 			var newLabel = new IDEX.OrderbookLabel({"name":name});
 			IDEX.user.labels.push(newLabel)
@@ -224,7 +224,7 @@ var IDEX = (function(IDEX, $, undefined)
 						
 			for (var i = 0; i < IDEX.allOrderbooks.length; i++)
 			{
-				var orderbook = IDEX.allOrderbook[i];
+				var orderbook = IDEX.allOrderbooks[i];
 				var orderbookLabel = IDEX.searchListOfObjects(orderbook.labels, "name", label.name)
 				
 				if (orderbookLabel)
@@ -289,9 +289,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbook = IDEX.getOrderbookByElement($orderbook);
 		
 		var name = $(this).attr("data-val");
-		
-		//console.log(orderbook)
-		
+				
 		if (orderbook)
 		{
 			var orderbookLabel = IDEX.searchListOfObjects(orderbook.labels, "name", name)
@@ -309,7 +307,6 @@ var IDEX = (function(IDEX, $, undefined)
 				if (label)
 				{
 					label = label.obj;
-					//label.isVisible = true;
 					orderbook.labels.push(label)
 				}
 			}
