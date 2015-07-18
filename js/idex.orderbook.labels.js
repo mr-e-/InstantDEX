@@ -45,32 +45,6 @@ var IDEX = (function(IDEX, $, undefined)
 	});
 		
 	
-	/*$('#label_example').on("click", function()
-	{
-		var name = $(this).text();
-		$(this).html('');
-		
-		$('<input></input>')
-		.attr({
-			'type': 'text',
-			'name': 'fname',
-			'id': 'txt_fullname',
-			'size': '30',
-			'value': name,
-			'class': 'label-example-input'
-		})
-		.appendTo('#label_example');
-		
-		$('#txt_fullname').focus();
-	});
-
-	
-	$(document).on('blur', '#txt_fullname', function()
-	{
-		var name = $(this).val();
-		$('#label_example').text(name);
-	});*/
-	
 	
 	$(".grid-trig-labels, .cm-orderbook-label-popup-close").on("click", function()
 	{
@@ -97,7 +71,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$el.removeClass("active")
 	})
-	
 	
 	
 	$(".orderbook-label-color-input").on('move.spectrum', function(e, tinycolor)
@@ -288,37 +261,57 @@ var IDEX = (function(IDEX, $, undefined)
 	}	
 	
 		
-
-	$(".orderbook-label-popup-table").on("click", ".orderbook-label-popup-all-row .label-popup-all-vis", function(e)
+	
+	$("#main_grid").on("click", ".orderbook-label-dropdown li", function()
 	{
-		var $parent = $(this).parent()
-		var index = $parent.index() - 2
-		var isActive = $(this).hasClass("active")
-		var label = IDEX.user.labels[index]
+		IDEX.flipClass($(this), "active");
 
-		if (isActive)
-		{
-			//var lClass = "label-" + label.name
-			$(this).removeClass("active")
-			label.isVisible = false
-			$(".label-" + label.name).removeClass("label-" + label.name)
-		}
-		else
-		{
-			$(this).addClass("active")
-			label.isVisible = true;
-		}
+		var $orderbook = $(this).closest(".orderbook-wrap");
+		var orderbook = IDEX.getOrderbookByElement($orderbook);
 		
-		IDEX.loadVis()
+		var name = $(this).attr("data-val");
+		
+		//console.log(orderbook)
+		
+		if (orderbook)
+		{
+			var orderbookLabel = IDEX.searchListOfObjects(orderbook.labels, "name", name)
+
+			if (orderbookLabel)
+			{
+				orderbook.orderbookDom.find(".label-" + name).removeClass("label-" + name)
+				orderbook.labels.splice(orderbookLabel.index, 1);
+			}
+			
+			else
+			{
+				var label = IDEX.searchListOfObjects(IDEX.user.labels, "name", name)
+							
+				if (label)
+				{
+					label = label.obj;
+					//label.isVisible = true;
+					orderbook.labels.push(label)
+				}
+			}
+			
+			IDEX.loadVis(orderbook)
+		}
+
+	
+		//$(".label-" + label.name).removeClass("label-" + label.name)
 	})
 	
 	
-	IDEX.loadVis = function()
+	IDEX.loadVis = function(orderbook)
 	{
-		var vis = IDEX.getItemsByProp(IDEX.user.labels, "isVisible", false)
-		var visMap = IDEX.getVisibleMap(vis)
-		var $sellBook = $(".sellbook");
-		var $buyBook = $(".buybook");
+		//var vis = IDEX.getItemsByProp(IDEX.user.labels, "isVisible", false)
+		//var visMap = IDEX.getVisibleMap(vis)
+		
+		var vis = orderbook.labels
+		
+		var $buyBook = orderbook.buyBookDom
+		var $sellBook = orderbook.sellBookDom
 
 		colorBook($sellBook, vis);
 		colorBook($buyBook, vis);
@@ -535,6 +528,34 @@ var IDEX = (function(IDEX, $, undefined)
 		$style.html(str)
 	}
 
+	
+	
+	
+	/*$('#label_example').on("click", function()
+	{
+		var name = $(this).text();
+		$(this).html('');
+		
+		$('<input></input>')
+		.attr({
+			'type': 'text',
+			'name': 'fname',
+			'id': 'txt_fullname',
+			'size': '30',
+			'value': name,
+			'class': 'label-example-input'
+		})
+		.appendTo('#label_example');
+		
+		$('#txt_fullname').focus();
+	});
+
+	
+	$(document).on('blur', '#txt_fullname', function()
+	{
+		var name = $(this).val();
+		$('#label_example').text(name);
+	});*/
 	
 	
 	

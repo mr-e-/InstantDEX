@@ -92,6 +92,28 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 			$el.addClass(cssClass);
 	}
+	
+	
+	IDEX.searchListOfObjects = function(arr, key, val)
+	{
+		var len = arr.length;
+		var retObj = false;
+		
+		for (var i = 0; i < len; i++)
+		{
+			var loopEl = arr[i];
+			
+			if (key in loopEl && loopEl[key] == val)
+			{
+				retObj = {};
+				retObj.index = i;
+				retObj.obj = loopEl;
+				break;
+			}
+		}
+		
+		return retObj;
+	}
 
 	
 	IDEX.getListObjVals = function(listObj, keys)
@@ -161,6 +183,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		return ((compCount == keys.length) ? true : false);
 	}
+	
 	
 
 	IDEX.getFormData = function($form) 
@@ -371,11 +394,16 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return Number(strAll)
 	}
+	
+	
 
 	IDEX.capitalizeFirstLetter = function(string) 
 	{
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
+	
+	
+	
 	
 	return IDEX;
 	

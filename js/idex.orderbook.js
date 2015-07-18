@@ -13,9 +13,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.newOrderbook = function(base, rel, $el)
 	{
 		var orderbook = IDEX.getOrderbookByElement($el);
-		
-		console.log(orderbook);
-		
+				
 		IDEX.updateOrderBox($el, base, rel);
 
 		if (!orderbook)

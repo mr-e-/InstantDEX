@@ -13,8 +13,8 @@ var IDEX = (function(IDEX, $, undefined)
 		this.groupedBids = groupOrders(IDEX.cloneListOfObjects(orderbookData.bids), IDEX.cloneListOfObjects(this.currentOrderbook.bids));
 		this.groupedAsks = groupOrders(IDEX.cloneListOfObjects(orderbookData.asks), IDEX.cloneListOfObjects(this.currentOrderbook.asks));
 
-		formatNewOrders(this.groupedBids.newOrders)
-		formatNewOrders(this.groupedAsks.newOrders)
+		formatNewOrders(this.groupedBids.newOrders, this)
+		formatNewOrders(this.groupedAsks.newOrders, this)
 	}
 
 	
@@ -100,7 +100,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 
-	function formatNewOrders(newOrders)
+	function formatNewOrders(newOrders, orderbook)
 	{	
 		
 		for (var i = 0; i < newOrders.length; i++)
@@ -108,30 +108,32 @@ var IDEX = (function(IDEX, $, undefined)
 			var order = newOrders[i];
 			var isAsk = order.askoffer;
 			
-			if (isAsk)
-				var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
-			else
-				var trString = IDEX.buildTableRows([[order.total, order.volume, order.price, order.sum]], "span");
+			var arr = isAsk ? [[order.price, order.volume, order.total, order.sum]] : [[order.total, order.volume, order.price, order.sum]];
+			var trString = IDEX.buildTableRows(arr, "span");
+
 			
 			//var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "fadeSlowIndy tooltip" : "fadeSlowIndy tooltip";
+			//trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
+			//trString = orderTooltip(trString, order);
+			
 			var trClasses = "fadeSlowIndy";
 			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
-			//trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
-			trClasses += " " + getLabelClass(order)
+			trClasses += " " + getLabelClass(order, orderbook)
 			
 			trString = IDEX.addElClass(trString, trClasses);
+			
 			trString = $(trString).find("span").each(function(index, e)
 			{
 				var extraClasses = "order-col-extra";
-				if (index == 3 || index == 3)
+				if (index == 3)
 				{
-					if (IDEX.isOrderbookExpanded)
-						extraClasses += " extra-show";
+					//if (IDEX.isOrderbookExpanded)
+					//	extraClasses += " extra-show";
 					$(this).addClass(extraClasses);
 				}
 			}).parent()[0].outerHTML;
 			
-			//trString = orderTooltip(trString, order);
+
 			trString = $(trString).prepend("<div class='order-row-inspect-trig'><img class='vert-align' src='img/eye.png'></div>")[0].outerHTML;
 			
 			order.row = trString;
@@ -139,14 +141,13 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	function getLabelClass(order)
+	function getLabelClass(order, orderbook)
 	{
 		var labelClass = "";
-		var vis = IDEX.getItemsByProp(IDEX.user.labels, "isVisible", false)
-		//var visMap = IDEX.getVisibleMap(vis)
+		var vis = orderbook.labels
 
 		for (var i = 0; i < vis.length; i++)
-		{		
+		{
 			var label = vis[i]
 			
 			if (order.exchange == label.exchange)

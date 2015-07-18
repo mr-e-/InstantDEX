@@ -407,7 +407,7 @@ var IDEX = (function(IDEX, $, undefined)
 						var run = Number(x2) - Number(x1)
 						
 						
-						console.log('rise/run: ' + String(rise) + " / " + String(run));
+						//console.log('rise/run: ' + String(rise) + " / " + String(run));
 						chart.drawingLine
 						.attr("x2", x2)
 						.attr("y2", y2)

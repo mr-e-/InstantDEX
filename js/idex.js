@@ -54,6 +54,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 		this.groupedBids = {};
 		this.groupedAsks = {};
+		
+		this.labels = [];
 
 		IDEX.constructFromObject(this, obj);
 	};
