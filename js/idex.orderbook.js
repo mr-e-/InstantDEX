@@ -70,7 +70,7 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbook.currentOrderbook = new IDEX.OrderbookVar();
 		orderbook.initLabelsDom();
 		
-		//orderbook.emptyOrderbook("Loading...");
+		orderbook.emptyOrderbook("Loading...");
 		//IDEX.updateScrollbar(false);
 		
 		return orderbook;

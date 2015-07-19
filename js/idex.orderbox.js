@@ -38,7 +38,7 @@ var IDEX = (function(IDEX, $, undefined)
 			that.exchangeDom = that.dom.find(".orderbox-exchange-title");
 			that.formDom = that.dom.find("form");
 			that.buttonDom = that.dom.find(".orderbox-order-button");
-		}(this, type)
+		}(this, type, $orderboxWrap)
 	};
 	
 	
@@ -53,8 +53,8 @@ var IDEX = (function(IDEX, $, undefined)
 			orderbox = new IDEX.Orderbox();
 
 			orderbox.orderboxDom = $el
-			orderbox.buyBox = new IDEX.Orderbox("buy", orderbox.orderboxDom)
-			orderbox.sellBox = new IDEX.Orderbox("sell", orderbox.orderboxDom)
+			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom)
+			orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom)
 
 			orderbox.orderboxDom.find(".orderbox-order-button").on("click", function() { orderbox.placeOrderButtonClick($(this)) })
 
@@ -92,8 +92,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbox.prototype.resetOrderBoxForm = function()
 	{
-		this.buyFormDom.trigger("reset")
-		this.sellFormDom.trigger("reset")
+		this.buyBox.formDom.trigger("reset")
+		this.sellBox.formDom.trigger("reset")
 	}
 	
 	

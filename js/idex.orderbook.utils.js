@@ -7,7 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.getRowData = function($row, index)
 	{
 		var $orderbook = $row.closest(".orderbook-wrap");
-		var orderbook = IDEX.getOrderbookByElement($orderbook);
+		var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
 		var rowData = null;
 		
 		if (orderbook)

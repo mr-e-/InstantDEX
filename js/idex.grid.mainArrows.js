@@ -156,8 +156,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 		$mainGrid.find(".preview-tile").remove();
 		
-		IDEX.makeGridType($newGrid);
-		$mainGrid.append($newGrid)			
+		$mainGrid.append($newGrid)
+		IDEX.makeGridType($newGrid);		
 	})
 	
 	
