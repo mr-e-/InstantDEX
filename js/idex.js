@@ -39,26 +39,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.constructFromObject(this, obj);
 	};
 	
-	
-	IDEX.Orderbook = function(obj) 
-	{	
-		this.isStoppingOrderbook = false;
-		this.isWaitingForOrderbook = false;
-		this.orderbookTimeout;
-		this.orderbookInit;
-		this.timeoutDFD = false;
-		this.xhr = false;
-		
-		this.currentOrderbook;
-		this.newOrderbook;
 
-		this.groupedBids = {};
-		this.groupedAsks = {};
-		
-		this.labels = [];
-
-		IDEX.constructFromObject(this, obj);
-	};
 	
 
 	IDEX.Asset = function(obj) 

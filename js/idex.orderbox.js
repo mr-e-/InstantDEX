@@ -8,17 +8,39 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbox = function(obj) 
 	{	
-		this.buyButtonDom;
-		this.sellButtonDom;
-		this.buyFormDom;
-		this.sellFormDom;
-		
 		this.baseAsset;
 		this.relAsset;
+		
+		this.orderboxDom;
+		this.buyBox;
+		this.sellBox;
 
 
 		IDEX.constructFromObject(this, obj);
 	};
+	
+	
+	IDEX.OrderboxType = function(type, $orderboxWrap) 
+	{	
+		this.type = type;
+		this.dom;
+		this.balanceTitleDom;
+		this.balanceValDom
+		this.exchangeDom
+		this.formDom;
+		this.buttonDom;
+
+		var __construct = function(that, type, $orderboxWrap)
+		{
+			that.dom = $orderboxWrap.find(".orderbox-" + type);
+			that.balanceTitleDom = that.dom.find(".orderbox-balance-title span");
+			that.balanceValDom = that.dom.find(".orderbox-balance-val span");
+			that.exchangeDom = that.dom.find(".orderbox-exchange-title");
+			that.formDom = that.dom.find("form");
+			that.buttonDom = that.dom.find(".orderbox-order-button");
+		}(this, type)
+	};
+	
 	
 	
 	
@@ -31,36 +53,33 @@ var IDEX = (function(IDEX, $, undefined)
 			orderbox = new IDEX.Orderbox();
 
 			orderbox.orderboxDom = $el
-			
-			orderbox.sellDom = $el.find(".orderbox-sell");
-			orderbox.sellBalanceTitleDom = orderbox.sellDom.find(".orderbox-balance-title span");
-			orderbox.sellBalanceValDom = orderbox.sellDom.find(".orderbox-balance-val span");
-			orderbox.sellFormDom = orderbox.sellDom.find("form");
-			orderbox.sellButtonDom = orderbox.sellDom.find(".orderbox-order-button");
-			
-			orderbox.buyDom = $el.find(".orderbox-buy");
-			orderbox.buyBalanceTitleDom = orderbox.sellDom.find(".orderbox-balance-title span");
-			orderbox.buyBalanceValDom = orderbox.sellDom.find(".orderbox-balance-val span");
-			orderbox.buyFormDom = orderbox.buyDom.find("form");
-			orderbox.buyButtomDom = orderbox.buyDom.find(".orderbox-order-button");
-
+			orderbox.buyBox = new IDEX.Orderbox("buy", orderbox.orderboxDom)
+			orderbox.sellBox = new IDEX.Orderbox("sell", orderbox.orderboxDom)
 
 			orderbox.orderboxDom.find(".orderbox-order-button").on("click", function() { orderbox.placeOrderButtonClick($(this)) })
 
 			IDEX.allOrderboxes.push(orderbox)
 		}
 		
-		
-		orderbox.baseAsset = base;
-		orderbox.relAsset = rel;
-		
+		return orderbox;
 	};
 	
 	
 	
+	IDEX.Orderbox.prototype.changeMarket = function(base, rel)
+	{
+		var orderbox = this;
+		orderbox.baseAsset = base;
+		orderbox.relAsset = rel;
+		
+		this.resetOrderBoxForm();
+		this.updateOrderBoxBalance();
+	}
+	
+	
 	IDEX.Orderbox.prototype.updateOrderBox = function()
 	{
-		this.resetOrderBoxForm($wrap);
+		this.resetOrderBoxForm();
 		this.updateOrderBoxBalance();
 
 
@@ -90,11 +109,11 @@ var IDEX = (function(IDEX, $, undefined)
 			var relBal = parseBalance(IDEX.account.getBalance(rel.assetID));
 			var baseBal = parseBalance(IDEX.account.getBalance(base.assetID));
 
-			orderbox.buyBalanceValDom.text(relBal.whole + relBal.dec);
-			orderbox.sellBalanceValDom.text(baseBal.whole + baseBal.dec);
+			orderbox.buyBox.balanceValDom.text(relBal.whole + relBal.dec);
+			orderbox.sellBox.balanceValDom.text(baseBal.whole + baseBal.dec);
 			
-			orderbox.buyBalanceTitleDom.html(rel.name + ":&nbsp;");
-			orderbox.sellBalanceTitleDom.html(base.name + ":&nbsp;");
+			orderbox.buyBox.balanceTitleDom.html(rel.name + ":&nbsp;");
+			orderbox.sellBox.balanceTitleDom.html(base.name + ":&nbsp;");
 		})
 	}
 	
@@ -119,52 +138,46 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
 	IDEX.Orderbox.prototype.placeOrderButtonClick = function($button)
 	{
 		var orderbox = this;
-
 		var isButtonDisabled = $button.hasClass("disabled");
+		var base = orderbox.baseAsset;
+		var rel = orderbox.relAsset;
+		var method = $button.attr("data-method");
+		var box = method == "placebid" ? orderbox.buyBox : orderbox.sellBox
 		
 		if (!isButtonDisabled)
 		{
-			var $orderbook = $(this).closest(".orderbook-wrap");
-			var orderbook = IDEX.getOrderbookByElement($orderbook);
+			var $form = box.formDom;
+			var params = IDEX.getFormData($form);
+			params = IDEX.buildPostPayload(method, params);
 			
-			if (orderbook)
+			var exchange = box.exchangeDom.text();
+			
+					
+			if (checkOrderboxInputValues($form))
 			{
-				var method = $button.attr("data-method");
-				var $wrap = $button.closest(".orderbox");
-				var $form = $wrap.find("form");
+				params.exchange = exchange;
+				params.baseid = base.assetID;
+				params.relid = rel.assetID;
 				
-				var params = IDEX.getFormData($form);
-				params = IDEX.buildPostPayload(method, params);
-				
-				var exchange = $wrap.find(".orderbox-exchange-title").text();
-				
-						
-				if (checkOrderboxInputValues($form))
+				if (exchange == "InstantDEX")
 				{
-					params.exchange = exchange;
-					params.baseid = orderbook.baseAsset.assetID;
-					params.relid = orderbook.relAsset.assetID;
-					
-					if (exchange == "InstantDEX")
-					{
-						//params['duration'] = "30";
-						//params['minperc'] = minperc
-					}
-							
-							
-					$form.trigger("reset");
-					$button.addClass("disabled");
-					
-					IDEX.placeOrder(params).then(function()
-					{
-						$button.removeClass("disabled")
-					});
+					//params['duration'] = "30";
+					//params['minperc'] = minperc
 				}
+						
+						
+				$form.trigger("reset");
+				$button.addClass("disabled");
+				
+				IDEX.placeOrder(params).then(function()
+				{
+					$button.removeClass("disabled")
+				});
 			}
+			
 		}
 	}
 	

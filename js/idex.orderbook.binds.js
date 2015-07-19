@@ -129,11 +129,9 @@ var IDEX = (function(IDEX, $, undefined)
 			var base = IDEX.user.getAssetInfo("assetID", baseid);	
 			var rel = IDEX.user.getAssetInfo("assetID", relid);
 
-			//var orderbook = new IDEX.Orderbook();
-			IDEX.newOrderbook(base, rel, $orderbook);
-		
-			//$banner.addClass("success")
-			//$banner.find("span").text("Success: " + base.name + "_" + rel.name + " added to favorite markets.")
+			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
+			orderbook.changeMarket(base, rel);
+
 			clearAssetInput($wrap);
 			$popup.find(".popup-header-close").trigger("click");
 		}

@@ -38,14 +38,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else if (gridType == "orderbook")
 		{
-			for (var i = 0; i < IDEX.user.labels.length; i++)
-			{
-				var label = IDEX.user.labels[i];
-				var name = label.name;
-				
-				var li = "<li data-val='"+name+"'>"+name+"</li>"
-				$grid.find(".orderbook-label-dropdown ul").append($(li))
-			}
+			var $orderbook = $grid.find(".orderbook-wrap");
+			IDEX.newOrderbook($orderbook);
 
 		}
 		else if (gridType == "watchlist")

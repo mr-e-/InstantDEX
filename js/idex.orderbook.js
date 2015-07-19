@@ -10,9 +10,41 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allOrderbooks = [];
 	
 	
-	IDEX.newOrderbook = function(base, rel, $el)
+	
+	IDEX.Orderbook = function(obj) 
+	{	
+		this.isStoppingOrderbook = false;
+		this.isWaitingForOrderbook = false;
+		this.orderbookTimeout;
+		this.timeoutDFD = false;
+		this.xhr = false;
+		
+		this.orderbookDom;
+		this.buyBookDom;
+		this.sellBookDom;
+		
+		this.baseAsset = {};
+		this.relAsset = {};
+		
+		this.currentOrderbook;
+		this.newOrderbook;
+
+		this.groupedBids = {};
+		this.groupedAsks = {};
+		
+		this.labels = [];
+		
+		this.orderbox;
+
+		IDEX.constructFromObject(this, obj);
+	};
+	
+	
+	
+	IDEX.newOrderbook = function($el)
 	{
 		var orderbook = IDEX.getObjectByElement($el, IDEX.allOrderbooks, "orderbookDom");
+		var orderbox = IDEX.getObjectByElement($el, IDEX.allOrderboxes, "orderboxDom");
 
 		//IDEX.updateOrderBox($el, base, rel);
 
@@ -20,20 +52,64 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			orderbook = new IDEX.Orderbook();
 
-			orderbook.orderbookDom = $el
+			orderbook.orderbookDom = $el;
 			orderbook.buyBookDom = $el.find(".bookname-buybook");
 			orderbook.sellBookDom = $el.find(".bookname-sellbook");
 			orderbook.buyBookDom.perfectScrollbar();
 			orderbook.sellBookDom.perfectScrollbar();
 			IDEX.allOrderbooks.push(orderbook)
 		}
+		if (!orderbox)
+		{
+			var $orderbox = $el.find(".orderbox-all")
+			var orderbox = IDEX.newOrderbox($orderbox)
+			orderbook.orderbox = orderbox;
+		}
 		
+
+		orderbook.currentOrderbook = new IDEX.OrderbookVar();
+		orderbook.initLabelsdom();
+		
+		//orderbook.emptyOrderbook("Loading...");
+		//IDEX.updateScrollbar(false);
+		
+		return orderbook;
+	};
+	
+	
+	
+	IDEX.Orderbook.prototype.initLabelsDom = function()
+	{
+		var orderbook = this;
+		
+		for (var i = 0; i < IDEX.user.labels.length; i++)
+		{
+			var label = IDEX.user.labels[i];
+			var name = label.name;
+			
+			var li = "<li data-val='"+name+"'>"+name+"</li>"
+			orderbook.orderbookDom.find(".orderbook-label-dropdown ul").append($(li))
+		}
+	}
+	
+	IDEX.Orderbook.prototype.initMarketDom = function()
+	{
+		/*
+		$wrap.find(".refcur-base").text(base.name);
+		$wrap.find(".refcur-rel").text(rel.name);
+		*/
+	}
+	
+	
+	
+	IDEX.Orderbook.prototype.changeMarket = function(base, rel)
+	{
+		var orderbook = this;
 		orderbook.baseAsset = base;
 		orderbook.relAsset = rel;
-		orderbook.currentOrderbook = new IDEX.OrderbookVar();
-		orderbook.emptyOrderbook("Loading...");
-		//IDEX.updateScrollbar(false);
-			
+		
+		orderbook.orderbox.changeMarket(base, rel);
+		
 		if (!orderbook.isStoppingOrderbook)
 		{
 			orderbook.stopPollingOrderbook(function()
@@ -42,7 +118,17 @@ var IDEX = (function(IDEX, $, undefined)
 				orderbook.orderbookHandler(1);
 			});
 		}
-	};
+	}
+	
+	/*IDEX.unloadMarket = function()
+	{
+		IDEX.user.clearPair();
+		IDEX.clearOrderBox();
+		
+		var $pairdom = $(".curr-pair")
+		var market = "No market loaded"
+		$pairdom.find("span").empty().text(market)
+	}*/
 	
 	
 	
@@ -50,7 +136,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (!this.isWaitingForOrderbook)
 		{
-			console.log('refreshing orderbook')
+			//console.log('refreshing orderbook')
 			this.clearTimeout();
 			this.orderbookHandler(1);
 		}
@@ -81,17 +167,7 @@ var IDEX = (function(IDEX, $, undefined)
 			callback();
 	}
 	
-	
-	/*IDEX.unloadMarket = function()
-	{
-		IDEX.user.clearPair();
-		IDEX.clearOrderBox();
-		
-		var $pairdom = $(".curr-pair")
-		var market = "No market loaded"
-		$pairdom.find("span").empty().text(market)
-	}*/
-	
+
 	
 	
 	IDEX.removeOrderbook = function($orderbook)
