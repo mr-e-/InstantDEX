@@ -68,7 +68,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 
 		orderbook.currentOrderbook = new IDEX.OrderbookVar();
-		orderbook.initLabelsdom();
+		orderbook.initLabelsDom();
 		
 		//orderbook.emptyOrderbook("Loading...");
 		//IDEX.updateScrollbar(false);

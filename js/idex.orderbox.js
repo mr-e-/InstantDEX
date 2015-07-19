@@ -44,7 +44,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.newOrderbox = function(base, rel, $el)
+	IDEX.newOrderbox = function($el)
 	{
 		var orderbox = IDEX.getObjectByElement($el, IDEX.allOrderboxes, "orderboxDom");
 				

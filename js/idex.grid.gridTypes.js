@@ -3,6 +3,11 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
+	var $mainGrid = $("#main_grid");
+	var $tileAdd = $("#tile_add");
+	var $contentWrap = $("#content_wrap");
+	var gridCount = 0;
+
 	
 	IDEX.makeGridType = function($grid)
 	{
@@ -13,7 +18,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (gridType == "chart")
 		{
-			if (!isTriggeredNew)
+			if (!IDEX.isTriggeredNew)
 			{
 				var id = $grid.find(".chart-header").attr("data-chart");
 				IDEX.makeChartDefault(id);
@@ -47,7 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 			IDEX.initFavorites($grid);
 		}
 		
-		if (isTriggeredNew)
+		if (IDEX.isTriggeredNew)
 			gridCount++;
 		
 	}
