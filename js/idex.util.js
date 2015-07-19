@@ -115,6 +115,25 @@ var IDEX = (function(IDEX, $, undefined)
 		return retObj;
 	}
 
+	IDEX.getObjectByElement = function($el, arr, key)
+	{
+		var ret = false;
+		
+		for (var i = 0; i < arr.length; i++)
+		{
+			var loopObj = arr[i];
+			var $loopEl = loopObj[key]
+						
+			if ($el.is($loopEl))
+			{
+				ret = loopObj;
+				break;
+			}
+		}
+		
+		return ret;
+	}
+	
 	
 	IDEX.getListObjVals = function(listObj, keys)
 	{

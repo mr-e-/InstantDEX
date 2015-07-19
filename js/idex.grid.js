@@ -279,7 +279,7 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < points.length; i++)
 		{
 			var point = points[i];
-			var results = searchResize(arr, point, resizeDir);
+			var results = searchX(arr, point, resizeDir);
 			
 			if (results.length)
 			{
@@ -397,47 +397,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	}
 	
-	
-	function searchResize(arr, points, direction)
-	{
-		var hKeys = ["left", "right"];
-		var vKeys = ["top", "bottom"];
-		var results = [];
-		
-		for (var i = 0; i < arr.length; i++)
-		{
-			var one = arr[i];
-			var oneRes = [];
-			
-			for (var j = 0; j < hKeys.length; j++)
-			{
-				var hKey = hKeys[j];
-				
-				for (var k = 0; k < vKeys.length; k++)
-				{
-					var vKey = vKeys[k];
-					
-					if (vKey == direction || hKey == direction)
-						continue;
-					var coord = [one.pos[hKey], one.pos[vKey]]
-					
-					var obj = {};
-					obj.h = hKey;
-					obj.v = vKey;
-					obj.el = one;
-					
-					if (compareCoord(points, coord, direction))
-						oneRes.push(obj)
-				}
-			}
-			
-			if (oneRes.length > 1)
-				results.push(oneRes)
-		}
-		
-		return results;
-	}
-	
+
 	
 	function compareCoord(mainPoints, compPoint, direction)
 	{
@@ -803,59 +763,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	var gridCount = 0;
 	
-	function makeGridType($grid)
-	{
-		//if (!isTriggeredNew)
-		//	return;
-		
-		var gridType = $grid.attr("data-grid")
-		
-		if (gridType == "chart")
-		{
-			if (!isTriggeredNew)
-			{
-				var id = $grid.find(".chart-header").attr("data-chart");
-				IDEX.makeChartDefault(id);
-				return
-			}
-			
-			var svg = IDEX.makeSVG()
-			var $svgEl = $(svg.node())
-			var id = "chart_" + String(gridCount)
-			$svgEl.attr("id", id)
-			$grid.find(".chart-wrap").append($svgEl)
-			$grid.find(".chart-header").attr("data-chart", id);
-			
-			var $dropdownTable = $($("#chartTableTemplate").html())
-			$grid.find(".dropdown-wrap").append($dropdownTable)
-			
-			IDEX.makeChartDefault(id);
-			
-	
-			var $search = $grid.find('.skynet-search');
-			IDEX.initSkyNETAuto($search)
-		}
-		else if (gridType == "orderbook")
-		{
-			for (var i = 0; i < IDEX.user.labels.length; i++)
-			{
-				var label = IDEX.user.labels[i];
-				var name = label.name;
-				
-				var li = "<li data-val='"+name+"'>"+name+"</li>"
-				$grid.find(".orderbook-label-dropdown ul").append($(li))
-			}
 
-		}
-		else if (gridType == "watchlist")
-		{
-			IDEX.initFavorites($grid);
-		}
-		
-		if (isTriggeredNew)
-			gridCount++;
-		
-	}
 	
 	/**************		MAIN GRID ARROWS	***************/
 	
@@ -1147,25 +1055,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$grid.remove();
 	})
 	
-	function closeGridType($grid)
-	{
-		var gridType = $grid.attr("data-grid")
-		
-		if (gridType == "chart")
-		{
-			
-		}
-		else if (gridType == "orderbook")
-		{
-			//console.log(IDEX.allOrderbooks);
-			var $orderbook = $grid.find(".orderbook-wrap");
-			IDEX.removeOrderbook($orderbook)
-		}
-		else if (gridType == "watchlist")
-		{
-
-		}
-	}
 	
 	function closeTab($tabHeader)
 	{
@@ -1235,22 +1124,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return results;
 	}
 	
-	/*function compareCoord(mainPoints, compPoint, direction)
-	{
-		var isVert = (direction == "left" || direction == "right")
-		var indexOfSame = isVert ? 0 : 1;
-		var indexOfBetween = isVert ? 1 : 0;
-		
-		var min = Math.min(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween])
-		var max = Math.max(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween])
 
-		var isSame = (mainPoints[0][indexOfSame] == compPoint[indexOfSame])
-		var isBetween = (compPoint[indexOfBetween] >= min && compPoint[indexOfBetween] <= max)
-
-
-		return isSame && isBetween
-	}*/
-	
 	
 	function getLowest(els, direction)
 	{

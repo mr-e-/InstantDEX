@@ -3,27 +3,6 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	IDEX.getOrderbookByElement = function($orderbook)
-	{
-		var ret = false;
-		
-		for (var i = 0; i < IDEX.allOrderbooks.length; i++)
-		{
-			var loopOrderbook = IDEX.allOrderbooks[i];
-			var $loopOrderbook = loopOrderbook.orderbookDom
-			
-			//var isSame = $orderbook.is($loopOrderbook);
-			
-			if ($orderbook.is($loopOrderbook))
-			{
-				ret = loopOrderbook;
-				break;
-			}
-		}
-		
-		return ret;
-	}
-	
 	
 	IDEX.getRowData = function($row, index)
 	{
