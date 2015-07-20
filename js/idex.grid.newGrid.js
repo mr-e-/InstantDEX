@@ -57,6 +57,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$grid.attr("data-grid", gridType);
 		IDEX.triggeredGrid = $grid;
 		IDEX.isTriggeredNew = true;
+		$(this).addClass("mousedown");
 	})
 	
 	
@@ -91,7 +92,11 @@ var IDEX = (function(IDEX, $, undefined)
 			$tileAdd.removeClass("active");
 			$(".main-grid-arrow").removeClass("active");
 			$(".grid-arrow-wrap").removeClass("active");
+			$(".grid-trig").removeClass("mousedown");
 		}
+		
+		$(".popup-trig").removeClass("mousedown");
+
 		
 		IDEX.isResizing = false;
 		IDEX.resizeGrid = null;

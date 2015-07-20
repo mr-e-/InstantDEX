@@ -629,6 +629,17 @@ table.dataTable thead th:last-child {
 	margin-top:8px;
 }
 
+.mainHeader-grid-ico-section {
+	height:100%;
+	position:relative;
+	float:left;
+	border-left:1px solid #444444;
+	border-right:1px solid #050505;
+}
+
+.mainHeader-grid-ico-section:last-child {
+	border-right:none;
+}
 
 .mainHeader-menu  {
 	height:100%;
@@ -658,27 +669,11 @@ table.dataTable thead th:last-child {
 	border-right:none;
 }
 
-.mainHeader-menu-cellIcon {
-
-}
-
 .mainHeader-menu-cellIcon img {
 	width:23px;
 	height:23px;
 	position:relative;
 	display:inline-block;
-}
-
-.mainHeader-menu-ico-settings {
-
-}
-
-.mainHeader-menu-ico-markets {
-
-}
-
-.mainHeader-menu-ico-orders {
-
 }
 
 .mainHeader-grid-icons {
@@ -695,8 +690,6 @@ table.dataTable thead th:last-child {
 	text-align:center;
 	padding-left:9px;
 	padding-right:9px;
-	/*border-left:1px solid #050505;
-	border-right:1px solid #3b3b3b;*/
 }
 
 .mainHeader-grid-ico-wrap img {
@@ -705,39 +698,24 @@ table.dataTable thead th:last-child {
 	width:22px;
 }
 
-.grid-trig-watchlist {
-	border-left:1px solid #444444;
-	padding-left:10px;
+.grid-trig.mousedown {
+	border:1px solid #329ddc;
+	padding-left:8px;
+	padding-right:8px;
+	background-color:#282828;
 }
 
-.grid-trig-orderbook {
-	border-right:1px solid #050505;
-	padding-right:10px;
+.grid-trig.mousedown img {
+	opacity:0.7;
 }
 
-.grid-trig-orders {
-	border-left:1px solid #444444;
-	padding-left:10px;
-}
-
-.grid-trig-balances {
-	border-right:1px solid #050505;
-	padding-right:11px;
-}
-
-.grid-trig-labels {
-	border-left:1px solid #444444;
-	padding-left:11px;
-}
-
-.mainHeader-grid-ico-wrap.active {
-
-}
-
-.mainHeader-grid-ico-wrap img:hover {
+.popup-trig.mouseover {
 	cursor:pointer;
 }
 
+.popup-trig.mousedown img {
+	opacity:0.7;
+}
 
 /* ------------------------- CONTENT WRAP ------------------------- */
 
@@ -2729,6 +2707,8 @@ table.dataTable thead th:last-child {
 
 .tooltipster-content {
 	background-color:black;
+	padding:0px 0px !important;
+	border-radius:3px;
 }
 
 

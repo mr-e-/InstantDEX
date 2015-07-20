@@ -64,8 +64,8 @@ var IDEX = (function(IDEX, $, undefined)
 			'baseid':this.baseAsset.assetID, 
 			'relid':this.relAsset.assetID, 
 			'allfields':1,
-			'maxdepth':25,
-			'showall':0,
+			'maxdepth':30,
+			'showall':1,
 			'timeout':10000
 		};
 		//console.log(params)

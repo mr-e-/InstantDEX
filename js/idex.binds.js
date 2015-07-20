@@ -17,9 +17,24 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 
 	
-	$(".popup-trig").on("click", function(e)
+	$(".popup-trig").on("mousedown", function(e)
 	{
-
+		$(this).addClass("mousedown");
+	})
+	
+	$(".popup-trig").on("mouseover", function(e)
+	{
+		$(this).addClass("mouseover");
+	})
+	
+	$(".popup-trig").on("mouseleave", function(e)
+	{
+		$(this).removeClass("mouseover");
+	})
+	
+	$(document).on("mouseup", function(e)
+	{
+		$(".popup-trig").removeClass("mousedown");
 	})
 	
 

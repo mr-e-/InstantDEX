@@ -13,10 +13,15 @@ var IDEX = (function(IDEX, $, undefined)
 	$(".mainHeader-grid-ico-wrap").each(function()
 	{
 		var gridType = $(this).attr("data-grid");
+		var content = $("<div style='padding:3px 17px;font-size:12px;'><span>" + IDEX.capitalizeFirstLetter(gridType) + "</span></div>")
+		
 		$(this).tooltipster({
-			content:IDEX.capitalizeFirstLetter(gridType),
+			content:content,
 			arrow:false,
-			offsetY:-15
+			offsetY:-15,
+			delay:130,
+			speed:200,
+			//autoClose:false
 		})
 	})
 	
