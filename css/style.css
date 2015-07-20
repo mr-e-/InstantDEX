@@ -267,7 +267,7 @@ input:focused {
 }
 
 .nbutton-icon-outer:hover {
-	background-color:#444444
+	background-color:#444444;
 }
 
 .nbutton-icon {
@@ -319,7 +319,7 @@ input:focused {
 }
 
 .nbutton-text-outer:hover {
-	background-color:#444444
+	background-color:#444444;
 }
 
 .nbutton-text {
@@ -2194,7 +2194,7 @@ table.dataTable thead th:last-child {
 	z-index:2000;
 	left:50%;
 	top:50%;
-	transform:translateX(-50%) translateY(-50%);
+	transform:translateX(-50%) translateY(-50%) translate3d(0.5px, 0.5px, 0);
 }
 
 .popup.active {
@@ -2355,6 +2355,11 @@ table.dataTable thead th:last-child {
 	z-index:101;
 }
 
+.popup-buttonArea .nbutton-text-outer:hover {
+	background-color:#333333;
+	border-bottom:1px solid #444444;
+}
+
 .popup-buttonArea .nbutton-text {
 	height:100%;
 	position:relative;
@@ -2375,6 +2380,9 @@ table.dataTable thead th:last-child {
 	border-top:1px solid #666666;
 }
 
+.popup-buttonArea .nbutton-text-inner:hover {
+	border-top:1px solid #444444;
+}
 
 /* ------------------------- MARKET SEARCH POPUP ------------------------- */
 

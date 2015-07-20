@@ -11,6 +11,21 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
+	IDEX.OrderbookVar = function(obj) 
+	{	
+		this.nxtRS = "";
+		this.pair = "";
+		this.orderbookID = "";
+		this.baseAsset = "";
+		this.relAsset = "";
+		
+		this.asks = [];
+		this.bids = [];
+
+		IDEX.constructFromObject(this, obj);
+	};
+	
+	
 	IDEX.Orderbook = function(obj) 
 	{	
 		this.isStoppingOrderbook = false;
@@ -20,8 +35,12 @@ var IDEX = (function(IDEX, $, undefined)
 		this.xhr = false;
 		
 		this.orderbookDom;
+		this.searchInputDom;
+		this.lastUpdatedDom;
 		this.buyBookDom;
+		this.emptyBuyBookDom;
 		this.sellBookDom;
+		this.emptyBuyBookDom;
 		
 		this.baseAsset = {};
 		this.relAsset = {};
@@ -46,18 +65,23 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbook = IDEX.getObjectByElement($el, IDEX.allOrderbooks, "orderbookDom");
 		var orderbox = IDEX.getObjectByElement($el, IDEX.allOrderboxes, "orderboxDom");
 
-		//IDEX.updateOrderBox($el, base, rel);
-
 		if (!orderbook)
 		{
 			orderbook = new IDEX.Orderbook();
 
 			orderbook.orderbookDom = $el;
 			orderbook.buyBookDom = $el.find(".bookname-buybook");
+			orderbook.emptyBuyBookDom = orderbook.buyBookDom.find(".empty-orderbook");
 			orderbook.sellBookDom = $el.find(".bookname-sellbook");
+			orderbook.emptySellBookDom = orderbook.sellBookDom.find(".empty-orderbook");
+			orderbook.searchInputDom = $el.find(".orderbook-search-wrap input");
+			orderbook.lastUpdatedDom = $el.find(".orderbook-lastUpdated");
+
 			orderbook.buyBookDom.perfectScrollbar();
 			orderbook.sellBookDom.perfectScrollbar();
 			IDEX.allOrderbooks.push(orderbook)
+			
+			orderbook.initLabelsDom();
 		}
 		if (!orderbox)
 		{
@@ -68,11 +92,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 
 		orderbook.currentOrderbook = new IDEX.OrderbookVar();
-		orderbook.initLabelsDom();
-		
-		orderbook.emptyOrderbook("Loading...");
-		//IDEX.updateScrollbar(false);
-		
+				
 		return orderbook;
 	};
 	
@@ -92,12 +112,16 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	}
 	
-	IDEX.Orderbook.prototype.initMarketDom = function()
+	IDEX.Orderbook.prototype.updateMarketDom = function()
 	{
-		/*
-		$wrap.find(".refcur-base").text(base.name);
-		$wrap.find(".refcur-rel").text(rel.name);
-		*/
+		var orderbook = this;
+		var base = orderbook.baseAsset;
+		var rel = orderbook.relAsset;
+		
+		orderbook.searchInputDom.val(base.name + "_" + rel.name);
+		
+		orderbook.orderbookDom.find(".refcur-base").text(base.name);
+		orderbook.orderbookDom.find(".refcur-rel").text(rel.name);
 	}
 	
 	
@@ -105,8 +129,12 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.changeMarket = function(base, rel)
 	{
 		var orderbook = this;
+		
 		orderbook.baseAsset = base;
 		orderbook.relAsset = rel;
+		
+		orderbook.emptyOrderbook("Loading...");
+		orderbook.updateMarketDom();
 		
 		orderbook.orderbox.changeMarket(base, rel);
 		
@@ -114,7 +142,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			orderbook.stopPollingOrderbook(function()
 			{
-				$(".empty-orderbook").hide();
+				orderbook.orderbookDom.find(".empty-orderbook").hide();
 				orderbook.orderbookHandler(1);
 			});
 		}
@@ -198,7 +226,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbook.prototype.orderbookHandler = function(timeout)
 	{
-		var _this = this;
+		var orderbook = this;
 		
 		this.getOrderbookData(timeout).done(function(orderbookData, errorLevel)
 		{
@@ -214,8 +242,8 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else if (errorLevel == IDEX.AJAX_ERROR)
 			{
-				_this.orderbookDom.find(".empty-orderbook").hide();
-				_this.emptyOrderbook("Error loading orderbook");
+				orderbook.orderbookDom.find(".empty-orderbook").hide();
+				orderbook.emptyOrderbook("Error loading orderbook");
 				
 				//$(".empty-orderbook").hide();
 				//$("#buyBook .twrap").empty();
@@ -228,23 +256,23 @@ var IDEX = (function(IDEX, $, undefined)
 				//orderbookData = new IDEX.OrderbookVar(orderbookData);
 				if ($.isEmptyObject(orderbookData))
 				{
-					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
-					_this.emptyOrderbook();
-					_this.orderbookDom.find(".empty-orderbook").show();
-					_this.updateScrollbar(false);
+					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
+					orderbook.emptyOrderbook();
+					orderbook.orderbookDom.find(".empty-orderbook").show();
+					orderbook.updateScrollbar(false);
 				}
 				else
 				{
-					_this.formatOrderbookData(orderbookData);
-					_this.updateOrders(_this.buyBookDom.find(".twrap"), _this.groupedBids);
-					_this.updateOrders(_this.sellBookDom.find(".twrap"), _this.groupedAsks);
+					orderbook.formatOrderbookData(orderbookData);
+					orderbook.updateOrders(orderbook.buyBookDom.find(".twrap"), orderbook.groupedBids);
+					orderbook.updateOrders(orderbook.sellBookDom.find(".twrap"), orderbook.groupedAsks);
 					
-					_this.updateLastPrice(orderbookData);
-					_this.animateOrderbook();
-					_this.currentOrderbook = new IDEX.Orderbook(orderbookData);
+					orderbook.updateLastPrice(orderbookData);
+					orderbook.animateOrderbook();
+					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
 				}
-				if (!(_this.isStoppingOrderbook))
-					_this.orderbookHandler(timeout);
+				if (!(orderbook.isStoppingOrderbook))
+					orderbook.orderbookHandler(timeout);
 			}
 			
 		})

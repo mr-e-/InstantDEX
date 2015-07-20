@@ -66,16 +66,12 @@ var IDEX = (function(IDEX, $, undefined)
 		$banner.removeClass("success")
 		$banner.addClass("active");
 		
-		console.log([baseid, relid])
+		//console.log([baseid, relid])
 
 		if (baseid != "-1" && relid != "-1")
 		{
 			var base = IDEX.user.getAssetInfo("assetID", baseid);	
 			var rel = IDEX.user.getAssetInfo("assetID", relid);
-			
-			console.log(base);
-			console.log(rel);
-			
 			
 			var retbool = IDEX.user.addFavorite(baseid, relid);
 

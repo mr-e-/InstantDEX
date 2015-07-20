@@ -72,8 +72,8 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbox.baseAsset = base;
 		orderbox.relAsset = rel;
 		
-		this.resetOrderBoxForm();
-		this.updateOrderBoxBalance();
+		orderbox.resetOrderBoxForm();
+		orderbox.updateOrderBoxBalance();
 	}
 	
 	
@@ -81,12 +81,6 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		this.resetOrderBoxForm();
 		this.updateOrderBoxBalance();
-
-
-		/*
-		$wrap.find(".refcur-base").text(base.name);
-		$wrap.find(".refcur-rel").text(rel.name);
-		*/
 	}
 
 	

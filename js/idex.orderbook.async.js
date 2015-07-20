@@ -127,9 +127,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbook = this;
 		
 		orderbook.lastUpdatedCounter().done(function()
-		{
-			var $el = orderbook.orderbookDom.find(".orderbook-lastUpdated");
-			
+		{			
 			if (orderbook.counter)
 			{
 				seconds++;
@@ -139,14 +137,14 @@ var IDEX = (function(IDEX, $, undefined)
 				else
 					var text = String(seconds) + "s"
 				
-				$el.text(text)
+				orderbook.lastUpdatedDom.text(text)
 				
 				orderbook.lastUpdatedHandler(seconds)
 			}
 			else
 			{
 				var text = "0s"
-				$el.text(text)
+				orderbook.lastUpdatedDom.text(text)
 			}
 		})
 	}

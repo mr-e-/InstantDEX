@@ -23,21 +23,6 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		IDEX.constructFromObject(this, obj);
 	};
-
-
-	IDEX.OrderbookVar = function(obj) 
-	{	
-		this.nxtRS = "";
-		this.pair = "";
-		this.orderbookID = "";
-		this.baseAsset = "";
-		this.relAsset = "";
-		
-		this.asks = [];
-		this.bids = [];
-
-		IDEX.constructFromObject(this, obj);
-	};
 	
 
 	

@@ -96,28 +96,27 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$("#main_grid").on("click", ".dropdown-list li", function()
 	{
-		/*var $wrap = $(this).closest(".dropdown-list-wrap");
-		var $list = $(this).closest("ul");
-
-		var val = $(this).attr("data-val");	
-		var title = $(this).text();
-
-		$list.find("li").removeClass("active");
-		$(this).addClass("active");
+		var $wrap = $(this).closest(".dropdown-list-wrap");
 		
-		$wrap.find(".dropdown-title span").text(title);
-		$wrap.trigger("mouseleave");*/
-	})
-	
-	
-	
-	$("#main_grid").on("click", ".orderbook-label-dropdown li", function()
-	{
+		if ($wrap.hasClass("dropdown-list-mult-wrap"))
+		{
+			
+		}
+		else
+		{
+			var $list = $(this).closest("ul");
 
-		//IDEX.flipClass($(this), "active");
+			var val = $(this).attr("data-val");	
+			var title = $(this).text();
 
-		
+			$list.find("li").removeClass("active");
+			$(this).addClass("active");
+			
+			$wrap.find(".dropdown-title span").text(title);
+			$wrap.trigger("mouseleave");
+		}
 	})
+
 	
 	
 	
