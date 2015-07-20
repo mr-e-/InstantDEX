@@ -1,6 +1,5 @@
 var IDEX = (function(IDEX, $, undefined) 
 {   
-	var skynetKeysTick = [2,3,4,5,6]
 	var skynetKeys = {
 		"startTime":0,
 		"endTime":1,
@@ -20,8 +19,9 @@ var IDEX = (function(IDEX, $, undefined)
 		"close":5,
 		"vol":6
 	}
-	//var skynetKeys = [1,2,3,4,5]
 
+	
+	
 	IDEX.SkyNETParams = function(obj) 
 	{
 		this.baseurl = "http://api.finhive.com/v1.0/run.cgi?";
@@ -54,6 +54,8 @@ var IDEX = (function(IDEX, $, undefined)
 
         return this.baseurl+s
     }
+	
+	
 	
 	IDEX.OHLC = function(obj) 
 	{
@@ -102,7 +104,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.getInd = function(indSettings, settings)
 	{
 		var dfd = new $.Deferred();
-		var id = "6932037131189568014"
 		
 		var iret = "merge"
 		
@@ -191,6 +192,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return [ohlc, volume]
 	}
 	
+	
 	function invert()
 	{
 		data[i][keys[0]] =  Number((1 / close).toFixed(6))
@@ -210,6 +212,9 @@ var IDEX = (function(IDEX, $, undefined)
 			var vol = data[i][keys['volume']]
 		*/
 	}
+	
+	
+	
 	
 	return IDEX;
 	

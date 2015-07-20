@@ -107,7 +107,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var label = IDEX.user.labels[i];
 			var name = label.name;
 			
-			var li = "<li data-val='"+name+"'>"+name+"</li>"
+			var li = "<li class='" + "label-" + name + "' data-val='"+name+"'>"+name+"</li>"
 			orderbook.orderbookDom.find(".orderbook-label-dropdown ul").append($(li))
 		}
 	}

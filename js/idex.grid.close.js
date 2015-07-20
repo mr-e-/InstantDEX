@@ -96,6 +96,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!$nextTabHeader.length)
 			$nextTabHeader = $tabHeader.prev();
 		
+		IDEX.closeGridType($tabContent);
 		$tabHeader.remove()
 		$tabContent.remove()
 		$nextTabHeader.trigger("click");

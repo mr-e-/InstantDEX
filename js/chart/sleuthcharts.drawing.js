@@ -464,34 +464,52 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 
-	var slip = 0
-	function resize()
-	{
-		if (slip == 0)
-		{
-			d3.selectAll("#boxes path").attr("transform", "scale(1,0.7)")
-			d3.select("#yAxisLabels").attr("transform", "scale(1,0.7)")
-		}
-		else
-		{
-			d3.selectAll("#boxes path").attr("transform", "scale(1,1)")
-			d3.select("#yAxisLabels").attr("transform", "scale(1,1)")
-		}
-		
-		slip = 1 - slip;
-		
-		var bb = $("#boxes")[0].getScreenCTM();
-		var cc = d3.select("#boxes")[0][0].getCTM();
-		var bbox = d3.select("#boxes").node().getBBox();
-		console.log(bb)
-		console.log(bbox)
-	}
-
 	
-	function transformSVG(element, m) 
+	function redrawLines(chart)
 	{
-		return element.transform.baseVal.initialize(element.ownerSVGElement.createSVGTransformFromMatrix(m));
-	};
+		var node = chart.node;
+		var $drawingGroup = $(node).find(".drawingLines");
+		$drawingGroup.empty();
+		
+		var d3DrawingGroup = d3.select($drawingGroup.get()[0])
+		
+		var lineAttr = {
+			"stroke-width": 1.5,
+			"stroke": "#999999"
+		}
+		
+		var priceAxis = chart.yAxis[0];
+		var xAxis = chart.xAxis[0];
+		
+		for (var i = 0; i < chart.drawPoints.length; i++)
+		{
+			var drawPoint = chart.drawPoints[i];
+			
+			if (drawPoint.length != 2)
+				continue;
+			
+			var positions = [];
+			
+			for (var j = 0; j < drawPoint.length; j++)
+			{
+				var linePoint = drawPoint[j];
+				var yPos = priceAxis.getPos(linePoint.price);
+				var xPoint = IDEX.getXPoint(chart.pointData, linePoint.time);
+				
+				var xPos = xPoint.pos.middle;
+				
+				positions.push({"x":xPos, "y":yPos});
+			}
+			
+			d3DrawingGroup.append("line")
+			.attr("x1", positions[0].x)
+			.attr("y1", positions[0].y)
+			.attr("x2", positions[1].x)
+			.attr("y2", positions[1].y)
+			.attr(lineAttr);
+		}
+					
+	}
 	
 	
 	

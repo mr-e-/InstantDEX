@@ -95,9 +95,6 @@ var IDEX = (function(IDEX, $, undefined)
 			$(".grid-trig").removeClass("mousedown");
 		}
 		
-		$(".popup-trig").removeClass("mousedown");
-
-		
 		IDEX.isResizing = false;
 		IDEX.resizeGrid = null;
 		IDEX.resizeDir = "";

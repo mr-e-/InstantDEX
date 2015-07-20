@@ -357,6 +357,52 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	}
 	
+	function updateAxisMinMax(vis, startIndex, endIndex, chart)
+	{
+		var xAxis = chart.xAxis[0]
+		
+		if (xAxis.calcPointWidth(vis))
+		{
+			chart.visiblePhases = vis;
+
+			xAxis.updateXMinMax(startIndex, endIndex)
+			for (var i = 0; i < chart.yAxis.length; i++)
+			{
+				var temp = i == 0;
+				
+				chart.yAxis[i].updateYMinMax(temp)
+			}
+		}
+	}
+	
+	function resizeAxis(chart)
+	{
+		chart.yAxis[0].resizeYAxis()
+		chart.yAxis[1].resizeYAxis()
+		chart.xAxis[0].resizeXAxis()
+	}
+	
+	function updateAxisPos(chart)
+	{
+		chart.yAxis[0].updateYAxisPos()
+		chart.yAxis[1].updateYAxisPos()
+		chart.xAxis[0].updateXAxisPos()	
+	}
+	
+	function updateAxisTicks(chart)
+	{
+		chart.yAxis[0].makeYAxis()
+		chart.yAxis[1].makeYAxis()
+		chart.xAxis[0].makeXAxis()	
+	}
+	
+	function drawAxisLines(chart)
+	{
+		chart.yAxis[0].drawYAxisLines()
+		chart.yAxis[1].drawYAxisLines()
+		chart.xAxis[0].drawXAxisLines()	
+	}
+	
 	
 	IDEX.Axis.prototype.makeYAxis = function()
 	{
@@ -531,6 +577,43 @@ var IDEX = (function(IDEX, $, undefined)
 		.attr("y1", function (d) { return d.y })
 		.attr("y2", function (d) { return d.y })
 		.attr(gridLineAttr)
+	}
+	
+	
+	IDEX.initXAxis = function(chart)
+	{
+		var xAxis = chart.xAxis[0]
+		var allPhases = chart.phases;
+		var vis = []
+		
+		var numShow = xAxis.range;
+		var minRange = xAxis.minRange
+
+		var startIndex = 0;
+		var endIndex = allPhases.length - 1;
+		
+		
+		if (allPhases.length > numShow)
+			startIndex = allPhases.length - numShow;
+		
+		vis = allPhases.slice(startIndex);
+		
+		if (xAxis.calcPointWidth(vis) || true);
+		{
+			chart.visiblePhases = vis;
+			
+			xAxis.dataMin = allPhases[0].startTime;
+			xAxis.dataMax = allPhases[allPhases.length-1].startTime
+			
+			//updateAxisMinMax(vis, startIndex, endIndex)
+			xAxis.updateXMinMax(startIndex, endIndex)
+			for (var i = 0; i < chart.yAxis.length; i++)
+			{
+				var temp = i == 0;
+				
+				chart.yAxis[i].updateYMinMax(temp)
+			}
+		}
 	}
 	
 	

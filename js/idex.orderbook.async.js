@@ -6,35 +6,35 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.getOrderbookData = function(timeout)
 	{
 		var retDFD = new $.Deferred();
-		var thisScope = this;
+		var orderbook = this;
 
-		thisScope.counter = true;
-		thisScope.lastUpdatedHandler(0);
+		orderbook.counter = true;
+		orderbook.lastUpdatedHandler(0);
 		
-		//IDEX.updateUserState();
+		orderbook.orderbox.updateOrderBoxBalance();
 		
-		thisScope.setTimeout(timeout).then(function(wasCleared)
+		orderbook.setTimeout(timeout).then(function(wasCleared)
 		{			
 			if (wasCleared)
 			{
-				thisScope.counter = false;
-				thisScope.clearUpdatedTimeout()
+				orderbook.counter = false;
+				orderbook.clearUpdatedTimeout()
 				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
 			else
 			{
-				thisScope.orderbookPost().done(function(orderbookData)
+				orderbook.orderbookPost().done(function(orderbookData)
 				{
-					//IDEX.updateUserState();
+					orderbook.orderbox.updateOrderBoxBalance();
 
-					thisScope.counter = false;
-					thisScope.clearUpdatedTimeout()
+					orderbook.counter = false;
+					orderbook.clearUpdatedTimeout()
 					
 					if (orderbookData == "fail")
 					{
 						retDFD.resolve({}, IDEX.AJAX_ERROR);
 					}
-					else if (thisScope.isStoppingOrderbook)
+					else if (orderbook.isStoppingOrderbook)
 					{
 						retDFD.resolve({}, IDEX.AJAX_ABORT);
 					}

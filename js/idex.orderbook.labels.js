@@ -161,7 +161,7 @@ var IDEX = (function(IDEX, $, undefined)
 						
 			$table.append($(newRow))
 			
-			var li = "<li data-val='"+name+"'>"+name+"</li>"
+			var li = "<li class='" + "label-" + name + "' data-val='"+name+"'>"+name+"</li>"
 			$("#main_grid").find(".orderbook-label-dropdown ul").append($(li))
 			
 			var newLabel = new IDEX.OrderbookLabel({"name":name});
@@ -296,7 +296,9 @@ var IDEX = (function(IDEX, $, undefined)
 
 			if (orderbookLabel)
 			{
-				orderbook.orderbookDom.find(".label-" + name).removeClass("label-" + name)
+				orderbook.buyBookDom.find(".label-" + name).removeClass("label-" + name)
+				orderbook.sellBookDom.find(".label-" + name).removeClass("label-" + name)
+
 				orderbook.labels.splice(orderbookLabel.index, 1);
 			}
 			
