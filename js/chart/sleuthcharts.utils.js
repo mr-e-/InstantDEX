@@ -85,6 +85,38 @@ var IDEX = (function(IDEX, $, undefined)
 		return obj;
 	}
 	
+	
+	
+	//axis.canvas = document.createElement('canvas');
+	//axis.ctx = this.canvas.getContext("2d");
+	//axis.ctx.font = this.labels.fontSize + " Roboto"; 
+	
+	function getTextPixelWidth(text, fontSize)
+	{
+		var canvas = document.createElement('canvas');
+		var ctx = canvas.getContext("2d");
+		ctx.font = fontSize + " Roboto"; 
+		
+		return ctx.measureText(text).width;
+	}
+	
+	
+	function getMaxTextWidth(vals, fontSize, ctx)
+	{
+		var max = 0
+		
+		for (var i = 0; i < vals.length; i++)
+		{
+			var text = String(Number(vals[i].toPrecision(3)));
+			var wid = ctx.measureText(text).width;
+			
+			if (wid > max)
+				max = wid
+		}
+		
+		return max
+	}
+	
 
 	
 	

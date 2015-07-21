@@ -126,6 +126,12 @@ var IDEX = (function(IDEX, $, undefined)
 			"minperc":75
 		}
 	
+		//console.log(Sleuthcharts);
+		//var s = IDEX.makeChart({"node":"1"});
+		//console.log(Sleuthcharts);
+
+		//console.log(Highcharts)
+		//console.log(s)		
 		
 		IDEX.pingSupernet().done(function()
 		{	

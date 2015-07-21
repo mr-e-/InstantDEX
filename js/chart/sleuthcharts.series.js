@@ -1,5 +1,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {   
+
+
 	IDEX.Series = function(obj) 
 	{
 		this.height = 0;

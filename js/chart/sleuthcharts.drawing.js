@@ -4,6 +4,11 @@
 var IDEX = (function(IDEX, $, undefined) 
 {   
 
+
+		//var $drawingGroup = $(node).find(".drawingLines");
+		//$drawingGroup.empty();
+
+
 	$("#main_grid").on("click", ".chart-tools-crosshair", function()
 	{
 		var $wrap = $(this).closest(".chart-header");

@@ -83,12 +83,9 @@ var IDEX = (function(IDEX, $, undefined)
 		var insideX = mouseX - offsetX
 		var insideY = mouseY - offsetY
 
-		var height = xAxis.pos['bottom'];
-		var width = priceAxis.pos['left'];
+		var height = xAxis.pos.bottom;
+		var width = priceAxis.pos.left;
 
-		
-		var topAxis = chart.yAxis[0]
-		var bottomAxis = chart.yAxis[chart.yAxis.length-1]
 		
 		if (insideY >= 0 && insideY <= height && insideX >= 0 && insideX <= width)
 		{
