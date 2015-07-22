@@ -55,6 +55,18 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.addResize = function(chart)
+	{
+		var node = chart.node
+		var $a = $(chart.node).parent()
+
+		$(chart.node).resize(function(e)
+		{
+			resizeHandler(chart)
+		})
+	}
+	
+	
 	function onChartMove(chart, e)
     {
 		if (!chart.xAxis.length)

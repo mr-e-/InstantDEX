@@ -34,11 +34,6 @@ var IDEX = (function(IDEX, $, undefined)
 		Chart.prototype = 
 		{
 			
-			//series: [],
-			//axes: [],
-			//xAxis: [],
-			//yAxis: [],
-			
 			
 			init: function(userOptions)
 			{
@@ -76,7 +71,6 @@ var IDEX = (function(IDEX, $, undefined)
 					opt.index = i;
 					var seriesType = opt.seriesType;
 					var seriesClass = Sleuthcharts.seriesTypes[seriesType]
-					console.log(seriesClass);
 					var series = new seriesClass(chart, opt);
 					chart.series.push(series);
 				}
@@ -178,6 +172,80 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 			
+			updateChart: function()
+			{
+				var dfd = new $.Deferred();
+
+				var chart = this;
+				var settings = chart.settings;
+				var isTime = settings.bars == "time";
+
+				
+				chart.emptyChart();
+				chart.unbindEventListeners();	//$("#"+node).unbind();
+				chart.toggleLoading(true);
+				
+				chart.prevIndex = -1;
+
+				updateChartType();
+
+				chart.MarketData.getMarketData.done(function()
+				{	
+					chart.resizeAxis();
+					chart.updateAxisPos();
+					chart.initXAxis();
+					
+					chart.redraw();
+					
+					chart.drawBothInds();
+
+					chart.drawMarketName();
+					chart.toggleLoading(false)
+					
+					
+					dfd.resolve();
+				})
+				
+				return dfd.promise()
+			},
+			
+			
+			redraw: function()
+			{
+				var chart = this;
+				
+				
+				if (!chart.xAxis.length)
+					return
+				
+
+				chart.getPointPositions();
+				chart.EqualizeYAxisWidth();
+				chart.resizeAxis();
+				chart.updateAxisPos();
+				
+				chart.updateAxisMinMax();
+				
+				
+				chart.getPointPositions();
+				chart.EqualizeYAxisWidth(priceAxis)
+				chart.resizeAxis();
+				chart.updateAxisPos();
+						
+						
+				chart.drawCandleSticks();
+				chart.drawVolBars()
+				chart.drawBothInds();
+
+
+				chart.updateAxisTicks(chart);
+				chart.drawAxisLines(chart);
+				
+				//highLowPrice(chart);
+				redrawLines(chart);
+			},
+			
+			
 
 		}
 		
@@ -188,6 +256,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 	}(Sleuthcharts || {}));
 	
+		
+		
 		
 
 	
@@ -294,113 +364,8 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 	
-	IDEX.updateChart = function()
-	{
-		var dfd = new $.Deferred();
-
-		var chart = this;
-		var settings = chart.settings;
-		var isTime = settings.bars == "time";
-
-		
-		chart.emptyChart();
-		chart.unbindEventListeners();	//$("#"+node).unbind();
-		chart.toggleLoading(true);
-		
-		chart.prevIndex = -1;
-
-		updateChartType();
-
-		chart.MarketData.getMarketData.done(function()
-		{	
-			chart.resizeAxis();
-			chart.updateAxisPos();
-			chart.initXAxis();
-			
-			chart.redraw();
-			
-			chart.drawBothInds();
-
-			chart.drawMarketName();
-			chart.toggleLoading(false)
-			
-			
-			dfd.resolve();
-		})
-		
-		return dfd.promise()
-	}
-	
-
-	function updateChartType()
-	{
-		var chart = this;
-		var settings = chart.settings;
-		
-		
-		if (settings.chartType == "candlestick")
-		{
-			$(chart.node).find(".mainline").empty()
-			chart.drawCandleSticks = drawCandleSticks
-			chart.chartType = "candlestick"
-		}
-		else if (settings.chartType == "line")
-		{
-			$(chart.node).find(".boxes").empty()
-			chart.drawCandleSticks = drawLineArea
-			chart.chartType = "line"
-
-		}
-		else if (settings.chartType == "ohlc")
-		{
-			$(chart.node).find(".mainline").empty()
-			chart.drawCandleSticks = drawCandleSticks
-			chart.chartType = "ohlc"
-		}
-		else if (settings.chartType == "area")
-		{
-			$(chart.node).find(".boxes").empty()
-			chart.drawCandleSticks = drawLineArea
-			chart.chartType = "area"
-		}
-	}
-		
-		
-		
-	function redraw(chart)
-	{
-		var chart = this;
-		
-		
-		if (!chart.xAxis.length)
-			return
-		
-
-		chart.getPointPositions();
-		chart.EqualizeYAxisWidth();
-		chart.resizeAxis();
-		chart.updateAxisPos();
-		
-		chart.updateAxisMinMax();
-		
-		
-		chart.getPointPositions();
-		chart.EqualizeYAxisWidth(priceAxis)
-		chart.resizeAxis();
-		chart.updateAxisPos();
-				
-				
-		chart.drawCandleSticks();
-		chart.drawVolBars()
-		chart.drawBothInds();
 
 
-		updateAxisTicks(chart);
-		drawAxisLines(chart);
-		
-		highLowPrice(chart);
-		redrawLines(chart);
-	}
 	
 	
 	

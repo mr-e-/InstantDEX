@@ -55,16 +55,6 @@ var IDEX = (function(IDEX, $, undefined)
 		redraw(chart)
 	}
 	
-	IDEX.addResize = function(chart)
-	{
-		var node = chart.node
-		var $a = $(chart.node).parent()
-
-		$(chart.node).resize(function(e)
-		{
-			resizeHandler(chart)
-		})
-	}
 	
 	
 	
