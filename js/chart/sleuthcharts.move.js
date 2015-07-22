@@ -6,6 +6,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
+
+
+	
+	
 	
 	function tryZoom(chart, e)
 	{

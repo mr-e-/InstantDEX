@@ -4,10 +4,6 @@ var Sleuthcharts = {};
 var IDEX = (function(IDEX, $, undefined) 
 {   
 
-	IDEX.allcharts = {};
-
-
-
 
 	Sleuthcharts = (function(Sleuthcharts) 
 	{
@@ -27,6 +23,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		}
 		
+
 		
 		
 		var Chart = Sleuthcharts.Chart = function()
@@ -34,19 +31,29 @@ var IDEX = (function(IDEX, $, undefined)
 			this.init.apply(this, arguments)
 		}
 		
-		Chart.prototype = {
+		Chart.prototype = 
+		{
+			
+			//series: [],
+			//axes: [],
+			//xAxis: [],
+			//yAxis: [],
+			
 			
 			init: function(userOptions)
 			{
 				
 				var chart = this;
 				chart.userOptions = userOptions;
+				
+				
+				chart.series = [];
+				chart.axes = [];
 				chart.xAxis = [];
 				chart.yAxis = [];
 				
-				
 				chart.initAxes();
-				//chart.initSeries();
+				chart.initSeries();
 				//chart.addEventListeners();				
 
 					
@@ -55,23 +62,24 @@ var IDEX = (function(IDEX, $, undefined)
 
 			},
 			
-			
-			addEventListeners: function()
-			{
-				var chart = this;
-				
-				chart.addWheel();
-				chart.addMove();
-				chart.addMouseout();
-				chart.addMouseup();
-				chart.addMousedown();
-				chart.addDrawing();
-			},
+		
 			
 			initSeries: function()
 			{
-				var candleSeries = new IDEX.Series(candleSeriesOpt)
-				var volSeries = new IDEX.Series(volSeriesOpt)
+				var chart = this;
+				var seriesOptions = chart.userOptions.series;
+				
+				
+				for (var i = 0; i < seriesOptions.length; i++)
+				{
+					var opt = seriesOptions[i];
+					opt.index = i;
+					var seriesType = opt.seriesType;
+					var seriesClass = Sleuthcharts.seriesTypes[seriesType]
+					console.log(seriesClass);
+					var series = new seriesClass(chart, opt);
+					chart.series.push(series);
+				}
 			},
 			
 			
@@ -100,6 +108,19 @@ var IDEX = (function(IDEX, $, undefined)
 					var axis = new Sleuthcharts.Axis(chart, opt)
 					chart.yAxis.push(axis)
 				}
+			},
+			
+			
+			addEventListeners: function()
+			{
+				var chart = this;
+				
+				chart.addWheel();
+				chart.addMove();
+				chart.addMouseout();
+				chart.addMouseup();
+				chart.addMousedown();
+				chart.addDrawing();
 			},
 			
 			
@@ -137,6 +158,23 @@ var IDEX = (function(IDEX, $, undefined)
 				chart.yAxis[0].drawYAxisLines()
 				chart.yAxis[1].drawYAxisLines()
 				chart.xAxis[0].drawXAxisLines()
+			},
+			
+			
+			toggleLoading: function (isLoading)
+			{
+				var chart = this;
+				var node  = chart.node;
+				var $parent = $(node).parent();
+				var $loading = $parent.find(".chart-loading")
+				if (isLoading)
+				{
+					$loading.show();
+				}
+				else
+				{
+					$loading.hide()
+				}
 			},
 			
 			
@@ -231,6 +269,16 @@ var IDEX = (function(IDEX, $, undefined)
 					"tickLength":7,
 					
 					"labels":yLabelStyle
+				}
+			],
+			
+			series: 
+			[
+				{
+					seriesType: "candlestick",
+				},
+				{
+					seriesType: "column",
 				}
 			]
 		}

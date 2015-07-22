@@ -5,6 +5,31 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
+	/*IDEX.getYAxisNodes = function(node, index)
+	{	
+		var obj = {}
+		var $axisGroup = $(node).find(".sleuthYAxis[data-axisnum='" + String(index) +"']")
+		
+		obj['labels'] = $axisGroup.find(".yLabels")
+		obj['ticksLeft'] = $axisGroup.find(".yTicksLeft")
+		obj['ticksRight'] = $axisGroup.find(".yTicksRight")
+		obj['gridLines'] = $axisGroup.find(".yGridLines")
+		
+		return obj;
+	}
+	
+	IDEX.getXAxisNodes = function(node, index)
+	{	
+		var obj = {}
+		var $axisGroup = $(node).find(".sleuthXAxis[data-axisnum='" + String(index) +"']")
+		
+		obj['labels'] = $axisGroup.find(".xLabels")
+		obj['ticks'] = $axisGroup.find(".xTicks")
+		
+		return obj;
+	}*/
+	
+	
 
 	Sleuthcharts = (function(Sleuthcharts) 
 	{
