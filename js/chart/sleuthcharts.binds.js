@@ -196,15 +196,16 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		$wrap.find(".chart-time-button-title span").text(title);
 
-		var node = $(this).closest(".chart-header").attr("data-chart")
-		var chart = IDEX.allcharts[node];
-		var settings = chart.settings;
-		var confVal = val
+		var $node = $(this).closest(".tile").find(".chart-wrap svg");
+		var chart = Sleuthcharts.getChart($node);
+	
+		//console.log(chart);
+		//console.log(Sleuthcharts);
 		
-		settings.barWidth = confVal;
-		settings.bars = confType;
+		//var confVal = val
+		//settings.barWidth = confVal;
+		//settings.bars = confType;
 		
-		IDEX.updateChart(node)
 	})
 	
 	

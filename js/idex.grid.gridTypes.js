@@ -18,28 +18,30 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (gridType == "chart")
 		{
+
+			
 			if (!IDEX.isTriggeredNew)
 			{
-				var id = $grid.find(".chart-header").attr("data-chart");
-				IDEX.makeChartDefault(id);
-				return
+				var $svgEl = $grid.find(".chart-wrap svg")
+				var chart = $svgEl.sleuthcharts();
+				
+				//console.log(chart)
 			}
-			
-			var svg = IDEX.makeSVG()
-			var $svgEl = $(svg.node())
-			var id = "chart_" + String(gridCount)
-			$svgEl.attr("id", id)
-			$grid.find(".chart-wrap").append($svgEl)
-			$grid.find(".chart-header").attr("data-chart", id);
-			
-			var $dropdownTable = $($("#chartTableTemplate").html())
-			$grid.find(".dropdown-wrap").append($dropdownTable)
-			
-			IDEX.makeChartDefault(id);
-			
-	
-			var $search = $grid.find('.skynet-search');
-			IDEX.initSkyNETAuto($search)
+			else
+			{
+				var svg = IDEX.makeSVG()
+				var $svgEl = $(svg.node())
+
+				$grid.find(".chart-wrap").append($svgEl)
+				
+				var $dropdownTable = $($("#chartTableTemplate").html())
+				$grid.find(".dropdown-wrap").append($dropdownTable)
+		
+				var $search = $grid.find('.skynet-search');
+				IDEX.initSkyNETAuto($search)
+				
+				IDEX.makeChart({"node":$svgEl})
+			}
 		}
 		else if (gridType == "orderbook")
 		{

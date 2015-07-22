@@ -11,18 +11,61 @@ var IDEX = (function(IDEX, $, undefined)
 		Sleuthcharts.allCharts = [];
 		
 		
+		$.fn.sleuthcharts = function () 
+		{
+			var args = arguments;
+			var options;
+			var ret;
+			var chart;
+			
+			
+			if (this[0]) 
+			{
+
+
+				options = args[0];
+
+				// Create the chart
+				if (typeof options !== "undefined") 
+				{
+					//console.log(options);
+					chart = new Sleuthcharts.Chart(options);
+					ret = chart;
+				}
+
+				if (typeof options === "undefined") 
+				{
+					var index = $(this).attr('data-sleuthcharts');
+					ret = Sleuthcharts.allCharts[index];
+				}
+			}
+			
+			return ret;
+		};
 		
-		Sleuthcharts.getChart = function()
+		
+		
+		Sleuthcharts.getChart = function($node)
 		{
 			var allCharts = this.allCharts;
 			var len = allCharts.length;
+			var ret = false;
 			
 			for (var i = 0; i < len; i++)
 			{
+				var chart = allCharts[i];
 				
+				if (chart.node.is($node))
+				{
+					ret = chart;
+					break;
+				}
 			}
-		}
+			
+			return ret;
+		};
 		
+
 
 		
 		
@@ -41,6 +84,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var chart = this;
 				chart.userOptions = userOptions;
 				
+				chart.node = chart.userOptions.chart.node;
 				
 				chart.series = [];
 				chart.axes = [];
@@ -52,9 +96,11 @@ var IDEX = (function(IDEX, $, undefined)
 				//chart.addEventListeners();				
 
 					
-				Sleuthcharts.allCharts.push(chart);
-				return chart;
+				chart.node.attr("data-sleuthcharts", Sleuthcharts.allCharts.length)
 
+				Sleuthcharts.allCharts.push(chart);
+				
+				return chart;
 			},
 			
 		
@@ -278,6 +324,12 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var chartOptions = 
 		{
+			chart:
+			{
+				node:node,
+			},
+			
+			
 			xAxis: [
 				{	
 					"isXAxis":true,
@@ -354,7 +406,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 		
-		var chart = new Sleuthcharts.Chart(chartOptions);
+		obj.node.sleuthcharts(chartOptions);
+		//var chart = new Sleuthcharts.Chart(chartOptions);
 
 		
 		//var chart = Sleuthcharts.getChart(node);

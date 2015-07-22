@@ -44,7 +44,7 @@ var IDEX = (function(IDEX, $, undefined)
 				series.padding = new Sleuthcharts.Padding();
 				series.padding = Sleuthcharts.extend(series.padding, userOptions.padding);
 				
-			}
+			},
 			
 			initAxis: function()
 			{
