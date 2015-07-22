@@ -3,103 +3,45 @@ var IDEX = (function(IDEX, $, undefined)
 {   
 
 
-	IDEX.getPointPositions = function(chart)
-	{
-		var xAxis = chart.xAxis[0];
-		var priceAxis = chart.yAxis[0]
-		
-		var xStart = xAxis.pos.left;
-		var xPos = xStart;
-		var phases = chart.visiblePhases;
-		var phasesLength = phases.length;
-		
-		var pointWidth = xAxis.pointWidth;
 
-		var allPoints = []
+	
+	IDEX.getMinMax = function(phases, type)
+	{
+		var min = 0;
+		var max = 0;
 		
-		//var a = Date.now()
-	    for (var i = 0; i < phasesLength; i++)
+		for (var i = 0; i < phases.length; ++i)
 		{
 			var phase = phases[i];
-			var closedHigher = phase.close > phase.open;
 			
-			var top = closedHigher ? phase.close : phase.open;
-			var bottom = closedHigher ? phase.open : phase.close;
-			
-		    var bottomBody = priceAxis.getPos(bottom);
-		    var bottomLeg = priceAxis.getPos(phase.low);
-		    var topBody = priceAxis.getPos(top);
-		    var topLeg = priceAxis.getPos(phase.high);
-			
-			var left = xPos + 0.5;
-			var right = (left + pointWidth) - 1;
-			var middle = ((left) + (right)) / 2;
-			
-			left += 0.5
-			right += 0.5
-			middle += 0.5
-			topLeg += 0.5
-			topBody += 0.5
-			bottomBody += 0.5
-			bottomLeg += 0.5
-			
-			//console.log(String(left) + " " + String(right) + " " + String(middle))
-			
-			var positions = {}
-			positions['left'] = left;
-			positions['right'] = right;
-			positions['middle'] = middle;
-			positions['topLeg'] = topLeg;
-			positions['topBody'] = topBody;
-			positions['bottomBody'] = bottomBody;
-			positions['bottomLeg'] = bottomLeg;
-
-			allPoints.push({"phase":phase, "pos":positions})
-			
-		    xPos += xAxis.xStep;
-		}
-		chart.pointData = allPoints;
-	}
-	
-
-	IDEX.getMinMax = function(phases)
-	{
-		var high = 0;
-		var low = 0;
-		for (var i = 0; i < phases.length; ++i)
-		{
 			if (i == 0)
 			{
-				low = phases[i].low;
-				high = phases[i].high;
+				if (type)
+				{
+					min = phases[i].low;
+					max = phases[i].high;
+				}
+				else
+				{
+					//min = phases[i].vol;
+					max = phase.vol;
+				}
 			}
 			else
 			{
-				low = phases[i].low < low ? phases[i].low : low;
-				high = phases[i].high > high ? phases[i].high : high;
+				if (type)
+				{
+					min = phase.low < min ? phase.low : min;
+					max = phase.high > max ? phase.high : max;
+				}
+				else
+				{
+					//min = phases[i].vol < min ? phases[i].vol : min;
+					max = phases[i].vol > max ? phases[i].vol : max;
+				}
 			}
 		}
-		return [low, high];
-	}
-	
-	IDEX.getMinMaxVol = function(phases)
-	{
-		var max = 0;
-		var min = 0;
 		
-		for (var i = 0; i < phases.length; ++i)
-		{
-			if (i == 0)
-			{
-				//min = phases[i].vol;
-				max = phases[i].vol;
-			}
-			else
-			{
-				//min = phases[i].vol < min ? phases[i].vol : min;
-				max = phases[i].vol > max ? phases[i].vol : max;
-			}
-		}
 		return [min, max];
 	}
 	

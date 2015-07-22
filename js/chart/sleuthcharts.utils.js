@@ -11,24 +11,19 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		Sleuthcharts.Padding = function()
 		{
-			this.padding = 
-			{
-				"top":0,
-				"bottom":0,
-				"left":0,
-				"right":0,
-			};
+			this.top = 0;
+			this.bottom = 0;
+			this.left = 0;
+			this.right = 0;
 		}
 		
 		Sleuthcharts.Positions = function()
 		{
-			this.positions = 
-			{
-				"top":0,
-				"bottom":0,
-				"left":0,
-				"right":0,
-			};
+
+			this.top = 0;
+			this.bottom = 0;
+			this.left = 0;
+			this.right = 0;
 		}
 		
 		
@@ -46,6 +41,15 @@ var IDEX = (function(IDEX, $, undefined)
 
 			
 			return objA
+		}
+		
+		Sleuthcharts.extendClass = function(parent, members)
+		{
+			var object = function () { return undefined; };
+			object.prototype = new parent();
+			Sleuthcharts.extend(object.prototype, members);
+			
+			return object;
 		}
 		
 		
@@ -88,9 +92,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	//axis.canvas = document.createElement('canvas');
-	//axis.ctx = this.canvas.getContext("2d");
-	//axis.ctx.font = this.labels.fontSize + " Roboto"; 
+
 	
 	function getTextPixelWidth(text, fontSize)
 	{
@@ -102,7 +104,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	function getMaxTextWidth(vals, fontSize, ctx)
+	IDEX.getMaxTextWidth = function(vals, fontSize, ctx)
 	{
 		var max = 0
 		

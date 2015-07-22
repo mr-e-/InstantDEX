@@ -199,7 +199,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var $node = $(this).closest(".tile").find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
 	
-		//console.log(chart);
+		console.log(chart);
 		//console.log(Sleuthcharts);
 		
 		//var confVal = val

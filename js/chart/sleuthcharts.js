@@ -77,7 +77,6 @@ var IDEX = (function(IDEX, $, undefined)
 		Chart.prototype = 
 		{
 			
-			
 			init: function(userOptions)
 			{
 				
@@ -91,8 +90,13 @@ var IDEX = (function(IDEX, $, undefined)
 				chart.xAxis = [];
 				chart.yAxis = [];
 				
+				chart.allPoints = [];
+				chart.visiblePhases = [];
+				
+				
 				chart.initAxes();
 				chart.initSeries();
+				chart.initMarketHandler();
 				//chart.addEventListeners();				
 
 					
@@ -100,7 +104,213 @@ var IDEX = (function(IDEX, $, undefined)
 
 				Sleuthcharts.allCharts.push(chart);
 				
+				var load = "marketSettings" in chart.userOptions;
+
+				console.log(load);
+				
+				if (load)
+				{
+					var marketHandler = chart.marketHandler;
+					marketHandler.getMarketData().done(function()
+					{
+					
+						chart.resizeAxis();
+						chart.updateAxisPos();
+						chart.initXAxis();
+						
+						//chart.redraw();
+						
+						//chart.drawBothInds();
+
+						//chart.drawMarketName();
+						//chart.toggleLoading(false)
+						
+
+
+						chart.getPointPositions();
+						chart.equalizeYAxisWidth();
+						chart.resizeAxis();
+						chart.updateAxisPos();
+						
+						chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
+						
+						//chart.getPointPositions();
+						//chart.equalizeYAxisWidth();
+						//chart.resizeAxis();
+						//chart.updateAxisPos();
+								
+						
+						for (var i = 0; i < chart.series.length; i++)
+						{
+							var series = chart.series[i];
+							console.log(series);
+							series.drawPoints();
+						}
+
+						//chart.drawBothInds();
+					})
+					
+				}
+				
 				return chart;
+			},
+			
+
+		
+			initXAxis: function()
+			{
+				var chart = this;
+				var xAxis = chart.xAxis[0];
+				var allPhases = chart.marketHandler.marketData.ohlc;
+				
+				xAxis.dataMin = allPhases[0].startTime;
+				xAxis.dataMax = allPhases[allPhases.length-1].startTime
+				
+				var numShow = xAxis.range;
+				var minRange = xAxis.minRange
+
+				var startIndex = 0;
+				var endIndex = allPhases.length - 1;
+				
+				if (allPhases.length > numShow)
+					startIndex = allPhases.length - numShow;
+				
+				var vis = allPhases.slice(startIndex);
+				
+				chart.updateAxisMinMax(vis, startIndex, endIndex);
+			},
+			
+			
+			updateAxisMinMax(vis, startIndex, endIndex)
+			{
+				var chart = this;
+				var xAxis = chart.xAxis[0]
+				
+				if (xAxis.calcPointWidth(vis))
+				{
+					chart.visiblePhases = vis;
+
+					xAxis.updateXMinMax(startIndex, endIndex)
+					for (var i = 0; i < chart.yAxis.length; i++)
+					{
+						var temp = i == 0;
+						
+						chart.yAxis[i].updateYMinMax()
+					}
+				}
+			},
+			
+			
+			
+			getPointPositions: function()
+			{
+				var chart = this;
+				var xAxis = chart.xAxis[0];
+				var priceAxis = chart.yAxis[0];
+				
+				var xPos = xAxis.pos.left;
+				//var phases = chart.marketHandler.marketData.ohlc;
+				var phases = chart.visiblePhases;
+				var phasesLength = phases.length;
+				
+				var pointWidth = xAxis.pointWidth;
+
+				var allPoints = []
+				
+				//var a = Date.now()
+				for (var i = 0; i < phasesLength; i++)
+				{
+					var phase = phases[i];
+					var closedHigher = phase.close > phase.open;
+					
+					var top = closedHigher ? phase.close : phase.open;
+					var bottom = closedHigher ? phase.open : phase.close;
+					
+					var bottomBody = priceAxis.getPositionFromValue(bottom);
+					var bottomLeg = priceAxis.getPositionFromValue(phase.low);
+					var topBody = priceAxis.getPositionFromValue(top);
+					var topLeg = priceAxis.getPositionFromValue(phase.high);
+					
+					var left = xPos + 0.5;
+					var right = (left + pointWidth) - 1;
+					var middle = ((left) + (right)) / 2;
+					
+					left += 0.5
+					right += 0.5
+					middle += 0.5
+					topLeg += 0.5
+					topBody += 0.5
+					bottomBody += 0.5
+					bottomLeg += 0.5
+					
+					//console.log(String(left) + " " + String(right) + " " + String(middle))
+					
+					var positions = {}
+					positions.left = left;
+					positions.right = right;
+					positions.middle = middle;
+					positions.topLeg = topLeg;
+					positions.topBody = topBody;
+					positions.bottomBody = bottomBody;
+					positions.bottomLeg = bottomLeg;
+
+					allPoints.push({"phase":phase, "pos":positions})
+					
+					xPos += xAxis.xStep;
+				}
+				
+				chart.allPoints = allPoints;
+			},
+			
+			
+			
+			equalizeYAxisWidth: function()
+			{
+				var chart = this;
+				var allSeries = chart.series;
+				var biggestWidth = 0;
+				
+				for (var i = 0; i < allSeries.length; i++)
+				{
+					var yAxis = allSeries[i].yAxis;
+					
+					var paddedMax = yAxis.max + (yAxis.max * (yAxis.maxPadding))
+					var paddedMin = yAxis.min - (yAxis.min * (yAxis.minPadding))
+					
+					var scale = d3.scale.linear()
+					.domain([paddedMin, paddedMax])
+					.range([yAxis.height, yAxis.pos.top])
+					
+					var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
+					
+					
+					var maxTextWidth = IDEX.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
+					var textPadding = yAxis.labels.textPadding;
+					var combinedWidth = maxTextWidth + (yAxis.tickLength * 2) + (textPadding * 2);
+					var newAxisWidth = combinedWidth;
+
+					biggestWidth = newAxisWidth > biggestWidth ? newAxisWidth : biggestWidth;
+				}
+				for (var i = 0; i < allSeries.length; i++)
+				{
+					var yAxis = allSeries[i].yAxis
+					yAxis.widthInit = biggestWidth
+					yAxis.width = biggestWidth;
+				}
+			},
+			
+			
+			
+			initMarketHandler: function()
+			{
+				var chart = this;
+				
+				var marketSettings = chart.userOptions.marketSettings || {};
+				
+				//console.log(marketSettings);
+				
+				var marketHandler = new Sleuthcharts.MarketHandler(chart, marketSettings);
+				chart.marketHandler = marketHandler;
 			},
 			
 		
@@ -116,8 +326,9 @@ var IDEX = (function(IDEX, $, undefined)
 					var opt = seriesOptions[i];
 					opt.index = i;
 					var seriesType = opt.seriesType;
-					var seriesClass = Sleuthcharts.seriesTypes[seriesType]
-					var series = new seriesClass(chart, opt);
+					var seriesClass = Sleuthcharts.seriesTypes[seriesType];
+					var series = new seriesClass();
+					series.init(chart, opt)
 					chart.series.push(series);
 				}
 			},
@@ -133,7 +344,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					var opt = xAxisOptions[i];
 					opt.isXAxis = true;
-					opt.axisIndex = i;
+					opt.index = i;
 					
 					var axis = new Sleuthcharts.Axis(chart, opt)
 					chart.xAxis.push(axis)
@@ -143,7 +354,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					var opt = yAxisOptions[i];
 					opt.isXAxis = false;
-					opt.axisIndex = i;
+					opt.index = i;
 					
 					var axis = new Sleuthcharts.Axis(chart, opt)
 					chart.yAxis.push(axis)
@@ -218,6 +429,7 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 			
+			
 			updateChart: function()
 			{
 				var dfd = new $.Deferred();
@@ -236,7 +448,7 @@ var IDEX = (function(IDEX, $, undefined)
 				updateChartType();
 
 				chart.MarketData.getMarketData.done(function()
-				{	
+				{
 					chart.resizeAxis();
 					chart.updateAxisPos();
 					chart.initXAxis();
@@ -261,8 +473,8 @@ var IDEX = (function(IDEX, $, undefined)
 				var chart = this;
 				
 				
-				if (!chart.xAxis.length)
-					return
+				//if (!chart.xAxis.length)
+				//	return
 				
 
 				chart.getPointPositions();
@@ -402,7 +614,13 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					seriesType: "column",
 				}
-			]
+			],
+			
+			marketSettings:
+			{
+				
+			},
+			
 		}
 		
 		

@@ -12,7 +12,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var Series = Sleuthcharts.Series = function()
 		{
-			this.init.apply(this, arguments)
+			//this.init.apply(this, arguments)
 		}
 		
 		Series.prototype = 
@@ -44,6 +44,16 @@ var IDEX = (function(IDEX, $, undefined)
 				series.padding = new Sleuthcharts.Padding();
 				series.padding = Sleuthcharts.extend(series.padding, userOptions.padding);
 				
+				if (this.seriesType == "candlestick")
+				{
+					series.pointsDom = chart.node.find(".boxes");
+				}
+				else if (this.seriesType == "column")
+				{
+					series.pointsDom = chart.node.find(".volbars");
+				}
+				
+				
 			},
 			
 			initAxis: function()
@@ -60,7 +70,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 		
-		Sleuthcharts.seriesTypes.candlestick = Sleuthcharts.extend(Series, 
+		Sleuthcharts.seriesTypes.candlestick = Sleuthcharts.extendClass(Series, 
 		{
 			seriesType: "candlestick",
 			
@@ -70,7 +80,7 @@ var IDEX = (function(IDEX, $, undefined)
 			closedLowerStroke: "#D12E2E",
 
 			
-			drawPoints:function()
+			drawPoints: function()
 			{
 				var series = this;
 				
@@ -82,7 +92,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var yAxis = series.yAxis;
 				
 				var chartData = chart.chartData;
-				var allPoints = chartData.allPoints;
+				var allPoints = chart.allPoints;
 				var allPointsLength = allPoints.length;
 				
 				var pointWidth = xAxis.pointWidth;
@@ -91,7 +101,7 @@ var IDEX = (function(IDEX, $, undefined)
 				$pointsDom.empty();
 
 		
-				for (var i = 0; i < allPoints; i++)
+				for (var i = 0; i < allPointsLength; i++)
 				{
 					var point = allPoints[i];
 					var phase = point.phase;
@@ -136,7 +146,7 @@ var IDEX = (function(IDEX, $, undefined)
 					]
 					
 
-					var a = box
+					var a = d3PointsDom
 					//.selectAll("path")
 					//.data(allPoints)
 					//.enter()
@@ -154,7 +164,7 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		
-		Sleuthcharts.seriesTypes.ohlc = Sleuthcharts.extend(Series, 
+		Sleuthcharts.seriesTypes.ohlc = Sleuthcharts.extendClass(Series, 
 		{
 			seriesType: "ohlc",
 		
@@ -218,7 +228,7 @@ var IDEX = (function(IDEX, $, undefined)
 						"L", pos.middle, closePos 
 					]
 					
-					var a = box
+					var a = d3PointsDom
 					//.selectAll("path")
 					//.data(allPoints)
 					//.enter()
@@ -236,7 +246,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 		
-		Sleuthcharts.seriesTypes.column = Sleuthcharts.extend(Series, 
+		Sleuthcharts.seriesTypes.column = Sleuthcharts.extendClass(Series, 
 		{
 			seriesType: "column",
 			
@@ -258,7 +268,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var yAxis = series.yAxis;
 				
 				var chartData = chart.chartData;
-				var allPoints = chartData.allPoints;
+				var allPoints = chart.allPoints;
 				var allPointsLength = allPoints.length;
 				
 				var pointWidth = xAxis.pointWidth;
@@ -273,7 +283,7 @@ var IDEX = (function(IDEX, $, undefined)
 					var phase = point.phase;
 					var pos = point.pos;
 					
-					var volTop = yAxis.getPos(phase.vol);
+					var volTop = yAxis.getPositionFromValue(phase.vol);
 					var volHeight = yAxis.pos.bottom - volTop;
 					
 					var closedHigher = phase.close > phase.open;
@@ -290,7 +300,7 @@ var IDEX = (function(IDEX, $, undefined)
 						"Z", 
 					]*/
 
-					volBars
+					d3PointsDom
 					.append("rect")
 					.attr("x", pos.left + 1)
 					.attr("y", volTop - 2)
@@ -306,7 +316,7 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		
-		Sleuthcharts.seriesTypes.line = Sleuthcharts.extend(Series, 
+		Sleuthcharts.seriesTypes.line = Sleuthcharts.extendClass(Series, 
 		{
 			seriesType: "line",
 			
@@ -365,7 +375,7 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		
-		Sleuthcharts.seriesTypes.area = Sleuthcharts.extend(Series, 
+		Sleuthcharts.seriesTypes.area = Sleuthcharts.extendClass(Series, 
 		{
 			seriesType: "area",
 			fillColor: "#2B8714",

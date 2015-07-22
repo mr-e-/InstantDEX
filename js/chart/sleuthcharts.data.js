@@ -64,16 +64,16 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		
 		
-		var MarketData = Sleuthcharts.MarketData = function()
+		var MarketHandler = Sleuthcharts.MarketHandler = function()
 		{
 			this.init.apply(this, arguments)
 		}
 		
 		
-		MarketData.prototype = 
+		MarketHandler.prototype = 
 		{
 			
-			settings:
+			marketSettings:
 			{
 				baseID: "6854596569382794790",
 				relID: "6932037131189568014",
@@ -89,14 +89,23 @@ var IDEX = (function(IDEX, $, undefined)
 
 				isVirtual: false,
 				isFlipped: false,
-				tradeData: [],
-				phases: [],
 			},
 			
 			
-			init: function(a)
+			init: function(chart, userOptions)
 			{
+				var marketHandler = this;
+				
+				marketHandler.chart = chart;
+				
+				marketHandler.phases = [];
+				marketHandler.tradeData = [];
+				marketHandler.marketData = {};
+				
+				marketHandler.marketSettings = Sleuthcharts.extend(marketHandler.marketSettings, userOptions.marketSettings);
 
+
+				
 			},
 			
 			
@@ -113,25 +122,25 @@ var IDEX = (function(IDEX, $, undefined)
 				settings.exchange = obj.exchange;
 			},
 			
+			
 			getMarketData: function()
 			{
+				var marketHandler = this;
 				var dfd = new $.Deferred();
 				
 				
-				data = data.results
-				
-				var both = IDEX.getStepOHLC(data, isTime);
-				var ohlc = both[0]
-				var vol = both[1]
-				
+				var isTime = marketHandler.marketSettings.barType == "time";
 
+				marketHandler.getSkynetMarketData().done(function(data)
+				{
+					data = data.results
+					
+					marketHandler.formatMarketData(data, isTime);
+					
+					dfd.resolve();
+					//var formattedData = marketHandler.marketData;
 				
-				var data = chart.marketData.data;
-				
-				var ohlcData = data.ohlcData
-				var volData = data.volumeData;
-				chart.phases = ohlc
-
+				})
 				
 				return dfd.promise();
 			},
@@ -140,8 +149,9 @@ var IDEX = (function(IDEX, $, undefined)
 			getSkynetMarketData: function()
 			{
 				var dfd = new $.Deferred();
-
-				var settings = this.settings;
+				var marketHandler = this;
+				
+				var settings = marketHandler.marketSettings;
 				
 				var obj = {}
 				obj.run = "quotes";
@@ -210,15 +220,14 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			
 			
-			formatMarketData: function()
+			formatMarketData: function(data, isTime)
 			{
-				var data;
-				var isTime;
-				
+				var marketHandler = this;
 				
 				var ohlc = [];
 				var volume = [];
 				var dataLength = data.length;
+				
 				var keys = isTime ? skynetKeysTime : skynetKeys;
 
 				
@@ -231,15 +240,16 @@ var IDEX = (function(IDEX, $, undefined)
 						obj[key] = data[i][keys[key]]
 					}
 
-					obj['startTime'] *= 1000;
-					obj['endTime'] *= 1000;
+					obj.startTime *= 1000;
+					obj.endTime *= 1000;
 					
 					
 					ohlc.push(obj)
-					volume.push({x:obj['startTime'], y:obj['vol']});
+					volume.push({x:obj.startTime, y:obj.vol});
 				}
 
-				return [ohlc, volume]
+				marketHandler.marketData.ohlc = ohlc;
+				marketHandler.marketData.volume = volume;
 			}
 			
 		}

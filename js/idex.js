@@ -126,7 +126,7 @@ var IDEX = (function(IDEX, $, undefined)
 			"minperc":75
 		}
 	
-		var $node = $("#marketSearch_popup");
+		//var $node = $("#marketSearch_popup");
 		
 		//console.log(Sleuthcharts);
 		//var s = IDEX.makeChart({"node":$node});

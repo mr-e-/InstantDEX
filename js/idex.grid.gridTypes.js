@@ -41,6 +41,7 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.initSkyNETAuto($search)
 				
 				IDEX.makeChart({"node":$svgEl})
+				
 			}
 		}
 		else if (gridType == "orderbook")
