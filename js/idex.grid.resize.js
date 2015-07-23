@@ -37,7 +37,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (isInsideBorder.isInside)
 		{
 			var borderMap = ["top", "bottom", "left", "right"]
-			var dirMap = ["N", "S", "E", "W"]
+			var dirMap = ["N", "S", "W", "E"]
 			
 			for (var i = 0; i < borderMap.length; i++)
 			{

@@ -66,8 +66,6 @@ var IDEX = (function(IDEX, $, undefined)
 		};
 		
 
-
-		
 		
 		var Chart = Sleuthcharts.Chart = function()
 		{
@@ -90,11 +88,14 @@ var IDEX = (function(IDEX, $, undefined)
 				chart.xAxis = [];
 				chart.yAxis = [];
 				
+				
 				chart.allPoints = [];
 				chart.visiblePhases = [];
 				
 				
 				chart.initAxes();
+				chart.axes = chart.xAxis.concat(chart.yAxis);
+
 				chart.initSeries();
 				chart.initMarketHandler();
 				//chart.addEventListeners();				
@@ -106,38 +107,38 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				var load = "marketSettings" in chart.userOptions;
 
-				console.log(load);
+				{
+					chart.resizeAxis();
+					chart.updateAxisPos();
+					
+					//chart.redraw();
+					
+					//chart.drawBothInds();
+
+					//chart.drawMarketName();
+				}
 				
 				if (load)
 				{
 					var marketHandler = chart.marketHandler;
+					
+					//chart.toggleLoading(true);
+
 					marketHandler.getMarketData().done(function()
 					{
-					
-						chart.resizeAxis();
-						chart.updateAxisPos();
-						chart.initXAxis();
+						var tempSeries = chart.series[0];
 						
-						//chart.redraw();
+						//chart.toggleLoading(false);	
+
+						tempSeries.setDefaultMarketDataRange();
+						tempSeries.getPointPositions();
 						
-						//chart.drawBothInds();
-
-						//chart.drawMarketName();
-						//chart.toggleLoading(false)
-						
-
-
-						chart.getPointPositions();
 						chart.equalizeYAxisWidth();
 						chart.resizeAxis();
 						chart.updateAxisPos();
 						
-						chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
+						//chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
 						
-						//chart.getPointPositions();
-						//chart.equalizeYAxisWidth();
-						//chart.resizeAxis();
-						//chart.updateAxisPos();
 								
 						
 						for (var i = 0; i < chart.series.length; i++)
@@ -146,8 +147,15 @@ var IDEX = (function(IDEX, $, undefined)
 							console.log(series);
 							series.drawPoints();
 						}
-
+						
 						//chart.drawBothInds();
+
+						//chart.updateAxisTicks();
+						//chart.drawAxisLines();
+						
+						//highLowPrice(chart);
+						//redrawLines(chart);
+
 					})
 					
 				}
@@ -156,113 +164,6 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 
-		
-			initXAxis: function()
-			{
-				var chart = this;
-				var xAxis = chart.xAxis[0];
-				var allPhases = chart.marketHandler.marketData.ohlc;
-				
-				xAxis.dataMin = allPhases[0].startTime;
-				xAxis.dataMax = allPhases[allPhases.length-1].startTime
-				
-				var numShow = xAxis.range;
-				var minRange = xAxis.minRange
-
-				var startIndex = 0;
-				var endIndex = allPhases.length - 1;
-				
-				if (allPhases.length > numShow)
-					startIndex = allPhases.length - numShow;
-				
-				var vis = allPhases.slice(startIndex);
-				
-				chart.updateAxisMinMax(vis, startIndex, endIndex);
-			},
-			
-			
-			updateAxisMinMax(vis, startIndex, endIndex)
-			{
-				var chart = this;
-				var xAxis = chart.xAxis[0]
-				
-				if (xAxis.calcPointWidth(vis))
-				{
-					chart.visiblePhases = vis;
-
-					xAxis.updateXMinMax(startIndex, endIndex)
-					for (var i = 0; i < chart.yAxis.length; i++)
-					{
-						var temp = i == 0;
-						
-						chart.yAxis[i].updateYMinMax()
-					}
-				}
-			},
-			
-			
-			
-			getPointPositions: function()
-			{
-				var chart = this;
-				var xAxis = chart.xAxis[0];
-				var priceAxis = chart.yAxis[0];
-				
-				var xPos = xAxis.pos.left;
-				//var phases = chart.marketHandler.marketData.ohlc;
-				var phases = chart.visiblePhases;
-				var phasesLength = phases.length;
-				
-				var pointWidth = xAxis.pointWidth;
-
-				var allPoints = []
-				
-				//var a = Date.now()
-				for (var i = 0; i < phasesLength; i++)
-				{
-					var phase = phases[i];
-					var closedHigher = phase.close > phase.open;
-					
-					var top = closedHigher ? phase.close : phase.open;
-					var bottom = closedHigher ? phase.open : phase.close;
-					
-					var bottomBody = priceAxis.getPositionFromValue(bottom);
-					var bottomLeg = priceAxis.getPositionFromValue(phase.low);
-					var topBody = priceAxis.getPositionFromValue(top);
-					var topLeg = priceAxis.getPositionFromValue(phase.high);
-					
-					var left = xPos + 0.5;
-					var right = (left + pointWidth) - 1;
-					var middle = ((left) + (right)) / 2;
-					
-					left += 0.5
-					right += 0.5
-					middle += 0.5
-					topLeg += 0.5
-					topBody += 0.5
-					bottomBody += 0.5
-					bottomLeg += 0.5
-					
-					//console.log(String(left) + " " + String(right) + " " + String(middle))
-					
-					var positions = {}
-					positions.left = left;
-					positions.right = right;
-					positions.middle = middle;
-					positions.topLeg = topLeg;
-					positions.topBody = topBody;
-					positions.bottomBody = bottomBody;
-					positions.bottomLeg = bottomLeg;
-
-					allPoints.push({"phase":phase, "pos":positions})
-					
-					xPos += xAxis.xStep;
-				}
-				
-				chart.allPoints = allPoints;
-			},
-			
-			
 			
 			equalizeYAxisWidth: function()
 			{
@@ -379,18 +280,20 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var chart = this;
 				
-				chart.yAxis[0].resizeYAxis()
-				chart.yAxis[1].resizeYAxis()
-				chart.xAxis[0].resizeXAxis()
+				for (var i = 0; i < chart.axes.length; i++)
+				{
+					chart.axes[i].resizeAxis();
+				}
 			},
 			
 			updateAxisPos: function()
 			{
 				var chart = this;
 				
-				chart.yAxis[0].updateYAxisPos()
-				chart.yAxis[1].updateYAxisPos()
-				chart.xAxis[0].updateXAxisPos()	
+				for (var i = 0; i < chart.axes.length; i++)
+				{
+					chart.axes[i].updateAxisPos();
+				}
 			},
 			
 			updateAxisTicks: function()
@@ -466,43 +369,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				return dfd.promise()
 			},
-			
-			
-			redraw: function()
-			{
-				var chart = this;
-				
-				
-				//if (!chart.xAxis.length)
-				//	return
-				
 
-				chart.getPointPositions();
-				chart.EqualizeYAxisWidth();
-				chart.resizeAxis();
-				chart.updateAxisPos();
-				
-				chart.updateAxisMinMax();
-				
-				
-				chart.getPointPositions();
-				chart.EqualizeYAxisWidth(priceAxis)
-				chart.resizeAxis();
-				chart.updateAxisPos();
-						
-						
-				chart.drawCandleSticks();
-				chart.drawVolBars()
-				chart.drawBothInds();
-
-
-				chart.updateAxisTicks(chart);
-				chart.drawAxisLines(chart);
-				
-				//highLowPrice(chart);
-				redrawLines(chart);
-			},
-			
 			
 
 		}

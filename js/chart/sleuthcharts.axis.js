@@ -111,10 +111,9 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var axis = this;
 				axis.chart = chart;
+				axis.series = [];
 				axis.options = options;
 				
-				
-				axis.series = [];
 
 				
 				axis.height = 0;
@@ -157,8 +156,14 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				if (axis.isXAxis)
 				{
+					axis.fullPointWidth = 0;
+					axis.pointPadding = 0;
+					axis.pointWidth = 0;
+					axis.numPoints = 0;
+					
 					axis.range = options.range;
 					axis.minRange = options.minRange;
+					
 					axis.tickStep = options.tickStep;
 					axis.nodes = IDEX.getXAxisNodes(chart.node, axis.index + 1);
 				}
@@ -179,38 +184,38 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			
 			
-		/***************		CALCULATE POINT WIDTH		****************/
-
-			calcPointWidth: function(vis)
+			updateMinMax: function(startIndex, endIndex)
 			{
 				var axis = this;
-				
-				var minWidth = 1;
-				var padding = 1;
-				
-				var fullWidth = axis.width / vis.length
-				
-				if (fullWidth >= 3) padding = 2;
-				if (fullWidth >= 5) padding = 3.5;
-				if (fullWidth >= 10) padding = 5;
-				if (fullWidth >= 20) padding = 10;
-				if (fullWidth >= 100) padding = 20;
+				var chart = axis.chart;
+				var isXAxis = axis.isXAxis;
 
-				var pointWidth = fullWidth - padding
-				//console.log(String(fullWidth) + " " + String(vis.length) + " " + String(pointWidth) + " " + String(padding))
-				
-				//pointWidth = pointWidth < minWidth ? minWidth : width;
-				if (pointWidth < minWidth)
-					return false
-				
-				axis.xStep = fullWidth;
-				axis.pointWidth = pointWidth;
-				axis.pointPadding = padding;
-				axis.numPoints = Math.ceil(axis.width / axis.xStep);
-				
-				return true
-			},
+				var visiblePhases = chart.visiblePhases;
+
 			
+				if (isXAxis)
+				{
+					var marketHandler = chart.marketHandler;
+	
+					var allPhases = marketHandler.marketData.ohlc;
+
+
+					axis.dataMin = allPhases[0].startTime;
+					axis.dataMax = allPhases[allPhases.length-1].startTime
+					
+					axis.minIndex = startIndex;
+					axis.maxIndex = endIndex;
+					axis.min = visiblePhases[0].startTime;
+					axis.max = visiblePhases[visiblePhases.length-1].startTime;
+				}
+				else
+				{
+					var minMax = IDEX.getMinMax(visiblePhases, axis.index == 0);
+
+					axis.min = minMax[0];
+					axis.max = minMax[1];						
+				}				
+			},
 			
 
 
@@ -219,55 +224,51 @@ var IDEX = (function(IDEX, $, undefined)
 		/***************		RESIZE AXIS		****************/
 
 			
-			resizeXAxis: function()
+			resizeAxis: function()
 			{
 				var axis = this;
 				var chart = axis.chart;
+				var isXAxis = axis.isXAxis;
 				
 				var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();
 				var wrapWidth = bbox.width;
 				var wrapHeight = bbox.height;
-
-				var widest = 0;
 				
-				for (var i = 0; i < chart.yAxis.length; i++)
+				
+				if (isXAxis)
 				{
-					var yAxis = chart.yAxis[i];
+					var widest = 0;
 					
-					if (yAxis.width > widest)
-						widest = yAxis.width;
+					for (var i = 0; i < chart.yAxis.length; i++)
+					{
+						var yAxis = chart.yAxis[i];
+						
+						if (yAxis.width > widest)
+							widest = yAxis.width;
+					}
+					
+					var convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
+					
+					var convertedWidth = axis.resizeHW("100%", wrapWidth);
+					convertedWidth = convertedWidth - (widest + yAxis.padding.left) - axis.padding.left;
 				}
 				
-				convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
-				convertedWidth = axis.resizeHW("100%", wrapWidth);
-				convertedWidth = convertedWidth - (widest + yAxis.padding.left) - axis.padding.left;
+				else
+				{
+					var xAxis = chart.xAxis[0];
+					var len = chart.yAxis.length;
+					
+					var convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
+					convertedHeight = ((convertedHeight - (xAxis.height / len)) - (xAxis.padding.top / len)) - axis.padding.top
+					
+					var convertedWidth = axis.resizeHW(axis.widthInit, wrapWidth);
+				}
 
 				
 				axis.height = convertedHeight;
 				axis.width = convertedWidth;
 			},
 			
-			
-			resizeYAxis: function()
-			{
-				var axis = this;
-				var chart = axis.chart;
-				
-				var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();
-				var wrapWidth = bbox.width;
-				var wrapHeight = bbox.height;
-
-				var xAxis = chart.xAxis[0];
-				var len = chart.yAxis.length;
-				
-				convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
-				convertedHeight = ((convertedHeight - (xAxis.height / len)) - (xAxis.padding.top / len)) - axis.padding.top
-				convertedWidth = axis.resizeHW(axis.widthInit, wrapWidth);	
-				
-				
-				axis.height = convertedHeight;
-				axis.width = convertedWidth;
-			},
 			
 			
 			resizeHW: function(hw, wrapHW)
@@ -292,66 +293,43 @@ var IDEX = (function(IDEX, $, undefined)
 		/***************		UPDATE INTERNAL DOM POSITIONS		****************/
 		
 		
-			updateYAxisPos: function()
+			updateAxisPos: function()
 			{
 				var axis = this;
-				var chart = axis.chart
-				var xAxis = chart.xAxis[0]
-				var axisIndex = axis.index;
+				var chart = axis.chart;
+				var isXAxis = axis.isXAxis;
 				
-				var leftAdd = xAxis.padding['left'] + xAxis.width;
-				var topAdd = 0;
-				
-				if (axisIndex > 0)
+				if (isXAxis)
 				{
-					var otherAxis = chart.yAxis[axisIndex-1]
-					topAdd += otherAxis.pos.bottom;
+					var yAxis = chart.yAxis[chart.yAxis.length-1]
+
+					axis.pos.top = yAxis.pos.bottom + axis.padding.top;
+					axis.pos.bottom = axis.pos.top + axis.height;
+					axis.pos.left = axis.padding.left;
+					axis.pos.right = axis.pos.left + axis.width;
 				}
-
-				axis.pos.top = axis.padding.top + topAdd;
-				axis.pos.bottom = axis.pos.top + axis.height;
-				axis.pos.left =  + axis.padding.left + leftAdd;
-				axis.pos.right = axis.pos.left + axis.width;
+				else
+				{
+					var xAxis = chart.xAxis[0];
+					var axisIndex = axis.index;
+					
+					var leftAdd = xAxis.padding['left'] + xAxis.width;
+					var topAdd = 0;
+					
+					if (axisIndex > 0)
+					{
+						var otherAxis = chart.yAxis[axisIndex-1]
+						topAdd += otherAxis.pos.bottom;
+					}
+					
+					axis.pos.top = axis.padding.top + topAdd;
+					axis.pos.bottom = axis.pos.top + axis.height;
+					axis.pos.left = axis.padding.left + leftAdd;
+					axis.pos.right = axis.pos.left + axis.width;
+				}
 			},
 			
 			
-			updateXAxisPos: function()
-			{
-				var axis = this;
-				var chart = axis.chart
-				var yAxis = chart.yAxis[chart.yAxis.length-1]
-
-				axis.pos.top = yAxis.pos.bottom + axis.padding.top;
-				axis.pos.bottom = axis.pos.top + axis.height;
-				axis.pos.left = axis.padding.left;
-				axis.pos.right = axis.pos.left + axis.width;
-			},
-			
-			
-		/***************		UPDATE MIN MAX		****************/
-			
-			
-			updateXMinMax: function(minIndex, maxIndex)
-			{
-				var axis = this;
-				var vis = axis.chart.visiblePhases;
-				
-				axis.minIndex = minIndex;
-				axis.maxIndex = maxIndex;
-				axis.min = vis[0].startTime;
-				axis.max = vis[vis.length-1].startTime
-			},
-
-			
-			updateYMinMax: function()
-			{
-				var axis = this;
-				var vis = axis.chart.visiblePhases;
-				var minMax = IDEX.getMinMax(vis, this.index == 0)
-
-				axis.min = minMax[0]
-				axis.max = minMax[1]
-			},
 			
 			
 			
