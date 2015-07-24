@@ -4,34 +4,65 @@ var IDEX = (function(IDEX, $, undefined)
 {
 
 	
-	
-	
 
-
-	
-	
-	
-	function tryZoom(chart, e)
+	Sleuthcharts = (function(Sleuthcharts) 
 	{
-		//e.preventDefault();
-
-		if ("type" in e && e.type == "DOMMouseScroll")
+		
+	
+		var Pointer = Sleuthcharts.Pointer = function()
 		{
-			var wheelDeltaY = e['originalEvent']['detail'] > 0 ? -1 : 1;
-			var clientX = e['originalEvent']['clientX'];
-			var clientY = e['originalEvent']['clientY'];
+			this.init.apply(this, arguments)
 		}
-		else
+		
+		
+		Pointer.prototype = 
 		{
-			var wheelDeltaY = e.originalEvent.wheelDeltaY;
-			var clientX = e['clientX'];
-			var clientY = e['clientY'];
+			init: function(chart, userOptions)
+			{
+				pointer = this;
+			},
+			
+			
+			normalizeMouseEvent: function(e)
+			{
+				if ("type" in e && e.type == "DOMMouseScroll")
+				{
+					e.wheelDeltaY = e['originalEvent']['detail'] > 0 ? -1 : 1;
+					e.clientX = e['originalEvent']['clientX'];
+					e.clientY = e['originalEvent']['clientY'];
+				}
+				else
+				{
+					e.wheelDeltaY = e.originalEvent.wheelDeltaY;
+					e.clientX = e['clientX'];
+					e.clientY = e['clientY'];
+				}
+				
+				return e;
+			},
+			
+						
 		}
+			
+		
+		
+		return Sleuthcharts;
+		
+		
+	}(Sleuthcharts || {}));
+	
+	
+	
+	
+	function tryZoom(e)
+	{	
+		e = this.normalizeMouseEvent(e);
+		var chart = this.chart;
 		
 		var mouseX = e.pageX
 		var mouseY = e.pageY
-		var offsetX = $(chart.node).offset().left;
-		var offsetY = $(chart.node).offset().top;
+		var offsetX = chart.node.offset().left;
+		var offsetY = chart.node.offset().top;
 		var insideX = mouseX - offsetX
 		var insideY = mouseY - offsetY
 		var height = chart.xAxis[0].pos['bottom'];
@@ -62,8 +93,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	function zoomChart(isZoomOut, chart)
+	function zoomChart(isZoomOut)
 	{
+		var series = this;
+		var chart = series.chart;
 		var xAxis = chart.xAxis[0]
 		var curMax = xAxis.max;
 		var curMin = xAxis.min;
@@ -113,10 +146,12 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	function shiftXAxis(chart, shifts, direction)
+	function shiftXAxis(shifts, direction)
 	{
-		var xAxis = chart.xAxis[0]
-		var vis = []
+		var series = this;
+		var chart = series.chart;
+		var xAxis = chart.xAxis[0];
+		var vis = [];
 		
 		if (direction == false)
 		{

@@ -137,6 +137,10 @@ var IDEX = (function(IDEX, $, undefined)
 						chart.resizeAxis();
 						chart.updateAxisPos();
 						
+		
+						tempSeries.setDefaultMarketDataRange();
+						tempSeries.getPointPositions();
+						
 						//chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
 						
 								
@@ -150,8 +154,8 @@ var IDEX = (function(IDEX, $, undefined)
 						
 						//chart.drawBothInds();
 
-						//chart.updateAxisTicks();
-						//chart.drawAxisLines();
+						chart.updateAxisTicks();
+						chart.drawAxisLines();
 						
 						//highLowPrice(chart);
 						//redrawLines(chart);
@@ -300,18 +304,20 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var chart = this;
 				
-				chart.yAxis[0].makeYAxis()
-				chart.yAxis[1].makeYAxis()
-				chart.xAxis[0].makeXAxis()	
+				for (var i = 0; i < chart.axes.length; i++)
+				{
+					chart.axes[i].makeAxis();
+				}
 			},
 			
 			drawAxisLines: function()
 			{
 				var chart = this;
 				
-				chart.yAxis[0].drawYAxisLines()
-				chart.yAxis[1].drawYAxisLines()
-				chart.xAxis[0].drawXAxisLines()
+				for (var i = 0; i < chart.axes.length; i++)
+				{
+					chart.axes[i].drawAxisLines();
+				}
 			},
 			
 			
@@ -428,7 +434,8 @@ var IDEX = (function(IDEX, $, undefined)
 					"tickStep":6,
 
 					"labels":{
-						"fontSize":"12px",	
+						"fontSize":"12px",
+						"fontColor":"#8C8C8C"
 					},
 				}
 			],

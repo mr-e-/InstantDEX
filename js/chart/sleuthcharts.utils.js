@@ -71,6 +71,65 @@ var IDEX = (function(IDEX, $, undefined)
 
 		}
 		
+		
+		Sleuthcharts.formatExponent = function(num)
+		{
+			var maxDec = 8;
+			var sind = String(num).search("e")
+			
+			if (sind != -1)
+			{
+				var partwhole = String(num).slice(0, sind)
+				var partall = partwhole.split(".")
+				if (partall.length == 1)
+					partall.push("0")
+				var exnum = String(num).slice(sind+1)
+				var isneg = Number(exnum) < 0
+				var pow = exnum.slice(1)
+				//partall[0].length + partall[1].length
+				num = "0." + (Array(Number(pow) - (0)).join("0")) + partall[0] + partall[1]
+
+			}
+			
+			var all = String(num).split(".")
+			var numDec = 0;
+			var startDec = 0;
+
+			if (all.length == 2)
+			{
+				if (Number(all[0]) > 0)
+				{
+				}
+				else
+				{
+					for (sing in all[1])
+					{
+						if (Number(all[1][sing]) > 0)
+						{
+							break
+						}
+						startDec++;
+					}
+				}
+			}
+			else
+			{
+				all.push("0")
+			}
+
+
+			var paddedDec = 3;
+			var endDec = startDec + paddedDec
+			//var avail = maxDec - numDec;
+			if (endDec > maxDec)
+				endDec = maxDec
+			
+			var strDec = Number("0."+all[1]).toFixed(endDec)
+			var strAll = all[0] + "." + strDec.split(".")[1];
+			
+			return Number(strAll);
+		}
+		
 
 		return Sleuthcharts;
 		

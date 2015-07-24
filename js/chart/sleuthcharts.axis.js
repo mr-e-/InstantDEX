@@ -123,17 +123,17 @@ var IDEX = (function(IDEX, $, undefined)
 				axis.dataMax = 0;
 				axis.min = 0;
 				axis.max = 0;
+				axis.paddedMin = 0;
+				axis.paddedMax = 0;
+				
 				axis.minIndex = 0;
 				axis.maxIndex = 0;
 				
 				axis.numTicks = 0;
-				axis.tickInterval = 0;
 				axis.tickLength = 0;
 				axis.tickStep = 0;
-				axis.tickStepStart = 0;
 				
-				axis.tickPositions = [];
-				axis.showTicks = [];
+				axis.ticks = [];
 				
 				
 				axis.isXAxis = options.isXAxis;
@@ -201,7 +201,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 
 					axis.dataMin = allPhases[0].startTime;
-					axis.dataMax = allPhases[allPhases.length-1].startTime
+					axis.dataMax = allPhases[allPhases.length-1].startTime;
 					
 					axis.minIndex = startIndex;
 					axis.maxIndex = endIndex;
@@ -213,8 +213,11 @@ var IDEX = (function(IDEX, $, undefined)
 					var minMax = IDEX.getMinMax(visiblePhases, axis.index == 0);
 
 					axis.min = minMax[0];
-					axis.max = minMax[1];						
-				}				
+					axis.max = minMax[1];			
+				}
+				
+				axis.paddedMax = axis.max + (axis.max * (axis.maxPadding));
+				axis.paddedMin = axis.min - (axis.min * (axis.minPadding));
 			},
 			
 
@@ -331,316 +334,314 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			
 			
-			
-			
-		/***************		MAKE Y AXIS ????		****************/
 
-			makeYAxis: function()
+			makeAxis: function()
 			{
-				var fontLabelAttr = {
-					"fill": this.labels.fontColor,
-					"font-family": "Roboto",
-					"font-size": this.labels.fontSize
-				}
 				
-				var node = this.chart.node
-				var $yAxisLabelsID = this.nodes.labels
-				var $yAxisTicksID = this.nodes.ticksLeft
-				var $yAxisTicksRightID = this.nodes.ticksRight
-				var $yAxisGridLinesID = this.nodes.gridLines
+				var axis = this;
+				var isXAxis = axis.isXAxis;
 				
-				$yAxisLabelsID.empty();
-				$yAxisTicksID.empty();
-				$yAxisTicksRightID.empty();
-				$yAxisGridLinesID.empty();
 				
-				var ticks = [];
+				var ticksLeft = [];
 				var ticksRight = [];
-				var tickLength = this.tickLength
-				
-				var labels = []
-				var gridLines = [];
-				
-				var paddedMax = this.max + (this.max * (this.maxPadding))
-				var paddedMin = this.min - (this.min * (this.minPadding))
-				
-				var scale = d3.scale.linear()
-				.domain([paddedMin, paddedMax])
-				.range([this.height, this.pos.top])
-				
-				var tickVals = scale.ticks(this.numTicks) //.map(o.tickFormat(8))
-				
-				var tickPositions = []
-				
-				for (var i = 0; i < tickVals.length; i++)
-				{
-					//if (this.chart.isMain)
-					//	tickVals[i] = Number(tickVals[i].toFixed(6));
-					var maxDec = 8;
-					var num = tickVals[i];
-					var sind = String(num).search("e")
-					if (sind != -1)
-					{
-						var partwhole = String(num).slice(0, sind)
-						var partall = partwhole.split(".")
-						if (partall.length == 1)
-							partall.push("0")
-						var exnum = String(num).slice(sind+1)
-						var isneg = Number(exnum) < 0
-						var pow = exnum.slice(1)
-						//partall[0].length + partall[1].length
-						num = "0." + (Array(Number(pow) - (0)).join("0")) + partall[0] + partall[1]
-
-					}
-					var all = String(num).split(".")
-					var numDec = 0;
-					var startDec = 0;
-					//console.log(all[1])
-					if (all.length == 2)
-					{
-						if (Number(all[0]) > 0)
-						{
-						}
-						else
-						{
-							for (sing in all[1])
-							{
-								if (Number(all[1][sing]) > 0)
-								{
-									break
-								}
-								startDec++;
-							}
-						}
-					}
-					else
-					{
-						all.push("0")
-					}
-
-
-					var paddedDec = 3;
-					var endDec = startDec + paddedDec
-					//var avail = maxDec - numDec;
-					if (endDec > maxDec)
-						endDec = maxDec
-					
-					var strDec = Number("0."+all[1]).toFixed(endDec)
-					var strAll = all[0] + "." + strDec.split(".")[1];
-					tickVals[i] = Number(strAll)
-					
-					
-					var p = this.getPositionFromValue(tickVals[i])
-					tickPositions.push(p)
-				}
-				
-				var xPos = this.pos.left;
-				
-				var maxTextWidth = getMaxTextWidth(tickVals, this.labels.fontSize, this.ctx)
-				var newAxisWidth = this.width
-				
-				for (var i = 0; i < tickPositions.length; i++)
-				{
-					if (tickVals[i] == 0)
-						continue
-					var yPos = tickPositions[i] + 0.5;
-					var text = String(tickVals[i]);
-					
-					var label = makeLabel(xPos, yPos, text, maxTextWidth, this)
-					labels.push(label);
-					
-					var tick = makeLeftTick(xPos, yPos);
-					ticks.push(tick);
-					
-					var tickRight = makeRightTick(xPos, yPos, this);
-					ticksRight.push(tickRight);
-					
-					var gridLine = makeGridLine(xPos, yPos);
-					gridLines.push(gridLine);
-				}
-
-				var SVGLabels = d3.select($yAxisLabelsID.get()[0]).selectAll("text")
-				.data(labels)
-				.enter()
-				.append("text")
-				
-				SVGLabels.attr("x", function (d) { return d.x })
-				.attr("y", function (d) { return d.y + 4 })
-				.text(function (d) { return d.text })
-				.attr(fontLabelAttr)
-				//.attr("text-anchor", "end")
-
-				
-				var SVGTicks = d3.select($yAxisTicksID.get()[0]).selectAll("line")
-				.data(ticks)
-				.enter()
-				.append("line")
-				
-				SVGTicks
-				.attr("x1", function (d) { return d.x })
-				.attr("x2", function (d) { return d.x + tickLength})
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y })
-				.attr(tickAttr)
-				
-				
-				var SVGTicksRight = d3.select($yAxisTicksRightID.get()[0]).selectAll("line")
-				.data(ticksRight)
-				.enter()
-				.append("line")
-				
-				SVGTicksRight
-				.attr("x1", function (d) { return d.x })
-				.attr("x2", function (d) { return d.x - tickLength})
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y })
-				.attr(tickAttr)
-				
-				
-				var SVGGridLines = d3.select($yAxisGridLinesID.get()[0]).selectAll("line")
-				.data(gridLines)
-				.enter()
-				.append("line")
-				
-				SVGGridLines
-				.attr("x1", function (d) { return 0 })
-				.attr("x2", function (d) { return d.x })
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y })
-				.attr(gridLineAttr)
-			},
-			
-			
-		/***************		MAKE X AXIS ????		****************/
-		
-			makeXAxis: function()
-			{
-				var xAxis = this
-				
-				var fontLabelAttr = {
-					"fill": "#737373",
-					"font-family": "Roboto",
-					"font-size": xAxis.labels.fontSize
-				}
-				
-				var $xAxisLabelsID = xAxis.nodes.labels
-				var $xAxisTicksID = xAxis.nodes.ticks
-				
-				$xAxisLabelsID.empty();
-				$xAxisTicksID.empty();
-
 				var labels = [];
-				
-				var ticks = [];
-				var tickLength = xAxis.tickLength
-				
-				var tickStep = xAxis.tickStep;
-				var tickStepStart = 0;
-				var chart = xAxis.chart
+				var gridLines = [];
 
-				if (xAxis.showTicks.length)
+				
+				if (isXAxis)
 				{
-					var index = -1;
-					for (var i = 0; i < chart.pointData.length; i++)
+					var ticksDom = [];
+					
+					var ticks = axis.getXAxisTicks();
+					var yPos = axis.pos.top;
+					
+					for (var i = 0; i < ticks.length; i++)
 					{
-						var point = chart.pointData[i]
-						for (var j = 0; j < xAxis.showTicks.length; j++)
-						{
-							var showTick = xAxis.showTicks[j];
-							if (point.phase == showTick.phase)
-							{
-								index = i;
-								break;
-							}
-						}
+						var tick = ticks[i];
+						var xPos = tick.position;
 						
-						if (index != -1)
-							break;
+						var label = {};
+						label.text = Sleuthcharts.formatTime(new Date(tick.val))
+						label.x = xPos
+						label.y = yPos;
+						labels.push(label);
+						
+						var tickDom = {};
+						tickDom.x = xPos;
+						tickDom.y = yPos;
+						ticksDom.push(tickDom);
 					}
-					if (index == -1)
-					{
-						xAxis.tickStepStart = 0;
-					}
-					else
-					{
-						xAxis.tickStepStart = index % tickStep;
-					}
-				}
-				
-				var showTicks = []
-				
-				if (tickStep >= chart.pointData.length)
-				{
-					var index = Math.floor((chart.pointData.length - 1) / 2)
-					showTicks.push(chart.pointData[index])
+					
 				}
 				else
 				{
-					var numTicks =  Math.floor(xAxis.width / tickStep) 
-					var tickJump = Math.floor(numTicks / xAxis.xStep)
+					var ticks = axis.getYAxisTicks();
+					var xPos = axis.pos.left;
+
+					for (var i = 0; i < ticks.length; i++)
+					{	
+						var tick = ticks[i];
+						var yPos = tick.position + 0.5;
+						var text = String(tick.val);
+						
+						var label = axis.calcLabelPosition(xPos, yPos, text)
+						labels.push(label);
+						
+						var tickLeft = axis.calcLeftTickPosition(xPos, yPos);
+						ticksLeft.push(tickLeft);
+						
+						var tickRight = axis.calcRightTickPosition(xPos, yPos);
+						ticksRight.push(tickRight);
+						
+						var gridLine = axis.calcGridlinePosition(xPos, yPos);
+						gridLines.push(gridLine);
+					}
+				}
+
+				
+	
+				
+				
+				var tickLength = axis.tickLength;
+
+				var fontLabelAttr = {
+					"fill": axis.labels.fontColor,
+					"font-family": "Roboto",
+					"font-size": axis.labels.fontSize
+				}
+				
+				
+				if (isXAxis)
+				{
+					var $axisLabels = axis.nodes.labels;
+					var $axisTicks = axis.nodes.ticks;
+					
+					$axisLabels.empty();
+					$axisTicks.empty();
+				
+					var SVGTimeLabels = d3.select($axisLabels.get()[0]).selectAll("text")
+					.data(labels)
+					.enter()
+					.append("text")
+					
+					SVGTimeLabels
+					.attr("x", function (d) { return d.x - 20})
+					.attr("y", function (d) { return d.y + 16 })
+					.text(function (d) { return d.text })
+					.attr(fontLabelAttr)
+					
+					var SVGTimeTicks = d3.select($axisTicks.get()[0]).selectAll("line")
+					.data(ticksDom)
+					.enter()
+					.append("line")
+					
+					SVGTimeTicks
+					.attr("x1", function (d) { return d.x })
+					.attr("x2", function (d) { return d.x })
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y + tickLength})
+					.attr(tickAttr)
+				
+				}
+				else
+				{
+					
+					var $axisLabels = axis.nodes.labels;
+					var $axisTicksLeft = axis.nodes.ticksLeft;
+					var $axisTicksRight = axis.nodes.ticksRight;
+					var $axisGridLines = axis.nodes.gridLines;
+					
+					$axisLabels.empty();
+					$axisTicksLeft.empty();
+					$axisTicksRight.empty();
+					$axisGridLines.empty();
+
+
+					var SVGLabels = d3.select($axisLabels.get()[0]).selectAll("text")
+					.data(labels)
+					.enter()
+					.append("text")
+					
+					SVGLabels.attr("x", function (d) { return d.x })
+					.attr("y", function (d) { return d.y + 4 })
+					.text(function (d) { return d.text })
+					.attr(fontLabelAttr)
+					//.attr("text-anchor", "end")
+
+					
+					var SVGTicks = d3.select($axisTicksLeft.get()[0]).selectAll("line")
+					.data(ticksLeft)
+					.enter()
+					.append("line")
+					
+					SVGTicks
+					.attr("x1", function (d) { return d.x })
+					.attr("x2", function (d) { return d.x + tickLength})
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y })
+					.attr(tickAttr)
+					
+					
+					var SVGTicksRight = d3.select($axisTicksRight.get()[0]).selectAll("line")
+					.data(ticksRight)
+					.enter()
+					.append("line")
+					
+					SVGTicksRight
+					.attr("x1", function (d) { return d.x })
+					.attr("x2", function (d) { return d.x - tickLength})
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y })
+					.attr(tickAttr)
+					
+					
+					var SVGGridLines = d3.select($axisGridLines.get()[0]).selectAll("line")
+					.data(gridLines)
+					.enter()
+					.append("line")
+					
+					SVGGridLines
+					.attr("x1", function (d) { return 0 })
+					.attr("x2", function (d) { return d.x })
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y })
+					.attr(gridLineAttr)
+				
+				}
+				
+			},
+			
+			
+			getXAxisTicks: function()
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var ticks = [];
+
+				
+				var tickStep = axis.tickStep;
+				var tickStepStart = 0;
+				
+				
+				var allPoints = chart.allPoints
+				var allPointsLength = allPoints.length;
+				
+				var ticks = axis.ticks;
+				var ticksLength = ticks.length;
+				
+
+				
+				var index = -1;
+					
+				for (var j = 0; j < ticksLength; j++)
+				{
+					var tick = ticks[j];
+					
+					for (var i = 0; i < allPointsLength; i++)
+					{
+						var point = allPoints[i]
+						
+						if (point.phase.startTime == tick.val)
+						{
+							index = i;
+							break;
+						}
+					}
+					
+					if (index != -1)
+					{
+						tickStepStart = index % tickStep;
+						break;
+					}
+				}
+					
+
+				
+				
+				var showTicks = []
+				
+				if (tickStep >= allPointsLength)
+				{
+					var index = Math.floor((allPointsLength - 1) / 2)
+					showTicks.push(allPoints[index])
+				}
+				else
+				{
+					var numTicks =  Math.floor(axis.width / tickStep) 
+					var tickJump = Math.floor(numTicks / axis.fullPointWidth)
+					
 					if (tickJump < 1)
 						tickJump = 1
 					
-					var i = xAxis.tickStepStart;
-					var len = chart.pointData.length;
-					while (i < len)
+					var tickStepPos = tickStepStart;
+					
+					while (tickStepPos < allPointsLength)
 					{
-						showTicks.push(chart.pointData[i])
-						i += tickJump;
+						showTicks.push(allPoints[tickStepPos]);
+						tickStepPos += tickJump;
 					}
 				}
-				xAxis.showTicks = showTicks
-				
-				var yPos = xAxis.pos.top;
 				
 				for (var i = 0; i < showTicks.length; i++)
 				{
 					var showTick = showTicks[i];
-					var xPos = showTick.pos.middle;
-					
-					var label = {};
-					label.text = IDEX.formatTime(new Date(showTick.phase.startTime))
-					label.x = xPos
-					label.y = yPos;
-					labels.push(label);
-					
-					var tick = {};
-					tick.x = xPos;
-					tick.y = yPos;
-					ticks.push(tick);
+					ticks.push({"position":showTick.pos.middle, "val":showTick.phase.startTime, "point":showTick})
 				}
 				
-						
-				var SVGTimeLabels = d3.select($xAxisLabelsID.get()[0]).selectAll("text")
-				.data(labels)
-				.enter()
-				.append("text")
+				axis.ticks = ticks;
 				
-				SVGTimeLabels
-				.attr("x", function (d) { return d.x - 20})
-				.attr("y", function (d) { return d.y + 16 })
-				.text(function (d) { return d.text })
-				.attr(fontLabelAttr)
+				return ticks;
+			},
+			
+			
+			getYAxisTicks: function()
+			{
+				var axis = this;
+				var ticks = [];
 				
-				var SVGTimeTicks = d3.select($xAxisTicksID.get()[0]).selectAll("line")
-				.data(ticks)
-				.enter()
-				.append("line")
+				var paddedMax = axis.paddedMax;
+				var paddedMin = axis.paddedMin;
 				
-				SVGTimeTicks
-				.attr("x1", function (d) { return d.x })
-				.attr("x2", function (d) { return d.x })
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y + tickLength})
-				.attr(tickAttr)
+				var scale = d3.scale.linear()
+				.domain([paddedMin, paddedMax])
+				.range([axis.height, axis.pos.top])
+				
+				
+				var tickVals = scale.ticks(axis.numTicks) //.map(o.tickFormat(8))
+								
+				for (var i = 0; i < tickVals.length; i++)
+				{
+					var val = tickVals[i];
+					val = Sleuthcharts.formatExponent(val);
+					var position = axis.getPositionFromValue(val)
+					
+					ticks.push({"position":position, "val":val})
+				}
+				
+				axis.ticks = ticks;
+
+				
+				return ticks;
 			},
 			
 			
 		/***************		LABEL/TICK FUNCTIONS		****************/
 			
 			
-			makeLabel: function(xPos, yPos, text, maxTextWidth, axis)
+			calcLabelPosition: function(xPos, yPos, text)
 			{
+				var axis = this;
+				var ticks = axis.ticks;
+				var maxTextWidth = 0
+				
+				for (var i = 0; i < ticks.length; i++)
+				{
+					var loopText = String(Number(ticks[i].val.toPrecision(3)));
+					var wid = axis.ctx.measureText(loopText).width;
+					maxTextWidth = wid > maxTextWidth ? wid : maxTextWidth;
+				}
+				
+
 				var label = {};
 				
 				var axisWidth = axis.width;
@@ -664,11 +665,12 @@ var IDEX = (function(IDEX, $, undefined)
 				label.y = yPos;
 				
 				label.x = xPos + shift + fixedTextPadding + tickLength;
+				
 				return label;
 			},
 			
 			
-			makeLeftTick: function(xPos, yPos)
+			calcLeftTickPosition: function(xPos, yPos)
 			{
 				var tick = {};
 				
@@ -679,7 +681,7 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 		
 			
-			makeRightTick: function(xPos, yPos)
+			calcRightTickPosition: function(xPos, yPos)
 			{
 				var axis = this;
 				var tickRight = {};
@@ -691,7 +693,7 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 			
-			makeGridLine: function(xPos, yPos)
+			calcGridlinePosition: function(xPos, yPos)
 			{
 				var gridLine = {};
 				
@@ -707,16 +709,26 @@ var IDEX = (function(IDEX, $, undefined)
 	
 			drawAxisLines: function()
 			{
-				var chart = this.chart;
-				var isXAxis = this.isXAxis;
-				var bbox = d3.select(chart.node)[0][0].getBoundingClientRect();	
+				var axis = this;
+				var chart = axis.chart;
+				var isXAxis = axis.isXAxis;
 				
-				var $axisGroup = this.axisGroupDom;
-				//var $axisGroup = $(chart.node).find(".sleuthYAxis[data-axisNum='" + String(this.axisIndex) +"']")
-				//var $axisGroup = $(chart.node).find(".sleuthXAxis[data-axisNum='" + String(this.axisIndex) +"']")
+				//var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();	
+				var bbox = chart.node[0].getBoundingClientRect()
+				
+				//var $axisGroup = this.axisGroupDom;
+				
+				if (isXAxis)
+				{
+					var $axisGroup = chart.node.find(".sleuthXAxis[data-axisNum='" + String(axis.index + 1) +"']")
+					var $axisLinesGroup = $axisGroup.find(".xAxisLines");
+				}
+				else
+				{
+					var $axisGroup = chart.node.find(".sleuthYAxis[data-axisNum='" + String(axis.index + 1) +"']")
+					var $axisLinesGroup = $axisGroup.find(".yAxisLines");
+				}
 
-				var $axisLinesGroup = $axisGroup.find(".yAxisLines");
-				//var $axisLinesGroup = $axisGroup.find(".xAxisLines");
 
 				var rawgroup = $axisLinesGroup.get()[0]
 				
@@ -730,35 +742,117 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				//var firstPos = isXAxis ? this.pos.top + 0.5 : this.pos.bottom + 0.5;
 				
-				d3.select(rawgroup).append("line")
-				.attr("x1", 0 )
-				.attr("x2", bbox.right)
-				.attr("y1", this.pos['bottom'] + 0.5)
-				.attr("y2", this.pos['bottom'] + 0.5)
-				.attr(lineAttr)
 				
-				d3.select(rawgroup).append("line")
-				.attr("x1", this.pos['left'] + 0.5)
-				.attr("x2", this.pos['left'] + 0.5)
-				.attr("y1", 0)
-				.attr("y2", this.pos['bottom'])
-				.attr(lineAttr)
+				if (isXAxis)
+				{
+					d3.select(rawgroup).append("line")
+					.attr("x1", 0 )
+					.attr("x2", bbox.right)
+					.attr("y1", axis.pos.top + 0.5)
+					.attr("y2", axis.pos.top + 0.5)
+					.attr(lineAttr)
+					
+					d3.select(rawgroup).append("line")
+					.attr("x1", 0 )
+					.attr("x2", bbox.right)
+					.attr("y1", axis.pos.bottom + 0.5)
+					.attr("y2", axis.pos.bottom + 0.5)
+					.attr(lineAttr)
+				}
+				else
+				{
+					d3.select(rawgroup).append("line")
+					.attr("x1", 0 )
+					.attr("x2", bbox.right)
+					.attr("y1", axis.pos.bottom + 0.5)
+					.attr("y2", axis.pos.bottom + 0.5)
+					.attr(lineAttr)
+					
+					d3.select(rawgroup).append("line")
+					.attr("x1", axis.pos.left + 0.5)
+					.attr("x2", axis.pos.left + 0.5)
+					.attr("y1", 0)
+					.attr("y2", axis.pos.bottom)
+					.attr(lineAttr)
+				}
 				
+
 				
-				d3.select(rawgroup).append("line")
-				.attr("x1", 0 )
-				.attr("x2", bbox.right)
-				.attr("y1", this.pos['top'] + 0.5)
-				.attr("y2", this.pos['top'] + 0.5)
-				.attr(lineAttr)
+			},
+			
+			
+			normalizeTimeTickInterval: function(tickInterval, unitsOption)
+			{
+				var units = unitsOption || 
+				[[
+						'millisecond', // unit name
+						[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+					], [
+						'second',
+						[1, 2, 5, 10, 15, 30]
+					], [
+						'minute',
+						[1, 2, 5, 10, 15, 30]
+					], [
+						'hour',
+						[1, 2, 3, 4, 6, 8, 12]
+					], [
+						'day',
+						[1, 2]
+					], [
+						'week',
+						[1, 2]
+					], [
+						'month',
+						[1, 2, 3, 4, 6]
+					], [
+						'year',
+						null
+				]];
 				
-				d3.select(rawgroup).append("line")
-				.attr("x1", 0 )
-				.attr("x2", bbox.right)
-				.attr("y1", this.pos['bottom'] + 0.5)
-				.attr("y2", this.pos['bottom'] + 0.5)
-				.attr(lineAttr)
+				var unit = units[units.length - 1];
+				var interval = timeUnits[unit[0]];
+				var multiples = unit[1];
+				var count;
+					
+				// loop through the units to find the one that best fits the tickInterval
+				for (i = 0; i < units.length; i++)
+				{
+					unit = units[i];
+					interval = timeUnits[unit[0]];
+					multiples = unit[1];
+
+
+					if (units[i + 1])
+					{
+						// lessThan is in the middle between the highest multiple and the next unit.
+						var lessThan = (interval * multiples[multiples.length - 1] +
+									timeUnits[units[i + 1][0]]) / 2;
+
+						// break and keep the current unit
+						if (tickInterval <= lessThan)
+							break;
+					}
+				}
 				
+				// prevent 2.5 years intervals, though 25, 250 etc. are allowed
+				if (interval === timeUnits.year && tickInterval < 5 * interval)
+				{
+					multiples = [1, 2, 5];
+				}
+
+				// get the count
+				count = normalizeTickInterval(
+					tickInterval / interval, 
+					multiples,
+					unit[0] === 'year' ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+				);
+				
+				return {
+					unitRange: interval,
+					count: count,
+					unitName: unit[0]
+				};
 			},
 
 			
