@@ -78,7 +78,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.buildMakeofferModal = function($modal, order)
 	{
-		$makeofferPopupConfirm.removeClass('disabled');
+		//$makeofferPopupConfirm.removeClass('disabled');
 
 		$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order");
 		console.log(order)

@@ -12,6 +12,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
+	
 //	$("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
 	$("#main_grid").on("click", ".order-row:not(.expiredRow):not(.own-order)", function(e)
 	{
@@ -20,29 +21,39 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (!has)
 		{
-			var bookID = $(this).closest(".bookname").attr("data-book").toLower();
+			var bookID = $(this).closest(".bookname").attr("data-book").toLowerCase();
 			var rowIndex = $(this).index(".bookname-"+bookID+" .order-row")
 			var order = IDEX.getRowData($(this), rowIndex);
-			var isAsk = order.askoffer ? "Bid" : "Ask";
-			var tab = order.askoffer ? "1" : "2";
 			IDEX.user.pendingOrder = order;
 			console.log(order);
 
-			var $popup = $("#makeoffer_popup")
+			var $popup = $("#makeofferPopup")
 			IDEX.buildMakeofferModal($popup, order);
 
-			$("#place"+isAsk+"Price").val(order.price);
-			$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");
-			//$(".order-tabs li[data-tab='"+tab+"'] span").trigger("mousedown").trigger("mouseup")
+			
+			var $orderbook = $(this).closest(".orderbook-wrap");
+			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
+			
+			var $orderbox = $orderbook.find(".orderbox-all");
+			var orderbox = IDEX.getObjectByElement($orderbox, IDEX.allOrderboxes, "orderboxDom");
+			
+			
+			
+			console.log(orderbox)
+
+			//var isAsk = order.askoffer ? "Bid" : "Ask";
+			//$("#place"+isAsk+"Price").val(order.price);
+			//$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");
 		}
 	})
+	
 	
 	
 	$("#main_grid").on("mouseover", ".order-row", function(e)
 	{
 		var $inspect = $(this).find(".order-row-inspect-trig")
 		$inspect.addClass("active");
-		//console.log(e.target)
+
 		var $target = $(e.target)
 		var has = $target.hasClass("vert-align")
 
@@ -57,6 +68,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
+	
 	$("#main_grid").on("mouseleave", ".bookname .order-row", function(e)
 	{
 		var $inspect = $(this).find(".order-row-inspect-trig")
@@ -69,7 +81,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		e.preventDefault();
 		var $orderRow = $(this).parent();
-		var bookID = $(this).closest(".bookname").attr("data-book")
+		var bookID = $(this).closest(".bookname").attr("data-book").toLowerCase();
 		var rowIndex = $orderRow.index(".bookname-"+bookID+" .order-row")
 		var order = IDEX.getRowData($orderRow, rowIndex);
 		

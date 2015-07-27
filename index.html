@@ -157,6 +157,7 @@
 						</div>
 					</div>
 					
+					
 					<div id="orderbookSearch_popup" class="popup orderbookSearchPopup">
 					
 						<div class="popup-header">
@@ -211,6 +212,129 @@
 											<div class="nbutton-text-inner">
 												<div class="nbutton-text-title">
 													<span class="vert-align">Open orderbook</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+						</div>
+					
+					</div>
+					
+					
+					<div id="makeofferPopup" class="popup makeofferPopup">
+					
+					
+									
+						<!--<div class="makeofferPopup-header">
+						
+							<div class="makeofferPopup-header-left">
+								<span class="makeofferPopup-orderType conf-title">Confirm Sell Order</span>
+							</div>
+							
+							<div class="makeofferPopup-header-right">
+								<span class="conf-exchange">test</span>
+							</div>
+						
+						</div>-->
+				
+					
+						<div class="popup-header">
+							<div class="popup-header-title">
+								<span class="vert-align">Makeoffer</span>
+							</div>
+							<div class="popup-header-icons">
+								<div class="popup-header-ico">
+									<img class="popup-header-close vert-align" src="img/close.png"></img>
+								</div>
+							</div>
+						</div>
+						
+						<div class="popup-content">
+						
+							<div class="makeofferPopup-inputArea">
+							
+								<div class="conf-jumbotron">
+									<div>Disclaimer</div>
+								</div>	
+								
+								<div class="makeofferPopup-form">
+								
+									<div class="makeofferPopup-form-row">
+										<div class="makeofferPopup-form-label">
+											<span>Price</span>
+										</div>
+										<div class="makeofferPopup-form-input">
+											<input disabled type="text" class="conf-input conf-price">
+											<span class="conf-input-addon refcur-rel"></span>
+										</div>
+									</div>
+								
+									<div class="makeofferPopup-form-row">
+										<div class="makeofferPopup-form-label">
+											<span>Amount</span>
+										</div>
+										<div class="makeofferPopup-form-input">
+											<input disabled type="text" class="conf-input conf-amount">
+											<span class="conf-input-addon refcur-base"></span>
+										</div>
+									</div>
+									
+									
+									<div class="makeofferPopup-form-row">
+										<div class="makeofferPopup-form-label">
+											<span>Total</span>
+										</div>
+										<div class="makeofferPopup-form-input">
+											<input disabled type="text" class="conf-input conf-total">
+											<span class="conf-input-addon refcur-rel"></span>
+										</div>
+									</div>
+									
+									<div class="makeofferPopup-form-row">
+										<div class="makeofferPopup-form-label">
+											<span>Fee</span>
+										</div>
+										<div class="makeofferPopup-form-input">
+											<input disabled type="text" class="conf-input conf-fee">
+											<span class="conf-input-addon">NXT</span>
+										</div>
+									</div>
+									
+									
+									<div class="makeofferPopup-form-row">
+										<div class="makeofferPopup-form-label">
+											<span>Min Perc</span>
+										</div>
+										<div class="makeofferPopup-form-input">
+											<input disabled type="text" class="conf-input conf-minperc">
+											<span class="conf-input-addon">%</span>
+										</div>
+									</div>
+									
+									<div class="makeofferPopup-form-row">
+										<div class="makeofferPopup-form-label">
+											<span>Perc</span>
+										</div>
+										<div class="makeofferPopup-form-input">
+											<input type="text" class="conf-input conf-perc">
+											<span class="conf-input-addon">%</span>
+										</div>
+									</div>
+								
+								</div>
+								
+							</div>
+							
+							<div class="popup-buttonArea makeofferPopup-buttonArea">
+								<div class="nbutton-text-wrap">
+									<div class="nbutton-text-outer">
+										<div class="nbutton-text orderbookSearch-search-trig">
+											<div class="nbutton-text-inner">
+												<div class="nbutton-text-title">
+													<span class="vert-align">Confirm</span>
 												</div>
 											</div>
 										</div>
@@ -777,7 +901,7 @@
 														<span>PRICE</span>
 												</div>
 													<div class="order-form-input">
-														<input type="text" name="price" id="placeBidPrice" placeholder=""></input>
+														<input type="text" name="price" placeholder=""></input>
 													</div>
 													<div class="order-form-refcur">
 														<span class="refcur-rel"></span>
@@ -791,7 +915,7 @@
 														<span>AMOUNT</span>
 													</div>
 													<div class="order-form-input">
-														<input type="text" name="volume" id="placeBidAmount" placeholder=""></input>
+														<input type="text" name="volume" placeholder=""></input>
 													</div>
 													<div class="order-form-refcur">
 														<span class="refcur-base"></span>
@@ -805,7 +929,7 @@
 														<span>TOTAL</span>
 													</div>
 													<div class="order-form-input">
-														<input type="text" name="total" id="placeBidTotal" placeholder=""></input>
+														<input type="text" name="total" placeholder=""></input>
 													</div>
 													<div class="order-form-refcur">
 														<span class="refcur-rel"></span>
@@ -876,7 +1000,7 @@
 														<span>PRICE</span>
 													</div>
 													<div class="order-form-input">
-														<input type="text" name="price" id="placeAskPrice" placeholder=""></input>
+														<input type="text" name="price" placeholder=""></input>
 													</div>
 													<div class="order-form-refcur">
 														<span class="refcur-rel"></span>
@@ -890,7 +1014,7 @@
 														<span>AMOUNT</span>
 													</div>
 													<div class="order-form-input">
-														<input type="text" name="volume" id="placeAskAmount" placeholder=""></input>
+														<input type="text" name="volume" placeholder=""></input>
 													</div>
 													<div class="order-form-refcur">
 														<span class="refcur-base"></span>
@@ -904,7 +1028,7 @@
 														<span>TOTAL</span>
 													</div>
 													<div class="order-form-input">
-														<input type="text" name="total" id="placeAskTotal" placeholder=""></input>
+														<input type="text" name="total" placeholder=""></input>
 													</div>
 													<div class="order-form-refcur">
 														<span class="refcur-rel"></span>
