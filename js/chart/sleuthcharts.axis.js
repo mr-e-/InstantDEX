@@ -210,7 +210,7 @@ var IDEX = (function(IDEX, $, undefined)
 				}
 				else
 				{
-					var minMax = IDEX.getMinMax(visiblePhases, axis.index == 0);
+					var minMax = Sleuthcharts.getMinMax(visiblePhases, axis.index == 0);
 
 					axis.min = minMax[0];
 					axis.max = minMax[1];			
@@ -420,7 +420,8 @@ var IDEX = (function(IDEX, $, undefined)
 					
 					$axisLabels.empty();
 					$axisTicks.empty();
-				
+					
+					
 					var SVGTimeLabels = d3.select($axisLabels.get()[0]).selectAll("text")
 					.data(labels)
 					.enter()
@@ -443,7 +444,8 @@ var IDEX = (function(IDEX, $, undefined)
 					.attr("y1", function (d) { return d.y })
 					.attr("y2", function (d) { return d.y + tickLength})
 					.attr(tickAttr)
-				
+					
+					axis.ticks = [];
 				}
 				else
 				{
@@ -518,14 +520,13 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var axis = this;
 				var chart = axis.chart;
-				var ticks = [];
 
 				
 				var tickStep = axis.tickStep;
 				var tickStepStart = 0;
 				
 				
-				var allPoints = chart.allPoints
+				var allPoints = chart.allPoints;
 				var allPointsLength = allPoints.length;
 				
 				var ticks = axis.ticks;
@@ -556,9 +557,7 @@ var IDEX = (function(IDEX, $, undefined)
 						break;
 					}
 				}
-					
-
-				
+									
 				
 				var showTicks = []
 				
@@ -569,14 +568,15 @@ var IDEX = (function(IDEX, $, undefined)
 				}
 				else
 				{
-					var numTicks =  Math.floor(axis.width / tickStep) 
-					var tickJump = Math.floor(numTicks / axis.fullPointWidth)
+					var numTicks =  Math.floor(axis.width / tickStep);
+					var tickJump = Math.floor(numTicks / axis.fullPointWidth);
 					
 					if (tickJump < 1)
 						tickJump = 1
 					
 					var tickStepPos = tickStepStart;
 					
+
 					while (tickStepPos < allPointsLength)
 					{
 						showTicks.push(allPoints[tickStepPos]);

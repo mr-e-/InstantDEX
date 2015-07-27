@@ -1,109 +1,74 @@
+	
 
 var IDEX = (function(IDEX, $, undefined) 
 {   
 
 
-
-	
-	IDEX.getMinMax = function(phases, type)
+	Sleuthcharts = (function(Sleuthcharts) 
 	{
-		var min = 0;
-		var max = 0;
 		
-		for (var i = 0; i < phases.length; ++i)
+		var Point = Sleuthcharts.Point = function()
 		{
-			var phase = phases[i];
+			this.init.apply(this, arguments)
+		}
+		
+		Point.prototype = 
+		{
 			
-			if (i == 0)
+		}
+		
+	
+		Sleuthcharts.getMinMax = function(phases, type)
+		{
+			var min = 0;
+			var max = 0;
+			
+			for (var i = 0; i < phases.length; ++i)
 			{
-				if (type)
+				var phase = phases[i];
+				
+				if (i == 0)
 				{
-					min = phases[i].low;
-					max = phases[i].high;
+					if (type)
+					{
+						min = phases[i].low;
+						max = phases[i].high;
+					}
+					else
+					{
+						//min = phases[i].vol;
+						max = phase.vol;
+					}
 				}
 				else
 				{
-					//min = phases[i].vol;
-					max = phase.vol;
+					if (type)
+					{
+						min = phase.low < min ? phase.low : min;
+						max = phase.high > max ? phase.high : max;
+					}
+					else
+					{
+						//min = phases[i].vol < min ? phases[i].vol : min;
+						max = phases[i].vol > max ? phases[i].vol : max;
+					}
 				}
 			}
-			else
-			{
-				if (type)
-				{
-					min = phase.low < min ? phase.low : min;
-					max = phase.high > max ? phase.high : max;
-				}
-				else
-				{
-					//min = phases[i].vol < min ? phases[i].vol : min;
-					max = phases[i].vol > max ? phases[i].vol : max;
-				}
-			}
+			
+			return [min, max];
 		}
+	
+
+	
+		return Sleuthcharts;
 		
-		return [min, max];
-	}
-	
-	IDEX.theMinMax = function(phases)
-	{
-		var min = 0;
-		var max = 0;
-		for (var i = 0; i < phases.length; ++i)
-		{
-			if (i == 0)
-			{
-				min = phases[i].close;
-				max = phases[i].close;
-			}
-			else
-			{
-				min = phases[i].close < min ? phases[i].close : min;
-				max = phases[i].close > max ? phases[i].close : max;
-			}
-		}
-		return [min, max];
-	}
-
-	
-	
-
-	
-	
-	IDEX.getXPoint = function(points, value)
-	{
-		var val = null;
-		//var points = curChart.pointData;
-
-		if (value >= points[points.length-1].phase.startTime)
-		{
-			val = points[points.length-1]
-		}
-		else if (value <= points[0].phase.startTime)
-		{
-			val = points[0]
-		}
-		else
-		{
-			for (var i = 0; i < points.length; i++) 
-			{
-				point = points[i]
-				if ( point.phase.startTime >= value) 
-				{
-					val = points[i-1]
-					break;
-				}
-			}
-		}
 		
-		//console.log(value)
-		//console.log(val)
-		//console.log(points)
-		return val;
-	}
+	}(Sleuthcharts || {}));
+	
 	
 	
 	
 	return IDEX;
+	
 	
 }(IDEX || {}, jQuery));

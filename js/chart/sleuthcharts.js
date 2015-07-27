@@ -210,7 +210,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 				if (vis.length)
 				{
-					console.log(vis);
+					//console.log(vis);
 					var series = chart.series[0];
 
 					if (series.calcPointWidth(vis))
@@ -219,6 +219,60 @@ var IDEX = (function(IDEX, $, undefined)
 						series.updateAxisMinMax(startIndex, endIndex);
 					}
 				}
+			},
+			
+			
+			zoomChart: function(isZoomOut)
+			{
+				var chart = this;
+				var xAxis = chart.xAxis[0]
+				
+				var marketHandler = chart.marketHandler;
+				var allPhases = marketHandler.marketData.ohlc;
+				
+				var curMax = xAxis.max;
+				var curMin = xAxis.min;
+				var dataMax = xAxis.dataMax;
+				var dataMin = xAxis.dataMin;
+				var diff = (curMax - curMin) / 10;
+				   
+				var newMax = curMax;
+				
+				if (isZoomOut)
+					var newMin = (curMin-diff > dataMin) ? curMin-diff : dataMin;
+				else
+					var newMin = (curMin + diff < curMax) ? curMin + diff : curMin;
+				
+					
+				var startIndex = 0;
+				
+				for (startIndex = 0; startIndex < allPhases.length; startIndex++)
+				{
+					var phase = allPhases[startIndex];
+					
+					if (phase.startTime >= newMin)
+					{
+						if (startIndex != 0)
+							startIndex--;
+						
+						break;
+					}
+				}
+				
+				var endIndex = xAxis.maxIndex;
+				
+
+				var vis = allPhases.slice(startIndex, endIndex + 1);
+				
+				var series = chart.series[0];
+
+				if (series.calcPointWidth(vis))
+				{
+					chart.visiblePhases = vis;
+					series.updateAxisMinMax(startIndex, endIndex);
+				}
+
+				chart.redraw()
 			},
 	
 			
@@ -409,7 +463,7 @@ var IDEX = (function(IDEX, $, undefined)
 					var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
 					
 					
-					var maxTextWidth = IDEX.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
+					var maxTextWidth = Sleuthcharts.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
 					var textPadding = yAxis.labels.textPadding;
 					var combinedWidth = maxTextWidth + (yAxis.tickLength * 2) + (textPadding * 2);
 					var newAxisWidth = combinedWidth;

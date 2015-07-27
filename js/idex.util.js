@@ -372,12 +372,16 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 
-	
-	
-
 	IDEX.capitalizeFirstLetter = function(string) 
 	{
 		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	
+	
+	
+	IDEX.convertNXTTime = function(timestamp)
+	{
+		return timestamp + GENESIS_TIMESTAMP
 	}
 	
 	

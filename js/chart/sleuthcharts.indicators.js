@@ -225,6 +225,42 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
+	IDEX.getXPoint = function(points, value)
+	{
+		var val = null;
+		//var points = curChart.pointData;
+
+		if (value >= points[points.length-1].phase.startTime)
+		{
+			val = points[points.length-1]
+		}
+		else if (value <= points[0].phase.startTime)
+		{
+			val = points[0]
+		}
+		else
+		{
+			for (var i = 0; i < points.length; i++) 
+			{
+				point = points[i]
+				if ( point.phase.startTime >= value) 
+				{
+					val = points[i-1]
+					break;
+				}
+			}
+		}
+		
+		//console.log(value)
+		//console.log(val)
+		//console.log(points)
+		return val;
+	}
+	
+	
+	
+	
 	return IDEX;
 	
 	

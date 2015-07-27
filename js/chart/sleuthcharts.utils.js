@@ -214,6 +214,34 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 		
+		Sleuthcharts.getTextPixelWidth = function(text, fontSize)
+		{
+			var canvas = document.createElement('canvas');
+			var ctx = canvas.getContext("2d");
+			ctx.font = fontSize + " Roboto"; 
+			
+			return ctx.measureText(text).width;
+		}
+		
+		
+		Sleuthcharts.getMaxTextWidth = function(vals, fontSize, ctx)
+		{
+			var max = 0
+			
+			for (var i = 0; i < vals.length; i++)
+			{
+				var text = String(Number(vals[i].toPrecision(3)));
+				var wid = ctx.measureText(text).width;
+				
+				if (wid > max)
+					max = wid
+			}
+			
+			return max
+		}
+	
+		
+		
 
 		return Sleuthcharts;
 		
@@ -222,53 +250,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 		
-		
 
-	
-
-
-	
-
-	
-
-
-	
-	
-	
-
-	
-	function getTextPixelWidth(text, fontSize)
-	{
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext("2d");
-		ctx.font = fontSize + " Roboto"; 
-		
-		return ctx.measureText(text).width;
-	}
-	
-	
-	IDEX.getMaxTextWidth = function(vals, fontSize, ctx)
-	{
-		var max = 0
-		
-		for (var i = 0; i < vals.length; i++)
-		{
-			var text = String(Number(vals[i].toPrecision(3)));
-			var wid = ctx.measureText(text).width;
-			
-			if (wid > max)
-				max = wid
-		}
-		
-		return max
-	}
-	
-	
-	IDEX.convertNXTTime = function(timestamp)
-	{
-		return timestamp + GENESIS_TIMESTAMP
-	}
-	
 	
 	
 	return IDEX;

@@ -267,11 +267,33 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			onContainerMouseWheel: function(e)
 			{
-				console.log('mousewheel');
+				e.preventDefault();
+				e.stopPropagation();
+				
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
+				
+				e = DOMEventHandler.normalizeMouseEvent(e);
 
-				//e.preventDefault();
-				//e.stopPropagation();
-				//tryZoom(chart, e);
+				
+				var mouseX = e.pageX;
+				var mouseY = e.pageY;
+				var insideX = e.chartX;
+				var insideY = e.chartY;
+						
+						
+				var xAxis = chart.xAxis[0];
+				var leftCheck = xAxis.pos.left;
+				var rightCheck = xAxis.pos.right;
+				var topCheck = chart.yAxis[0].pos.top;
+				var bottomCheck = chart.yAxis[chart.yAxis.length - 1].pos.bottom;
+		
+				if ((insideY >= topCheck && insideY <= bottomCheck) && (insideX >= leftCheck && insideX <= rightCheck))
+				{
+					var isZoomOut = e.wheelDeltaY <= 0;
+					chart.zoomChart(isZoomOut);
+				}	
+		
 			},
 			
 			onContainerResize: function(e)
@@ -291,104 +313,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 	}(Sleuthcharts || {}));
 	
-	
 
-	
-	
-
-	
-	
-	
-	function tryZoom(e)
-	{	
-		e = this.normalizeMouseEvent(e);
-		var chart = this.chart;
-		
-		var mouseX = e.pageX
-		var mouseY = e.pageY
-		var offsetX = chart.node.offset().left;
-		var offsetY = chart.node.offset().top;
-		var insideX = mouseX - offsetX
-		var insideY = mouseY - offsetY
-		var height = chart.xAxis[0].pos['bottom'];
-		var width = chart.yAxis[0].pos['left']; //+ priceAxis.width
-				
-		var topAxis = chart.yAxis[0]
-		var bottomAxis = chart.yAxis[chart.yAxis.length - 1]
-		
-		var topPos = topAxis.pos.top;
-		var bottomPos = bottomAxis.pos.bottom;
-		var xAxis = chart.xAxis[0]
-		
-		if (insideY >= 0 && insideY <= height && insideX >= 0 && insideX <= width)
-		{
-			if (insideY >= topPos && insideY <= bottomPos
-				&& insideX >= xAxis.pos.left && insideX <= xAxis.pos.right)
-			{
-				//var insidePriceY = insideY - priceAxis.padding.top;
-				var isZoomOut = wheelDeltaY <= 0;
-				//console.log(clientX)
-				//console.log(clientY)
-				//console.log(wheelDeltaY)
-
-				zoomChart(isZoomOut, chart);
-			}
-		}
-	}
-	
-	
-	
-	function zoomChart(isZoomOut)
-	{
-		var series = this;
-		var chart = series.chart;
-		var xAxis = chart.xAxis[0]
-		var curMax = xAxis.max;
-		var curMin = xAxis.min;
-		var dataMax = xAxis.dataMax;
-		var dataMin = xAxis.dataMin;
-		var diff = (curMax - curMin) / 10;
-		   
-		var newMax = curMax;
-		
-		if (isZoomOut)
-			var newMin = (curMin-diff > dataMin) ? curMin-diff : dataMin;
-		else
-			var newMin = (curMin + diff < curMax) ? curMin + diff : curMin;
-		
-			
-		var startIndex = findMinIndex(chart.phases, newMin)
-		var endIndex = xAxis.maxIndex;
-		var vis = chart.phases.slice(startIndex, endIndex + 1);
-		
-		updateAxisMinMax(vis, startIndex, endIndex, chart)
-		
-		chart.resizeAxis(chart)
-		chart.updateAxisPos(chart)
-		chart.redraw(chart)
-	}
-	
-	
-	function findMinIndex(data, newMin)
-	{
-		var startIndex = 0;
-		
-		for (startIndex = 0; startIndex < data.length; startIndex++)
-		{
-			var phase = data[startIndex];
-			
-			if (phase.startTime >= newMin)
-			{
-				if (startIndex != 0)
-					startIndex--;
-				
-				break;
-			}
-		}
-		
-		return startIndex;
-	}
-	
 	
 	
 
