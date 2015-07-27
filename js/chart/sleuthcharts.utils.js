@@ -130,6 +130,29 @@ var IDEX = (function(IDEX, $, undefined)
 			return Number(strAll);
 		}
 		
+		
+		
+		Sleuthcharts.getDOMPosition = function($el)
+		{
+			var positions = {};
+			
+			var offset = $el.offset()
+			var bbox = $el[0].getBoundingClientRect();
+			
+			var width = bbox.width
+			var height = bbox.height
+			
+			positions.height = height;
+			positions.width = width;
+			positions.top = offset.top;
+			positions.bottom = positions.top + height;
+			positions.left = offset.left;
+			positions.right = positions.left + width;
+			
+			return positions;
+		}
+		
+		
 
 		return Sleuthcharts;
 		

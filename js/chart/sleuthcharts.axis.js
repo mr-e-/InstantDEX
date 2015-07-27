@@ -231,11 +231,12 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var axis = this;
 				var chart = axis.chart;
+				var chartPadding = chart.padding;
 				var isXAxis = axis.isXAxis;
 				
 				var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();
-				var wrapWidth = bbox.width;
-				var wrapHeight = bbox.height;
+				var wrapWidth = chart.plotWidth;
+				var wrapHeight = chart.plotHeight;
 				
 				
 				if (isXAxis)
@@ -278,11 +279,11 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var strVal = String(hw);
 				var hasPct = strVal.indexOf('%') >= 0;
-				converted = hw
+				converted = hw;
 				
 				if (hasPct)
 				{
-					var valNum = parseInt(strVal)/100			
+					var valNum = parseInt(strVal)/100			;
 					var converted = Math.round(valNum * Number(wrapHW));
 				}
 				
@@ -300,6 +301,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var axis = this;
 				var chart = axis.chart;
+				var chartPadding = chart.padding;
 				var isXAxis = axis.isXAxis;
 				
 				if (isXAxis)
@@ -308,7 +310,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 					axis.pos.top = yAxis.pos.bottom + axis.padding.top;
 					axis.pos.bottom = axis.pos.top + axis.height;
-					axis.pos.left = axis.padding.left;
+					axis.pos.left = axis.padding.left + chartPadding.left;
 					axis.pos.right = axis.pos.left + axis.width;
 				}
 				else
@@ -321,13 +323,13 @@ var IDEX = (function(IDEX, $, undefined)
 					
 					if (axisIndex > 0)
 					{
-						var otherAxis = chart.yAxis[axisIndex-1]
+						var otherAxis = chart.yAxis[axisIndex-1];
 						topAdd += otherAxis.pos.bottom;
 					}
 					
-					axis.pos.top = axis.padding.top + topAdd;
+					axis.pos.top = axis.padding.top + topAdd + (chartPadding.top / chart.yAxis.length);
 					axis.pos.bottom = axis.pos.top + axis.height;
-					axis.pos.left = axis.padding.left + leftAdd;
+					axis.pos.left = axis.padding.left + leftAdd + chartPadding.left;
 					axis.pos.right = axis.pos.left + axis.width;
 				}
 			},
@@ -781,6 +783,7 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 			
+			// highcharts
 			normalizeTimeTickInterval: function(tickInterval, unitsOption)
 			{
 				var units = unitsOption || 

@@ -80,25 +80,32 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				var chart = this;
 				chart.userOptions = userOptions;
+				chart.chartOptions = userOptions.chart;
 				
 				chart.node = chart.userOptions.chart.node;
 				
+				chart.allPoints = [];
+				chart.visiblePhases = [];
+				chart.DOMPosition = {};
+				chart.padding = new Sleuthcharts.Padding();
+				chart.padding = Sleuthcharts.extend(chart.padding, chart.chartOptions.padding);
+				
+				chart.DOMEventHandler;
+				chart.marketHandler
 				chart.series = [];
 				chart.axes = [];
 				chart.xAxis = [];
 				chart.yAxis = [];
+								
 				
-				
-				chart.allPoints = [];
-				chart.visiblePhases = [];
-				
-				
+				chart.setContainerSize();
 				chart.initAxes();
-				chart.axes = chart.xAxis.concat(chart.yAxis);
-
 				chart.initSeries();
 				chart.initMarketHandler();
-				//chart.addEventListeners();				
+				chart.initDOMEventHandler();
+
+
+				
 
 					
 				chart.node.attr("data-sleuthcharts", Sleuthcharts.allCharts.length)
@@ -168,42 +175,25 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 
-			
-			equalizeYAxisWidth: function()
+		
+			setContainerSize: function()
 			{
 				var chart = this;
-				var allSeries = chart.series;
-				var biggestWidth = 0;
+				var chartPadding = chart.padding;
+				var $chartNode = chart.node;
 				
-				for (var i = 0; i < allSeries.length; i++)
-				{
-					var yAxis = allSeries[i].yAxis;
-					
-					var paddedMax = yAxis.max + (yAxis.max * (yAxis.maxPadding))
-					var paddedMin = yAxis.min - (yAxis.min * (yAxis.minPadding))
-					
-					var scale = d3.scale.linear()
-					.domain([paddedMin, paddedMax])
-					.range([yAxis.height, yAxis.pos.top])
-					
-					var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
-					
-					
-					var maxTextWidth = IDEX.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
-					var textPadding = yAxis.labels.textPadding;
-					var combinedWidth = maxTextWidth + (yAxis.tickLength * 2) + (textPadding * 2);
-					var newAxisWidth = combinedWidth;
-
-					biggestWidth = newAxisWidth > biggestWidth ? newAxisWidth : biggestWidth;
-				}
-				for (var i = 0; i < allSeries.length; i++)
-				{
-					var yAxis = allSeries[i].yAxis
-					yAxis.widthInit = biggestWidth
-					yAxis.width = biggestWidth;
-				}
+				var DOMPosition = Sleuthcharts.getDOMPosition($chartNode);
+				
+				chart.DOMPosition = DOMPosition;
+				
+				chart.plotTop = DOMPosition.top + chartPadding.top;
+				chart.plotBottom = DOMPosition.bottom - chartPadding.bottom;
+				chart.plotLeft = DOMPosition.left + chartPadding.left;
+				chart.plotRight = DOMPosition.right - chartPadding.right;
+				
+				chart.plotHeight = chart.plotBottom - chart.plotTop;
+				chart.plotWidth = chart.plotRight - chart.plotLeft;
 			},
-			
 			
 			
 			initMarketHandler: function()
@@ -264,20 +254,58 @@ var IDEX = (function(IDEX, $, undefined)
 					var axis = new Sleuthcharts.Axis(chart, opt)
 					chart.yAxis.push(axis)
 				}
+				
+				chart.axes = chart.xAxis.concat(chart.yAxis);
 			},
 			
 			
-			addEventListeners: function()
+			initDOMEventHandler: function()
 			{
 				var chart = this;
+				var DOMEventHandler = new Sleuthcharts.DOMEventHandler(chart);
+				DOMEventHandler.setDOMEvents();
 				
-				chart.addWheel();
-				chart.addMove();
-				chart.addMouseout();
-				chart.addMouseup();
-				chart.addMousedown();
-				chart.addDrawing();
+				chart.DOMEventHandler = DOMEventHandler;
 			},
+			
+			
+			equalizeYAxisWidth: function()
+			{
+				var chart = this;
+				var allSeries = chart.series;
+				var biggestWidth = 0;
+				
+				for (var i = 0; i < allSeries.length; i++)
+				{
+					var yAxis = allSeries[i].yAxis;
+					
+					var paddedMax = yAxis.max + (yAxis.max * (yAxis.maxPadding))
+					var paddedMin = yAxis.min - (yAxis.min * (yAxis.minPadding))
+					
+					var scale = d3.scale.linear()
+					.domain([paddedMin, paddedMax])
+					.range([yAxis.height, yAxis.pos.top])
+					
+					var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
+					
+					
+					var maxTextWidth = IDEX.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
+					var textPadding = yAxis.labels.textPadding;
+					var combinedWidth = maxTextWidth + (yAxis.tickLength * 2) + (textPadding * 2);
+					var newAxisWidth = combinedWidth;
+
+					biggestWidth = newAxisWidth > biggestWidth ? newAxisWidth : biggestWidth;
+				}
+				for (var i = 0; i < allSeries.length; i++)
+				{
+					var yAxis = allSeries[i].yAxis
+					yAxis.widthInit = biggestWidth
+					yAxis.width = biggestWidth;
+				}
+			},
+			
+			
+
 			
 			
 			resizeAxis: function()
@@ -412,6 +440,13 @@ var IDEX = (function(IDEX, $, undefined)
 			chart:
 			{
 				node:node,
+				padding:
+				{
+					left:0,
+					right:0,
+					top:0,
+					bottom:0,
+				},
 			},
 			
 			

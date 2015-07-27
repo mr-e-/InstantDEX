@@ -9,22 +9,79 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		
 	
-		var Pointer = Sleuthcharts.Pointer = function()
+		var DOMEventHandler = Sleuthcharts.DOMEventHandler = function()
 		{
 			this.init.apply(this, arguments)
 		}
 		
 		
-		Pointer.prototype = 
+		DOMEventHandler.prototype = 
 		{
-			init: function(chart, userOptions)
+			init: function(chart)
 			{
-				pointer = this;
+				var DOMEventHandler = this;
+				DOMEventHandler.chart = chart;
+			},
+			
+			setDOMEvents: function()
+			{
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
+				var $chartEl = chart.node;
+				
+		
+				$chartEl.on('mousewheel DOMMouseScroll', function(e)
+				{
+					DOMEventHandler.onContainerMouseWheel(e);
+				})
+				
+				$chartEl.on('mousedown', function(e)
+				{
+					DOMEventHandler.onContainerMouseDown(e);
+				})
+				
+				$chartEl.on('mouseup', function(e)
+				{
+					DOMEventHandler.onContainerMouseUp(e);
+				})
+				
+				$chartEl.on('mousemove', function(e)
+				{
+					DOMEventHandler.onContainerMouseMove(e);
+				})
+				
+				$chartEl.on('mouseleave', function(e)
+				{
+					DOMEventHandler.onContainerMouseLeave(e);
+				})
+				
+				$chartEl.on('click', function(e)
+				{
+					DOMEventHandler.onContainerMouseClick(e);
+				})
+
+				$chartEl.on('resize', function(e)
+				{
+					DOMEventHandler.onContainerResize(e);
+				})
+				
+
 			},
 			
 			
 			normalizeMouseEvent: function(e)
 			{
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
+				var $chartContainer = chart.node;
+				
+				var mouseX = e.pageX;
+				var mouseY = e.pageY;
+				var offset = $chartContainer.offset();
+				var chartX = mouseX - offset.left;
+				var chartY = mouseY - offset.top;
+				
+				
 				if ("type" in e && e.type == "DOMMouseScroll")
 				{
 					e.wheelDeltaY = e['originalEvent']['detail'] > 0 ? -1 : 1;
@@ -38,7 +95,152 @@ var IDEX = (function(IDEX, $, undefined)
 					e.clientY = e['clientY'];
 				}
 				
+				e.chartX = chartX;
+				e.chartY = chartY;
+
+				
 				return e;
+			},
+			
+			
+			onContainerMouseClick: function(e)
+			{
+				//console.log('click');
+			},
+			
+			
+			onContainerMouseDown: function(e)
+			{
+				console.log('mousedown');
+
+				//chartMousedown(e, chart);
+			},
+			
+			onContainerMouseUp: function(e)
+			{
+				console.log('mouseup');
+
+				//$(chart.node).css("cursor", "default");
+				//chart.isDragging = false;
+			},
+			
+
+			
+			onContainerMouseMove: function(e)
+			{
+			
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
+				e = DOMEventHandler.normalizeMouseEvent(e);
+
+				if (!chart.xAxis.length)
+					return
+				
+				var $cursor_follow_x = $(chart.node).find(".cursor_follow_x");
+				var $cursor_follow_y = $(chart.node).find(".cursor_follow_y");
+				
+				var $priceFollowWrap = $(chart.node).find(".yAxis-follow[data-axisNum='1']");
+				var $volFollowWrap = $(chart.node).find(".yAxis-follow[data-axisNum='2']");
+				var $timeFollowWrap = $(chart.node).find(".xAxis-follow");
+
+				
+
+				
+				var mouseX = e.pageX;
+				var mouseY = e.pageY;
+				var insideX = e.chartX;
+				var insideY = e.chartY;
+
+				var node = chart.node;
+				var xAxis = chart.xAxis[0]
+				var priceAxis = chart.yAxis[0];
+				
+				var height = xAxis.pos.bottom;
+				var width = priceAxis.pos.left;
+
+				
+				if (insideY >= 0 && insideY <= height && insideX >= 0 && insideX <= width)
+				{
+					var closestPoint = IDEX.getPoint(chart.allPoints, insideX)
+					var index = chart.visiblePhases.indexOf(closestPoint.phase)
+					
+					drawXLine(chart, insideY);
+					
+					
+					if (index != chart.prevIndex && index >= 0) //&& (closestTime % pointRange <= pointRange/2))
+					{
+						chart.prevIndex = index;
+						
+						drawMarketInfo(chart, closestPoint);
+						
+						drawYLine(chart, closestPoint);
+
+						
+						if (insideX >= xAxis.pos.left && insideX <= xAxis.pos.right)
+						{
+							//var insideTimeX = insideX - xAxis.pos.left;
+							var time = closestPoint.phase.startTime
+							drawTimeBox(insideX, time, chart)
+						}
+						else
+						{
+							chart.prevIndex = -1;
+							$timeFollowWrap.hide()
+						}
+					}
+					
+					if (insideY >= priceAxis.pos.top && insideY <= priceAxis.pos.bottom)
+					{
+						drawYAxisFollow(insideY, chart, priceAxis)
+					}
+					else
+					{
+						$priceFollowWrap.hide()
+					}
+					
+					if (hasVol && insideY >= volAxis.pos.top && insideY <= volAxis.pos.bottom)
+					{
+						drawYAxisFollow(insideY, chart, volAxis)
+					}
+					else
+					{
+						$volFollowWrap.hide()
+					}
+				}
+				else
+				{
+					chart.prevIndex = -1;
+					hideRenders(chart);
+				}
+
+				if (chart.isDragging)
+				{
+					handleDrag(chart, insideX)
+				}
+			},
+			
+			onContainerMouseLeave: function(e)
+			{
+				console.log('mouseleave');
+
+				//hideRenders(chart);
+			},
+			
+			
+			onContainerMouseWheel: function(e)
+			{
+				console.log('mousewheel');
+
+				//e.preventDefault();
+				//e.stopPropagation();
+				//tryZoom(chart, e);
+			},
+			
+			onContainerResize: function(e)
+			{
+				console.log('resize');
+
+				//resizeHandler(chart);
 			},
 			
 						
@@ -51,6 +253,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 	}(Sleuthcharts || {}));
 	
+	
+
 	
 	
 	
@@ -250,6 +454,66 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 	    }
     }
+	
+	
+	
+	function onChartMove(chart, e)
+    {
+
+    }
+	
+	
+	$(window).resize(function(e)
+	{
+		for (key in IDEX.allcharts)
+		{
+			var chart = IDEX.allcharts[key].sleuthchart
+
+			if (!chart || !chart.xAxis.length)
+			{
+				continue;
+			}
+			else
+			{
+				doSetTimeout(chart);
+			}
+		}
+	})
+	
+	
+	function doSetTimeout(chart)
+	{
+		setTimeout(function()
+		{
+			var $el = $(chart.node);
+			var isVisible = $el.is(":visible")
+
+			if (!isVisible)
+			{
+
+			}
+			else
+			{
+				resizeHandler(chart);
+			}
+			
+		}, 200)
+	}
+	
+	
+	function resizeHandler(chart)
+	{
+		var xAxis = chart.xAxis[0];
+		resizeAxis(chart)
+		updateAxisPos(chart)
+		
+		updateAxisMinMax(chart.visiblePhases, xAxis.minIndex, xAxis.maxIndex, chart)
+
+
+		redraw(chart)
+	}
+	
+	
 	
 	
 	

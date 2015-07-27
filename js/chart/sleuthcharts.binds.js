@@ -4,163 +4,35 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-
 	
-	IDEX.addWheel = function(chart)
+	
+	Sleuthcharts = (function(Sleuthcharts) 
 	{
-		var node = chart.node
 		
-		$(chart.node).on('mousewheel DOMMouseScroll', function(e)
-		{
-			e.preventDefault()
-			e.stopPropagation()
-			//console.log(e.target)
-			tryZoom(chart, e)
-		})
-	}
-	
-	
-	IDEX.addMouseup = function(chart)
-	{
-		$(chart.node).on("mouseup", function(e)
-		{
-			$(chart.node).css("cursor", "default");
-			chart.isDragging = false;
-		})
-	}
-	
-	IDEX.addMousedown = function(chart)
-	{
-		$(chart.node).on("mousedown", function(e)
-		{
-			chartMousedown(e, chart);
-		})
-	}
-	
-	
-	IDEX.addMove = function(chart, settings)
-	{
-		$(chart.node).on("mousemove", function(e)
-		{
-			onChartMove(chart, e);
-		})
-	}
-	
-	IDEX.addMouseout = function(chart)
-	{
-		$(chart.node).on("mouseleave", function(e)
-		{
-			hideRenders(chart);
-		})
-	}
-	
-	
-	IDEX.addResize = function(chart)
-	{
-		var node = chart.node
-		var $a = $(chart.node).parent()
-
-		$(chart.node).resize(function(e)
-		{
-			resizeHandler(chart)
-		})
-	}
-	
-	
-	function onChartMove(chart, e)
-    {
-		if (!chart.xAxis.length)
-			return
 		
-		var node = chart.node
-		var xAxis = chart.xAxis[0]
-		var priceAxis = chart.yAxis[0];
-		
-		var hasVol = chart.yAxis.length > 1
-		if (hasVol)
-			var volAxis = chart.yAxis[1];
-		
-		var $cursor_follow_x = $(chart.node).find(".cursor_follow_x");
-		var $cursor_follow_y = $(chart.node).find(".cursor_follow_y");
-		
-		var $priceFollowWrap = $(chart.node).find(".yAxis-follow[data-axisNum='1']");
-		var $volFollowWrap = $(chart.node).find(".yAxis-follow[data-axisNum='2']");
-		var $timeFollowWrap = $(chart.node).find(".xAxis-follow");
-
-		
-		var mouseX = e.pageX
-		var mouseY = e.pageY
-		var offsetX = $(node).offset().left;
-		var offsetY = $(node).offset().top;
-		var insideX = mouseX - offsetX
-		var insideY = mouseY - offsetY
-
-		var height = xAxis.pos.bottom;
-		var width = priceAxis.pos.left;
-
-		
-		if (insideY >= 0 && insideY <= height && insideX >= 0 && insideX <= width)
+		var Renderer = Sleuthcharts.Renderer = function()
 		{
-			var closestPoint = IDEX.getPoint(chart.pointData, insideX)
-			var index = chart.visiblePhases.indexOf(closestPoint.phase)
-			
-			drawXLine(chart, insideY);
-			
-			
-			if (index != chart.prevIndex && index >= 0) //&& (closestTime % pointRange <= pointRange/2))
-			{
-				chart.prevIndex = index;
-				
-				drawMarketInfo(chart, closestPoint);
-				
-				drawYLine(chart, closestPoint);
-
-				
-				if (insideX >= xAxis.pos.left && insideX <= xAxis.pos.right)
-				{
-					//var insideTimeX = insideX - xAxis.pos.left;
-					var time = closestPoint.phase.startTime
-					drawTimeBox(insideX, time, chart)
-				}
-				else
-				{
-					chart.prevIndex = -1;
-					$timeFollowWrap.hide()
-				}
-			}
-			
-			if (insideY >= priceAxis.pos.top && insideY <= priceAxis.pos.bottom)
-			{
-				drawYAxisFollow(insideY, chart, priceAxis)
-			}
-			else
-			{
-				$priceFollowWrap.hide()
-			}
-			
-			
-			if (hasVol && insideY >= volAxis.pos.top && insideY <= volAxis.pos.bottom)
-			{
-				drawYAxisFollow(insideY, chart, volAxis)
-			}
-			else
-			{
-				$volFollowWrap.hide()
-			}
+			this.init.apply(this, arguments)
 		}
-		else
+		
+		Renderer.prototype = 
 		{
-			chart.prevIndex = -1;
-			hideRenders(chart);
+			
 		}
+		
+		
+		
+		return Sleuthcharts;
+		
+		
+	}(Sleuthcharts || {}));
+	
 
-		if (chart.isDragging)
-		{
-			handleDrag(chart, insideX)
-		}
-    }
+	
+
 	
 	
+
 	
 
 	
