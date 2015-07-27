@@ -67,37 +67,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
-	IDEX.getPoint = function(points, value) 
-	{
-		var val = null;
-		//var points = curChart.pointData;
 
-		if (value >= points[points.length-1].pos.left)
-		{
-			val = points[points.length-1]
-		}
-		else if (value <= points[0].pos.left)
-		{
-			val = points[0]
-		}
-		else
-		{
-			for (var i = 0; i < points.length; i++) 
-			{
-				point = points[i]
-				if ( point.pos.left >= value) 
-				{
-					val = points[i-1]
-					break;
-				}
-			}
-		}
-		
-		//console.log(value)
-		//console.log(val)
-		//console.log(points)
-		return val;
-	}
 	
 	
 	IDEX.getXPoint = function(points, value)

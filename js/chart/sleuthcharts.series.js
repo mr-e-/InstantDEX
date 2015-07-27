@@ -64,6 +64,46 @@ var IDEX = (function(IDEX, $, undefined)
 				//axis.width = this.width * options.widthPerc;
 			},
 			
+			drawYAxisFollowLine: function(yPos)
+			{
+				var axis = this;
+				var chart = axis.chart;
+				
+				if (!chart.isCrosshair)
+					return
+				
+				var width = axis.pos.left;
+				var $cursor_follow_x = chart.node.find(".cursor_follow_x");
+
+				$cursor_follow_x
+				.attr("x1", 0)
+				.attr("x2", width)
+				.attr("y1", yPos + 0.5)
+				.attr("y2", yPos + 0.5)
+				.attr("stroke-width", 1)
+				.attr("stroke", "#a5a5a5")
+				.attr("pointer-events", "none");
+			},
+			
+			drawXAxisFollowLine: function(closestPoint)
+			{
+				if (!chart.isCrosshair)
+					return
+				
+				var xAxis = chart.xAxis[0];
+				var height = xAxis.pos['bottom'];
+				var $cursor_follow_y = $(chart.node).find(".cursor_follow_y");
+			
+				$cursor_follow_y
+				.attr("x1", closestPoint.pos.middle)
+				.attr("x2", closestPoint.pos.middle)
+				.attr("y1", 0)
+				.attr("y2", height)
+				.attr("stroke-width", 1)
+				.attr("stroke", "#a5a5a5")
+				.attr("pointer-events", "none");
+			},
+			
 			
 			setDefaultMarketDataRange: function()
 			{
@@ -210,7 +250,6 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				chart.allPoints = allPoints;
 			},
-			
 			
 			
 			

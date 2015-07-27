@@ -53,21 +53,23 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 		
-		Sleuthcharts.formatTime = function(d)
+		Sleuthcharts.formatTime = function(d, temp)
 		{
 			var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
 			  "July", "Aug", "Sept", "Oct", "Nov", "Dec"
 			];
 
-			var month = monthNames[d.getMonth()]
-			var day = d.getDate()
-			var hours = String(d.getHours())
-			var minutes = d.getMinutes()
+			var month = monthNames[d.getMonth()];
+			var day = d.getDate();
+			var hours = String(d.getHours());
+			var minutes = d.getMinutes();
 			
-			minutes = minutes < 10 ? "0"+String(minutes) : String(minutes)
+			minutes = minutes < 10 ? "0"+String(minutes) : String(minutes);
 			
-			return month + ". " + day 
-			//return month + ". " + day + " " + hours + ":" + minutes
+			if (!temp)
+				return month + ". " + day;
+			else
+				return month + ". " + day + " " + hours + ":" + minutes;
 
 		}
 		
@@ -131,6 +133,50 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 		
+		Sleuthcharts.formatNumWidth = function(num)
+		{
+			var maxDec = 8;
+			var all = String(num).split(".")
+			var numDec = 0;
+			var startDec = 0;
+
+			if (all.length == 2)
+			{
+				if (Number(all[0]) > 0)
+				{
+					
+				}
+				else
+				{
+					for (sing in all[1])
+					{
+						if (Number(all[1][sing]) > 0)
+						{
+							break
+						}
+						startDec++;
+					}
+				}
+			}
+			else
+			{
+				all.push("0")
+			}
+
+
+			var paddedDec = 3;
+			var endDec = startDec + paddedDec
+
+			if (endDec > maxDec)
+				endDec = maxDec
+			
+			var strDec = Number("0."+all[1]).toFixed(endDec)
+			var strAll = all[0] + "." + strDec.split(".")[1];
+			
+			return Number(strAll)
+		}
+		
+		
 		
 		Sleuthcharts.getDOMPosition = function($el)
 		{
@@ -150,6 +196,21 @@ var IDEX = (function(IDEX, $, undefined)
 			positions.right = positions.left + width;
 			
 			return positions;
+		}
+		
+		
+		Sleuthcharts.padString = function(string)
+		{
+			var numSpaces = 20;
+			
+			var needed = 20 - string.length
+			if (needed < 0)
+				needed = 0;
+			
+			for (i = 0; i < needed; i++)
+				string += " "
+			
+			return string;
 		}
 		
 		

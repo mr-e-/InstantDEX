@@ -783,6 +783,114 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 			
+			drawYAxisFollow: function(mousePosY)
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var axisIndex = axis.index;
+
+				var $followWrap = chart.node.find(".yAxis-follow[data-axisnum='"+ String(axisIndex + 1) +"']");
+				var $followBackbox = $followWrap.find(".yAxis-follow-backbox");
+				var $followText = $followWrap.find(".yAxis-follow-text");
+				
+				var textAttr = {
+					"fill":"#D3D3D3",
+					"font-family":"Roboto",
+					"font-size":"12px"
+				}
+				
+				var leftPos = axis.pos.left;
+				var width = axis.width;
+				
+				var insideY = mousePosY - axis.pos.top;
+				var val = axis.getValueFromPosition(insideY);
+				val = Sleuthcharts.formatNumWidth(Number(val));
+				
+				var textWidth = axis.ctx.measureText(val).width;
+				var move = (width - textWidth) / 2;
+			
+				$followText
+				.text(val)
+				.attr("y", mousePosY + 5)
+				.attr("x", leftPos + move)
+				.attr(textAttr)
+
+				
+				var backboxRect = d3.select($followText.get()[0]).node().getBBox();
+				var rightPos = axis.pos.right - 1;
+				var leftPos = axis.pos.left;
+				var topPos = backboxRect.y - 3;
+				var bottomPos = topPos + backboxRect.height + 6;
+				var yMiddlePos = topPos + ((bottomPos - topPos) / 2) + 0.5;
+				var leftPosPad = leftPos + 7;
+				
+				var d = 
+				[
+					"M", rightPos, topPos, 
+					"L", leftPosPad, topPos, 
+					"L", leftPos, yMiddlePos, 
+					"L", leftPosPad, bottomPos, 
+					"L", rightPos, bottomPos, 
+					"L", rightPos, topPos, 
+				]
+
+
+				d3.select($followBackbox.get()[0])
+				.attr("d", d.join(" "))
+				.attr("stroke", "#D3D3D3")
+				.attr("stroke-width", 0.5)
+			
+				$followWrap.show();
+			},
+			
+			
+			
+			drawTimeBox: function(mousePosX, time)
+			{	
+				var axis = this;
+				var chart = axis.chart;
+				time = Sleuthcharts.formatTime(new Date(time), true)
+
+				
+				var textAttr = {
+					"fill":"#D3D3D3",
+					"font-family":"Roboto",
+					"font-size":"13px"
+				}
+				
+				var boxAttr = {
+					"fill":"#black",
+					"stroke":"#a5a5a5",
+					"stroke-width":1
+				}
+				
+				var $followWrap = chart.node.find(".xAxis-follow");
+				var $followBackbox = $followWrap.find(".xAxis-follow-backbox");
+				var $followText = $followWrap.find(".xAxis-follow-text");
+				
+				
+				var topPos = axis.pos.top;
+				var height = axis.height;
+				
+									
+				$followText
+				.text(time)
+				.attr("y", topPos + 15)
+				.attr("x", mousePosX - 37)
+				.attr(textAttr)
+
+				//var timerect = d3.select($cursor_follow_time.get()[0]).node().getBBox();
+				d3.select($followBackbox.get()[0])
+				.attr("x", mousePosX - 55)
+				.attr("y", topPos)
+				.attr("width", 110)
+				.attr("height", height)
+				.attr(boxAttr)
+				
+				$followWrap.show()
+			},
+			
+			
 			// highcharts
 			normalizeTimeTickInterval: function(tickInterval, unitsOption)
 			{

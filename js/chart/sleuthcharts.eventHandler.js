@@ -110,40 +110,54 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			
 			onContainerMouseDown: function(e)
-			{
-				console.log('mousedown');
+			{				
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
 
-				//chartMousedown(e, chart);
+				e = DOMEventHandler.normalizeMouseEvent(e);
+
+
+				var mouseX = e.pageX;
+				var mouseY = e.pageY;
+				var insideX = e.chartX;
+				var insideY = e.chartY;
+				
+
+				if (chart.isInsidePlot(mouseX, mouseY))
+				{
+					var xAxis = chart.xAxis[0];
+					var leftCheck = xAxis.pos.left;
+					var rightCheck = xAxis.pos.right;
+					var topCheck = chart.yAxis[0].pos.top;
+					var bottomCheck = chart.yAxis[chart.yAxis.length - 1].pos.bottom;
+			
+					if ((insideY >= topCheck && insideY <= bottomCheck) && (insideX >= leftCheck && insideX <= rightCheck))
+					{
+						chart.node.css("cursor", "move");
+						chart.isDragging = true;
+						chart.draggingPos = insideX - xAxis.pos.left;
+					}
+				}	
 			},
 			
+			
 			onContainerMouseUp: function(e)
-			{
-				console.log('mouseup');
+			{				
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
 
-				//$(chart.node).css("cursor", "default");
-				//chart.isDragging = false;
+				chart.node.css("cursor", "default");
+				chart.isDragging = false;
 			},
 			
 
 			
 			onContainerMouseMove: function(e)
 			{
-			
 				var DOMEventHandler = this;
 				var chart = DOMEventHandler.chart;
+				
 				e = DOMEventHandler.normalizeMouseEvent(e);
-
-				if (!chart.xAxis.length)
-					return
-				
-				var $cursor_follow_x = $(chart.node).find(".cursor_follow_x");
-				var $cursor_follow_y = $(chart.node).find(".cursor_follow_y");
-				
-				var $priceFollowWrap = $(chart.node).find(".yAxis-follow[data-axisNum='1']");
-				var $volFollowWrap = $(chart.node).find(".yAxis-follow[data-axisNum='2']");
-				var $timeFollowWrap = $(chart.node).find(".xAxis-follow");
-
-				
 
 				
 				var mouseX = e.pageX;
@@ -151,79 +165,103 @@ var IDEX = (function(IDEX, $, undefined)
 				var insideX = e.chartX;
 				var insideY = e.chartY;
 
-				var node = chart.node;
-				var xAxis = chart.xAxis[0]
-				var priceAxis = chart.yAxis[0];
 				
-				var height = xAxis.pos.bottom;
-				var width = priceAxis.pos.left;
-
-				
-				if (insideY >= 0 && insideY <= height && insideX >= 0 && insideX <= width)
+				if (chart.isInsidePlot(mouseX, mouseY))
 				{
-					var closestPoint = IDEX.getPoint(chart.allPoints, insideX)
+					var closestPoint = chart.getPoint(chart.allPoints, insideX)
 					var index = chart.visiblePhases.indexOf(closestPoint.phase)
 					
-					drawXLine(chart, insideY);
+					chart.drawCrosshairX(insideY);
+					chart.drawCrosshairY(closestPoint);
 					
-					
-					if (index != chart.prevIndex && index >= 0) //&& (closestTime % pointRange <= pointRange/2))
+					for (var i = 0; i < chart.axes.length; i++)
 					{
-						chart.prevIndex = index;
+						var axis = chart.axes[i];
+						var isXAxis = axis.isXAxis;
+						var axisIndex = axis.index;
 						
-						drawMarketInfo(chart, closestPoint);
-						
-						drawYLine(chart, closestPoint);
-
-						
-						if (insideX >= xAxis.pos.left && insideX <= xAxis.pos.right)
+						if (isXAxis)
 						{
-							//var insideTimeX = insideX - xAxis.pos.left;
-							var time = closestPoint.phase.startTime
-							drawTimeBox(insideX, time, chart)
+
+							if (index != chart.prevIndex && index >= 0) //&& (closestTime % pointRange <= pointRange/2))
+							{
+								chart.prevIndex = index;
+								
+								chart.drawMarketInfo(closestPoint);
+								
+								
+								if (insideX >= axis.pos.left && insideX <= axis.pos.right)
+								{
+									var time = closestPoint.phase.startTime;
+									axis.drawTimeBox(closestPoint.pos.middle, time);
+								}
+								else
+								{
+									var $timeFollowWrap = chart.node.find(".xAxis-follow");
+
+									chart.prevIndex = -1;
+									$timeFollowWrap.hide();
+								}
+							}
 						}
 						else
 						{
-							chart.prevIndex = -1;
-							$timeFollowWrap.hide()
+							if (insideY >= axis.pos.top && insideY <= axis.pos.bottom)
+							{
+								axis.drawYAxisFollow(insideY);
+							}
+							else
+							{
+								var $yAxisFollowWrap = chart.node.find(".yAxis-follow[data-axisNum='" + String(axisIndex + 1) + "']");
+								$yAxisFollowWrap.hide();
+							}
 						}
-					}
-					
-					if (insideY >= priceAxis.pos.top && insideY <= priceAxis.pos.bottom)
-					{
-						drawYAxisFollow(insideY, chart, priceAxis)
-					}
-					else
-					{
-						$priceFollowWrap.hide()
-					}
-					
-					if (hasVol && insideY >= volAxis.pos.top && insideY <= volAxis.pos.bottom)
-					{
-						drawYAxisFollow(insideY, chart, volAxis)
-					}
-					else
-					{
-						$volFollowWrap.hide()
 					}
 				}
 				else
 				{
 					chart.prevIndex = -1;
-					hideRenders(chart);
+					chart.hideRenders();
 				}
 
 				if (chart.isDragging)
 				{
-					handleDrag(chart, insideX)
+					DOMEventHandler.handleDrag(insideX)
 				}
 			},
 			
+			
+			handleDrag: function(xPos)
+			{
+				var DOMEventHandler = this;
+				var chart = DOMEventHandler.chart;
+				var xAxis = chart.xAxis[0];
+				
+				var insideTimeX = xPos - xAxis.pos.left;
+				var diff = insideTimeX - chart.draggingPos;
+				var direction = diff < 0;
+				diff = Math.abs(diff);
+				
+				if (diff != 0 && diff > xAxis.fullPointWidth)
+				{	
+					var shifts = Math.floor(diff / xAxis.fullPointWidth)
+					
+					chart.draggingPos = insideTimeX;
+					
+					chart.shiftXAxis(shifts, direction);
+					chart.redraw();
+				}
+			},
+			
+			
+
+			
+			
 			onContainerMouseLeave: function(e)
 			{
-				console.log('mouseleave');
-
-				//hideRenders(chart);
+				var chart = this.chart;
+				
+				chart.hideRenders();
 			},
 			
 			
@@ -252,6 +290,9 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 	}(Sleuthcharts || {}));
+	
+	
+
 	
 	
 
@@ -350,117 +391,113 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	function shiftXAxis(shifts, direction)
-	{
-		var series = this;
-		var chart = series.chart;
-		var xAxis = chart.xAxis[0];
-		var vis = [];
-		
-		if (direction == false)
-		{
-			if (xAxis.minIndex > 0)
-			{
-				var startIndex = xAxis.minIndex - shifts;
-				var endIndex = xAxis.maxIndex - shifts;
-				vis = chart.phases.slice(startIndex, endIndex+1);
-			}
-		}
-		else
-		{
-			if (xAxis.maxIndex < chart.phases.length - 1)
-			{
-				var startIndex = xAxis.minIndex + shifts;
-				var endIndex = xAxis.maxIndex + shifts;
-				vis = chart.phases.slice(startIndex, endIndex+1);
-			}
-		}
 
-		if (vis.length)
-		{			
-			updateAxisMinMax(vis, startIndex, endIndex, chart)
-		}
-	}
+	
+
 	
 	
-	function handleDrag(chart, xPos)
+	function highLowPrice(chart)
 	{
-		var xAxis = chart.xAxis[0];
-		
-		var insideTimeX = xPos - xAxis.pos.left;
-		var diff = insideTimeX - chart.draggingPos;
-		var direction = diff < 0
-		diff = Math.abs(diff)
-		
-		if (diff != 0 && diff > xAxis.xStep)
-		{	
-			var shifts = Math.floor(diff / xAxis.xStep)
-			
-			chart.draggingPos = insideTimeX
-			shiftXAxis(chart, shifts, direction)
-			chart.resizeAxis(chart);
-			chart.updateAxisPos(chart)
-			chart.redraw(chart);
-		}
-	}
-	
-	
-	
-	function chartMousedown(e, chart)
-    {
 		if (!chart.xAxis.length)
 			return
 		
-		var xAxis = chart.xAxis[0];
-		var priceAxis = chart.yAxis[0];
 		
-		var hasVol = chart.yAxis.length > 1
-		if (hasVol)
-			var volAxis = chart.yAxis[1];
-		
-		var mouseX = e.pageX
-		var mouseY = e.pageY
-		var offsetX = $(chart.node).offset().left;
-		var offsetY = $(chart.node).offset().top;
-		var insideX = mouseX - offsetX
-		var insideY = mouseY - offsetY
+		var points = chart.pointData
+		var highestPrice = null;
+		var lowestPrice = null;
 
-		var height = xAxis.pos['bottom'];
-		var width = priceAxis.pos['left']; //+ priceAxis.width
-		
-		
-		if (insideY >= 0 && insideY <= height 
-			&& insideX >= 0 && insideX <= width)
-	    {
-			if (hasVol)
+		for (var i = 0; i < points.length; ++i)
+		{
+			if (chart.chartType == "candlestick" || chart.chartType == "ohlc")
 			{
-				if (insideY >= priceAxis.pos.top && insideY <= volAxis.pos.bottom
-					&& insideX >= xAxis.pos.left && insideX <= xAxis.pos.right)
+				if (highestPrice === null || points[i].phase.high >= highestPrice.phase.high)
 				{
-					$(chart.node).css("cursor", "move");
-					chart.isDragging = true;
-					chart.draggingPos = insideX - xAxis.pos.left;
+					highestPrice = points[i]
+				}
+				if (lowestPrice === null || points[i].phase.low <= lowestPrice.phase.low)
+				{
+					lowestPrice = points[i]
 				}
 			}
-			else
+			else if (chart.chartType == "line" || chart.chartType == "area")
 			{
-				if (insideY >= priceAxis.pos.top && insideY <= priceAxis.pos.bottom
-					&& insideX >= xAxis.pos.left && insideX <= xAxis.pos.right)
+				if (highestPrice === null || points[i].phase.close >= highestPrice.phase.close)
 				{
-					$(chart.node).css("cursor", "move");
-					chart.isDragging = true;
-					chart.draggingPos = insideX - xAxis.pos.left;
+					highestPrice = points[i]
+				}
+				if (lowestPrice === null || points[i].phase.close <= lowestPrice.phase.close)
+				{
+					lowestPrice = points[i]
 				}
 			}
-	    }
-    }
-	
-	
-	
-	function onChartMove(chart, e)
-    {
+		}
+				
+		var fontAttr = {
+			"fill": "#B0B0B0",
+			"font-family": "Roboto",
+			"font-size": "13px"
+		}
+		
+		if (chart.chartType == "line" || chart.chartType == "area")
+		{
+			var topPos = highestPrice.phase.close > highestPrice.phase.open ? highestPrice.pos.topBody : highestPrice.pos.bottomBody 
+			var bottomPos = lowestPrice.phase.close > lowestPrice.phase.open ? lowestPrice.pos.topBody : lowestPrice.pos.bottomBody 
+		}
+		else if (chart.chartType == "candlestick" || chart.chartType == "ohlc")
+		{
+			var topPos = highestPrice.pos.topLeg - 2
+			var bottomPos = lowestPrice.pos.bottomLeg + 2
+		}
+		
+		var $highestPriceEl = $(chart.node).find(".highestPrice");
+		var $lowestPriceEl = $(chart.node).find(".lowestPrice");
 
-    }
+		$highestPriceEl
+		.text("- " + String(highestPrice.phase.high))
+		.attr('x', highestPrice.pos.middle)
+		.attr('y', topPos)
+		.attr(fontAttr)
+		
+		$lowestPriceEl
+		.text("- " + String(lowestPrice.phase.low))
+		.attr('x', lowestPrice.pos.middle)
+		.attr('y', bottomPos)
+		.attr(fontAttr)
+	}
+	
+	
+	function getNames(baseID, relID)
+	{
+		
+		var nxtass = "5527630"
+		
+		var base = IDEX.user.getAssetInfo("assetID", baseID)
+		var rel = IDEX.user.getAssetInfo("assetID", relID)
+		
+		if (!($.isEmptyObject(base)))
+		{
+			var basename = base.name
+		}
+		else
+		{
+			var basename = baseID
+		}
+
+		if (!($.isEmptyObject(rel)))
+		{
+			var relname = rel.name
+		}
+		else
+		{
+			var relname = relID
+		}
+		
+		return [basename, relname]
+	}
+	
+	
+	
+	
 	
 	
 	$(window).resize(function(e)

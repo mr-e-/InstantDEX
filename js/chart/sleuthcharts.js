@@ -90,6 +90,11 @@ var IDEX = (function(IDEX, $, undefined)
 				chart.padding = new Sleuthcharts.Padding();
 				chart.padding = Sleuthcharts.extend(chart.padding, chart.chartOptions.padding);
 				
+				chart.isDragging = false;
+				chart.isCrosshair = true;
+				chart.prevIndex = -2;
+				
+				
 				chart.DOMEventHandler;
 				chart.marketHandler
 				chart.series = [];
@@ -174,7 +179,121 @@ var IDEX = (function(IDEX, $, undefined)
 				return chart;
 			},
 			
+			
+			shiftXAxis: function(shifts, direction)
+			{
+				var chart = this;
+				var xAxis = chart.xAxis[0];
+				var vis = [];
+				var marketHandler = chart.marketHandler;
+				var allPhases = marketHandler.marketData.ohlc;
 
+				
+				if (direction == false)
+				{
+					if (xAxis.minIndex > 0)
+					{
+						var startIndex = xAxis.minIndex - shifts;
+						var endIndex = xAxis.maxIndex - shifts;
+						vis = allPhases.slice(startIndex, endIndex+1);
+					}
+				}
+				else
+				{
+					if (xAxis.maxIndex < allPhases.length - 1)
+					{
+						var startIndex = xAxis.minIndex + shifts;
+						var endIndex = xAxis.maxIndex + shifts;
+						vis = allPhases.slice(startIndex, endIndex+1);
+					}
+				}
+
+				if (vis.length)
+				{
+					console.log(vis);
+					var series = chart.series[0];
+
+					if (series.calcPointWidth(vis))
+					{
+						chart.visiblePhases = vis;
+						series.updateAxisMinMax(startIndex, endIndex);
+					}
+				}
+			},
+	
+			
+
+			redraw: function()
+			{
+				var chart = this;
+				
+				var tempSeries = chart.series[0];
+
+				chart.resizeAxis();
+				chart.updateAxisPos();
+				tempSeries.getPointPositions();
+				
+				chart.equalizeYAxisWidth();
+				
+				chart.resizeAxis();
+				chart.updateAxisPos();
+				tempSeries.getPointPositions();
+										
+				
+				for (var i = 0; i < chart.series.length; i++)
+				{
+					var series = chart.series[i];
+					series.drawPoints();
+				}
+				
+				chart.updateAxisTicks();
+				chart.drawAxisLines();
+			},
+			
+			
+			
+			isInsidePlot: function(mouseX, mouseY)
+			{
+				var chart = this;
+				
+				var isInsideX = mouseX > chart.plotLeft && mouseX < chart.plotRight;
+				var isInsideY = mouseY > chart.plotTop && mouseY < chart.plotBottom;
+				
+				var isInside = isInsideX && isInsideY;
+				
+				return isInside
+			},
+			
+			
+			getPoint: function(points, value) 
+			{
+				var chart = this;
+				var val = null;
+
+				if (value >= points[points.length-1].pos.left)
+				{
+					val = points[points.length-1]
+				}
+				else if (value <= points[0].pos.left)
+				{
+					val = points[0]
+				}
+				else
+				{
+					for (var i = 0; i < points.length; i++) 
+					{
+						point = points[i]
+						if ( point.pos.left >= value) 
+						{
+							val = points[i-1]
+							break;
+						}
+					}
+				}
+				
+				return val;
+			},
+			
 		
 			setContainerSize: function()
 			{
@@ -269,6 +388,7 @@ var IDEX = (function(IDEX, $, undefined)
 			},
 			
 			
+			
 			equalizeYAxisWidth: function()
 			{
 				var chart = this;
@@ -304,9 +424,7 @@ var IDEX = (function(IDEX, $, undefined)
 				}
 			},
 			
-			
 
-			
 			
 			resizeAxis: function()
 			{
@@ -403,9 +521,144 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				return dfd.promise()
 			},
-
 			
+			
+			
+			
+			drawMarketName: function()
+			{
+				var chart = this;
+				var settings = chart.marketHandler.marketSettings;
+				
+				var both = settings.pair.split("_")
+				var b = both[0]
+				var r = both[1]
+				var a = getNames(b, r)
+				var pair = a[0] + "_" + a[1]
+				
+				var $el = $(chart.node).find(".cur-market")
+				d3.select($el.get()[0])
+				.text(pair.toUpperCase() + " - " + settings.exchange.toUpperCase())
+				.attr("y", 20)
+				.attr("x", 20)
+				.attr(textAttr)
+				.attr("fill", "#bbbbbb")
+				.attr("font-size", "11px")
+			},
+			
+			
+			drawMarketInfo: function(closestPoint)
+			{
+				var chart = this;
+				var $node = chart.node;
+				
+				//var fontSize = chart.marketInfoFontSize
+				var textAttr = {
+					"fill":"#bbbbbb",
+					"font-family":"Roboto",
+					"font-size":"12px"
+				}
+				
+				var $marketNameEl = $node.find(".cur-market")
+				var marketNameBbox = d3.select($marketNameEl.get()[0]).node().getBBox();
+				var leftPos = marketNameBbox.x + marketNameBbox.width + 10;
+				var topPos = marketNameBbox.y + marketNameBbox.height - 3;
+				
+				leftPos = 10;
+				topPos = 10;
 
+				var openStr = "O: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.open))
+				var highStr = "H: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.high))
+				var lowStr = "L: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.low))
+				var closeStr = "C: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.close))
+				var volStr = "V: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.vol))
+				
+				var str = ""
+				str += openStr
+				str += highStr
+				str += lowStr
+				str += closeStr
+				str += volStr
+
+				
+				var $candleInfoEl = $node.find(".candleInfo");
+				d3.select($candleInfoEl.get()[0])
+				.text(str)
+				.attr("y", topPos)
+				.attr("x", leftPos)
+				.attr(textAttr)
+			},
+			
+			
+			drawCrosshairX: function(yPos)
+			{
+				var chart = this;
+				
+				if (!chart.isCrosshair)
+					return;
+				
+				var lineLeft = chart.xAxis[0].pos.left;
+				var lineRight = chart.yAxis[0].pos.left;
+				var $cursor_follow_x = chart.node.find(".cursor_follow_x");
+
+				$cursor_follow_x
+				.attr("x1", lineLeft)
+				.attr("x2", lineRight)
+				.attr("y1", yPos + 0.5)
+				.attr("y2", yPos + 0.5)
+				.attr("stroke-width", 1)
+				.attr("stroke", "#a5a5a5")
+				.attr("pointer-events", "none");
+			},
+			
+			
+			drawCrosshairY: function(closestPoint)
+			{
+				var chart = this;
+				
+				if (!chart.isCrosshair)
+					return;
+				
+				var $cursor_follow_y = chart.node.find(".cursor_follow_y");
+				
+				var xAxis = chart.xAxis[0];
+				var lineTop = 0;
+				var lineBottom = chart.xAxis[0].pos.top;
+			
+				$cursor_follow_y
+				.attr("x1", closestPoint.pos.middle)
+				.attr("x2", closestPoint.pos.middle)
+				.attr("y1", lineTop)
+				.attr("y2", lineBottom)
+				.attr("stroke-width", 1)
+				.attr("stroke", "#a5a5a5")
+				.attr("pointer-events", "none");
+			},
+			
+			
+			hideRenders: function()
+			{
+				var chart = this;
+				
+				var $node = chart.node;
+				var $candleInfoEl = $node.find(".candleInfo");
+				var $cursor_follow_x = $node.find(".cursor_follow_x");
+				var $cursor_follow_y = $node.find(".cursor_follow_y");
+				var $priceFollowWrap = $node.find(".yAxis-follow[data-axisNum='1']");
+				var $volFollowWrap = $node.find(".yAxis-follow[data-axisNum='2']");
+				var $timeFollowWrap = $node.find(".xAxis-follow");
+
+				
+				$cursor_follow_x.attr("stroke-width", 0);
+				$cursor_follow_y.attr("stroke-width", 0);
+
+				$priceFollowWrap.hide()
+				$volFollowWrap.hide()
+				$timeFollowWrap.hide()
+				
+				$candleInfoEl.text(""); 
+			}
+			
 		}
 		
 		
