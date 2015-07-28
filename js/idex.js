@@ -2,6 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
+    IDEX.isWindows = false;
 	IDEX.account;
 	IDEX.user;
 

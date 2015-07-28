@@ -9,6 +9,9 @@ var IDEX = (function(IDEX, $, undefined)
 	var lastTime = new Date().getTime()
 	var q = []
 
+    
+    var windowsURL = "http://127.0.0.1:12345";
+    var idCounter = 1;
 	
 	
 	IDEX.sendPost = function(params, isNXT, callback) 
@@ -28,17 +31,43 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (!isNXT)
 			params['plugin'] = "InstantDEX";
+        else
+            params['plugin'] = "nxt";
+            
 		
-		var ajaxSettings = 
-		{
-			type: "POST",
-			url: url,
-			data: params,
-			contentType: 'application/x-www-form-urlencoded',
-			xhrFields: {
-				withCredentials: true
-			},
-		};
+		
+        if (IDEX.isWindows)
+        {
+            url = windowsURL;
+            var a = {};
+            a.method = "sendPost"
+            a.id = idCounter++;
+            a.params = params
+            a = JSON.stringify(a);
+            //console.log(params)
+            var ajaxSettings = 
+            {
+                type: "POST",
+                url: url,
+                data: a,
+                contentType: 'application/json-rpc',
+                //dataType: 'application/json-rpc'
+            };
+        }
+        else
+        {
+            var ajaxSettings = 
+            {
+                type: "POST",
+                url: url,
+                data: params,
+                contentType: 'application/x-www-form-urlencoded',
+                xhrFields: {
+                    withCredentials: true
+                },
+            };
+        }
+		
 		
 		var obj = {}
 		obj.ajaxSettings = ajaxSettings;
@@ -56,8 +85,23 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			xhr.done(function(data)
 			{
-				data = $.parseJSON(data);
-				//console.log(data)
+					//console.log(data)
+
+				
+                if (IDEX.isWindows)
+                {
+                    var data = data['result']['retval'];
+                    console.log(typeof data)
+                    if (typeof data == "string")
+                        data = $.parseJSON(data)
+                        
+                    console.log(data)
+                    //data = $.parseJSON(retObj);
+                }
+                else
+                {
+                    data = $.parseJSON(data);
+                }
 				
 				dfd.resolve(data);
 				
@@ -90,6 +134,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return dfd.promise()
 	}
+
+	
 
 	
 	
