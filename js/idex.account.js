@@ -25,7 +25,10 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred();
 		var nxtIDAndRS = [];
 		var account = this;
-		var params = {"method":"openorders"};
+		var params = {"method":"orderbook"};
+		params.baseid = "12071612744977229797";
+		params.relid = "5527630";
+		params.maxdepth = "1";
 		
 		IDEX.sendPost(params, false).then(function(data)
 		{
@@ -36,8 +39,7 @@ var IDEX = (function(IDEX, $, undefined)
 				nxtIDAndRS.push(id);
 				nxtIDAndRS.push(rs);
 			}
-			
-			$(".nxtrs").text(nxtIDAndRS[1])
+
 			account.setNXTRS(nxtIDAndRS);
 			
 			dfd.resolve([account.nxtID, account.nxtRS])
@@ -45,6 +47,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return dfd.promise()
 	}
+	
 	
 	IDEX.Account.prototype.updateOpenOrders = function(forceUpdate)
 	{

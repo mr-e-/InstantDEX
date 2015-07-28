@@ -1,6 +1,8 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
+	
+	
 	var dataTableSettings = {
 		"scrollX":true,
 		"scrollY":0,
@@ -62,23 +64,6 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
-	$(window).resize(function()
-	{	
-		var $modal = $(".md-modal.md-show")
-		
-		if ($modal && $modal.length)
-		{
-			var $tab = $modal.find(".tab-tables .nav.active")
-			var $table = $("#"+$tab.attr('tab-index')).find("table.dataTable");
-			if ($table && $table.length)
-			{
-				var dt = $($table[1]).dataTable()
-				dt.fnAdjustColumnSizing(false);
-				adjustDataTableHeight($($table[1]))
-			}
-		}
-	})
-
 
 	return IDEX;
 	

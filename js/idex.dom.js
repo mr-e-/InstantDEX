@@ -8,22 +8,6 @@ var IDEX = (function(IDEX, $, undefined)
 	var $loadingText = $(".loading-text").find("span");
 
 	
-	IDEX.buildMainChartDom = function()
-	{
-		var svg = IDEX.makeSVG()
-		var $svgEl = $(svg.node())
-		var id = "main_menu_chart"
-		$svgEl.attr("id", id)
-		$(".browse-chart-wrap").append($svgEl)		
-		
-		var svg = IDEX.makeSVG()
-		var $svgEl = $(svg.node())
-		var id = "ex_chart"
-		$svgEl.attr("id", id)
-		$svgEl.css("background", "#0A0A0A")
-		$("#chartArea").append($svgEl)	
-	}
-	
 	
 	IDEX.showLoading = function()
 	{
@@ -41,12 +25,9 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		$loadingText.text(text);
 	}
-	
-	
-	
-	
 
-	
+
+
 	IDEX.makeSVG = function()
 	{
 		//var $svg = $("<svg></svg>")
@@ -58,7 +39,6 @@ var IDEX = (function(IDEX, $, undefined)
 		.attr("height", "100%")
 		.attr("width", "100%")
 		.attr("class", "unselectable")
-		//.style({"background":"#090909"});
 		//.style({"background":"black"});
 
 		svg.append("g")
@@ -210,6 +190,18 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		svg.append("text")
 		.attr("class", "cur-market");
+		
+		
+		
+		var lines = svg.append("g")
+		.attr("class", "drawingLines");
+		
+		svg.append("rect")
+		.attr("class", "drawingFollow");
+		
+		
+		var fib = svg.append("g")
+		.attr("class", "fibLines");
 
 		
 		return svg

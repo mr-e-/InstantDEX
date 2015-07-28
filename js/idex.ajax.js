@@ -9,39 +9,65 @@ var IDEX = (function(IDEX, $, undefined)
 	var lastTime = new Date().getTime()
 	var q = []
 
+    
+    var windowsURL = "http://127.0.0.1:12345";
+    var idCounter = 1;
+	
+	
 	IDEX.sendPost = function(params, isNXT, callback) 
 	{
-		var time = new Date().getTime()
-		
-		var waitTime = 0;
-		
-		if (time - lastTime < 300)
-		{
-			waitTime = 300 + (q.length * 300)
-		}
-		
-		lastTime = time
-				
 		var dfd = new $.Deferred();
 		var url = isNXT ? nxtURL : snURL;
+
+		var time = new Date().getTime()
+		lastTime = time
+		var waitTime = 0;
+
+		if (time - lastTime < 300)
+			waitTime = 300 + (q.length * 300)
+						
+		
+		//params = isNXT ? params : JSON.
 		
 		if (!isNXT)
-		{
-			//params['timeout'] = 0;
-			//params['plugin'] = "InstantDEX";
-		}
+			params['plugin'] = "InstantDEX";
+        else
+            params['plugin'] = "nxt";
+            
 		
-		var ajaxSettings = 
-		{
-			type: "POST",
-			url: url,
-			data: params,
-			contentType: 'application/x-www-form-urlencoded',
-			xhrFields: {
-				withCredentials: true
-			},
-			//timeout:10000,
-		};
+		
+        if (IDEX.isWindows)
+        {
+            url = windowsURL;
+            var a = {};
+            a.method = "sendPost"
+            a.id = idCounter++;
+            a.params = params
+            a = JSON.stringify(a);
+            //console.log(params)
+            var ajaxSettings = 
+            {
+                type: "POST",
+                url: url,
+                data: a,
+                contentType: 'application/json-rpc',
+                //dataType: 'application/json-rpc'
+            };
+        }
+        else
+        {
+            var ajaxSettings = 
+            {
+                type: "POST",
+                url: url,
+                data: params,
+                contentType: 'application/x-www-form-urlencoded',
+                xhrFields: {
+                    withCredentials: true
+                },
+            };
+        }
+		
 		
 		var obj = {}
 		obj.ajaxSettings = ajaxSettings;
@@ -50,21 +76,32 @@ var IDEX = (function(IDEX, $, undefined)
 		obj.params = params;
 		q.push(obj)
 		
-		var index = q.length - 1;
-		//console.log(waitTime)
-		//console.log(JSON.stringify(params))
-		console.log(params)
+		//var index = q.length - 1;
+		//console.log(params)
 		
 		setTimeout(function()
 		{
 			var xhr = $.ajax(ajaxSettings);
-
-			//console.log(new Date().getTime())
 			
 			xhr.done(function(data)
 			{
-				data = $.parseJSON(data);
-				//console.log(data)
+					//console.log(data)
+
+				
+                if (IDEX.isWindows)
+                {
+                    var data = data['result']['retval'];
+                    console.log(typeof data)
+                    if (typeof data == "string")
+                        data = $.parseJSON(data)
+                        
+                    console.log(data)
+                    //data = $.parseJSON(retObj);
+                }
+                else
+                {
+                    data = $.parseJSON(data);
+                }
 				
 				dfd.resolve(data);
 				
@@ -93,15 +130,12 @@ var IDEX = (function(IDEX, $, undefined)
 			})
 			
 			
-			/*if (callback)
-				return xhr;
-			else
-				return dfd.promise();*/
-			
 		}, waitTime)
 		
 		return dfd.promise()
 	}
+
+	
 
 	
 	

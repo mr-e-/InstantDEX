@@ -2,14 +2,9 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	IDEX.orderbook;
+    IDEX.isWindows = false;
 	IDEX.account;
 	IDEX.user;
-	IDEX.chart;
-
-	IDEX.isSNRunning = false;
-	IDEX.chartInit = false;
-	IDEX.isOrderbookExpanded = false;
 
 	IDEX.snPostParams = 
 	{
@@ -29,40 +24,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		IDEX.constructFromObject(this, obj);
 	};
-
-
-	IDEX.OrderbookVar = function(obj) 
-	{	
-		this.nxtRS = "";
-		this.pair = "";
-		this.orderbookID = "";
-		this.baseAsset = "";
-		this.relAsset = "";
-		
-		this.asks = [];
-		this.bids = [];
-
-		IDEX.constructFromObject(this, obj);
-	};
 	
-	
-	IDEX.Orderbook = function(obj) 
-	{	
-		this.isStoppingOrderbook = false;
-		this.isWaitingForOrderbook = false;
-		this.orderbookTimeout;
-		this.orderbookInit;
-		this.timeoutDFD = false;
-		this.xhr = false;
-		
-		this.currentOrderbook;
-		this.newOrderbook;
 
-		this.groupedBids = {};
-		this.groupedAsks = {};
-
-		IDEX.constructFromObject(this, obj);
-	};
 	
 
 	IDEX.Asset = function(obj) 
@@ -145,34 +108,37 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.init = function()
 	{
 		var initializedAssets = new $.Deferred();
-		var loadedChart = new $.Deferred();
 		var timeoutFinished = new $.Deferred();
 		var updatedNXT = new $.Deferred();
 
 		IDEX.user = new IDEX.User();
 		IDEX.account = new IDEX.Account();
-		IDEX.orderbook = new IDEX.Orderbook();
-		IDEX.chart = new IDEX.Chart();
 		
 		IDEX.initScrollbar();
-		IDEX.initDataTable();
-		
-		IDEX.buildTilesDom();
-		IDEX.buildMainChartDom();
+		//IDEX.initDataTable();
 		
 		IDEX.user.initFavorites();
-		/*IDEX.user.initLabels();
+		IDEX.user.initLabels();
 
+		
 		IDEX.user.options = 
 		{
 			"duration":6000,
 			"minperc":75
-		}*/
+		}
 	
+		//var $node = $("#marketSearch_popup");
+		
+		//console.log(Sleuthcharts);
+		//var s = IDEX.makeChart({"node":$node});
+		//console.log(Sleuthcharts);
+
+		//console.log($node.sleuthcharts())
+		//console.log(Highcharts)
+		//console.log(s)		
 		
 		IDEX.pingSupernet().done(function()
-		{
-			
+		{	
 			IDEX.initTimer().done(function()
 			{
 				timeoutFinished.resolve();
@@ -197,21 +163,8 @@ var IDEX = (function(IDEX, $, undefined)
 			});
 			
 			
-			IDEX.updateChart("main_menu_chart").then(function()
+			$.when(timeoutFinished, initializedAssets, updatedNXT).done(function()
 			{
-				loadedChart.resolve();
-				
-			})
-			
-			
-			
-			$.when(timeoutFinished, initializedAssets, loadedChart, updatedNXT).done(function()
-			{
-				var lastMarket = IDEX.user.getLastMarket()
-				var baseID = lastMarket.baseID;
-				var relID = lastMarket.relID;
-
-				IDEX.changeMarket(baseID, relID);
 				IDEX.hideLoading();
 			})
 			

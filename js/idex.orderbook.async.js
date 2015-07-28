@@ -6,35 +6,35 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.getOrderbookData = function(timeout)
 	{
 		var retDFD = new $.Deferred();
-		var thisScope = this;
+		var orderbook = this;
 
-		thisScope.counter = true;
-		thisScope.lastUpdatedHandler(0);
+		orderbook.counter = true;
+		orderbook.lastUpdatedHandler(0);
 		
-		//IDEX.updateUserState();
+		orderbook.orderbox.updateOrderBoxBalance();
 		
-		thisScope.setTimeout(timeout).then(function(wasCleared)
-		{
-			//IDEX.updateUserState();
-			
+		orderbook.setTimeout(timeout).then(function(wasCleared)
+		{			
 			if (wasCleared)
 			{
-				thisScope.counter = false;
-				thisScope.clearUpdatedTimeout()
+				orderbook.counter = false;
+				orderbook.clearUpdatedTimeout()
 				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
 			else
 			{
-				thisScope.orderbookPost().done(function(orderbookData)
+				orderbook.orderbookPost().done(function(orderbookData)
 				{
-					thisScope.counter = false;
-					thisScope.clearUpdatedTimeout()
+					orderbook.orderbox.updateOrderBoxBalance();
+
+					orderbook.counter = false;
+					orderbook.clearUpdatedTimeout()
 					
 					if (orderbookData == "fail")
 					{
 						retDFD.resolve({}, IDEX.AJAX_ERROR);
 					}
-					else if (thisScope.isStoppingOrderbook)
+					else if (orderbook.isStoppingOrderbook)
 					{
 						retDFD.resolve({}, IDEX.AJAX_ABORT);
 					}
@@ -64,8 +64,8 @@ var IDEX = (function(IDEX, $, undefined)
 			'baseid':this.baseAsset.assetID, 
 			'relid':this.relAsset.assetID, 
 			'allfields':1,
-			'maxdepth':25,
-			'showall':0,
+			'maxdepth':30,
+			'showall':1,
 			'timeout':10000
 		};
 		//console.log(params)
@@ -127,9 +127,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbook = this;
 		
 		orderbook.lastUpdatedCounter().done(function()
-		{
-			var $el = $(".orderbook-last-updated");
-			
+		{			
 			if (orderbook.counter)
 			{
 				seconds++;
@@ -139,14 +137,14 @@ var IDEX = (function(IDEX, $, undefined)
 				else
 					var text = String(seconds) + "s"
 				
-				$el.text(text)
+				orderbook.lastUpdatedDom.text(text)
 				
 				orderbook.lastUpdatedHandler(seconds)
 			}
 			else
 			{
 				var text = "0s"
-				$el.text(text)
+				orderbook.lastUpdatedDom.text(text)
 			}
 		})
 	}

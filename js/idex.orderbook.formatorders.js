@@ -13,8 +13,8 @@ var IDEX = (function(IDEX, $, undefined)
 		this.groupedBids = groupOrders(IDEX.cloneListOfObjects(orderbookData.bids), IDEX.cloneListOfObjects(this.currentOrderbook.bids));
 		this.groupedAsks = groupOrders(IDEX.cloneListOfObjects(orderbookData.asks), IDEX.cloneListOfObjects(this.currentOrderbook.asks));
 
-		formatNewOrders(this.groupedBids.newOrders)
-		formatNewOrders(this.groupedAsks.newOrders)
+		formatNewOrders(this.groupedBids.newOrders, this)
+		formatNewOrders(this.groupedAsks.newOrders, this)
 	}
 
 	
@@ -83,7 +83,6 @@ var IDEX = (function(IDEX, $, undefined)
 				if (IDEX.compObjs(order, currentOrder, ['quoteid']))
 				{
 					order['index'] = currentOrder['index'];
-					//console.log(order['index'])
 					oldOrders.push(order);
 					currentOrders.splice(j, 1);
 					isNew = false;
@@ -101,54 +100,63 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 
-	function formatNewOrders(newOrders)
+	function formatNewOrders(newOrders, orderbook)
 	{	
 		
 		for (var i = 0; i < newOrders.length; i++)
 		{
-			var order = newOrders[i]
-			var isAsk = order.askoffer
-			if (isAsk)
-				var trString = IDEX.buildTableRows([[order.price, order.volume, order.total, order.sum]], "span");
-			else
-				var trString = IDEX.buildTableRows([[order.total, order.volume, order.price, order.sum]], "span");
-			var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "fadeSlowIndy tooltip" : "fadeSlowIndy tooltip";
-			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
-			trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
+			var order = newOrders[i];
+			var isAsk = order.askoffer;
 			
-			trClasses += " " + getLabelClass(order)
+			var arr = isAsk ? [[order.price, order.volume, order.total, order.sum]] : [[order.total, order.volume, order.price, order.sum]];
+			var trString = IDEX.buildTableRows(arr, "span");
+
+			
+			//var trClasses = (order['exchange'] == "nxtae_nxtae" || order['exchange'] == "nxtae") ? "fadeSlowIndy tooltip" : "fadeSlowIndy tooltip";
+			//trClasses += IDEX.isOrderbookExpanded ? " order-row-expand" : "";
+			//trString = orderTooltip(trString, order);
+			
+			var trClasses = "fadeSlowIndy";
+			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
+			trClasses += " " + getLabelClass(order, orderbook)
 			
 			trString = IDEX.addElClass(trString, trClasses);
+			
 			trString = $(trString).find("span").each(function(index, e)
 			{
 				var extraClasses = "order-col-extra";
-				if (index == 3 || index == 3)
+				if (index == 3)
 				{
-					if (IDEX.isOrderbookExpanded)
-						extraClasses += " extra-show";
+					//if (IDEX.isOrderbookExpanded)
+					//	extraClasses += " extra-show";
 					$(this).addClass(extraClasses);
 				}
 			}).parent()[0].outerHTML;
-			order['row'] = trString;
+			
+
+			trString = $(trString).prepend("<div class='order-row-inspect-trig'><img class='vert-align' src='img/eye.png'></div>")[0].outerHTML;
+			
+			order.row = trString;
 		}	
 	}
 	
 	
-	function getLabelClass(order)
+	function getLabelClass(order, orderbook)
 	{
 		var labelClass = "";
-		var vis = IDEX.getVisibleLabels()
-		var visMap = IDEX.getVisibleMap(vis)
+		var vis = orderbook.labels
 
-
-		for (var exchange in visMap)
+		for (var i = 0; i < vis.length; i++)
 		{
-			var label = visMap[exchange]
+			var label = vis[i]
 			
-			if (order.exchange == exchange)
+			if (order.exchange == label.exchange)
 			{
-				labelClass = label.name
-				break;
+				labelClass = "label-" + label.name
+			}
+			else if ("NXT" in order && label.nxtrs == IDEX.toRS(order.NXT))
+			{
+				labelClass = "label-" + label.name
 			}
 		}
 		
@@ -178,6 +186,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}*/
 		})
 	}
+	
 	
 	
 	return IDEX;

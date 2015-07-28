@@ -1,6 +1,5 @@
 var IDEX = (function(IDEX, $, undefined) 
 {   
-	var skynetKeysTick = [2,3,4,5,6]
 	var skynetKeys = {
 		"startTime":0,
 		"endTime":1,
@@ -20,8 +19,9 @@ var IDEX = (function(IDEX, $, undefined)
 		"close":5,
 		"vol":6
 	}
-	//var skynetKeys = [1,2,3,4,5]
 
+	
+	
 	IDEX.SkyNETParams = function(obj) 
 	{
 		this.baseurl = "http://api.finhive.com/v1.0/run.cgi?";
@@ -55,6 +55,220 @@ var IDEX = (function(IDEX, $, undefined)
         return this.baseurl+s
     }
 	
+	
+	
+
+	
+	
+	Sleuthcharts = (function(Sleuthcharts) 
+	{
+		
+		
+		var MarketHandler = Sleuthcharts.MarketHandler = function()
+		{
+			this.init.apply(this, arguments)
+		}
+		
+		
+		MarketHandler.prototype = 
+		{
+			
+			marketSettings:
+			{
+				baseID: "6854596569382794790",
+				relID: "6932037131189568014",
+				baseName: "SkyNET",
+				relName: "jl777hodl",
+				pair: "6932037131189568014_NXT",
+
+				barType: "tick",
+				numTicks: "100",
+				barWidth: "100",
+
+				exchange: "nxtae",
+
+				isVirtual: false,
+				isFlipped: false,
+			},
+			
+			
+			init: function(chart, userOptions)
+			{
+				var marketHandler = this;
+				
+				marketHandler.chart = chart;
+				
+				marketHandler.phases = [];
+				marketHandler.tradeData = [];
+				marketHandler.marketData = {};
+				
+				marketHandler.marketSettings = Sleuthcharts.extend(marketHandler.marketSettings, userOptions.marketSettings);
+
+
+				
+			},
+			
+			
+			changeMarket: function(newMarket)
+			{
+				var settings = this.dataSettings;
+				var newBaseID = newMarket.baseID;
+				var newRelID = newMarket.relID;
+				
+				var pair = (newRelID == 5527630) ? newBaseID + "_" + "NXT" : newBaseID + "_" + newRelID
+				
+	
+				settings.pair = pair;
+				settings.exchange = obj.exchange;
+			},
+			
+			
+			getMarketData: function()
+			{
+				var marketHandler = this;
+				var dfd = new $.Deferred();
+				
+				
+				var isTime = marketHandler.marketSettings.barType == "time";
+
+				marketHandler.getSkynetMarketData().done(function(data)
+				{
+					data = data.results
+					
+					marketHandler.formatMarketData(data, isTime);
+					
+					dfd.resolve();
+					//var formattedData = marketHandler.marketData;
+				
+				})
+				
+				return dfd.promise();
+			},
+			
+			
+			getSkynetMarketData: function()
+			{
+				var dfd = new $.Deferred();
+				var marketHandler = this;
+				
+				var settings = marketHandler.marketSettings;
+				
+				var obj = {}
+				obj.run = "quotes";
+				obj.section = "crypto";
+				obj.mode = "bars";
+				obj.exchg = settings.exchange;
+				obj.pair = settings.pair
+				obj.num = "500"
+				obj.bars = settings.barType
+				obj.len = settings.barWidth
+				obj.order = "asc"
+				
+
+				var params = new IDEX.SkyNETParams(obj)
+				var url = params.makeURL()
+				//console.log(url)
+				
+				$.getJSON(url, function(data)
+				{
+					dfd.resolve(data)	
+				})
+				
+				return dfd.promise()
+			},
+			
+			
+			getSkynetIndicatorData: function()
+			{
+				var dfd = new $.Deferred();
+
+				var settings = this.settings;
+				var indSettings = this.indicatorSettings;
+				
+				var iret = (indSettings.type == "bollin") ? "solo" : "merge";
+
+		
+				var obj = {}
+				obj.run = "indicator";
+				obj.section = "crypto";
+				obj.mode = "bars";
+				obj.exchg = settings.exchange;
+				obj.pair = settings.pair
+				obj.num = "500"
+				obj.bars = settings.barType
+				obj.len = settings.barWidth
+				obj.order = "asc"
+				
+				obj.icode = "ind_" + indSettings.type
+				obj.ion = indSettings.price
+				obj.ilen = indSettings.len
+				obj.inum = "500"
+				obj.iret = iret
+				obj.order = "asc"
+
+				var params = new IDEX.SkyNETParams(obj)
+				var url = params.makeURL()
+				//console.log(url)
+				
+				$.getJSON(url, function(data)
+				{
+					dfd.resolve(data)	
+				})
+				
+				return dfd.promise()
+			},
+			
+			
+			
+			formatMarketData: function(data, isTime)
+			{
+				var marketHandler = this;
+				
+				var ohlc = [];
+				var volume = [];
+				var dataLength = data.length;
+				
+				var keys = isTime ? skynetKeysTime : skynetKeys;
+
+				
+				for (var i = 0; i < dataLength; i++) 
+				{
+					var obj = {}
+					
+					for (key in keys)
+					{
+						obj[key] = data[i][keys[key]]
+					}
+
+					obj.startTime *= 1000;
+					obj.endTime *= 1000;
+					
+					
+					ohlc.push(obj)
+					volume.push({x:obj.startTime, y:obj.vol});
+				}
+
+				marketHandler.marketData.ohlc = ohlc;
+				marketHandler.marketData.volume = volume;
+			}
+			
+		}
+	
+		
+		
+		return Sleuthcharts;
+		
+		
+	}(Sleuthcharts || {}));
+	
+
+
+	
+	
+	
+	
+	/*
+	
 	IDEX.OHLC = function(obj) 
 	{
 		this.startTime = ""
@@ -69,125 +283,23 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.getData = function(settings)
+	function fixSpikes()
 	{
-		//6932037131189568014 jl777
-		//15344649963748848799 idex
-		var dfd = new $.Deferred();
-		
-        var obj = {}
-        obj['run'] = "quotes";
-        obj['section'] = "crypto";
-        obj['mode'] = "bars";
-        obj['exchg'] = settings.exchange;
-        obj['pair'] = settings.pair
-        obj['num'] = "500"
-        obj['bars'] = settings.bars
-        obj['len'] = settings.barWidth
-		obj['order'] = "asc"
-
-        var params = new IDEX.SkyNETParams(obj)
-        var url = params.makeURL()
-		//console.log(url)
-		$.getJSON(url, function(data)
+		if (i != 0 && (obj['high'] > ohlc[ohlc.length-1].close * 5 ))
 		{
-			dfd.resolve(data)	
-		})
-		
-		return dfd.promise()
-	}
-	
-	
-	IDEX.getInd = function(indSettings, settings)
-	{
-		var dfd = new $.Deferred();
-		var id = "6932037131189568014"
-		
-		var iret = "merge"
-		
-		if (indSettings.type == "bollin")
-			iret = "solo"
-		
-        var obj = {}
-		obj['run'] = "indicator"
-        obj['section'] = "crypto";
-        obj['mode'] = "bars";
-        obj['exchg'] = settings.exchange;
-        obj['pair'] = settings.pair;
-        obj['num'] = "500"
-        obj['bars'] = settings.bars
-        obj['len'] = settings.barWidth;
-		
-		obj['icode'] = "ind_" + indSettings.type
-		obj['ion'] = indSettings.price
-		obj['ilen'] = indSettings.len
-		obj['inum'] = "500"
-		obj['iret'] = iret
-		obj['order'] = "asc"
-
-
-        var params = new IDEX.SkyNETParams(obj)
-        var url = params.makeURL()
-		//console.log(url)
-
-		$.getJSON(url, function(data)
-		{
+			console.log('no')
+			point = data[i-1]
 			
-			//console.log(data)
-			dfd.resolve(data)	
-		})
-		
-		return dfd.promise()
-	}
-	
-	
-	IDEX.getStepOHLC = function(data, isTime)
-	{
-		var ohlc = []
-		var volume = []
-		var dataLength = data.length
-		var keys = skynetKeys
-		if (isTime)
-			keys = skynetKeysTime
-		var baseNXT = false
-		
-		for (var i = 0; i < dataLength; i++) 
-		{
-
-			var point = data[i]
-
-			
-			var obj = {}
+			obj = {}
 			
 			for (key in keys)
 			{
-				obj[key] = data[i][keys[key]]
+				obj[key] = data[i-1][keys[key]]
 			}
-			/*if (i != 0 && (obj['high'] > ohlc[ohlc.length-1].close * 5 ))
-			{
-				console.log('no')
-				point = data[i-1]
-				
-				obj = {}
-				
-				for (key in keys)
-				{
-					obj[key] = data[i-1][keys[key]]
-				}
-				
-				obj = ohlc[ohlc.length-1]
-				
-			}*/
-
-			obj['startTime'] *= 1000;
-			obj['endTime'] *= 1000;
 			
+			obj = ohlc[ohlc.length-1]
 			
-			ohlc.push(new IDEX.OHLC(obj))
-			volume.push({x:obj['startTime'], y:obj['vol']});
 		}
-
-		return [ohlc, volume]
 	}
 	
 	function invert()
@@ -198,8 +310,8 @@ var IDEX = (function(IDEX, $, undefined)
 		data[i][keys[3]] =  Number((1 / open).toFixed(6))
 		data[i][keys[4]] =  Number((close * vol).toFixed(6))
 
-		//data[i] = ((i!= 0) && (data[i][keys[2]] < data[i-1][keys[2]]/5)) ? data[i-1] : data[i] // spike
-		/*
+		data[i] = ((i!= 0) && (data[i][keys[2]] < data[i-1][keys[2]]/5)) ? data[i-1] : data[i] // spike
+		
 			var startTime = data[i][keys['start']] * 1000;
 			var endTime = data[i][keys['end']] * 1000;
 			var open = data[i][keys['open']]
@@ -207,8 +319,12 @@ var IDEX = (function(IDEX, $, undefined)
 			var low = data[i][keys['low']]
 			var close = data[i][keys['close']]
 			var vol = data[i][keys['volume']]
-		*/
+		
 	}
+	*/
+	
+	
+	
 	
 	return IDEX;
 	

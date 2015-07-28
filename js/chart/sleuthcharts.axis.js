@@ -3,771 +3,1018 @@
 var IDEX = (function(IDEX, $, undefined) 
 {   
 	
-	IDEX.Axis = function(obj) 
-	{
-		this.chart;
-		this.height = 0;
-		this.width = 0;
-		this.heightInit = "";
-		this.widthInit = "";
+	
+	
+	IDEX.getYAxisNodes = function($node, index)
+	{	
+		var obj = {}
+		var $axisGroup = $node.find(".sleuthYAxis[data-axisnum='" + String(index) +"']")
 		
-		this.pos = {
-			"top":0,
-			"bottom":0,
-			"left":0,
-			"right":0,
-		},
+		obj['labels'] = $axisGroup.find(".yLabels")
+		obj['ticksLeft'] = $axisGroup.find(".yTicksLeft")
+		obj['ticksRight'] = $axisGroup.find(".yTicksRight")
+		obj['gridLines'] = $axisGroup.find(".yGridLines")
+		
+		return obj;
+	}
+	
+	IDEX.getXAxisNodes = function($node, index)
+	{	
+		var obj = {}
+		var $axisGroup = $node.find(".sleuthXAxis[data-axisnum='" + String(index) +"']")
+		
+		obj['labels'] = $axisGroup.find(".xLabels")
+		obj['ticks'] = $axisGroup.find(".xTicks")
+		
+		return obj;
+	}
+	
+	
+
+	Sleuthcharts = (function(Sleuthcharts) 
+	{
+		
+		var tickAttr = 
+		{
+			"stroke": "white",
+			"stroke-width": 0.5
+		};
+		
+		var gridLineAttr = 
+		{
+			"stroke": "#404040",
+			"stroke-dasharray": "1,3",
+			"stroke-width": 1
+		};
+	
+	
+		var Axis = Sleuthcharts.Axis = function()
+		{
+			this.init.apply(this, arguments)
+		}
+		
+		
+		Axis.prototype = 
+		{
 			
-		this.padding = {
-			"top":0,
-			"bottom":0,
-			"left":0,
-			"right":0,
-		},
-		
-		this.dataMin = 0;
-		this.dataMax = 0;
-		this.min = 0;
-		this.max = 0;
-		this.minIndex = 0;
-		this.maxIndex = 0;
-		
-		this.numTicks = 0;
-		this.tickInterval = 0;
-		this.tickLength = 0;
-		this.tickStep = 0;
-		this.tickStepStart = 0;
-		
-		this.labels = [];
-		this.tickPositions = [];
-		this.showTicks = [];
+			defaultXAxisOptions:
+			{	
+				//"heightInit":20,
+				//"widthInit":"100%",
+				
+				"range":40,
+				"minRange":40,
+				
+				"padding":{
+					"top":0,
+					"bottom":0,
+					"left":0,
+					"right":0,
+				},
+				
+				"numTicks":8,
+				"tickLength":4,
+				"tickStep":6,
 
-		this.isXAxis = false;
-		this.series = [];
-		
-		
-		IDEX.constructFromObject(this, obj);
-		
-		this.canvas = document.createElement('canvas');
-		this.ctx = this.canvas.getContext("2d");
-		this.ctx.font = this.labels.fontSize + " Roboto"; 
-	}
-	
-	
-	IDEX.Axis.prototype.resizeXAxis = function()
-	{
-		var bbox = d3.select(this.chart.node)[0][0].getBoundingClientRect();
-		var wrapWidth = bbox.width;
-		var wrapHeight = bbox.height;
-
-		var widest = 0;
-		
-		for (var i = 0; i < this.series.length; i++)
-		{
-			var yAxis = this.series[i].yAxis;
+				"labels":{
+					"fontSize":"12px",	
+				},
+			},
 			
-			if (yAxis.width > widest)
-				widest = yAxis.width;
-		}
-		
-		convertedHeight = this.resizeHW(this.heightInit, wrapHeight);
-		convertedWidth = this.resizeHW("100%", wrapWidth);
-		convertedWidth = convertedWidth - (widest + yAxis.padding.left) - this.padding.left;
-
-		
-		this.height = convertedHeight;
-		this.width = convertedWidth;
-	}
-	
-	
-	IDEX.Axis.prototype.resizeYAxis = function()
-	{
-		var bbox = d3.select(this.chart.node)[0][0].getBoundingClientRect();
-		var wrapWidth = bbox.width;
-		var wrapHeight = bbox.height;
-
-		var xAxis = this.series[0].xAxis;
-		var len = this.series[0].xAxis.series.length;
-		
-		convertedHeight = this.resizeHW(this.heightInit, wrapHeight);
-		convertedHeight = ((convertedHeight - (xAxis.height / len)) - (xAxis.padding.top / len)) - this.padding.top
-		convertedWidth = this.resizeHW(this.widthInit, wrapWidth);	
-		
-		
-		this.height = convertedHeight;
-		this.width = convertedWidth;
-	}
-	
-	
-	
-	IDEX.Axis.prototype.resizeHW = function(hw, wrapHW)
-	{
-		var strVal = String(hw);
-		var hasPct = strVal.indexOf('%') >= 0;
-		converted = hw
-		
-		if (hasPct)
-		{
-			var valNum = parseInt(strVal)/100			
-			var converted = Math.round(valNum * Number(wrapHW));
-		}
-		
-		return converted
-	}
-	
-	
-	IDEX.Axis.prototype.setYAxis = function(width)
-	{
-		this.widthInit = width
-		this.width = width;
-	}
-
-	
-	IDEX.Axis.prototype.getPos = function(pointValue)
-	{
-		var paddedMax = this.max + (this.max * this.maxPadding)
-		var paddedMin = this.min - (this.min * this.minPadding)
-
-		var num = pointValue - paddedMin;
-		var range = paddedMax - paddedMin;
-		var ratio = num / range;
-		var pos = Number((this.pos.bottom - (ratio * this.height)).toFixed(4));
-		//console.log(String(pointValue) + "    " + String(ratio) + "  " + String(pos));
-		return pos
-	}
-	
-	
-	IDEX.Axis.prototype.getPriceFromY = function(yPos)
-	{
-		var paddedMax = this.max + (this.max * this.maxPadding)
-		var paddedMin = this.min - (this.min * this.minPadding)
-		
-		var range = paddedMax - paddedMin;
-		var ratio = yPos / this.height;
-		var num = ratio * range
-		var price = paddedMax - num
-		return price
-	}
-	
-	
-	IDEX.Axis.prototype.getXVal = function(xPos)
-	{
-		var range = this.max - this.min;
-		var ratio = xPos / this.width;
-		var num = ratio * range;
-		num = this.min + num;
-		return num;
-	}
-	
-	
-	IDEX.Axis.prototype.drawYAxisLines = function()
-	{
-		var chart = this.chart
-		var bbox = d3.select(chart.node)[0][0].getBoundingClientRect()	
-		
-		var $axisGroup = $(chart.node).find(".sleuthYAxis[data-axisNum='" + String(this.axisIndex) +"']")
-		var $axisLinesGroup = $axisGroup.find(".yAxisLines");
-		var rawgroup = $axisLinesGroup.get()[0]
-		
-		var lineAttr = {
-			"stroke-width": 1,
-			"stroke": "#303030"
-		}
-		
-		$axisLinesGroup.empty();
-
-		d3.select(rawgroup).append("line")
-		.attr("x1", 0 )
-		.attr("x2", bbox.right)
-		.attr("y1", this.pos['bottom'] + 0.5)
-		.attr("y2", this.pos['bottom'] + 0.5)
-		.attr(lineAttr)
-		
-		d3.select(rawgroup).append("line")
-		.attr("x1", this.pos['left'] + 0.5)
-		.attr("x2", this.pos['left'] + 0.5)
-		.attr("y1", 0)
-		.attr("y2", this.pos['bottom'])
-		.attr(lineAttr)
-		
-	}
-	
-	IDEX.Axis.prototype.drawXAxisLines = function()
-	{
-		var chart = this.chart
-		var bbox = d3.select(chart.node)[0][0].getBoundingClientRect()	
-		
-		var $axisGroup = $(chart.node).find(".sleuthXAxis[data-axisNum='" + String(this.axisIndex) +"']")
-		var $axisLinesGroup = $axisGroup.find(".xAxisLines");
-		var rawgroup = $axisLinesGroup.get()[0]
-		
-		var lineAttr = {
-			"stroke-width": 1,
-			"stroke": "#303030"
-		}
-		
-		d3.select(rawgroup).append("line")
-		.attr("x1", 0 )
-		.attr("x2", bbox.right)
-		.attr("y1", this.pos['top'] + 0.5)
-		.attr("y2", this.pos['top'] + 0.5)
-		.attr(lineAttr)
-		
-		d3.select(rawgroup).append("line")
-		.attr("x1", 0 )
-		.attr("x2", bbox.right)
-		.attr("y1", this.pos['bottom'] + 0.5)
-		.attr("y2", this.pos['bottom'] + 0.5)
-		.attr(lineAttr)
-	}
-	
-
-	IDEX.Axis.prototype.updateXMinMax = function(minIndex, maxIndex)
-	{
-		var vis = this.chart.visiblePhases;
-		
-		this.minIndex = minIndex;
-		this.maxIndex = maxIndex;
-		this.min = vis[0].startTime;
-		this.max = vis[vis.length-1].startTime
-	}
-	
-	
-	IDEX.Axis.prototype.updateYMinMax = function(temp)
-	{
-		var vis = this.chart.visiblePhases;
-		
-		if (temp)
-		{
-			var minMax = IDEX.getMinMax(vis)
-		}
-		else
-		{
-			var minMax = IDEX.getMinMaxVol(vis)
-		}
-		
-		this.min = minMax[0]
-		this.max = minMax[1]
-	}
-	
-	
-	
-	IDEX.Axis.prototype.calcPointWidth = function(vis)
-	{
-		var minWidth = 1;
-		var padding = 1;
-		
-	    var fullWidth = this.width / vis.length
-		
-		if (fullWidth >= 3) padding = 2;
-		if (fullWidth >= 5) padding = 3.5;
-		if (fullWidth >= 10) padding = 5;
-		if (fullWidth >= 20) padding = 10;
-		if (fullWidth >= 100) padding = 20;
-
-		var pointWidth = fullWidth - padding
-		//console.log(String(fullWidth) + " " + String(vis.length) + " " + String(pointWidth) + " " + String(padding))
-		
-		//pointWidth = pointWidth < minWidth ? minWidth : width;
-		if (pointWidth < minWidth)
-			return false
-		
-		this.xStep = fullWidth;
-		this.pointWidth = pointWidth;
-		this.pointPadding = padding;
-		this.numPoints = Math.ceil(this.width / this.xStep);
-		
-		return true
-	}
-	
-	
-	
-	var tickAttr = {
-		"stroke": "white",
-		"stroke-width": 0.5
-	}
-	
-	var gridLineAttr = {
-		"stroke": "#404040",
-		"stroke-dasharray": "1,3",
-		"stroke-width": 1
-	}
-	
-	
-	IDEX.Axis.prototype.updateYAxisPos = function()
-	{
-		var chart = this.chart
-		var xAxis = chart.xAxis[0]
-		var axisIndex = this.axisIndex;
-		
-		var leftAdd = xAxis.padding['left'] + xAxis.width;
-		var topAdd = 0;
-		
-		if (axisIndex > 1)
-		{
-			var otherAxis = chart.yAxis[axisIndex-2]
-			topAdd += otherAxis.pos.bottom;
-		}
-
-		this.pos['top'] = this.padding['top'] + topAdd;
-		this.pos['bottom'] = this.pos['top'] + this.height;
-		this.pos['left'] =  + this.padding['left'] + leftAdd;
-		this.pos['right'] = this.pos['left'] + this.width;
-	}
-	
-	IDEX.Axis.prototype.updateXAxisPos = function()
-	{
-		var chart = this.chart
-		var yAxis = chart.yAxis[chart.yAxis.length-1]
-
-		this.pos['top'] = yAxis.pos['bottom'] + this.padding['top'];
-		this.pos['bottom'] = this.pos['top'] + this.height;
-		this.pos['left'] = this.padding['left'];
-		this.pos['right'] = this.pos['left'] + this.width;	
-	}
-	
-	IDEX.getNeededWidth = function(thisAxis)
-	{
-		var allSeries = thisAxis.series[0].xAxis.series
-		var biggestWidth = 0;
-		
-		for (var i = 0; i < allSeries.length; i++)
-		{
-			var yAxis = allSeries[i].yAxis;
-			
-			var paddedMax = yAxis.max + (yAxis.max * (yAxis.maxPadding))
-			var paddedMin = yAxis.min - (yAxis.min * (yAxis.minPadding))
-			
-			var scale = d3.scale.linear()
-			.domain([paddedMin, paddedMax])
-			.range([yAxis.height, yAxis.pos.top])
-			
-			var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
-			
-			
-			var maxTextWidth = getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
-			var newAxisWidth = getNewAxisWidth(yAxis, maxTextWidth)
-			biggestWidth = newAxisWidth > biggestWidth ? newAxisWidth : biggestWidth;
-		}
-		for (var i = 0; i < allSeries.length; i++)
-		{
-			var yAxis = allSeries[i].yAxis
-			yAxis.setYAxis(biggestWidth)
-			//console.log(yAxis.height)
-		}
-	}
-	
-	
-	IDEX.Axis.prototype.makeYAxis = function()
-	{
-		var fontLabelAttr = {
-			"fill": this.labels.fontColor,
-			"font-family": "Roboto",
-			"font-size": this.labels.fontSize
-		}
-		
-		var node = this.chart.node
-		var $yAxisLabelsID = this.nodes.labels
-		var $yAxisTicksID = this.nodes.ticksLeft
-		var $yAxisTicksRightID = this.nodes.ticksRight
-		var $yAxisGridLinesID = this.nodes.gridLines
-		
-		$yAxisLabelsID.empty();
-		$yAxisTicksID.empty();
-		$yAxisTicksRightID.empty();
-		$yAxisGridLinesID.empty();
-		
-		var ticks = [];
-		var ticksRight = [];
-		var tickLength = this.tickLength
-		
-		var labels = []
-		var gridLines = [];
-		
-		var paddedMax = this.max + (this.max * (this.maxPadding))
-		var paddedMin = this.min - (this.min * (this.minPadding))
-		
-		var scale = d3.scale.linear()
-		.domain([paddedMin, paddedMax])
-		.range([this.height, this.pos.top])
-		
-		var tickVals = scale.ticks(this.numTicks) //.map(o.tickFormat(8))
-		
-		var tickPositions = []
-		
-		for (var i = 0; i < tickVals.length; i++)
-		{
-			//if (this.chart.isMain)
-			//	tickVals[i] = Number(tickVals[i].toFixed(6));
-			var maxDec = 8;
-			var num = tickVals[i];
-			var sind = String(num).search("e")
-			if (sind != -1)
+			defaultYAxisOptions:
 			{
-				var partwhole = String(num).slice(0, sind)
-				var partall = partwhole.split(".")
-				if (partall.length == 1)
-					partall.push("0")
-				var exnum = String(num).slice(sind+1)
-				var isneg = Number(exnum) < 0
-				var pow = exnum.slice(1)
-				//partall[0].length + partall[1].length
-				num = "0." + (Array(Number(pow) - (0)).join("0")) + partall[0] + partall[1]
-
-			}
-			var all = String(num).split(".")
-			var numDec = 0;
-			var startDec = 0;
-			//console.log(all[1])
-			if (all.length == 2)
-			{
-				if (Number(all[0]) > 0)
+				
+				"padding":
 				{
+					"top":0,
+					"bottom":0,
+					"left":0,
+					"right":0,
+				},
+				
+				"minPadding":0.05,
+				"maxPadding":0.05,
+				
+				"numTicks":10,
+				"tickLength":7,
+				
+				"labels":
+				{
+					"textPadding":5,
+					"fontSize":"13px",
+					"fontColor":"#8C8C8C",
+				},
+			},
+			
+			
+			init: function(chart, options)
+			{
+				var axis = this;
+				axis.chart = chart;
+				axis.series = [];
+				axis.options = options;
+				
+
+				
+				axis.height = 0;
+				axis.width = 0;
+				
+				axis.dataMin = 0;
+				axis.dataMax = 0;
+				axis.min = 0;
+				axis.max = 0;
+				axis.paddedMin = 0;
+				axis.paddedMax = 0;
+				
+				axis.minIndex = 0;
+				axis.maxIndex = 0;
+				
+				axis.numTicks = 0;
+				axis.tickLength = 0;
+				axis.tickStep = 0;
+				
+				axis.ticks = [];
+				
+				
+				axis.isXAxis = options.isXAxis;
+				axis.index = options.index;
+				
+				axis.heightInit = options.heightInit;
+				axis.widthInit = options.widthInit;
+				
+				axis.minPadding = options.minPadding || 0;
+				axis.maxPadding = options.maxPadding || 0;
+				
+				axis.numTicks = options.numTicks;
+				axis.tickLength = options.tickLength;
+				
+				axis.pos = new Sleuthcharts.Positions();
+				axis.padding = new Sleuthcharts.Padding();
+				axis.padding = Sleuthcharts.extend(axis.padding, options.padding);
+				
+				axis.labels = options.labels;
+				
+				if (axis.isXAxis)
+				{
+					axis.fullPointWidth = 0;
+					axis.pointPadding = 0;
+					axis.pointWidth = 0;
+					axis.numPoints = 0;
+					
+					axis.range = options.range;
+					axis.minRange = options.minRange;
+					
+					axis.tickStep = options.tickStep;
+					axis.nodes = IDEX.getXAxisNodes(chart.node, axis.index + 1);
 				}
 				else
 				{
-					for (sing in all[1])
+					axis.nodes = IDEX.getYAxisNodes(chart.node, axis.index + 1);
+				}
+				
+
+				//var obj = IDEX.getYAxisNodes(1)
+						
+				axis.canvas = document.createElement('canvas');
+				axis.ctx = axis.canvas.getContext("2d");
+				axis.ctx.font = axis.labels.fontSize + " Roboto"; 
+
+
+			},
+			
+			
+			
+			updateMinMax: function(startIndex, endIndex)
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var isXAxis = axis.isXAxis;
+
+				var visiblePhases = chart.visiblePhases;
+
+			
+				if (isXAxis)
+				{
+					var marketHandler = chart.marketHandler;
+	
+					var allPhases = marketHandler.marketData.ohlc;
+
+
+					axis.dataMin = allPhases[0].startTime;
+					axis.dataMax = allPhases[allPhases.length-1].startTime;
+					
+					axis.minIndex = startIndex;
+					axis.maxIndex = endIndex;
+					axis.min = visiblePhases[0].startTime;
+					axis.max = visiblePhases[visiblePhases.length-1].startTime;
+				}
+				else
+				{
+					var minMax = Sleuthcharts.getMinMax(visiblePhases, axis.index == 0);
+
+					axis.min = minMax[0];
+					axis.max = minMax[1];			
+				}
+				
+				axis.paddedMax = axis.max + (axis.max * (axis.maxPadding));
+				axis.paddedMin = axis.min - (axis.min * (axis.minPadding));
+			},
+			
+
+
+			
+			
+		/***************		RESIZE AXIS		****************/
+
+			
+			resizeAxis: function()
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var chartPadding = chart.padding;
+				var isXAxis = axis.isXAxis;
+				
+				var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();
+				var wrapWidth = chart.plotWidth;
+				var wrapHeight = chart.plotHeight;
+				
+				
+				if (isXAxis)
+				{
+					var widest = 0;
+					
+					for (var i = 0; i < chart.yAxis.length; i++)
 					{
-						if (Number(all[1][sing]) > 0)
-						{
-							break
-						}
-						startDec++;
+						var yAxis = chart.yAxis[i];
+						
+						if (yAxis.width > widest)
+							widest = yAxis.width;
+					}
+					
+					var convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
+					
+					var convertedWidth = axis.resizeHW("100%", wrapWidth);
+					convertedWidth = convertedWidth - (widest + yAxis.padding.left) - axis.padding.left;
+				}
+				
+				else
+				{
+					var xAxis = chart.xAxis[0];
+					var len = chart.yAxis.length;
+					
+					var convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
+					convertedHeight = ((convertedHeight - (xAxis.height / len)) - (xAxis.padding.top / len)) - axis.padding.top
+					
+					var convertedWidth = axis.resizeHW(axis.widthInit, wrapWidth);
+				}
+
+				
+				axis.height = convertedHeight;
+				axis.width = convertedWidth;
+			},
+			
+			
+			
+			resizeHW: function(hw, wrapHW)
+			{
+				var strVal = String(hw);
+				var hasPct = strVal.indexOf('%') >= 0;
+				converted = hw;
+				
+				if (hasPct)
+				{
+					var valNum = parseInt(strVal)/100			;
+					var converted = Math.round(valNum * Number(wrapHW));
+				}
+				
+				return converted
+			},
+			
+			
+			
+			
+			
+		/***************		UPDATE INTERNAL DOM POSITIONS		****************/
+		
+		
+			updateAxisPos: function()
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var chartPadding = chart.padding;
+				var isXAxis = axis.isXAxis;
+				
+				if (isXAxis)
+				{
+					var yAxis = chart.yAxis[chart.yAxis.length-1]
+
+					axis.pos.top = yAxis.pos.bottom + axis.padding.top;
+					axis.pos.bottom = axis.pos.top + axis.height;
+					axis.pos.left = axis.padding.left + chartPadding.left;
+					axis.pos.right = axis.pos.left + axis.width;
+				}
+				else
+				{
+					var xAxis = chart.xAxis[0];
+					var axisIndex = axis.index;
+					
+					var leftAdd = xAxis.padding['left'] + xAxis.width;
+					var topAdd = 0;
+					
+					if (axisIndex > 0)
+					{
+						var otherAxis = chart.yAxis[axisIndex-1];
+						topAdd += otherAxis.pos.bottom;
+					}
+					
+					axis.pos.top = axis.padding.top + topAdd + (chartPadding.top / chart.yAxis.length);
+					axis.pos.bottom = axis.pos.top + axis.height;
+					axis.pos.left = axis.padding.left + leftAdd + chartPadding.left;
+					axis.pos.right = axis.pos.left + axis.width;
+				}
+			},
+			
+			
+			
+
+			makeAxis: function()
+			{
+				
+				var axis = this;
+				var isXAxis = axis.isXAxis;
+				
+				
+				var ticksLeft = [];
+				var ticksRight = [];
+				var labels = [];
+				var gridLines = [];
+
+				
+				if (isXAxis)
+				{
+					var ticksDom = [];
+					
+					var ticks = axis.getXAxisTicks();
+					var yPos = axis.pos.top;
+					
+					for (var i = 0; i < ticks.length; i++)
+					{
+						var tick = ticks[i];
+						var xPos = tick.position;
+						
+						var label = {};
+						label.text = Sleuthcharts.formatTime(new Date(tick.val))
+						label.x = xPos
+						label.y = yPos;
+						labels.push(label);
+						
+						var tickDom = {};
+						tickDom.x = xPos;
+						tickDom.y = yPos;
+						ticksDom.push(tickDom);
+					}
+					
+				}
+				else
+				{
+					var ticks = axis.getYAxisTicks();
+					var xPos = axis.pos.left;
+
+					for (var i = 0; i < ticks.length; i++)
+					{	
+						var tick = ticks[i];
+						var yPos = tick.position + 0.5;
+						var text = String(tick.val);
+						
+						var label = axis.calcLabelPosition(xPos, yPos, text)
+						labels.push(label);
+						
+						var tickLeft = axis.calcLeftTickPosition(xPos, yPos);
+						ticksLeft.push(tickLeft);
+						
+						var tickRight = axis.calcRightTickPosition(xPos, yPos);
+						ticksRight.push(tickRight);
+						
+						var gridLine = axis.calcGridlinePosition(xPos, yPos);
+						gridLines.push(gridLine);
 					}
 				}
-			}
-			else
-			{
-				all.push("0")
-			}
 
-
-			var paddedDec = 3;
-			var endDec = startDec + paddedDec
-			//var avail = maxDec - numDec;
-			if (endDec > maxDec)
-				endDec = maxDec
-			
-			var strDec = Number("0."+all[1]).toFixed(endDec)
-			var strAll = all[0] + "." + strDec.split(".")[1];
-			tickVals[i] = Number(strAll)
-			
-			
-			var p = this.getPos(tickVals[i])
-			tickPositions.push(p)
-		}
-		
-		var xPos = this.pos.left;
-		
-		var maxTextWidth = getMaxTextWidth(tickVals, this.labels.fontSize, this.ctx)
-		var newAxisWidth = this.width
-		
-	    for (var i = 0; i < tickPositions.length; i++)
-	    {
-			if (tickVals[i] == 0)
-				continue
-			var yPos = tickPositions[i] + 0.5;
-			var text = String(tickVals[i]);
-			
-			var label = makeLabel(xPos, yPos, text, maxTextWidth, this)
-			labels.push(label);
-			
-			var tick = makeLeftTick(xPos, yPos);
-			ticks.push(tick);
-			
-			var tickRight = makeRightTick(xPos, yPos, this);
-			ticksRight.push(tickRight);
-			
-			var gridLine = makeGridLine(xPos, yPos);
-			gridLines.push(gridLine);
-		}
-
-		var SVGLabels = d3.select($yAxisLabelsID.get()[0]).selectAll("text")
-		.data(labels)
-		.enter()
-		.append("text")
-		
-		SVGLabels.attr("x", function (d) { return d.x })
-		.attr("y", function (d) { return d.y + 4 })
-		.text(function (d) { return d.text })
-		.attr(fontLabelAttr)
-		//.attr("text-anchor", "end")
-
-		
-		var SVGTicks = d3.select($yAxisTicksID.get()[0]).selectAll("line")
-		.data(ticks)
-		.enter()
-		.append("line")
-		
-		SVGTicks
-		.attr("x1", function (d) { return d.x })
-		.attr("x2", function (d) { return d.x + tickLength})
-		.attr("y1", function (d) { return d.y })
-		.attr("y2", function (d) { return d.y })
-		.attr(tickAttr)
-		
-		
-		var SVGTicksRight = d3.select($yAxisTicksRightID.get()[0]).selectAll("line")
-		.data(ticksRight)
-		.enter()
-		.append("line")
-		
-		SVGTicksRight
-		.attr("x1", function (d) { return d.x })
-		.attr("x2", function (d) { return d.x - tickLength})
-		.attr("y1", function (d) { return d.y })
-		.attr("y2", function (d) { return d.y })
-		.attr(tickAttr)
-		
-		
-		var SVGGridLines = d3.select($yAxisGridLinesID.get()[0]).selectAll("line")
-		.data(gridLines)
-		.enter()
-		.append("line")
-		
-		SVGGridLines
-		.attr("x1", function (d) { return 0 })
-		.attr("x2", function (d) { return d.x })
-		.attr("y1", function (d) { return d.y })
-		.attr("y2", function (d) { return d.y })
-		.attr(gridLineAttr)
-	}
+				
 	
-	
-	IDEX.Axis.prototype.makeXAxis = function()
-	{
-		var xAxis = this
-		
-		var fontLabelAttr = {
-			"fill": "#737373",
-			"font-family": "Roboto",
-			"font-size": xAxis.labels.fontSize
-		}
-		
-		var $xAxisLabelsID = xAxis.nodes.labels
-		var $xAxisTicksID = xAxis.nodes.ticks
-		
-		$xAxisLabelsID.empty();
-		$xAxisTicksID.empty();
+				
+				
+				var tickLength = axis.tickLength;
 
-		var labels = [];
-		
-		var ticks = [];
-		var tickLength = xAxis.tickLength
-		
-		var tickStep = xAxis.tickStep;
-		var tickStepStart = 0;
-		var chart = xAxis.chart
-
-		if (xAxis.showTicks.length)
-		{
-			var index = -1;
-			for (var i = 0; i < chart.pointData.length; i++)
-			{
-				var point = chart.pointData[i]
-				for (var j = 0; j < xAxis.showTicks.length; j++)
+				var fontLabelAttr = {
+					"fill": axis.labels.fontColor,
+					"font-family": "Roboto",
+					"font-size": axis.labels.fontSize
+				}
+				
+				
+				if (isXAxis)
 				{
-					var showTick = xAxis.showTicks[j];
-					if (point.phase == showTick.phase)
+					var $axisLabels = axis.nodes.labels;
+					var $axisTicks = axis.nodes.ticks;
+					
+					$axisLabels.empty();
+					$axisTicks.empty();
+					
+					
+					var SVGTimeLabels = d3.select($axisLabels.get()[0]).selectAll("text")
+					.data(labels)
+					.enter()
+					.append("text")
+					
+					SVGTimeLabels
+					.attr("x", function (d) { return d.x - 20})
+					.attr("y", function (d) { return d.y + 16 })
+					.text(function (d) { return d.text })
+					.attr(fontLabelAttr)
+					
+					var SVGTimeTicks = d3.select($axisTicks.get()[0]).selectAll("line")
+					.data(ticksDom)
+					.enter()
+					.append("line")
+					
+					SVGTimeTicks
+					.attr("x1", function (d) { return d.x })
+					.attr("x2", function (d) { return d.x })
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y + tickLength})
+					.attr(tickAttr)
+					
+					axis.ticks = [];
+				}
+				else
+				{
+					
+					var $axisLabels = axis.nodes.labels;
+					var $axisTicksLeft = axis.nodes.ticksLeft;
+					var $axisTicksRight = axis.nodes.ticksRight;
+					var $axisGridLines = axis.nodes.gridLines;
+					
+					$axisLabels.empty();
+					$axisTicksLeft.empty();
+					$axisTicksRight.empty();
+					$axisGridLines.empty();
+
+
+					var SVGLabels = d3.select($axisLabels.get()[0]).selectAll("text")
+					.data(labels)
+					.enter()
+					.append("text")
+					
+					SVGLabels.attr("x", function (d) { return d.x })
+					.attr("y", function (d) { return d.y + 4 })
+					.text(function (d) { return d.text })
+					.attr(fontLabelAttr)
+					//.attr("text-anchor", "end")
+
+					
+					var SVGTicks = d3.select($axisTicksLeft.get()[0]).selectAll("line")
+					.data(ticksLeft)
+					.enter()
+					.append("line")
+					
+					SVGTicks
+					.attr("x1", function (d) { return d.x })
+					.attr("x2", function (d) { return d.x + tickLength})
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y })
+					.attr(tickAttr)
+					
+					
+					var SVGTicksRight = d3.select($axisTicksRight.get()[0]).selectAll("line")
+					.data(ticksRight)
+					.enter()
+					.append("line")
+					
+					SVGTicksRight
+					.attr("x1", function (d) { return d.x })
+					.attr("x2", function (d) { return d.x - tickLength})
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y })
+					.attr(tickAttr)
+					
+					
+					var SVGGridLines = d3.select($axisGridLines.get()[0]).selectAll("line")
+					.data(gridLines)
+					.enter()
+					.append("line")
+					
+					SVGGridLines
+					.attr("x1", function (d) { return 0 })
+					.attr("x2", function (d) { return d.x })
+					.attr("y1", function (d) { return d.y })
+					.attr("y2", function (d) { return d.y })
+					.attr(gridLineAttr)
+				
+				}
+				
+			},
+			
+			
+			getXAxisTicks: function()
+			{
+				var axis = this;
+				var chart = axis.chart;
+
+				
+				var tickStep = axis.tickStep;
+				var tickStepStart = 0;
+				
+				
+				var allPoints = chart.allPoints;
+				var allPointsLength = allPoints.length;
+				
+				var ticks = axis.ticks;
+				var ticksLength = ticks.length;
+				
+
+				
+				var index = -1;
+					
+				for (var j = 0; j < ticksLength; j++)
+				{
+					var tick = ticks[j];
+					
+					for (var i = 0; i < allPointsLength; i++)
 					{
-						index = i;
+						var point = allPoints[i]
+						
+						if (point.phase.startTime == tick.val)
+						{
+							index = i;
+							break;
+						}
+					}
+					
+					if (index != -1)
+					{
+						tickStepStart = index % tickStep;
 						break;
 					}
 				}
+									
 				
-				if (index != -1)
-					break;
-			}
-			if (index == -1)
-			{
-				xAxis.tickStepStart = 0;
-			}
-			else
-			{
-				xAxis.tickStepStart = index % tickStep;
-			}
-		}
-		
-		var showTicks = []
-		
-		if (tickStep >= chart.pointData.length)
-		{
-			var index = Math.floor((chart.pointData.length - 1) / 2)
-			showTicks.push(chart.pointData[index])
-		}
-		else
-		{
-			var numTicks =  Math.floor(xAxis.width / tickStep) 
-			var tickJump = Math.floor(numTicks / xAxis.xStep)
-			if (tickJump < 1)
-				tickJump = 1
-			
-			var i = xAxis.tickStepStart;
-			var len = chart.pointData.length;
-			while (i < len)
-			{
-				showTicks.push(chart.pointData[i])
-				i += tickJump;
-			}
-		}
-		xAxis.showTicks = showTicks
-		
-		var yPos = xAxis.pos.top;
-		
-		for (var i = 0; i < showTicks.length; i++)
-		{
-			var showTick = showTicks[i];
-			var xPos = showTick.pos.middle;
-			
-			var label = {};
-			label.text = IDEX.formatTime(new Date(showTick.phase.startTime))
-			label.x = xPos
-			label.y = yPos;
-			labels.push(label);
-			
-			var tick = {};
-			tick.x = xPos;
-			tick.y = yPos;
-			ticks.push(tick);
-		}
-		
+				var showTicks = []
 				
-		var SVGTimeLabels = d3.select($xAxisLabelsID.get()[0]).selectAll("text")
-		.data(labels)
-		.enter()
-		.append("text")
-		
-		SVGTimeLabels
-		.attr("x", function (d) { return d.x - 20})
-		.attr("y", function (d) { return d.y + 16 })
-		.text(function (d) { return d.text })
-		.attr(fontLabelAttr)
-		
-		var SVGTimeTicks = d3.select($xAxisTicksID.get()[0]).selectAll("line")
-		.data(ticks)
-		.enter()
-		.append("line")
-		
-		SVGTimeTicks
-		.attr("x1", function (d) { return d.x })
-		.attr("x2", function (d) { return d.x })
-		.attr("y1", function (d) { return d.y })
-		.attr("y2", function (d) { return d.y + tickLength})
-		.attr(tickAttr)
-	}
-	
-	
-	function makeLabel(xPos, yPos, text, maxTextWidth, axis)
-	{
-		var label = {};
-		
-		var axisWidth = axis.width;
-		var tickLength = axis.tickLength;
-		var fixedTextPadding = axis.labels.textPadding
-		
-		var textWidth =  axis.ctx.measureText(text).width;
-		var diff = maxTextWidth - textWidth 
-		var shift = 0
-		
-		var wrapWidth = (tickLength * 2) + (fixedTextPadding * 2)
-		var pad = ((axis.width - wrapWidth) / 2) - (maxTextWidth / 2)
-		
-		if (diff >= 1)
-			shift = diff/2
-		
-		if (pad >= 0.5)
-			shift += pad
-		/*console.log(axisWidth - textWidth)
-		console.log(shift)
-		console.log(fixedTextPadding)
-		console.log(xPos)
-		console.log(text)*/
-		label.text = text;
-		label.y = yPos;
-		
-		label.x = xPos + shift + fixedTextPadding + tickLength;
-		return label;
-	}
-	
-	
-	function makeLeftTick(xPos, yPos)
-	{
-		var tick = {};
-		
-		tick.x = xPos;
-		tick.y = yPos;
-		
-		return tick;
-	}
-	
-	
-	function makeRightTick(xPos, yPos, axis)
-	{
-		var tickRight = {};
-		
-		tickRight.y = yPos;
-		tickRight.x = xPos + axis.width;
-		
-		return tickRight;
-	}
-	
-	
-	function makeGridLine(xPos, yPos)
-	{
-		var gridLine = {};
-		
-		gridLine.y = yPos;
-		gridLine.x = xPos;
-		
-		return gridLine;
-	}
-	
+				if (tickStep >= allPointsLength)
+				{
+					var index = Math.floor((allPointsLength - 1) / 2)
+					showTicks.push(allPoints[index])
+				}
+				else
+				{
+					var numTicks =  Math.floor(axis.width / tickStep);
+					var tickJump = Math.floor(numTicks / axis.fullPointWidth);
+					
+					if (tickJump < 1)
+						tickJump = 1
+					
+					var tickStepPos = tickStepStart;
+					
 
-	function getTextPixelWidth(text, fontSize)
-	{
-		var canvas = document.createElement('canvas');
-		var ctx = canvas.getContext("2d");
-		ctx.font = fontSize + " Roboto"; 
-		
-		return ctx.measureText(text).width;
-	}
-	
-	
-	function getMaxTextWidth(vals, fontSize, ctx)
-	{
-		var max = 0
-		
-		for (var i = 0; i < vals.length; i++)
-		{
-			var text = String(Number(vals[i].toPrecision(3)));
-			var wid = ctx.measureText(text).width;
+					while (tickStepPos < allPointsLength)
+					{
+						showTicks.push(allPoints[tickStepPos]);
+						tickStepPos += tickJump;
+					}
+				}
+				
+				for (var i = 0; i < showTicks.length; i++)
+				{
+					var showTick = showTicks[i];
+					ticks.push({"position":showTick.pos.middle, "val":showTick.phase.startTime, "point":showTick})
+				}
+				
+				axis.ticks = ticks;
+				
+				return ticks;
+			},
 			
-			if (wid > max)
-				max = wid
-		}
-		
-		return max
-	}
-	
-	
-	function getNewAxisWidth(yAxis, newWidth)
-	{
-		var textPadding = yAxis.labels.textPadding;
-		var combinedWidth = newWidth + (yAxis.tickLength * 2) + (textPadding * 2)
-		
-		return combinedWidth
-	}
-	
+			
+			getYAxisTicks: function()
+			{
+				var axis = this;
+				var ticks = [];
+				
+				var paddedMax = axis.paddedMax;
+				var paddedMin = axis.paddedMin;
+				
+				var scale = d3.scale.linear()
+				.domain([paddedMin, paddedMax])
+				.range([axis.height, axis.pos.top])
+				
+				
+				var tickVals = scale.ticks(axis.numTicks) //.map(o.tickFormat(8))
+								
+				for (var i = 0; i < tickVals.length; i++)
+				{
+					var val = tickVals[i];
+					val = Sleuthcharts.formatExponent(val);
+					var position = axis.getPositionFromValue(val)
+					
+					ticks.push({"position":position, "val":val})
+				}
+				
+				axis.ticks = ticks;
 
-	function updateYAxisWidth(yAxis, newWidth)
-	{
-		for (var i = 0; i < yAxis.series[0].xAxis.series.length; i++)
-		{
-			var otherAxis = yAxis.series[0].xAxis.series[i].yAxis
-			if (otherAxis.width < newWidth)
-				otherAxis.setYAxis(newWidth)
+				
+				return ticks;
+			},
+			
+			
+		/***************		LABEL/TICK FUNCTIONS		****************/
+			
+			
+			calcLabelPosition: function(xPos, yPos, text)
+			{
+				var axis = this;
+				var ticks = axis.ticks;
+				var maxTextWidth = 0
+				
+				for (var i = 0; i < ticks.length; i++)
+				{
+					var loopText = String(Number(ticks[i].val.toPrecision(3)));
+					var wid = axis.ctx.measureText(loopText).width;
+					maxTextWidth = wid > maxTextWidth ? wid : maxTextWidth;
+				}
+				
+
+				var label = {};
+				
+				var axisWidth = axis.width;
+				var tickLength = axis.tickLength;
+				var fixedTextPadding = axis.labels.textPadding
+				
+				var textWidth =  axis.ctx.measureText(text).width;
+				var diff = maxTextWidth - textWidth 
+				var shift = 0
+				
+				var wrapWidth = (tickLength * 2) + (fixedTextPadding * 2)
+				var pad = ((axis.width - wrapWidth) / 2) - (maxTextWidth / 2)
+				
+				if (diff >= 1)
+					shift = diff/2
+				
+				if (pad >= 0.5)
+					shift += pad
+
+				label.text = text;
+				label.y = yPos;
+				
+				label.x = xPos + shift + fixedTextPadding + tickLength;
+				
+				return label;
+			},
+			
+			
+			calcLeftTickPosition: function(xPos, yPos)
+			{
+				var tick = {};
+				
+				tick.x = xPos;
+				tick.y = yPos;
+				
+				return tick;
+			},
+		
+			
+			calcRightTickPosition: function(xPos, yPos)
+			{
+				var axis = this;
+				var tickRight = {};
+				
+				tickRight.y = yPos;
+				tickRight.x = xPos + axis.width;
+				
+				return tickRight;
+			},
+			
+			
+			calcGridlinePosition: function(xPos, yPos)
+			{
+				var gridLine = {};
+				
+				gridLine.y = yPos;
+				gridLine.x = xPos;
+				
+				return gridLine;	
+			},
+			
+			
+		/***************		DRAW LINES		****************/
+
+	
+			drawAxisLines: function()
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var isXAxis = axis.isXAxis;
+				
+				//var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();	
+				var bbox = chart.node[0].getBoundingClientRect()
+				
+				//var $axisGroup = this.axisGroupDom;
+				
+				if (isXAxis)
+				{
+					var $axisGroup = chart.node.find(".sleuthXAxis[data-axisNum='" + String(axis.index + 1) +"']")
+					var $axisLinesGroup = $axisGroup.find(".xAxisLines");
+				}
+				else
+				{
+					var $axisGroup = chart.node.find(".sleuthYAxis[data-axisNum='" + String(axis.index + 1) +"']")
+					var $axisLinesGroup = $axisGroup.find(".yAxisLines");
+				}
+
+
+				var rawgroup = $axisLinesGroup.get()[0]
+				
+				var lineAttr = {
+					"stroke-width": 1,
+					"stroke": "#555555"
+				}
+				
+				$axisLinesGroup.empty();
+
+				
+				//var firstPos = isXAxis ? this.pos.top + 0.5 : this.pos.bottom + 0.5;
+				
+				
+				if (isXAxis)
+				{
+					d3.select(rawgroup).append("line")
+					.attr("x1", 0 )
+					.attr("x2", bbox.right)
+					.attr("y1", axis.pos.top + 0.5)
+					.attr("y2", axis.pos.top + 0.5)
+					.attr(lineAttr)
+					
+					d3.select(rawgroup).append("line")
+					.attr("x1", 0 )
+					.attr("x2", bbox.right)
+					.attr("y1", axis.pos.bottom + 0.5)
+					.attr("y2", axis.pos.bottom + 0.5)
+					.attr(lineAttr)
+				}
+				else
+				{
+					d3.select(rawgroup).append("line")
+					.attr("x1", 0 )
+					.attr("x2", bbox.right)
+					.attr("y1", axis.pos.bottom + 0.5)
+					.attr("y2", axis.pos.bottom + 0.5)
+					.attr(lineAttr)
+					
+					d3.select(rawgroup).append("line")
+					.attr("x1", axis.pos.left + 0.5)
+					.attr("x2", axis.pos.left + 0.5)
+					.attr("y1", 0)
+					.attr("y2", axis.pos.bottom)
+					.attr(lineAttr)
+				}
+				
+
+				
+			},
+			
+			
+			drawYAxisFollow: function(mousePosY)
+			{
+				var axis = this;
+				var chart = axis.chart;
+				var axisIndex = axis.index;
+
+				var $followWrap = chart.node.find(".yAxis-follow[data-axisnum='"+ String(axisIndex + 1) +"']");
+				var $followBackbox = $followWrap.find(".yAxis-follow-backbox");
+				var $followText = $followWrap.find(".yAxis-follow-text");
+				
+				var textAttr = {
+					"fill":"#D3D3D3",
+					"font-family":"Roboto",
+					"font-size":"12px"
+				}
+				
+				var leftPos = axis.pos.left;
+				var width = axis.width;
+				
+				var insideY = mousePosY - axis.pos.top;
+				var val = axis.getValueFromPosition(insideY);
+				val = Sleuthcharts.formatNumWidth(Number(val));
+				
+				var textWidth = axis.ctx.measureText(val).width;
+				var move = (width - textWidth) / 2;
+			
+				$followText
+				.text(val)
+				.attr("y", mousePosY + 5)
+				.attr("x", leftPos + move)
+				.attr(textAttr)
+
+				
+				var backboxRect = d3.select($followText.get()[0]).node().getBBox();
+				var rightPos = axis.pos.right - 1;
+				var leftPos = axis.pos.left;
+				var topPos = backboxRect.y - 3;
+				var bottomPos = topPos + backboxRect.height + 6;
+				var yMiddlePos = topPos + ((bottomPos - topPos) / 2) + 0.5;
+				var leftPosPad = leftPos + 7;
+				
+				var d = 
+				[
+					"M", rightPos, topPos, 
+					"L", leftPosPad, topPos, 
+					"L", leftPos, yMiddlePos, 
+					"L", leftPosPad, bottomPos, 
+					"L", rightPos, bottomPos, 
+					"L", rightPos, topPos, 
+				]
+
+
+				d3.select($followBackbox.get()[0])
+				.attr("d", d.join(" "))
+				.attr("stroke", "#D3D3D3")
+				.attr("stroke-width", 0.5)
+			
+				$followWrap.show();
+			},
+			
+			
+			
+			drawTimeBox: function(mousePosX, time)
+			{	
+				var axis = this;
+				var chart = axis.chart;
+				time = Sleuthcharts.formatTime(new Date(time), true)
+
+				
+				var textAttr = {
+					"fill":"#D3D3D3",
+					"font-family":"Roboto",
+					"font-size":"13px"
+				}
+				
+				var boxAttr = {
+					"fill":"#black",
+					"stroke":"#a5a5a5",
+					"stroke-width":1
+				}
+				
+				var $followWrap = chart.node.find(".xAxis-follow");
+				var $followBackbox = $followWrap.find(".xAxis-follow-backbox");
+				var $followText = $followWrap.find(".xAxis-follow-text");
+				
+				
+				var topPos = axis.pos.top;
+				var height = axis.height;
+				
+									
+				$followText
+				.text(time)
+				.attr("y", topPos + 15)
+				.attr("x", mousePosX - 37)
+				.attr(textAttr)
+
+				//var timerect = d3.select($cursor_follow_time.get()[0]).node().getBBox();
+				d3.select($followBackbox.get()[0])
+				.attr("x", mousePosX - 55)
+				.attr("y", topPos)
+				.attr("width", 110)
+				.attr("height", height)
+				.attr(boxAttr)
+				
+				$followWrap.show()
+			},
+			
+			
+			// highcharts
+			normalizeTimeTickInterval: function(tickInterval, unitsOption)
+			{
+				var units = unitsOption || 
+				[[
+						'millisecond', // unit name
+						[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+					], [
+						'second',
+						[1, 2, 5, 10, 15, 30]
+					], [
+						'minute',
+						[1, 2, 5, 10, 15, 30]
+					], [
+						'hour',
+						[1, 2, 3, 4, 6, 8, 12]
+					], [
+						'day',
+						[1, 2]
+					], [
+						'week',
+						[1, 2]
+					], [
+						'month',
+						[1, 2, 3, 4, 6]
+					], [
+						'year',
+						null
+				]];
+				
+				var unit = units[units.length - 1];
+				var interval = timeUnits[unit[0]];
+				var multiples = unit[1];
+				var count;
+					
+				// loop through the units to find the one that best fits the tickInterval
+				for (i = 0; i < units.length; i++)
+				{
+					unit = units[i];
+					interval = timeUnits[unit[0]];
+					multiples = unit[1];
+
+
+					if (units[i + 1])
+					{
+						// lessThan is in the middle between the highest multiple and the next unit.
+						var lessThan = (interval * multiples[multiples.length - 1] +
+									timeUnits[units[i + 1][0]]) / 2;
+
+						// break and keep the current unit
+						if (tickInterval <= lessThan)
+							break;
+					}
+				}
+				
+				// prevent 2.5 years intervals, though 25, 250 etc. are allowed
+				if (interval === timeUnits.year && tickInterval < 5 * interval)
+				{
+					multiples = [1, 2, 5];
+				}
+
+				// get the count
+				count = normalizeTickInterval(
+					tickInterval / interval, 
+					multiples,
+					unit[0] === 'year' ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+				);
+				
+				return {
+					unitRange: interval,
+					count: count,
+					unitName: unit[0]
+				};
+			},
+
+			
+		/***************		CONVERT PIXEL/VALUE		****************/
+
+		
+			getPositionFromValue: function(pointValue)
+			{
+				var axis = this;
+				
+				var paddedMax = axis.max + (axis.max * axis.maxPadding)
+				var paddedMin = axis.min - (axis.min * axis.minPadding)
+
+				var num = pointValue - paddedMin;
+				var range = paddedMax - paddedMin;
+				var ratio = num / range;
+				var pos = Number((axis.pos.bottom - (ratio * axis.height)).toFixed(4));
+				//console.log(String(pointValue) + "    " + String(ratio) + "  " + String(pos));
+				
+				return pos
+			},
+			
+			
+			getValueFromPosition: function(pos)
+			{
+				var axis = this;
+				
+				var isXAxis = axis.isXAxis
+				var paddedMax = axis.max + (axis.max * axis.maxPadding)
+				var paddedMin = axis.min - (axis.min * axis.minPadding)
+				
+				
+				var range = paddedMax - paddedMin;
+				var ratio = isXAxis ? pos / axis.width : pos / axis.height;
+				var num = ratio * range
+				var val = isXAxis ? paddedMin + num : paddedMax - num
+
+				return val
+			},
+			
+			
 		}
-	}
+		
+		
+		
+		return Sleuthcharts;
+		
+		
+	}(Sleuthcharts || {}));
+	
+	
 	
 	
 	

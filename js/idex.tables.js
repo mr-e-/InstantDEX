@@ -242,7 +242,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.sendPost({'method':"cancelquote",'quoteid':quoteid}).done(function(data)
 		{
 			IDEX.updateUserState();
-			console.log(data)
+			//console.log(data)
 		})
 	})
 	
@@ -258,11 +258,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).parent().removeClass("cancel-hover")
 	})
 	
-
-	$("#allOrderbooksTable tbody").on("click", "tr", function()
-	{
-		IDEX.changeMarket($(this).attr("data-baseid"), $(this).attr("data-relid"));
-	})
 	
 
 	return IDEX;

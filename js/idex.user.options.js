@@ -2,21 +2,35 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {	
-	var defaultOptions = 
+
+	IDEX.User.prototype.initLabels = function()
 	{
-		"duration":6000,
-		"minperc":75
-	}
+		var $table = $(".orderbook-label-popup-table")
+		var orderbookLabels = [];
+				
+				
+		if (localStorage.orderbookLabels)
+		{
+			orderbookLabels = JSON.parse(localStorage.getItem('orderbookLabels'));
+		}
 
-	IDEX.User.prototype.initOptions = function()
-	{	
-		var options = {};
-		
+		for (var i = 0; i < orderbookLabels.length; i++)
+		{
+			var label = orderbookLabels[i];
+			label.isActive = false;
+			label.isVisible = false;
+			IDEX.makeLabelStyle(label)
+			var name = label.name
+			var newRow = IDEX.buildLabelRow(name)
+			
+			$table.append($(newRow))
+		}
 
-		this.options = options;
+		this.labels = orderbookLabels;
 	}
 	
 
+	
 	
 	return IDEX;
 	

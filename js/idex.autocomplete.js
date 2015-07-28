@@ -5,82 +5,93 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	var autoSearchName = [];
 	var autoSearchSkynet = [];
-	var autoSearchOrderbookExchange = ["nxtae", "unconf", "InstantDEX", "nxtae_nxtae"];
-	
+
 	
 	
 	IDEX.initAutocomplete = function()
+	{
+		initAssetAutocomplete();
+	}
+	
+	function initAssetAutocomplete()
 	{
 		var assets = IDEX.user.allAssets;
 		var len = assets.length;
 
 		for (var i = 0; i < len; i++)
 		{
+			var asset = assets[i];
 			var vals = {}
-			vals['name'] = assets[i].name;
-			vals['assetid'] = assets[i].assetID
+			vals.name = asset.name;
+			vals.assetID = asset.assetID
 			
-			autoSearchName.push({"label":assets[i].name+" <span>("+assets[i].assetID+")</span>","value":assets[i].name, "vals":vals});
+			autoSearchName.push({"label":asset.name+" <span>("+asset.assetID+")</span>", "value":asset.name, "vals":vals});
 		}
 	}
 	
-	
-	$('.skynet-search').autocomplete(
-	{
-		delay:0,
-		html:true,
-		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"450px","margin-top":"14px"})},
-		source: function(request,response) { skynetMatcher(request, response, autoSearchSkynet) },
-		//change: function(e, ui) { skynetSelection($(this), e, ui) },
-		select: function(e, ui) { skynetSelection($(this), e, ui) }
-	});
-	
-	
-	$('.auto-label-exchange').autocomplete(
-	{
-		delay:0,
-		source: function(request,response) { labelExchangeMatcher(request, response, autoSearchOrderbookExchange) },
-		change: function(e, ui) { labelExchangeSelection($(this), e, ui) },
-		select: function(e, ui) { labelExchangeSelection($(this), e, ui) }
-	});
 
-	
-	$('.assets-fav input').autocomplete(
+	$('.asset-search').autocomplete(
 	{
 		delay: 0,
 		html: true,
 		create: function(e, ui) { },
 		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"180px"})},
-		source: function(request,response) { autocompleteMatcher(request, response, autoSearchName) },
-		change: function(e, ui) { autocompleteSelection($(this), e, ui) },
-		select: function(e, ui) { autocompleteSelection($(this), e, ui) }
+		source: function(request,response) { assetMatcher(request, response, autoSearchName) },
+		change: function(e, ui) { assetSelection($(this), e, ui) },
+		select: function(e, ui) { assetSelection($(this), e, ui) }
 	});
-
 	
-	function labelExchangeMatcher(request, response, auto)
+	
+	function assetMatcher(request, response, auto)
 	{
 		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
+		
 		var a = $.grep(auto, function( item )
 		{
-			var v = item
+			var assetID = item.vals.assetID;
+			var assetName = item.vals.name;
 
-			return (matcher.test(v));
+			return (matcher.test(assetID) || matcher.test(assetName));
 		});
 
 		response(a);
 	}
 	
-	
-	function labelExchangeSelection($thisScope, e, ui)
+	function assetSelection($thisScope, e, ui)
 	{
-		var exchange = ""
-		if (ui.item)
+		if (!ui.item)
 		{
-			exchange = ui.item.value
+			$thisScope.attr('data-asset', "-1");
 		}
-		console.log(exchange)
+		else
+		{
+			var assetID = ui.item.vals.assetID;
+			
+			$thisScope.attr('data-asset', assetID);
+		}
 	}
 	
+	
+	
+	IDEX.initSkyNETAuto = function($search)
+	{
+		$search.autocomplete(
+		{
+			delay:0,
+			html:true,
+			open: function(e, ui) { $(this).autocomplete('widget').css({'width':"450px","margin-top":"14px"})},
+			source: function(request,response) { skynetMatcher(request, response, autoSearchSkynet) },
+			//change: function(e, ui) { skynetSelection($(this), e, ui) },
+			select: function(e, ui) { skynetSelection($(this), e, ui) }
+		});
+	}
+	
+	
+	$('.skynet-search').each(function(index, element)
+	{
+		IDEX.initSkyNETAuto($(element));
+	});
+
 	
 	function skynetMatcher(request, response, auto)
 	{
@@ -102,147 +113,100 @@ var IDEX = (function(IDEX, $, undefined)
 			return (ret);
 		});
 
-		response(a.slice(0, 60));
+		response(a.slice(0, 80));
 	}
 	
 	
-	function skynetSelection($thisScope, e, ui)
-	{	
-		console.log(ui.item)
-		if (!ui.item)
-		{
-			$thisScope.attr('data-pair', "-1");
-		}
-		else
-		{
-			var $el = $(ui.item.label)
-			var idPair = ""
-			var pair = ""
-			var exchange = ""
-			
-			pair = $el.attr("data-pair")
-			idPair = $el.attr("data-idpair")
-			exchange = $el.attr("data-exchange")
-
-			if (idPair.split("_").length == 2 && exchange == "nxtae")
-				$thisScope.attr('data-pair', idPair);
-			else
-				$thisScope.attr('data-pair', pair);
-			
-			$thisScope.attr('data-exchange', exchange);
-			
-			IDEX.chartClick($thisScope)
-		}
-	}
-	
-	
-	function autocompleteSelection($thisScope, e, ui)
+	function skynetSelection($input, e, ui)
 	{
 		if (!ui.item)
 		{
-			$thisScope.attr('data-asset', "-1");
+			$input.attr('data-pair', "-1");
 		}
 		else
 		{
-			var assetid = ui.item.vals.assetid;
+			var vals = ui.item.vals;
+			var searchPair = vals.pair;
 			
-			$thisScope.attr('data-asset', assetid);
+			if (vals.idPair.split("_").length == 2 && vals.exchange == "nxtae")
+				searchPair = vals.idPair
+
+			$input.attr('data-pair', searchPair);
+			$input.attr('data-exchange', vals.exchange);
+			
+			var obj = {};			
+			var $wrap = $input.closest(".chart-header")	
+			obj.node = $wrap.attr("data-chart");
+			
+			var both = searchPair.split("_")
+
+			obj.baseid = both[0];
+			obj.relid = both[1];
+			
+			obj.exchange = vals.exchange
+
+			
+			console.log(vals)
+			IDEX.makeChart(obj)
 		}
 	}
+	
 
-
-	function autocompleteMatcher(request, response, auto)
-	{
-		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
-		var a = $.grep(auto, function( item )
-		{
-			var assetid = item.vals.assetid;
-			var assetname = item.vals.name;
-
-			return (matcher.test(assetid) || matcher.test(assetname));
-		});
-
-		response(a);
-	}
 	
 	
 	IDEX.getSkynet = function(options, len)
 	{
 		var dfd = new $.Deferred();
 
-		loadSkynetData().done(function(markets)
+		loadSkynetData().done(function(parsed)
 		{
-			var parsed = markets
 			var len = parsed.length;
-			
-			var formatted = []
-			
+						
 			for (var i = 0; i < len; i++)
 			{
 				var obj = {}
-				obj['baseID'] = ""
-				obj['relID'] = ""
-				obj['exchange'] = parsed[i].exchange
+				obj.baseName = "";
+				obj.relName = "";
+				obj.baseID = ""
+				obj.relID = ""
+				obj.pair = "";
+				obj.idPair = "";
+				obj.exchange = parsed[i].exchange
 
 				var pair = parsed[i].pair;
 				var both = pair.split("_")
 				
-				var baseAsset = IDEX.user.getAssetInfo("assetID", both[0])
-				var relAsset = IDEX.user.getAssetInfo("assetID", both[1])
-				if ("name" in baseAsset)
+				var func = function(obj, defaultName, typeAsset) 
+				{	
+					var assetObj = IDEX.user.getAssetInfo("assetID", defaultName)
+					obj[typeAsset + "Name"] = defaultName;
+					
+					if ("name" in assetObj)
+					{
+						obj[typeAsset + "ID"] = assetObj.assetID;
+						obj[typeAsset + "Name"] = assetObj.name;
+					}
+				};
+				
+				func(obj, both[0], "base")
+				func(obj, both[1], "rel")
+				
+				obj.pair = obj.baseName + "_" + obj.relName
+				
+				if (obj.exchange == "nxtae")
 				{
-					obj['baseID'] = baseAsset['assetID']
-					obj['baseName']  = baseAsset['name']
-				}
-				else
-				{
-					obj['baseName']  = both[0]
+					var baseRef = obj.baseID.length ? obj.baseID : obj.baseName;
+					var relRef = obj.relID.length ? obj.relID : obj.relName;
+					
+					obj.idPair = baseRef + "_" + relRef;
 				}
 				
-				if ("name" in relAsset)
-				{
-					obj['relID'] = relAsset['assetID']
-					obj['relName']  = relAsset['name']
-				}
-				else
-				{
-					obj['relName']  = both[1]
-				}
+											
+				var row = buildSkynetSearchRow(obj)
 				
-				obj['pair'] = obj['baseName'] + "_" + obj['relName']
-				obj['idPair'] = obj['baseID'] + "_" + obj['relID']
-				
-				var exchangeSpan = "<span class='sky-exchange'>" + obj['exchange'] + "</span>"
-				var pairSpan = "<span class='sky-pair'>" + obj['pair'] + " </span>"
-				
-				if (obj['baseID'].length && obj['relID'].length)
-				{
-					var idPair = obj['idPair']
-					var idPairSpan =  "<span class='sky-idPair'>" + idPair + " </span>"
-				}
-				else if (obj['baseID'].length && obj['exchange'] == "nxtae")
-				{
-					var idPair = obj['baseID'] + "_" + obj['relName']
-					var idPairSpan = "<span class='sky-idPair'>" + idPair + " </span>"
-				}
-				else if (obj['relID'].length && obj['exchange'] == "nxtae")
-				{
-					var idPair =  obj['relID'] + "_" + obj['baseName']
-					var idPairSpan = "<span class='sky-idPair'>" + idPair + " </span>"
-				}
-				else
-				{
-					var idPair = ""
-					var idPairSpan = "";
-				}
-				
-				var wrap = "<div class='sky-auto-wrap' data-idpair='" + idPair +"' data-pair='" + obj['pair'] + "' data-exchange='" + obj['exchange'] + "'>"
-				wrap += "<div class='sky-auto-cell'>" + pairSpan + "</div>"
-				wrap += "<div class='sky-auto-cell'>" + idPairSpan + "</div>"
-				wrap += "<div class='sky-auto-cell sky-cell-ex'>" + exchangeSpan + "</div>"
-				wrap += "</div>"
-				autoSearchSkynet.push({"label":wrap, "value":obj['pair'], "vals":obj});
+				autoSearchSkynet.push({"label":row, "value":obj.pair, "vals":obj});
 			}
+			
 			dfd.resolve(parsed)	
 		})
 		
@@ -250,11 +214,25 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	function buildSkynetSearchRow(obj)
+	{
+		var exchangeSpan = "<span>" + obj.exchange + "</span>"
+		var pairSpan = "<span>" + obj.pair + " </span>"
+		var idPairSpan = "<span>" + obj.idPair + " </span>"
+		
+		var row = "<div class='sky-auto-wrap'>";
+		row += "<div class='sky-auto-cell sky-auto-pair'>" + pairSpan + "</div>";
+		row += "<div class='sky-auto-cell sky-auto-idPair'>" + idPairSpan + "</div>";
+		row += "<div class='sky-auto-cell sky-auto-exchange'>" + exchangeSpan + "</div>";
+		row += "</div>";
+		
+		return row
+		
+	}
+	
 	function loadSkynetData()
 	{
-		var retdfd = new $.Deferred();
 		var dfd = new $.Deferred();
-		var user = this;
 		
 		if (localStorage.skynetMarkets)
 		{
@@ -264,42 +242,33 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 		{
 			var obj = {}
-			obj['section'] = "crypto";
-			obj['run'] = "search";
-			obj['field'] = "pair";
-			obj['term'] = "";
-			obj['key'] = "beta_test";
-			obj['filter'] = "";
+			obj.section = "crypto";
+			obj.run = "search";
+			obj.field = "pair";
+			obj.term = "";
+			obj.key = "beta_test";
+			obj.filter = "";
 
 			var url = IDEX.makeSkynetURL(obj)
-			//console.log(url)
+
 			$.getJSON(url, function(data)
 			{
-				console.log(data)
 				var parsed = parseSkynetSearch(data.results)
-				var len = parsed.length;
 				localStorage.setItem('skynetMarkets', JSON.stringify(parsed));
 				dfd.resolve(parsed);
 			})
 		}
 		
 		
-		dfd.done(function(markets)
-		{
-			retdfd.resolve(markets);
-		})
-		
-		return retdfd.promise();
+		return dfd.promise();
 	}
 	
 	
 	function parseSkynetSearch(data)
 	{
 		var exchanges = {}
-		var pairs = []
 		var parsed = []
 		
-		var counter = 0;
 		for (pair in data)
 		{
 			var pairExchanges = data[pair].split('|');
@@ -309,8 +278,6 @@ var IDEX = (function(IDEX, $, undefined)
 				var exchange = pairExchanges[i];
 				parsed.push({"pair":pair,"exchange":exchange})
 			}
-
-			counter++;
 		}
 
 		return parsed;

@@ -3,6 +3,26 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
+	var labelPopupClass = ".orderbook-label-popup";
+	var $labelPopup = $(labelPopupClass);
+	var $banner = $(".orderbook-label-popup-banner");
+	
+	
+	IDEX.OrderbookLabel = function(obj) 
+	{
+		this.exchange = "";
+		this.nxtrs = "";
+		this.market = "";
+		this.cbg = "";
+		this.ctext = "";
+		
+		this.name = "";
+		this.isVisible = false;
+		this.isActive = false;
+
+		IDEX.constructFromObject(this, obj);
+	};
+	
 	
 	$(".orderbook-label-color-input").each(function()
 	{
@@ -23,45 +43,17 @@ var IDEX = (function(IDEX, $, undefined)
 			appendTo: $el,
 		})
 	});
-	
-	
-
-	IDEX.labels = []
-	IDEX.isLabelPopup = false;
-	
-	
-	IDEX.OrderbookLabel = function(obj) 
-	{	
-		this.exchange = "";
-		this.nxtrs = "";
-		this.market = "";
-		this.bgcolor = "";
-		this.textcolor = "";
 		
-		this.name = "";
-		this.isVisible = false;
-		this.isActive = false;
+	
+	
+	$(".grid-trig-labels").on("click", function()
+	{
+		var flipClassName = "active"
 
-		IDEX.constructFromObject(this, obj);
-	};
-	
-	
-	$(".cm-orderbook-label-popup-close").on("mouseup", function()
-	{
-		$(".orderbook-label-popup").css("display", "none");
-		IDEX.isLabelPopup = false
-		$(".order-row").removeClass("label-temp")
-	})
-	
-	$(".cm-orderbook-label-trig").on("mouseup", function()
-	{
-		if (!IDEX.isLabelPopup)
-			$(".orderbook-label-popup").css("display", "block");
-		else
-			$(".orderbook-label-popup").css("display", "none");
+		IDEX.flipClass($labelPopup, flipClassName)
 		
-		$(".order-row").removeClass("label-temp")
-		IDEX.isLabelPopup = !IDEX.isLabelPopup;
+		//$(".order-row").removeClass("label-temp")
+		$banner.removeClass("active")
 	})
 	
 	
@@ -82,191 +74,29 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	$(".orderbook-label-color-input").on('move.spectrum', function(e, tinycolor)
-	{
-		var $ex = $("#label_example")
-		
+	{		
 		var $el = $(this).parent().find(".orderbook-label-color-trig")
 		var $conf = $(".orderbook-label-popup-left")
-		
-		var exchange = $conf.find("input[name='ex']").val()
+				
 		var ltype = $(this).attr("data-ltype")
-		var colorClass = ltype == "bg" ? "background-color" : "color";
+		var colorClass = ltype == "bg" ? "cbg" : "ctext";
 
 		var rgba = tinycolor.toRgbString()
 		
-		updateStyle(colorClass, rgba)
-		
-
-		$el.val(rgba)
-		$ex.addClass("label-temp")
-		//IDEX.colorOrderbook(exchange)
+		updateStyle(colorClass, rgba)		
+		$el.val(rgba);
 	});
-	
-	
-	function updateStyle(colorClass, color)
-	{
-		var $style = $("#temp_label_style");
-		
-		if (colorClass == "background-color")
-			var cClass = "cbg"
-		else
-			var cClass = "ctext"
-		
-		$style.attr("data-"+cClass, color)
-		
-		var cbg = $style.attr("data-cbg")
-		var ctext = $style.attr("data-ctext")
-		
-		var str = "." + "label-temp" 
-		str += " { " + "background-color" + ":" + cbg + "; " + "color" + ":" + ctext + "; }"
-		$style.html(str)
-	}
-	
-	function loadStyle(label)
-	{
-		
-		var bgcolor = label.bgcolor
-		var textcolor = label.textcolor
-		var $style = $("#temp_label_style");
-		
-		
-		$style.attr("data-cbg", bgcolor)
-		$style.attr("data-ctext", textcolor)
-		
-		var cbg = $style.attr("data-cbg")
-		var ctext = $style.attr("data-ctext")
-		
-		var str = "." + "label-temp" 
-		str += " { " + "background-color" + ":" + cbg + "; " + "color" + ":" + ctext + "; }"
-		$style.html(str)
-	}
-	
-	
-	function makeStyle()
-	{
-		var style = document.createElement('style');
-		style.type = 'text/css';
-		
-		style.innerHTML = "." + labelClass + " { color:" + textColor + "; background-color:" + bgColor + "; }";
-		//document.getElementsByTagName('head')[0].appendChild(style);
-	}
-	
-	function initStyle(label)
-	{
-		var name = label.name
-		var $style = $("#"+name);
-		var bgcolor = label.bgcolor
-		var textcolor = label.textcolor
-
-		$style.attr("data-cbg", bgcolor)
-		$style.attr("data-ctext", textcolor)
-	
-		var str = "." + name 
-		str += " { " + "background-color" + ":" + bgcolor + "; " + "color" + ":" + textcolor + "; }"
-		$style.html(str)
-	}
-	
-	
-	function loadColorBox(obj)
-	{
-		//var obj = getInputValues()
-		
-		$("#orderbook_label_bgcolor").spectrum("set", obj.bgcolor);
-		$("orderbook_label_textcolor").spectrum("set", obj.textcolor);
-	}
-	
-	
-	IDEX.colorOrderbook = function(exchange)
-	{
-		$(".order-row").removeClass("label-temp")
-		if (exchange)
-		{
-			var $book = $("#sellBook")
-			var $rows = $book.find(".order-row")
-			var $style = $("#temp_label_style");
-
-
-			$rows.each(function()
-			{
-				var order = IDEX.getRowData($(this), $(this).index());
-
-				if (order.exchange == exchange)
-					$(this).addClass("label-temp")
-			})
-		}
-	}
-	
-	
-	$("#add_orderbook_label").on("click", function()
-	{
-		var $table = $(".orderbook-label-popup-table")
-		var lastIndex = IDEX.labels.length + 1;
-		var name = "Label-"+String(lastIndex)
-		var newRow = IDEX.buildLabelRow(name)
-		
-		$table.append($(newRow))
-		var newLabel = new IDEX.OrderbookLabel({"name":name});
-		IDEX.labels.push(newLabel)
-	})
-	
-	
-	$(".orderbook-label-popup-confirm-wrap").on("click", function()
-	{
-		saveLabel()
-	})
-	
-	
-	function saveLabel()
-	{
-		var label = getActiveLabel();
-		console.log(label)
-		if (label)
-		{
-			var inputVals = getInputValues()
-			
-			var name = label.name;
-			var isVis = label.isVisible;
-			var isActive = label.isActive;
-			
-			var updatedLabel = new IDEX.OrderbookLabel(inputVals)
-			updatedLabel.isVisible = isVis;
-			updatedLabel.name = name;
-			updatedLabel.isActive = isActive;
-			
-			console.log(updatedLabel)
-			
-			var index = IDEX.labels.indexOf(label)
-			IDEX.labels[index] = updatedLabel;
-			initStyle(updatedLabel)
-			IDEX.loadVis()
-		}
-	}
 	
 	
 	$(".orderbook-label-popup-table").on("click", ".orderbook-label-popup-all-row .label-popup-all-name", function(e)
 	{
-		/*var has = $(e.target).hasClass("label-popup-all-name");
-
-		if (!has)
-		{
-			e.stopPropagation()
-			return
-		}*/
-		var $wrap = $(".orderbook-label-popup-left")
-		var $overlay = $(".label-left-overlay");
-		
-		
 		var elClass = ".orderbook-label-popup-all-row"
 		var $parent = $(this).parent()
 		
 		var isActive = $parent.hasClass("active")
-		
 		$parent.parent().find(elClass).removeClass("active");
 		
 		var index = $parent.index() - 2
-		
-		console.log(index)
-		console.log(isActive)
 		
 		if (isActive)
 		{
@@ -275,140 +105,286 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 		{
 			$parent.addClass("active");
-			IDEX.loadLabel(index);
+			loadLabel(index);
 		}
 	})
 	
 	
-	IDEX.loadLabel = function(index)
+	$("#add_orderbook_label").on("click", function()
 	{
-		var $overlay = $(".label-left-overlay");
-		$overlay.removeClass("active")
+		addLabel();
+	})
+	
+	$("#delete_orderbook_label").on("click", function()
+	{
+		removeLabel();
+	})
+	
+	$(".orderbook-label-popup-confirm-wrap").on("click", function()
+	{
+		saveLabel()
+	})
+	
+	
+	function addLabel()
+	{
+		var lastIndex = IDEX.user.labels.length + 1;
 		
+		if (lastIndex < 13)
+		{
+			var $table = $(".orderbook-label-popup-table")
+									
+			var nums = []
+
+			for (var i = 0; i < IDEX.user.labels.length; i++)
+			{
+				var label = IDEX.user.labels[i];
+				var name = label.name;
+				var both = name.split("-");
+				var labelNum = Number(both[1])
+				nums.push(labelNum)
+			}
+			
+			nums.sort(IDEX.sortNumber)
+			
+			for (var i = 0; i < nums.length; i++)
+			{
+				if (i + 1 != nums[i])
+					break;
+			}
+		
+			
+			var num = i + 1;
+
+			var name = "Label-"+String(num)
+			var newRow = IDEX.buildLabelRow(name)
+						
+			$table.append($(newRow))
+			
+			var li = "<li class='" + "label-" + name + "' data-val='"+name+"'>"+name+"</li>"
+			$("#main_grid").find(".orderbook-label-dropdown ul").append($(li))
+			
+			var newLabel = new IDEX.OrderbookLabel({"name":name});
+			IDEX.user.labels.push(newLabel)
+			
+			editBanner("success", name + " added");
+			localStorage.setItem('orderbookLabels', JSON.stringify(IDEX.user.labels));
+		}
+		else
+		{
+			editBanner("error", "Max amount of labels reached");
+		}
+	}
+	
+	
+	function saveLabel()
+	{
+		var label = IDEX.getItemsByProp(IDEX.user.labels, "isActive", false)
+
+		if (label.length)
+		{
+			label = label[0];
+			var inputVals = getInputValues()
+			
+			$.extend(label, inputVals)
+			
+			IDEX.makeLabelStyle(label)
+			initStyle(label)
+			IDEX.loadAllVis()
+			editBanner("success", label.name + " saved")
+			localStorage.setItem('orderbookLabels', JSON.stringify(IDEX.user.labels));			
+		}
+	}
+	
+	
+	function removeLabel()
+	{
+		var label = IDEX.getItemsByProp(IDEX.user.labels, "isActive", false)
+		
+		if (label.length)
+		{
+			label = label[0];
+			
+			var $style = $("#label_" + label.name);
+			var labelClass = ".label-" + label.name
+			$style.remove()
+			$(labelClass).removeClass(labelClass)
+			
+			var index = IDEX.user.labels.indexOf(label)
+
+			IDEX.user.labels.splice(index, 1)
+			
+			var $table = $(".orderbook-label-popup-table")
+			var $row = $(".orderbook-label-popup-all-row.active")
+			$row.remove();
+			
+
+			$(".orderbook-label-dropdown ul li[data-val='"+label.name+"']").remove();
+
+						
+			for (var i = 0; i < IDEX.allOrderbooks.length; i++)
+			{
+				var orderbook = IDEX.allOrderbooks[i];
+				var orderbookLabel = IDEX.searchListOfObjects(orderbook.labels, "name", label.name)
+				
+				if (orderbookLabel)
+				{
+					orderbook.labels.splice(orderbookLabel.index, 1);
+				}
+			}
+			
+			
+			unloadLabel();
+			
+			IDEX.loadAllVis()
+			
+			localStorage.setItem('orderbookLabels', JSON.stringify(IDEX.user.labels));
+			
+			editBanner("success", label.name + " deleted")
+		}
+		else
+		{
+			editBanner("error", "Load a label first")
+		}
+	}
+	
+	
+	function loadLabel(index)
+	{		
 		var $ex = $("#label_example")
-		var label = IDEX.labels[index]
-		console.log(label)
-		
-		$(".label-temp").removeClass("label-temp")
-		
-		$ex.text(label.name)
+		var label = IDEX.user.labels[index]
+
+		toggleOverlay(false)
 		removeActiveLabel()
-		label.isActive = true;
+		label.isActive = true;	
+		$ex.text(label.name)
 		setInputValues(label)
 		loadColorBox(label)
 		loadStyle(label)
-		//IDEX.colorOrderbook(label.exchange)
+		
+		//editBanner("success", label.name + " loaded");
 	}
+	
 	
 	function unloadLabel()
 	{
 		var $wrap = $(".orderbook-label-popup-left")
-		var $overlay = $(".label-left-overlay");
 		var $ex = $("#label_example")
-		$ex.text("")
 		
-		$overlay.addClass("active");
+		toggleOverlay(true)
 		removeActiveLabel();
-		
-		$wrap.find("input[name='ex']").val("")
-		$wrap.find("input[name='ctext']").val("")
-		$wrap.find("input[name='cbg']").val("")
-		$wrap.find("input[name='rs']").val("")
+		$ex.text("")
+		clearInputValues();
 		
 		$(".label-temp").removeClass("label-temp")
-	}
+	}	
 	
-
+		
 	
-	$(".orderbook-label-popup-table").on("click", ".orderbook-label-popup-all-row .label-popup-all-vis", function(e)
+	$("#main_grid").on("click", ".orderbook-label-dropdown li", function()
 	{
-		var $parent = $(this).parent()
-		var index = $parent.index() - 2
-		var isActive = $(this).hasClass("active")
-		var label = IDEX.labels[index]
-		
-		if (isActive)
-		{
-			$(this).removeClass("active")
-			label.isVisible = false
+		IDEX.flipClass($(this), "active");
 
-			$("." + label.name).removeClass(label.name)
-			IDEX.loadVis()
-		}
-		else
-		{
-			$(this).addClass("active")
-			label.isVisible = true;
-			IDEX.loadVis()
-		}
+		var $orderbook = $(this).closest(".orderbook-wrap");
+		var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
 		
-		console.log(label)
+		var name = $(this).attr("data-val");
+				
+		if (orderbook)
+		{
+			var orderbookLabel = IDEX.searchListOfObjects(orderbook.labels, "name", name)
+
+			if (orderbookLabel)
+			{
+				orderbook.buyBookDom.find(".label-" + name).removeClass("label-" + name)
+				orderbook.sellBookDom.find(".label-" + name).removeClass("label-" + name)
+
+				orderbook.labels.splice(orderbookLabel.index, 1);
+			}
+			
+			else
+			{
+				var label = IDEX.searchListOfObjects(IDEX.user.labels, "name", name)
+							
+				if (label)
+				{
+					label = label.obj;
+					orderbook.labels.push(label)
+				}
+			}
+			
+			IDEX.loadVis(orderbook)
+		}
+
+	
+		//$(".label-" + label.name).removeClass("label-" + label.name)
 	})
 	
-
 	
-	IDEX.loadVis = function()
+	IDEX.loadVis = function(orderbook)
 	{
-		var vis = IDEX.getVisibleLabels()
-		var visMap = IDEX.getVisibleMap(vis)
-		console.log(vis)
-		var $book = $("#sellBook")
-		var $rows = $book.find(".order-row")
-		var $style = $("#temp_label_style");
-
+		//var vis = IDEX.getItemsByProp(IDEX.user.labels, "isVisible", false)
+		//var visMap = IDEX.getVisibleMap(vis)
 		
+		var vis = orderbook.labels
+		
+		var $buyBook = orderbook.buyBookDom
+		var $sellBook = orderbook.sellBookDom
+
+		colorBook($sellBook, vis);
+		colorBook($buyBook, vis);
+	}
+	
+	IDEX.loadAllVis = function()
+	{	
+		for (var i = 0; i < IDEX.allOrderbooks.length; i++)
+		{
+			var orderbook = IDEX.allOrderbooks[i];
+			var vis = orderbook.labels
+			
+			var $buyBook = orderbook.buyBookDom
+			var $sellBook = orderbook.sellBookDom
+
+			colorBook($sellBook, vis);
+			colorBook($buyBook, vis);
+		}
+	}
+	
+	
+	function colorBook($book, visMap)
+	{
+		var $rows = $book.find(".order-row")
+
 		$rows.each(function()
 		{
 			var order = IDEX.getRowData($(this), $(this).index());
 			
-			for (var exchange in visMap)
+			/*for (var exchange in visMap)
 			{
 				var label = visMap[exchange]
-				//console.log(exchange)
 				
 				if (order.exchange == exchange)
 				{
-					for (var i = 0; i < 5; i++)
-					{
-						$(this).removeClass("Label-" + String(i))
-					}
-					$(this).addClass(label.name)
+					$(this).addClass("label-" + label.name)
 					break;
 				}
-			}
-		})
-		
-		var $book = $("#buyBook")
-		var $rows = $book.find(".order-row")
+			}*/
+			for (var i = 0; i < visMap.length; i++)
+			{				
+				var label = visMap[i]
 
-		$rows.each(function()
-		{
-			var order = IDEX.getRowData($(this), $(this).index());
-			
-			for (var exchange in visMap)
-			{
-				var label = visMap[exchange]
-				//console.log(exchange)
-				
-				if (order.exchange == exchange)
+				if (order.exchange == label.exchange)
 				{
-					for (var i = 0; i < 5; i++)
-					{
-						$(this).removeClass("Label-" + String(i))
-					}
-					$(this).addClass(label.name)
-					break;
+					$(this).addClass("label-" + label.name)
+				}
+				else if ("NXT" in order && label.nxtrs == IDEX.toRS(order.NXT))
+				{
+					$(this).addClass("label-" + label.name)
 				}
 			}
 		})
 	}
-	
-	
-	function unloadVis()
-	{
-		
-	}
-	
+
 	
 	IDEX.getVisibleMap = function(vis)
 	{
@@ -424,63 +400,37 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.getVisibleLabels = function()
-	{
-		var vis = [];
-		
-		for (var i = 0; i < IDEX.labels.length; i++)
-		{
-			var label = IDEX.labels[i]
-			
-			if (label.isVisible)
-			{
-				vis.push(label);
-				break;
-			}
-		}
-		
-		return vis;
-	}
-	
-	
-	function getActiveLabel()
-	{
-		var ret = false;
-		
-		for (var i = 0; i < IDEX.labels.length; i++)
-		{
-			var label = IDEX.labels[i]
-			
-			if (label.isActive)
-			{
-				ret = label;
-				break;
-			}
-		}
-		
-		return ret;
-	}
-	
-	
 	function removeActiveLabel()
 	{
-		for (var i = 0; i < IDEX.labels.length; i++)
+		for (var i = 0; i < IDEX.user.labels.length; i++)
 		{
-			IDEX.labels[i].isActive = false;
+			IDEX.user.labels[i].isActive = false;
 		}
 	}
 	
+	
+	function clearInputValues()
+	{
+		var $wrap = $(".orderbook-label-popup-left")
+
+		$wrap.find("input").each(function()
+		{
+			$(this).val("")
+		})	
+	}
 	
 	function getInputValues()
 	{
 		var $wrap = $(".orderbook-label-popup-left")
-		
 		var obj = {}
-		obj.exchange = $wrap.find("input[name='ex']").val()
-		obj.textcolor = $wrap.find("input[name='ctext']").val()
-		obj.bgcolor = $wrap.find("input[name='cbg']").val()
-		obj.nxtrs = $wrap.find("input[name='rs']").val()
-		obj.market = $wrap.find("input[name='market']").val()
+		
+		$wrap.find("input").each(function()
+		{
+			var name = $(this).attr("name");
+			var val = $(this).val();
+			
+			obj[name] = val;
+		})	
 		
 		return obj
 	}
@@ -490,17 +440,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var $wrap = $(".orderbook-label-popup-left")
 		
-		var obj = {}
-		$wrap.find("input[name='ex']").val(label.exchange)
-		$wrap.find("input[name='ctext']").val(label.textcolor)
-		$wrap.find("input[name='cbg']").val(label.bgcolor)
-		$wrap.find("input[name='rs']").val(label.nxtrs)
+		$wrap.find("input").each(function()
+		{
+			var name = $(this).attr("name");			
+			$(this).val(label[name])
+		})	
 		
-		//console.log($wrap.find("input"))
-		//console.log($wrap.find("input[name='ex']").val())
-		//$wrap.find("input[name='market']").val()
-		
-		return obj
 	}
 	
 	
@@ -524,31 +469,127 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	/*$(".orderbook-label-popup-table").on("mouseover", ".orderbook-label-popup-all-row", function(e)
+	function loadColorBox(obj)
 	{
-		var has = $(e.target).hasClass("label-popup-all-name");
-		console.log($(e.target))
-		if (!has)
-		{
-			e.stopPropagation()
-		}
-		else
-		{
-			$(this).addClass("labelHover")
-		}
-	})
+		//var obj = getInputValues()
+		
+		$("#orderbook_label_bgcolor").spectrum("set", obj.bgcolor);
+		$("orderbook_label_textcolor").spectrum("set", obj.textcolor);
+	}
 	
-	$(".orderbook-label-popup-table").on("mouseleave", ".orderbook-label-popup-all-row", function(e)
+	
+	function editBanner(statusClass, statusText)
 	{
-		$(this).removeClass("labelHover")
-	})
+		$banner.removeClass("error")
+		$banner.removeClass("success")
+		$banner.addClass("active");
 
-	$(".orderbook-label-popup-table").on("mouseover", ".label-popup-all-vis", function(e)
+
+		$banner.addClass(statusClass)
+		$banner.find("span").text(statusText)
+	}
+	
+	
+	function toggleOverlay(hide)
 	{
-		//e.preventDefault();
-		$(".orderbook-label-popup-all-row").trigger("mouseleave")
-	})*/
+		var $overlay = $(".label-left-overlay");
 
+		if (hide)
+			$overlay.addClass("active")
+		else
+			$overlay.removeClass("active")
+	}
+	
+	
+	IDEX.makeLabelStyle = function(label)
+	{
+		var labelID = "label_" + label.name;
+		
+		var $labelStyle = 
+		$('<style></style>').attr(
+		{
+			'type': 'text/css',
+			'id': labelID,
+		});
+		
+		$labelStyle.html(".label-" + label.name + " { color:" + label.ctext + "; background-color:" + label.cbg + "; }")
+
+		$("head").append($labelStyle)
+	}
+	
+	
+	function updateStyle(colorClass, color)
+	{
+		var $style = $("#temp_label_style");
+		
+		$style.attr("data-" + colorClass, color)
+		
+		var cbg = $style.attr("data-cbg")
+		var ctext = $style.attr("data-ctext")
+		
+		var str = "." + "label-temp";
+		str += " { " + "background-color" + ":" + cbg + "; " + "color" + ":" + ctext + "; }";
+		$style.html(str)
+	}
+	
+	
+	function loadStyle(label)
+	{	
+		var $style = $("#temp_label_style");
+		var $temp = $("#label_example");
+		
+		$style.attr("data-cbg", label.cbg)
+		$style.attr("data-ctext", label.ctext)
+		
+		var str = "." + "label-temp";
+		str += " { " + "background-color" + ":" + label.cbg + "; " + "color" + ":" + label.ctext + "; }";
+		$style.html(str)
+		
+		$temp.addClass("label-temp");
+	}
+	
+	
+	function initStyle(label)
+	{
+		var $style = $("#label_" + label.name);
+
+		$style.attr("data-cbg", label.cbg)
+		$style.attr("data-ctext", label.ctext)
+		
+		var str = ".label-" + label.name 
+		str += " { " + "background-color" + ":" + label.cbg + "; " + "color" + ":" + label.ctext + "; }"
+		$style.html(str)
+	}
+
+	
+	
+	
+	/*$('#label_example').on("click", function()
+	{
+		var name = $(this).text();
+		$(this).html('');
+		
+		$('<input></input>')
+		.attr({
+			'type': 'text',
+			'name': 'fname',
+			'id': 'txt_fullname',
+			'size': '30',
+			'value': name,
+			'class': 'label-example-input'
+		})
+		.appendTo('#label_example');
+		
+		$('#txt_fullname').focus();
+	});
+
+	
+	$(document).on('blur', '#txt_fullname', function()
+	{
+		var name = $(this).val();
+		$('#label_example').text(name);
+	});*/
+	
 	
 	
 	return IDEX;

@@ -7,6 +7,10 @@ var IDEX = (function(IDEX, $, undefined)
 	//var GENESIS_TIMESTAMP = 1385294400;
 
 	
+	IDEX.sortNumber = function(a, b)
+	{
+		return a - b;
+	}
 	
 	IDEX.compareProp = function(prop)
 	{
@@ -77,7 +81,59 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return s;
 	}
+	
+	
+	IDEX.flipClass = function($el, cssClass)
+	{
+		var has = $el.hasClass(cssClass);
+		
+		if (has)
+			$el.removeClass(cssClass);
+		else
+			$el.addClass(cssClass);
+	}
+	
+	
+	IDEX.searchListOfObjects = function(arr, key, val)
+	{
+		var len = arr.length;
+		var retObj = false;
+		
+		for (var i = 0; i < len; i++)
+		{
+			var loopEl = arr[i];
+			
+			if (key in loopEl && loopEl[key] == val)
+			{
+				retObj = {};
+				retObj.index = i;
+				retObj.obj = loopEl;
+				break;
+			}
+		}
+		
+		return retObj;
+	}
 
+	IDEX.getObjectByElement = function($el, arr, key)
+	{
+		var ret = false;
+		
+		for (var i = 0; i < arr.length; i++)
+		{
+			var loopObj = arr[i];
+			var $loopEl = loopObj[key]
+						
+			if ($el.is($loopEl))
+			{
+				ret = loopObj;
+				break;
+			}
+		}
+		
+		return ret;
+	}
+	
 	
 	IDEX.getListObjVals = function(listObj, keys)
 	{
@@ -147,6 +203,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return ((compCount == keys.length) ? true : false);
 	}
 	
+	
 
 	IDEX.getFormData = function($form) 
 	{
@@ -195,6 +252,27 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 
 		return params;
+	}
+	
+	
+	IDEX.getItemsByProp = function(arr, prop, getAll)
+	{
+		var items = [];
+
+		for (var i = 0; i < arr.length; i++)
+		{
+			var item = arr[i]
+			
+			if (item[prop])
+			{
+				items.push(item);
+				
+				if (!getAll)
+					break;
+			}
+		}
+		
+		return items;	
 	}
 
 
@@ -293,49 +371,21 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.formatNumWidth = function(num)
+
+	IDEX.capitalizeFirstLetter = function(string) 
 	{
-		var maxDec = 8;
-		var all = String(num).split(".")
-		var numDec = 0;
-		var startDec = 0;
-
-		if (all.length == 2)
-		{
-			if (Number(all[0]) > 0)
-			{
-				
-			}
-			else
-			{
-				for (sing in all[1])
-				{
-					if (Number(all[1][sing]) > 0)
-					{
-						break
-					}
-					startDec++;
-				}
-			}
-		}
-		else
-		{
-			all.push("0")
-		}
-
-
-		var paddedDec = 3;
-		var endDec = startDec + paddedDec
-
-		if (endDec > maxDec)
-			endDec = maxDec
-		
-		var strDec = Number("0."+all[1]).toFixed(endDec)
-		var strAll = all[0] + "." + strDec.split(".")[1];
-		
-		return Number(strAll)
+		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
-
+	
+	
+	
+	IDEX.convertNXTTime = function(timestamp)
+	{
+		return timestamp + GENESIS_TIMESTAMP
+	}
+	
+	
+	
 	
 	return IDEX;
 	
