@@ -129,7 +129,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					chart.resizeAxis();
 					chart.updateAxisPos();
 					
-					//chart.drawMarketName();
+					chart.drawMarketName();
 
 					tempSeries.setDefaultMarketDataRange();
 					tempSeries.getPointPositions();
@@ -161,6 +161,9 @@ Sleuthcharts = (function(Sleuthcharts)
 
 					
 					//highLowPrice(chart);
+				}).fail(function()
+				{
+					chart.editLoading("Error loading market " + marketHandler.marketSettings.pairName);
 				})
 				
 			}
@@ -177,6 +180,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var marketHandler = chart.marketHandler;
 			
 			chart.toggleLoading(true);
+			chart.editLoading();
 			chart.prevIndex = -2;
 			
 			//chart.emptyChart();
@@ -190,7 +194,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				chart.resizeAxis();
 				chart.updateAxisPos();
 				
-				//chart.drawMarketName();
+				chart.drawMarketName();
 
 				tempSeries.setDefaultMarketDataRange();
 				tempSeries.getPointPositions();
@@ -222,6 +226,9 @@ Sleuthcharts = (function(Sleuthcharts)
 				dfd.resolve();
 				
 				//highLowPrice(chart);
+			}).fail(function()
+			{
+				chart.editLoading("Error loading market " + marketHandler.marketSettings.pairName);
 			})
 			
 			
@@ -574,12 +581,12 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
-		toggleLoading: function (isLoading)
+		toggleLoading: function(isLoading)
 		{
 			var chart = this;
 			var $node  = chart.node;
 			var $parent = $node.parent();
-			var $loading = $parent.find(".chart-loading")
+			var $loading = $parent.find(".chart-loading");
 			
 			if (isLoading)
 			{
@@ -592,27 +599,37 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		editLoading: function(text)
+		{
+			var chart = this;
+			var $node  = chart.node;
+			var $parent = $node.parent();
+			var $loading = $parent.find(".chart-loading");
+			
+			text = typeof text === "undefined" ? "Loading..." : text;
+			$loading.find("span").text(text);
+		},
+		
 		
 		
 		drawMarketName: function()
 		{
 			var chart = this;
-			var settings = chart.marketHandler.marketSettings;
+			var marketHandler = chart.marketHandler;
+			var marketSettings = marketHandler.marketSettings;
 			
-			var both = settings.pair.split("_")
-			var b = both[0]
-			var r = both[1]
-			var a = getNames(b, r)
-			var pair = a[0] + "_" + a[1]
+			var pair = marketSettings.pairName;
+			var exchange = marketSettings.exchange;
 			
-			var $el = $(chart.node).find(".cur-market")
+			var $el = chart.node.find(".cur-market");
+			
 			d3.select($el.get()[0])
-			.text(pair.toUpperCase() + " - " + settings.exchange.toUpperCase())
+			.text(pair.toUpperCase() + " - " + exchange.toUpperCase())
 			.attr("y", 20)
 			.attr("x", 20)
-			.attr(textAttr)
+			.attr("font-family", "Roboto")
 			.attr("fill", "#bbbbbb")
-			.attr("font-size", "11px")
+			.attr("font-size", "12px")
 		},
 		
 		
@@ -633,14 +650,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			var leftPos = marketNameBbox.x + marketNameBbox.width + 10;
 			var topPos = marketNameBbox.y + marketNameBbox.height - 3;
 			
-			leftPos = 10;
-			topPos = 10;
+			//leftPos = 10;
+			//topPos = 10;
 
 			var openStr = "O: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.open))
-			var highStr = "H: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.high))
-			var lowStr = "L: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.low))
-			var closeStr = "C: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.close))
-			var volStr = "V: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.vol))
+			var highStr = " H: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.high))
+			var lowStr = " L: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.low))
+			var closeStr = " C: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.close))
+			var volStr = " V: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.vol))
 			
 			var str = ""
 			str += openStr

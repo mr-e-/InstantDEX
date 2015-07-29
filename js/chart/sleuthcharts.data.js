@@ -73,14 +73,15 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		marketSettings:
 		{
-			baseID: "6854596569382794790",
-			relID: "6932037131189568014",
-			baseName: "SkyNET",
-			relName: "jl777hodl",
+			baseID: "6932037131189568014_NXT",
+			relID: "5527630",
+			baseName: "jl777hodl",
+			relName: "NXT",
 			pair: "6932037131189568014_NXT",
+			pairName: "jl777hodl_NXT",
 
 			barType: "tick",
-			barWidth: "100",
+			barWidth: "25",
 
 			exchange: "nxtae",
 
@@ -111,9 +112,11 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			//var pair = (newRelID == 5527630) ? newBaseID + "_" + "NXT" : newBaseID + "_" + newRelID;
 			var pair = newMarket.baseID + "_" + newMarket.relID;
-			
+			var pairName = newMarket.baseName + "_" + newMarket.relName;
+
 
 			settings.pair = pair;
+			settings.pairName = pairName;
 			settings.baseID = newMarket.baseID;
 			settings.relID = newMarket.relID;
 			settings.baseName = newMarket.baseName;
@@ -209,12 +212,19 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			marketHandler.getSkynetMarketData().done(function(data)
 			{
-				data = data.results
+				data = data.results;
 				
-				marketHandler.formatMarketData(data, isTime);
-				
-				dfd.resolve();
-				//var formattedData = marketHandler.marketData;
+				if (!data.length)
+				{
+					dfd.reject();
+				}
+				else
+				{
+					marketHandler.formatMarketData(data, isTime);
+					//var formattedData = marketHandler.marketData;
+
+					dfd.resolve();
+				}
 			
 			})
 			
