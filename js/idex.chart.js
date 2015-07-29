@@ -120,9 +120,46 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		//var chart = Sleuthcharts.getChart(node);
 		//chart.changeMarket(obj);
-		
-		
 	}
+	
+	
+	IDEX.changeChartMarket = function(obj)
+	{
+		var $node = obj.node.closest(".tile").find(".chart-wrap svg");
+		var chart = Sleuthcharts.getChart($node);
+		var marketHandler = chart.marketHandler;
+		
+		var newMarket = {};
+		newMarket.baseID = obj.baseID;
+		newMarket.relID = obj.relID;
+		newMarket.baseName = getName(newMarket.baseID);
+		newMarket.relName = getName(newMarket.relID);
+		newMarket.exchange = obj.exchange;
+		
+		marketHandler.changeMarket(newMarket);
+		chart.updateChart();
+	}
+	
+
+	function getName(assetID)
+	{
+		//var nxtAssetID = "5527630"
+		var asset = IDEX.user.getAssetInfo("assetID", assetID)
+		
+		if (!($.isEmptyObject(asset)))
+		{
+			var name = asset.name
+		}
+		else
+		{
+			var name = assetID
+		}
+
+		
+		return name;
+	}
+
+
 
 
 	$("#main_grid").on("click", ".chart-time-dropdown-wrap li", function()
@@ -172,8 +209,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 		marketHandler.changeSettings(newSettings);
 
-
-		
 	})
 	
 	

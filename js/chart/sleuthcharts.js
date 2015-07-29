@@ -147,7 +147,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					for (var i = 0; i < chart.series.length; i++)
 					{
 						var series = chart.series[i];
-						console.log(series);
+						//console.log(series);
 						series.drawPoints();
 					}
 					

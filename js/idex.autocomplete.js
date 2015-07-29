@@ -136,18 +136,16 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			var obj = {};			
 			var $wrap = $input.closest(".chart-header")	
-			obj.node = $wrap.attr("data-chart");
+			obj.node = $wrap;
 			
 			var both = searchPair.split("_")
 
-			obj.baseid = both[0];
-			obj.relid = both[1];
+			obj.baseID = both[0];
+			obj.relID = both[1];
 			
-			obj.exchange = vals.exchange
+			obj.exchange = vals.exchange;
 
-			
-			console.log(vals)
-			IDEX.makeChart(obj)
+			IDEX.changeChartMarket(obj);
 		}
 	}
 	

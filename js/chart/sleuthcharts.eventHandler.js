@@ -387,37 +387,6 @@ function highLowPrice(chart)
 }
 
 
-function getNames(baseID, relID)
-{
-	
-	var nxtass = "5527630"
-	
-	var base = IDEX.user.getAssetInfo("assetID", baseID)
-	var rel = IDEX.user.getAssetInfo("assetID", relID)
-	
-	if (!($.isEmptyObject(base)))
-	{
-		var basename = base.name
-	}
-	else
-	{
-		var basename = baseID
-	}
-
-	if (!($.isEmptyObject(rel)))
-	{
-		var relname = rel.name
-	}
-	else
-	{
-		var relname = relID
-	}
-	
-	return [basename, relname]
-}
-
-
-
 
 
 

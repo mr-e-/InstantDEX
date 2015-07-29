@@ -106,15 +106,19 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		changeMarket: function(newMarket)
 		{
-			var settings = this.dataSettings;
-			var newBaseID = newMarket.baseID;
-			var newRelID = newMarket.relID;
-			
-			var pair = (newRelID == 5527630) ? newBaseID + "_" + "NXT" : newBaseID + "_" + newRelID
+			var marketHandler = this;
+			var settings = marketHandler.marketSettings;
+
+			//var pair = (newRelID == 5527630) ? newBaseID + "_" + "NXT" : newBaseID + "_" + newRelID;
+			var pair = newMarket.baseID + "_" + newMarket.relID;
 			
 
 			settings.pair = pair;
-			settings.exchange = obj.exchange;
+			settings.baseID = newMarket.baseID;
+			settings.relID = newMarket.relID;
+			settings.baseName = newMarket.baseName;
+			settings.relName = newMarket.relName;
+			settings.exchange = newMarket.exchange;
 		},
 		
 		
@@ -147,6 +151,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 			else if (configType == "indicator")
 			{
+				return;
+				
 				var indicatorType = newSettings.configVal;
 				
 				if (indicatorType == "none")

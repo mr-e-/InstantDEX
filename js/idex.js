@@ -108,7 +108,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.init = function()
 	{
 		IDEX.isWindows = window.jscd.os == "Windows";
-		console.log(IDEX.isWindows);
+
 		var initializedAssets = new $.Deferred();
 		var timeoutFinished = new $.Deferred();
 		var updatedNXT = new $.Deferred();
