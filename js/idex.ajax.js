@@ -97,11 +97,11 @@ var IDEX = (function(IDEX, $, undefined)
                 if (IDEX.isWindows)
                 {
                     var data = data['result']['retval'];
-                    console.log(typeof data)
+                    //console.log(typeof data)
                     if (typeof data == "string")
                         data = $.parseJSON(data)
                         
-                    console.log(data)
+                    //console.log(data)
                     //data = $.parseJSON(retObj);
                 }
                 else
