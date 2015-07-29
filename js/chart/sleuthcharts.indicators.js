@@ -2,7 +2,44 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {   
+	/*
 
+		this.isInd = true;
+		this.candleInd = [
+			{
+				type:"ema",
+				color:color1,
+				price:"cl",
+				len:"7",
+				axisIndex:0
+			},
+			{
+				type:"ema",
+				color:color2,
+				price:"cl",
+				len:"20",
+				axisIndex:0
+			}
+		]
+		
+		this.volInd = [
+			{
+				type:"ema",
+				color:color1,
+				price:"vol",
+				len:"7",
+				axisIndex:1
+			},
+			{
+				type:"ema",
+				color:color2,
+				price:"vol",
+				len:"20",
+				axisIndex:1
+			}
+		]
+	*/
+	
 	IDEX.Indicator = function(obj) 
 	{
 		this.base = "6854596569382794790";

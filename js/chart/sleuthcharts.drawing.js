@@ -4,7 +4,20 @@
 var IDEX = (function(IDEX, $, undefined) 
 {   
 
-
+		/*
+		this.isCrosshair = true;
+		this.isDrawing = false;
+		this.isDrawingLine = false;
+		this.isFib = false;
+		this.isFibDrawing = false;
+		
+		this.drawFib = [];
+		
+		this.drawingLine;
+		this.drawPoints = [];
+		this.curDrawPoint = [];
+		*/
+		
 		//var $drawingGroup = $(node).find(".drawingLines");
 		//$drawingGroup.empty();
 

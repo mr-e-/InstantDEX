@@ -1,35 +1,26 @@
 
-
-var IDEX = (function(IDEX, $, undefined) 
+Sleuthcharts = (function(Sleuthcharts) 
 {
-
-	Sleuthcharts = (function(Sleuthcharts) 
+	
+	
+	var Renderer = Sleuthcharts.Renderer = function()
+	{
+		this.init.apply(this, arguments)
+	}
+	
+	Renderer.prototype = 
 	{
 		
-		
-		var Renderer = Sleuthcharts.Renderer = function()
-		{
-			this.init.apply(this, arguments)
-		}
-		
-		Renderer.prototype = 
-		{
-			
-		}
-		
-		
-		
-		
-		
-		return Sleuthcharts;
-		
-		
-	}(Sleuthcharts || {}));
+	}
 	
+	
+	
+	
+	
+	return Sleuthcharts;
+	
+	
+}(Sleuthcharts || {}));
 
 
-	
 
-	return IDEX;
-	
-}(IDEX || {}, jQuery));
