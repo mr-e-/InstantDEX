@@ -2,6 +2,9 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
+	var windowsServerUsername = "user";
+	var windowsServerPassword = "pass";
+	var windowsServerAuth = btoa (windowsServerUsername + ":" + windowsServerPassword);
 	
 	var nxtURL = "http://127.0.0.1:7777/nxt?";
 	var snURL = "http://127.0.0.1:7777/InstantDEX?";
@@ -51,6 +54,9 @@ var IDEX = (function(IDEX, $, undefined)
                 url: url,
                 data: a,
                 contentType: 'application/json-rpc',
+				beforeSend: function (xhr) {
+					xhr.setRequestHeader("Authorization", "Basic " + windowsServerAuth);
+				},
                 //dataType: 'application/json-rpc'
             };
         }
