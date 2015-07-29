@@ -19,6 +19,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			DOMEventHandler.chart = chart;
 		},
 		
+		
+		
 		setDOMEvents: function()
 		{
 			var DOMEventHandler = this;
@@ -61,7 +63,6 @@ Sleuthcharts = (function(Sleuthcharts)
 				DOMEventHandler.onContainerResize(e);
 			})
 			
-
 		},
 		
 		
@@ -99,10 +100,16 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		onContainerMouseClick: function(e)
 		{
+			var DOMEventHandler = this;
+			var chart = DOMEventHandler.chart;
+			
 			//console.log('click');
+			//console.log(chart);
 		},
+		
 		
 		
 		onContainerMouseDown: function(e)
@@ -135,6 +142,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				}
 			}	
 		},
+		
 		
 		
 		onContainerMouseUp: function(e)
@@ -227,6 +235,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		handleDrag: function(xPos)
 		{
 			var DOMEventHandler = this;
@@ -250,8 +259,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
-
-		
 		
 		onContainerMouseLeave: function(e)
 		{
@@ -259,6 +266,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			chart.hideRenders();
 		},
+		
 		
 		
 		onContainerMouseWheel: function(e)
@@ -292,14 +300,15 @@ Sleuthcharts = (function(Sleuthcharts)
 	
 		},
 		
+		
+		
 		onContainerResize: function(e)
 		{
 			console.log('resize');
-
-			//resizeHandler(chart);
 		},
 		
-					
+
+		
 	}
 		
 	
@@ -385,59 +394,4 @@ function highLowPrice(chart)
 	.attr('y', bottomPos)
 	.attr(fontAttr)
 }
-
-
-
-
-
-$(window).resize(function(e)
-{
-	for (key in Sleuthcharts.allcharts)
-	{
-		var chart = Sleuthcharts.allcharts[key].chart
-
-		if (!chart || !chart.xAxis.length)
-		{
-			continue;
-		}
-		else
-		{
-			doSetTimeout(chart);
-		}
-	}
-})
-
-
-function doSetTimeout(chart)
-{
-	setTimeout(function()
-	{
-		var $el = $(chart.node);
-		var isVisible = $el.is(":visible")
-
-		if (!isVisible)
-		{
-
-		}
-		else
-		{
-			resizeHandler(chart);
-		}
-		
-	}, 200)
-}
-
-
-function resizeHandler(chart)
-{
-	var xAxis = chart.xAxis[0];
-	resizeAxis(chart)
-	updateAxisPos(chart)
-	
-	updateAxisMinMax(chart.visiblePhases, xAxis.minIndex, xAxis.maxIndex, chart)
-
-
-	redraw(chart)
-}
-
 

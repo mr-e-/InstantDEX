@@ -89,6 +89,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.isDragging = false;
 			chart.isCrosshair = true;
 			chart.prevIndex = -2;
+			chart.needsResize = false;
 			
 			
 			chart.DOMEventHandler;
@@ -736,6 +737,49 @@ Sleuthcharts = (function(Sleuthcharts)
 	
 }(Sleuthcharts || {}));
 
+
+
+$(window).resize(function(e)
+{	
+	var prevWindowHeight = $(window).height();
+	var prevWindowWidth = $(window).width();
 	
 	
-	
+	setTimeout(function()
+	{
+		var windowHeight = $(window).height();
+		var windowWidth = $(window).width();
+		
+		//console.log([prevWindowHeight, windowHeight])
+		
+		if (windowHeight != prevWindowHeight || windowWidth != prevWindowWidth)
+		{
+
+		}
+		else
+		{
+			var allCharts = Sleuthcharts.allCharts;
+			var len = allCharts.length;
+			
+			for (var i = 0; i < len; i++)
+			{
+				var chart = allCharts[i]
+
+				var $chartNode = chart.node;
+				var isVisible = $chartNode.is(":visible")
+
+				if (!isVisible)
+				{
+					chart.needsResize = true;
+				}
+				else
+				{
+					chart.redraw();
+				}
+			}
+		}
+	}, 300)
+})
+
+
+

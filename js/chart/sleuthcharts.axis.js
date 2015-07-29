@@ -331,7 +331,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		
 		
-
 		makeAxis: function()
 		{
 			
