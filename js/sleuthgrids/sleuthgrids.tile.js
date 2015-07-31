@@ -21,6 +21,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			
 			tileNavCell.tileNavCellDOM;
+			tileNavCell.isActive = false;
 		},
 		
 		
@@ -52,16 +53,29 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			
 			
-			tileNavCell.tileNavCellDOM.on("click", function()
+			tileNavCell.tileNavCellDOM.on("click", function(e)
 			{
-				tileNavCell.changeCellTabs($(this));
+				tileNavCell.changeCellTabs(e);
 
 			})
+			
+	
+			tileNavCell.tileNavCellDOM.find(".tile-header-close").on("click", function()
+			{
+				tile.closeTile(tileNavCell);
+			})
+			
 		},
 		
 		
-		changeCellTabs: function()
+		changeCellTabs: function(e)
 		{
+			if (e && $(e.target).hasClass("tile-header-close"))
+			{
+				console.log('has');
+				return;
+			}
+			
 			var tileNavCell = this;
 			var tile = tileNavCell.tile;
 			var index = tileNavCell.index;
@@ -72,18 +86,31 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				var loopCell = tile.cells[i];
 				var $loopCell = loopCell.cellDOM;
+				$loopCell.addClass("tab-hidden");
+				loopCell.isActive = false;
+
 				
 				var loopTileNavCell = tile.navCells[i];
 				var $loopTileNavCell = loopTileNavCell.tileNavCellDOM;
-				
-				$loopCell.addClass("tab-hidden");
 				$loopTileNavCell.removeClass("active");
+				loopTileNavCell.isActive = false;
 				
 			}
 			
 			tileNavCell.tileNavCellDOM.addClass("active");
+			tileNavCell.isActive = true;
 			cell.cellDOM.removeClass("tab-hidden");
-		}
+			cell.isActive = true;
+		},
+		
+		
+		removeTileNavCell: function()
+		{
+			var tileNavCell = this;
+			var $tileNavCell = tileNavCell.tileNavCellDOM;
+
+			$tileNavCell.remove();
+		},
 		
 	}
 	
@@ -124,9 +151,6 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var tile = this;
 			
-			//change cell tab
-			//Sleuthgrid.addEventListener("click", ".tile-nav-cell", function());
-			
 			
 			tile.tileDOM.on("mousedown", function()
 			{
@@ -156,13 +180,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			//start move tile
 			//Sleuthgrid.addEventListener("mousedown", ".tile-header", function());
-			
-			
-	
-			tile.tileDOM.find(".tile-header-close").on("click", function()
-			{
-				tile.closeTile();
-			})
 			
 	
 	
@@ -221,17 +238,32 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			if (arrowDirections.isMiddle)
 			{
-					
 				if (!tile.isTileHeaderTabbed && tile.cells.length > 1)
 				{
-					var $tileHeader = tile.tileHeaderDOM;
-
-					$tileHeader.addClass("tile-header-tabs");					
-					tile.isTileHeaderTabbed = true;
+					tile.toggleHeaderTabbed(true);
 				}
 			}
 			
 			tileNavCell.changeCellTabs();
+		},
+		
+		
+		toggleHeaderTabbed: function(isTabbed)
+		{
+			var tile = this;
+			var $tileHeader = tile.tileHeaderDOM;
+			
+			if (isTabbed)
+			{
+				$tileHeader.addClass("tile-header-tabs");					
+				tile.isTileHeaderTabbed = true;
+			}
+			else
+			{
+				$tileHeader.removeClass("tile-header-tabs");					
+				tile.isTileHeaderTabbed = false;
+			}
+
 		},
 		
 		
@@ -253,13 +285,17 @@ Sleuthgrids = (function(Sleuthgrids)
 				tile.cells = [];
 			}
 			else
-			{
+			{				
+				var cellIndex = cell.index;
+				var tileNavCell = tile.navCells[cellIndex];
+				
+				tileNavCell.removeTileNavCell();
 				cell.removeCell();
 				
-				var cellIndex = cellIndex.index;
+				tile.navCells.splice(cellIndex, 1);
+				Sleuthgrids.updateArrayIndex(tile.navCells);
 				
 				tile.cells.splice(cellIndex, 1);
-				
 				Sleuthgrids.updateArrayIndex(tile.cells);
 			}
 		},
@@ -452,26 +488,48 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		closeTile: function()
+		closeTile: function(tileNavCell)
 		{
 			var tile = this;
 			var grid = tile.grid;
 			var $tile = tile.tileDOM;
 			
-			/*var isTab = $tile.hasClass("tile-header-tab-close");
+			var numCells = tile.cells.length;
 
-			if (isTab)
-			{
-				var len = $grid.find(".tile-content").length;
-				
-				if (len > 1)
+			if (numCells > 1)
+			{	
+				var cellIndex = tileNavCell.index;
+				var cell = tile.cells[cellIndex];
+
+				if (numCells == 2)
 				{
-					var $header = $(this).closest(".tile-header-tab");
-					closeTab($header)
-					
-					return
+					tile.toggleHeaderTabbed(false);
 				}
-			}*/
+				
+				tile.removeCell(cell);
+				
+				
+				var activeNavCell = false;
+				for (var i = 0; i < tile.navCells.length; i++)
+				{
+					if (tile.navCells[i].isActive)
+					{
+						activeNavCell = tile.navCells[i];
+						break;
+					}
+				}
+				
+				if (!activeNavCell)
+				{
+					var newIndex = cellIndex - 1;
+					newIndex = newIndex < 0 ? 0 : newIndex;
+					activeNavCell = tile.navCells[newIndex];
+				}
+
+				activeNavCell.changeCellTabs();
+
+				return;
+			}
 
 			var tilePositions = Sleuthgrids.getPositions($tile, true);
 			var allTilesPositions = [];

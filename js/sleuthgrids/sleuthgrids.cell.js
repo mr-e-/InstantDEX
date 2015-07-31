@@ -22,6 +22,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			cell.index = index;
 			cell.cellDOM;
+			cell.isActive = false;
 		},
 		
 		
@@ -72,6 +73,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				handler.remove(cell);
 			}
+			
+			$cell.remove();
 		},
 		
 		
