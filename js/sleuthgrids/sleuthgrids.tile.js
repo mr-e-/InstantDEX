@@ -40,6 +40,49 @@ Sleuthgrids = (function(Sleuthgrids)
 			$tileHeaderTab.find(".tile-header-title").text(title);
 			
 			tileNavCell.tileNavCellDOM = $tileHeaderTab;
+			
+			tileNavCell.initEventListeners();
+		},
+		
+		
+		initEventListeners: function()
+		{
+			var tileNavCell = this;
+			var tile = tileNavCell.tile;
+			
+			
+			
+			tileNavCell.tileNavCellDOM.on("click", function()
+			{
+				tileNavCell.changeCellTabs($(this));
+
+			})
+		},
+		
+		
+		changeCellTabs: function()
+		{
+			var tileNavCell = this;
+			var tile = tileNavCell.tile;
+			var index = tileNavCell.index;
+			var cell = tile.cells[index];
+			
+			
+			for (var i = 0; i < tile.cells.length; i++)
+			{
+				var loopCell = tile.cells[i];
+				var $loopCell = loopCell.cellDOM;
+				
+				var loopTileNavCell = tile.navCells[i];
+				var $loopTileNavCell = loopTileNavCell.tileNavCellDOM;
+				
+				$loopCell.addClass("tab-hidden");
+				$loopTileNavCell.removeClass("active");
+				
+			}
+			
+			tileNavCell.tileNavCellDOM.addClass("active");
+			cell.cellDOM.removeClass("tab-hidden");
 		}
 		
 	}
@@ -186,11 +229,9 @@ Sleuthgrids = (function(Sleuthgrids)
 					$tileHeader.addClass("tile-header-tabs");					
 					tile.isTileHeaderTabbed = true;
 				}
-			
-				//$grid.find(".tile-content").addClass("tab-hidden")
-				//$tileHeaderTab.trigger("click");
-
 			}
+			
+			tileNavCell.changeCellTabs();
 		},
 		
 		
