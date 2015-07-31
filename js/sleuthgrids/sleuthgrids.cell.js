@@ -12,7 +12,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	Cell.prototype = 
 	{	
 	
-		init: function(tile, $cellDOM)
+		init: function(tile, index)
 		{
 			
 			var cell = this;
@@ -20,10 +20,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.tile = tile;
 			cell.grid = tile.grid;
 			
-			//cell.cellDOM = $cellDOM;
-			//cell.cellType = cell.cellDOM.attr("data-celltype");
-			cell.index = -1;
-			
+			cell.index = index;
+			cell.cellDOM;
 		},
 		
 		

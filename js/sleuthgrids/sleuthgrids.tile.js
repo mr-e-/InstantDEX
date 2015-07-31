@@ -3,6 +3,48 @@ Sleuthgrids = (function(Sleuthgrids)
 {
 	
 	
+	var TileNavCell = Sleuthgrids.TileNavCell = function()
+	{
+		this.init.apply(this, arguments)
+	}
+	
+	
+	TileNavCell.prototype = 
+	{	
+		init: function(tile, index)
+		{
+			var tileNavCell = this;
+			
+			tileNavCell.tile = tile;
+			
+			tileNavCell.index = index;
+			
+			
+			tileNavCell.tileNavCellDOM;
+		},
+		
+		
+		initDOM: function()
+		{
+			var tileNavCell = this;
+			var tile = tileNavCell.tile;
+			var index = tileNavCell.index;
+			var cell = tile.cells[index];
+			var cellType = cell.cellType;
+			
+			var $tileHeaderTab = $($("#tile_header_solo_template").html());
+			var $tabWrap = $("<div/>", {'class':"tile-header-tab", 'data-tab':index} );
+			$tileHeaderTab = $($tileHeaderTab.wrapAll($tabWrap).parent()[0].outerHTML);
+			
+			var title = Sleuthgrids.capitalizeFirstLetter(cellType);
+			$tileHeaderTab.find(".tile-header-title").text(title);
+			
+			tileNavCell.tileNavCellDOM = $tileHeaderTab;
+		}
+		
+	}
+	
+	
 	
 	var Tile = Sleuthgrids.Tile = function()
 	{
@@ -18,10 +60,16 @@ Sleuthgrids = (function(Sleuthgrids)
 
 			tile.grid = grid;
 			tile.cells = [];
+			tile.navCells = [];
 			
 			tile.tileDOM = $tile;
 			tile.tileArrowWrapDOM = tile.tileDOM.find(".tile-arrow-wrap");
+			tile.tileHeaderDOM = tile.tileDOM.find(".tile-header");
 			tile.index = -1;
+			
+			
+			tile.isTileHeaderTabbed = false;
+			
 			
 			tile.initEventListeners();
 			//tile.grid.gridDOM.append($tile);		
@@ -114,63 +162,35 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tile = this;
 			var $tile = tile.tileDOM;
 			
-			var cell = new Sleuthgrids.Cell(tile);
-			cell.index = tile.cells.length;
-			tile.cells.push(cell);
 			
+			var cell = new Sleuthgrids.Cell(tile, tile.cells.length);
+			tile.cells.push(cell);
 			cell.makeCellDOM(cellType, arrowDirections);
 			$tile.find(".tile-cells").append(cell.cellDOM);
-			
 			cell.loadCell();
 			
 			
-			//$tileHeaderTab.trigger("click");
+			var tileNavCell = new Sleuthgrids.TileNavCell(tile, tile.navCells.length);
+			tile.navCells.push(tileNavCell);
+			tileNavCell.initDOM();
+			tile.tileHeaderDOM.append(tileNavCell.tileNavCellDOM);
+						
 			
-			//$tile.find(".tile-header-title").text(Sleuthgrids.capitalizeFirstLetter(cellType))
-			
-			
-			if (arrowDirections.isMiddle && arrowDirections.isTab)
+			if (arrowDirections.isMiddle)
 			{
-				var $tileHeader = $tile.find(".tile-header");
-				var tabIndex = 1;
-				
-				var has = $tileHeader.find(".tile-header-tab").length > 1;
-	
-				if (has)
-				{
-					var $lastTab = $tileHeader.find(".tile-header-tab").last();
-					var lastTabIndex = Number($lastTab.attr("data-tab"))
-					tabIndex = lastTabIndex;
-				}
-				else
-				{
-					$tileHeader.addClass("tile-header-tabs");
-
-					var $tabWrap = $("<div/>", {'class':"tile-header-tab", 'data-tab':0} );
 					
-					$tileHeader.wrapInner($tabWrap);
-					//var $currentTileHeaderInner = $($tileHeader.html());
-				}
-				
-				var $tileHeaderTab = $($("#tile_header_solo_template").html());
-				var $tabWrap = $("<div/>", {'class':"tile-header-tab", 'data-tab':tabIndex} );
+				if (!tile.isTileHeaderTabbed && tile.cells.length > 1)
+				{
+					var $tileHeader = tile.tileHeaderDOM;
 
-				$tileHeaderTab = $($tileHeaderTab.wrapAll($tabWrap).parent()[0].outerHTML);
-				
-				console.log($tileHeaderTab)
-				
-				var newTitle = Sleuthgrids.capitalizeFirstLetter(cellType);
-				$tileHeaderTab.find(".tile-header-title").text(newTitle);
-				
-				$tileHeader.append($tileHeaderTab)
-				
-				//$grid.find(".tile-content").addClass("tab-hidden")					
+					$tileHeader.addClass("tile-header-tabs");					
+					tile.isTileHeaderTabbed = true;
+				}
+			
+				//$grid.find(".tile-content").addClass("tab-hidden")
+				//$tileHeaderTab.trigger("click");
 
 			}
-			
-
-		
-
 		},
 		
 		

@@ -909,16 +909,64 @@ table.dataTable thead th:last-child {
 	padding:1px;
 }
 
-.tile-header.tile-nav {
+.tile-header {
 	height:20px;
 	width:100%;
 	position:relative;
 	display:block;
+	
 	background-color:#444444;
 	border-bottom:1px solid black;
 	border-top:1px solid #555555;
 	padding-left:5px;
 	
+}
+
+.tile-header.tile-header-tabs {
+	
+	border-bottom:none;
+	padding-left:0px;
+	background-color:transparent;
+	border-top:none;
+	margin-bottom:-1px;
+}
+
+.tile-header-tab {
+	height:100%;
+	width:100%;
+	position:relative;
+}
+
+.tile-header-tabs .tile-header-tab {
+	height:100%;
+	width:initial;
+	position:relative;
+	float:left;
+	background-color:#222222;
+	border-top-left-radius:3px;
+	border-top-right-radius:3px;
+
+	padding-left:5px;
+	padding-right:3px;
+	margin-right:2px;
+}
+
+.tile-header-tabs  .tile-header-tab.active {
+	background-color:#333333;
+}
+
+.tile-header-tabs  .tile-header-tab.focus-border {
+	border:1px solid #329ddc;
+	border-bottom:none;
+	z-index:1;
+}
+
+.tile-header-tabs  .tile-header-tab:hover:not(.active) {
+	background-color:#2d2d2d;
+}
+
+.tile-header-tabs  .tile-header-tab .tile-header-title-wrap {
+	margin-right:13px;
 }
 
 .tile-header.focus-border {
@@ -957,48 +1005,10 @@ table.dataTable thead th:last-child {
 	cursor:pointer;
 }
 
-.tile-header.tile-header-tabs {
-	height:20px;
-	width:100%;
-	position:relative;
-	display:block;
-	border-bottom:none;
-	padding-left:0px;
-	background-color:transparent;
-	border-top:none;
-	margin-bottom:-1px;
-}
 
-.tile-header-tab {
-	height:100%;
-	position:relative;
-	float:left;
-	background-color:#222222;
-	border-top-left-radius:3px;
-	border-top-right-radius:3px;
 
-	padding-left:5px;
-	padding-right:3px;
-	margin-right:2px;
-}
 
-.tile-header-tab.active {
-	background-color:#333333;
-}
 
-.tile-header-tab.focus-border {
-	border:1px solid #329ddc;
-	border-bottom:none;
-	z-index:1;
-}
-
-.tile-header-tab:hover:not(.active) {
-	background-color:#2d2d2d;
-}
-
-.tile-header-tab .tile-header-title-wrap {
-	margin-right:13px;
-}
 
 
 .tile-cells {
