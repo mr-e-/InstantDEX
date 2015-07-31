@@ -18,9 +18,12 @@ Sleuthgrids = (function(Sleuthgrids)
 			tileNavCell.tile = tile;
 			
 			tileNavCell.index = index;
+			tileNavCell.linkIndex = -1;
+
 			
 			
 			tileNavCell.tileNavCellDOM;
+			tileNavCell.navLinkDOM;
 			tileNavCell.isActive = false;
 		},
 		
@@ -41,6 +44,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			$tileHeaderTab.find(".tile-header-title").text(title);
 			
 			tileNavCell.tileNavCellDOM = $tileHeaderTab;
+			tileNavCell.navLinkDOM = $tileHeaderTab.find(".tile-header-link");
 			
 			tileNavCell.initEventListeners();
 		},
@@ -65,6 +69,62 @@ Sleuthgrids = (function(Sleuthgrids)
 				tile.closeTile(tileNavCell);
 			})
 			
+			tileNavCell.navLinkDOM.find(".dropdown-list li").on("click", function(e)
+			{
+				tileNavCell.cellLinkClick($(this))
+			})
+			
+		},
+		
+		
+		cellLinkClick: function($li)
+		{
+			var tileNavCell = this;
+			var cellIndex = tileNavCell.index;
+			var tile = tileNavCell.tile;
+			var cell = tile.cells[cellIndex];
+			var grid = tile.grid;
+			
+			var $wrap = $li.closest(".dropdown-list-wrap");
+			var $ul = $li.closest("ul");
+
+			var linkIndex = $li.attr("data-val");	
+			var title = $li.text();
+
+			$ul.find("li").removeClass("active");
+			$li.addClass("active");
+			
+			$wrap.find(".dropdown-title span").text(title);
+			$wrap.trigger("mouseleave");
+			
+			tileNavCell.linkIndex = linkIndex;
+			cell.linkIndex = linkIndex;
+			
+			
+			
+			var obj = {};
+			var allGridTiles = grid.tiles;
+			
+			for (var i = 0; i < allGridTiles.length; i++)
+			{
+				var loopTile = allGridTiles[i];
+				var allLoopTileCells = loopTile.cells;
+				
+				for (var j = 0; j < allLoopTileCells.length; j++)
+				{
+					var loopCell = allLoopTileCells[j];
+					var loopCellLinkIndex = loopCell.linkIndex;
+					
+					if (!(String(loopCellLinkIndex) in obj))
+					{
+						obj[String(loopCellLinkIndex)] = [];
+					}
+					
+					obj[String(loopCellLinkIndex)].push(loopCell);
+				}
+			}
+			
+			//console.log(obj);
 		},
 		
 		

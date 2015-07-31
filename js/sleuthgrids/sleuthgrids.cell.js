@@ -21,8 +21,10 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.grid = tile.grid;
 			
 			cell.index = index;
-			cell.cellDOM;
+			cell.linkIndex = -1;
 			cell.isActive = false;
+			
+			cell.cellDOM;
 		},
 		
 		

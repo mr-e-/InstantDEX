@@ -113,7 +113,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var $wrap = $(this).closest(".dropdown-list-wrap");
 		
-		if ($wrap.hasClass("dropdown-list-mult-wrap"))
+		if ($wrap.hasClass("dropdown-list-mult-wrap") || $wrap.hasClass("tile-header-link-dropdown"))
 		{
 			
 		}

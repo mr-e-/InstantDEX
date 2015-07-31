@@ -263,7 +263,7 @@ input:focused {
 	position:relative;
 	display:block;
 	border-bottom:1px solid #444444;
-	z-index:101;
+	z-index:0;
 }
 
 .nbutton-icon-outer:hover {
@@ -996,7 +996,7 @@ table.dataTable thead th:last-child {
 }
 
 .tile-header-tabs  .tile-header-tab .tile-header-title-wrap {
-	margin-right:13px;
+	margin-right:20px;
 }
 
 
@@ -1005,6 +1005,40 @@ table.dataTable thead th:last-child {
 	position:relative;
 	float:left;
 	padding-left:4px;
+}
+
+.tile-header-link {
+	height:100%;
+	position:relative;
+	float:right;
+	padding-right:7px;
+	display:none;
+}
+
+.tile-header-tab.active .tile-header-link {
+	display:block;
+}
+
+.tile-header-link .dropdown-outer {
+	height:16px;
+	width:22px;
+}
+
+.tile-header-link .dropdown-inner {
+	padding:0px;
+	text-align:center;
+}
+
+.tile-header-link .dropdown-title {
+	width:100%;
+}
+
+.tile-header-link .dropdown-list ul {
+	text-align:center;
+}
+
+.tile-header-link .dropdown-list li {
+	padding-left:0px;
 }
 
 .tile-header-icons {
