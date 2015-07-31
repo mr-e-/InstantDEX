@@ -244,8 +244,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			if (Sleuthgrids.isResizing)
 			{
 				var resizePos = Sleuthgrids.getPositions(Sleuthgrids.resizeTile.tileDOM);
-				var offsetX = $mainGrid.offset().left;
-				var offsetY = $mainGrid.offset().top;
+				var offsetX = grid.gridDOM.offset().left;
+				var offsetY = grid.gridDOM.offset().top;
 				var insideX = mouseX - offsetX
 				var insideY = mouseY - offsetY
 				
@@ -329,11 +329,12 @@ Sleuthgrids = (function(Sleuthgrids)
 		showTileBorder: function()
 		{
 			var tile = this;
+			var grid = tile.grid;
 			var $tile = tile.tileDOM;
 			
 			
-			$mainGrid.find(".tile-header-tab").removeClass("focus-border");
-			$mainGrid.find(".tile-cells").removeClass("focus-border");
+			grid.gridDOM.find(".tile-header-tab").removeClass("focus-border");
+			grid.gridDOM.find(".tile-cells").removeClass("focus-border");
 			
 			
 			var activeNavCell = false;
@@ -531,7 +532,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				}
 			}
 			
-			var $prev = $mainGrid.find(".preview-tile");
+			var $prev = grid.gridDOM.find(".preview-tile");
 			if ($prev.length)
 			{
 				var obj = {};
@@ -594,6 +595,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		onTileArrowMouseover: function($arrow)
 		{
 			var tile = this;
+			var grid = tile.grid;
 			var $tile = tile.tileDOM;
 			var $tileArrowWrap = tile.tileArrowWrapDOM;
 			var $previewTile = $($("#preview_tile_template").html());
@@ -622,9 +624,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			$previewTile.css("width", tilePositions.width);
 
 			$previewTile.css(sizeKeys.absKey, sizeKeys.newAbs);
-			$previewTile.css(sizeKeys.sizeKey, sizeKeys.newSize)
+			$previewTile.css(sizeKeys.sizeKey, sizeKeys.newSize);
 
-			$mainGrid.append($previewTile)
+			grid.gridDOM.append($previewTile);
 		},
 		
 		
@@ -633,6 +635,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			if (Sleuthgrids.isGridTrig)
 			{	
 				var tile = this;
+				var grid = tile.grid;
 				var $tile = tile.tileDOM;
 				var $tileArrowWrap = tile.tileArrowWrapDOM;
 			
@@ -651,7 +654,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				$tile.css(sizeKeys.absKey, sizeKeys.newAbs)
 				
 				
-				$mainGrid.find(".preview-tile").remove();
+				grid.gridDOM.find(".preview-tile").remove();
 			}
 		},
 		
@@ -669,7 +672,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			$tileArrowWrap.removeClass(arrowDirections.direction)
 			
 			
-			var $previewTile = $mainGrid.find(".preview-tile");
+			var $previewTile = grid.gridDOM.find(".preview-tile");
 			var previewTilePositions = Sleuthgrids.getPositions($previewTile, true);
 			
 			/*var newGridDirections = 
@@ -693,7 +696,7 @@ Sleuthgrids = (function(Sleuthgrids)
 
 			
 
-			$mainGrid.find(".preview-tile").remove();
+			grid.gridDOM.find(".preview-tile").remove();
 		}
 		
 			

@@ -3,9 +3,11 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
+	var $contentWrap = $("#content_wrap");
+
 	
 
-	$("#main_grid").on("click", ".order-row.own-order", function()
+	$contentWrap.on("click", ".order-row.own-order", function()
 	{
 		var order = IDEX.getRowData($(this), $(this).index());
 		console.log(order);
@@ -14,7 +16,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 //	$("#buyBook, #sellBook").on("click", ".order-row:not(.own-order):not(.expiredRow)", function(e)
-	$("#main_grid").on("click", ".order-row:not(.expiredRow):not(.own-order)", function(e)
+	$contentWrap.on("click", ".order-row:not(.expiredRow):not(.own-order)", function(e)
 	{
 		var $target = $(e.target)
 		var has = $target.hasClass("vert-align")
@@ -49,7 +51,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	$("#main_grid").on("mouseover", ".order-row", function(e)
+	$contentWrap.on("mouseover", ".order-row", function(e)
 	{
 		var $inspect = $(this).find(".order-row-inspect-trig")
 		$inspect.addClass("active");
@@ -69,7 +71,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	$("#main_grid").on("mouseleave", ".bookname .order-row", function(e)
+	$contentWrap.on("mouseleave", ".bookname .order-row", function(e)
 	{
 		var $inspect = $(this).find(".order-row-inspect-trig")
 		$inspect.removeClass("active");
@@ -77,7 +79,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$("#main_grid").on("click", ".bookname .order-row-inspect-trig", function(e)
+	$contentWrap.on("click", ".bookname .order-row-inspect-trig", function(e)
 	{
 		e.preventDefault();
 		var $orderRow = $(this).parent();
@@ -96,7 +98,7 @@ var IDEX = (function(IDEX, $, undefined)
 	var $popup = $("#orderbookSearch_popup");
 	
 	
-	$("#main_grid").on("click", ".orderbook-search-popup-trig", function()
+	$contentWrap.on("click", ".orderbook-search-popup-trig", function()
 	{
 		var $orderbook = $(this).closest(".orderbook-wrap")
 		var $banner = $popup.find(".banner");

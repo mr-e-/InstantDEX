@@ -129,413 +129,463 @@
 			<div id="content_wrap">
 
 			
-				<div id="main_grid" class="main-grid">
+				<div class="grids" id="grids">
+				
 
-					<div id="main_grid_arrow_left" class="main-grid-arrow" data-arrow="left">
+
+				</div>
+				
+				
+				
+			
+				<div id="tile_add">
+					<div class="tile-add-header">
+						
+					</div>
+					<div class="tile-add-body">
+					
+					</div>
+				</div>
+		
+				
+				<div id="orderbookSearch_popup" class="popup orderbookSearchPopup">
+				
+					<div class="popup-header">
+						<div class="popup-header-title">
+							<span class="vert-align">Market search</span>
+						</div>
+						<div class="popup-header-icons">
+							<div class="popup-header-ico">
+								<img class="popup-header-close vert-align" src="img/close.png"></img>
+							</div>
+						</div>
+					</div>
+					
+					<div class="banner">
+						<span></span>
+					</div>
+					
+					<div class="popup-content orderbookSearch-popup-content">
+					
+						<div class="orderbookSearch-popup-inputArea">
+							<form role="form" class="orderbookSearch-popup-form" autocomplete="off">
+
+								<div class="form-row">
+									<div class="form-label">
+										<span>Base</span>
+									</div>
+									<div class="form-input-outer">
+										<div class="form-input">
+											<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-row">
+									<div class="form-label">
+										<span>Quote</span>
+									</div>
+									<div class="form-input-outer">
+										<div class="form-input">
+											<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
+										</div>
+									</div>
+								</div>
+
+							</form>
+						</div>
+						
+						<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
+							<div class="nbutton-text-wrap">
+								<div class="nbutton-text-outer">
+									<div class="nbutton-text orderbookSearch-search-trig">
+										<div class="nbutton-text-inner">
+											<div class="nbutton-text-title">
+												<span class="vert-align">Open orderbook</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+					</div>
+				
+				</div>
+		
+		
+		
+		
+				<div id="marketSearch_popup" class="popup marketSearchPopup">
+				
+					<div class="popup-header">
+						<div class="popup-header-title">
+							<span class="vert-align">Market search</span>
+						</div>
+						<div class="popup-header-icons">
+							<div class="popup-header-ico">
+								<img class="popup-header-close vert-align" src="img/close.png"></img>
+							</div>
+						</div>
+					</div>
+					
+					<div class="banner">
+						<span></span>
+					</div>
+					
+					<div class="popup-content marketSearch-popup-content">
+				
+						<div class="marketSearch-popup-inputArea">
+							<form role="form" class="marketSearch-popup-form" autocomplete="off">
+
+								<div class="form-row">
+									<div class="form-label">
+										<span>Base</span>
+									</div>
+									<div class="form-input-outer">
+										<div class="form-input">
+											<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-row">
+									<div class="form-label">
+										<span>Quote</span>
+									</div>
+									<div class="form-input-outer">
+										<div class="form-input">
+											<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
+										</div>
+									</div>
+								</div>
+
+							</form>
+						</div>
+						
+						<div class="popup-buttonArea marketSearch-popup-buttonArea">
+							<div class="nbutton-text-wrap">
+								<div class="nbutton-text-outer">
+									<div class="nbutton-text marketSearch-add-trig">
+										<div class="nbutton-text-inner">
+											<div class="nbutton-text-title">
+												<span class="vert-align">Add</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+					</div>
+				
+				</div>
+		
+		
+				<div class="popup orderbook-label-popup">
+				
+					<div class="popup-header">
+						<div class="popup-header-title">
+							<span class="vert-align">Orderbook labels</span>
+						</div>
+						<div class="popup-header-icons">
+							<div class="popup-header-ico">
+								<img class="popup-header-close vert-align orderbook-label-popup-close" src="img/close.png"></img>
+							</div>
+						</div>
+					</div>
+					
+					<div class="orderbook-label-popup-main">
+					
+						<div class="orderbook-label-popup-banner success">
+							<span id="orderbook_label_popup_banner" class="vert-align"></span>
+						</div>
+					
+						<div class="orderbook-label-popup-left">
+						
+							<div class="label-left-overlay active">
+								<div class="label-left-overlay-title">
+									<span>Load a label</span>
+								</div>
+							</div>
+							
+							<div class="label-example-row label-example">
+								<span id="label_example" class="vert-align label-temp"></span>
+							</div>
+							<div class="orderbook-label-popup-row">
+								<div class="orderbook-label-row-title">
+									<span>Label:</span>
+								</div>
+								<div class="orderbook-label-row-input orderbook-label-conf">
+									<input class="auto-label-exchange" type="text" name="exchange" placeholder="Exchange"></input>
+								</div>
+								<div class="orderbook-label-row-input orderbook-label-conf">
+									<input type="text" name="nxtrs" placeholder="NXT RS"></input>
+								</div>
+							</div>
+							<div class="orderbook-label-popup-row">
+								<div class="orderbook-label-row-title">
+									<span>Text Color</span>
+								</div>
+								<div class="orderbook-label-row-input" data-lower="0">
+									<input readonly type="text" id="" class="orderbook-label-color-trig" data-ltype="text" name="ctext"></input>
+									<input type="hidden" id="orderbook_label_textcolor" class="orderbook-label-color-input" data-ltype="text"></input>
+									<div class="orderbook-label-color-box-wrap">
+									
+									</div>
+								</div>
+							</div>
+							<div class="orderbook-label-popup-row">
+								<div class="orderbook-label-row-title">
+									<span>Background Color</span>
+								</div>
+								<div class="orderbook-label-row-input" data-lower="1">
+									<input readonly type="text" id="" class="orderbook-label-color-trig" data-ltype="bg" name="cbg"></input>
+									<input type="hidden" id="orderbook_label_bgcolor" class="orderbook-label-color-input" data-ltype="bg"></input>
+									<div class="orderbook-label-color-box-wrap">
+									
+									</div>
+								</div>
+							</div>
+							
+							<div class="orderbook-label-popup-left-bottom">
+								<div class="orderbook-label-popup-confirm-wrap">
+									<span>SAVE</span>
+								</div>
+							</div>
+
+						</div>
+							
+							
+						<div class="orderbook-label-popup-right">
+							<div class="orderbook-label-popup-all-header">
+								<div class="orderbook-label-popup-all-header-right">
+									<div  id="delete_orderbook_label" class="orderbook-label-popup-all-header-cell unselectable">
+										<span>DELETE</span>
+									</div>
+									<div id="add_orderbook_label" class="orderbook-label-popup-all-header-cell unselectable">
+										<span>ADD</span>
+									</div>
+								</div>
+							</div>
+							
+							<div class="orderbook-label-popup-table">
+								<!--<div class="orderbook-label-popup-all-row">
+									<div class="orderbook-label-popup-all-row-cell label-popup-all-name">
+										<span>Label 1</span>
+									</div>
+									<div class="orderbook-label-popup-all-row-cell label-popup-all-vis">
+										<img src="img/eye.png"></img>
+									</div>
+								</div>-->
+							</div>
+						</div>
+						
+					</div>
+				</div>
+		
+		
+		
+		
+				<div id="makeofferPopup" class="popup makeofferPopup">
+				
+				
+								
+					<!--<div class="makeofferPopup-header">
+					
+						<div class="makeofferPopup-header-left">
+							<span class="makeofferPopup-orderType conf-title">Confirm Sell Order</span>
+						</div>
+						
+						<div class="makeofferPopup-header-right">
+							<span class="conf-exchange">test</span>
+						</div>
+					
+					</div>-->
+			
+				
+					<div class="popup-header">
+						<div class="popup-header-title">
+							<span class="vert-align">Makeoffer</span>
+						</div>
+						<div class="popup-header-icons">
+							<div class="popup-header-ico">
+								<img class="popup-header-close vert-align" src="img/close.png"></img>
+							</div>
+						</div>
+					</div>
+					
+					<div class="popup-content">
+					
+						<div class="makeofferPopup-inputArea">
+						
+							<div class="conf-jumbotron">
+								<div>Disclaimer</div>
+							</div>	
+							
+							<div class="makeofferPopup-form">
+							
+								<div class="makeofferPopup-form-row">
+									<div class="makeofferPopup-form-label">
+										<span>Price</span>
+									</div>
+									<div class="makeofferPopup-form-input">
+										<input disabled type="text" class="conf-input conf-price">
+										<span class="conf-input-addon refcur-rel"></span>
+									</div>
+								</div>
+							
+								<div class="makeofferPopup-form-row">
+									<div class="makeofferPopup-form-label">
+										<span>Amount</span>
+									</div>
+									<div class="makeofferPopup-form-input">
+										<input disabled type="text" class="conf-input conf-amount">
+										<span class="conf-input-addon refcur-base"></span>
+									</div>
+								</div>
+								
+								
+								<div class="makeofferPopup-form-row">
+									<div class="makeofferPopup-form-label">
+										<span>Total</span>
+									</div>
+									<div class="makeofferPopup-form-input">
+										<input disabled type="text" class="conf-input conf-total">
+										<span class="conf-input-addon refcur-rel"></span>
+									</div>
+								</div>
+								
+								<div class="makeofferPopup-form-row">
+									<div class="makeofferPopup-form-label">
+										<span>Fee</span>
+									</div>
+									<div class="makeofferPopup-form-input">
+										<input disabled type="text" class="conf-input conf-fee">
+										<span class="conf-input-addon">NXT</span>
+									</div>
+								</div>
+								
+								
+								<div class="makeofferPopup-form-row">
+									<div class="makeofferPopup-form-label">
+										<span>Min Perc</span>
+									</div>
+									<div class="makeofferPopup-form-input">
+										<input disabled type="text" class="conf-input conf-minperc">
+										<span class="conf-input-addon">%</span>
+									</div>
+								</div>
+								
+								<div class="makeofferPopup-form-row">
+									<div class="makeofferPopup-form-label">
+										<span>Perc</span>
+									</div>
+									<div class="makeofferPopup-form-input">
+										<input type="text" class="conf-input conf-perc">
+										<span class="conf-input-addon">%</span>
+									</div>
+								</div>
+							
+							</div>
+							
+						</div>
+						
+						<div class="popup-buttonArea makeofferPopup-buttonArea">
+							<div class="nbutton-text-wrap">
+								<div class="nbutton-text-outer">
+									<div class="nbutton-text orderbookSearch-search-trig">
+										<div class="nbutton-text-inner">
+											<div class="nbutton-text-title">
+												<span class="vert-align">Confirm</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					
+					</div>
+				
+				</div>
+		
+			
+
+			</div>
+			
+			
+			<!------------------------- END CONTENT WRAP ----------------------------->
+
+			
+			
+			
+			<!------------------------- START FOOTER ----------------------------->
+			
+			<div id="utilArea">
+			
+				<div class ="util-grid-tabs">
+					<div class="util-grid-tab" data-gridindex="0">
+						<span class="vert-align">Grid-1</span>
+					</div>
+				</div>
+				
+				<div class="util-grid-newTab">
+					<span class="vert-align">Add</span>
+				</div>
+			
+			</div>
+			
+			<!------------------------- END FOOTER ----------------------------->
+			
+			
+		
+			<div id="grid_template" class="template">
+
+				<div class="grid" data-gridindex="0">
+		
+					<div class="grid-arrow grid-arrow-left" data-arrow="left">
 						<img src="img/trileft.png"></img>
 					</div>
-					<div id="main_grid_arrow_right" class="main-grid-arrow" data-arrow="right">
+					<div class="grid-arrow grid-arrow-right" data-arrow="right">
 						<img src="img/triright.png"></img>
 					</div>
-					<div id="main_grid_arrow_top" class="main-grid-arrow" data-arrow="top">
+					<div class="grid-arrow grid-arrow-top" data-arrow="top">
 						<img src="img/triup.png"></img>
 					</div>
-					<div id="main_grid_arrow_bottom" class="main-grid-arrow" data-arrow="bottom">
+					<div class="grid-arrow grid-arrow-bottom" data-arrow="bottom">
 						<img src="img/tridown.png"></img>
 					</div>
-					<div id="main_grid_arrow_middle" class="main-grid-arrow-middle" data-arrow="middle">
+					<div class="grid-arrow-middle" data-arrow="middle">
 					</div>
 
-
-				
-					<div id="tile_add">
-						<div class="tile-add-header">
-							
-						</div>
-						<div class="tile-add-body">
-						
-						</div>
-					</div>
 					
-					
-					<div id="orderbookSearch_popup" class="popup orderbookSearchPopup">
-					
-						<div class="popup-header">
-							<div class="popup-header-title">
-								<span class="vert-align">Market search</span>
-							</div>
-							<div class="popup-header-icons">
-								<div class="popup-header-ico">
-									<img class="popup-header-close vert-align" src="img/close.png"></img>
-								</div>
-							</div>
-						</div>
-						
-						<div class="banner">
-							<span></span>
-						</div>
-						
-						<div class="popup-content orderbookSearch-popup-content">
-						
-							<div class="orderbookSearch-popup-inputArea">
-								<form role="form" class="orderbookSearch-popup-form" autocomplete="off">
-
-									<div class="form-row">
-										<div class="form-label">
-											<span>Base</span>
-										</div>
-										<div class="form-input-outer">
-											<div class="form-input">
-												<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
-											</div>
-										</div>
-									</div>
-
-									<div class="form-row">
-										<div class="form-label">
-											<span>Quote</span>
-										</div>
-										<div class="form-input-outer">
-											<div class="form-input">
-												<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
-											</div>
-										</div>
-									</div>
-
-								</form>
-							</div>
-							
-							<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
-								<div class="nbutton-text-wrap">
-									<div class="nbutton-text-outer">
-										<div class="nbutton-text orderbookSearch-search-trig">
-											<div class="nbutton-text-inner">
-												<div class="nbutton-text-title">
-													<span class="vert-align">Open orderbook</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						
-						</div>
+					<div class="tiles">
 					
 					</div>
 					
-					
-					<div id="makeofferPopup" class="popup makeofferPopup">
-					
-					
-									
-						<!--<div class="makeofferPopup-header">
-						
-							<div class="makeofferPopup-header-left">
-								<span class="makeofferPopup-orderType conf-title">Confirm Sell Order</span>
-							</div>
-							
-							<div class="makeofferPopup-header-right">
-								<span class="conf-exchange">test</span>
-							</div>
-						
-						</div>-->
-				
-					
-						<div class="popup-header">
-							<div class="popup-header-title">
-								<span class="vert-align">Makeoffer</span>
-							</div>
-							<div class="popup-header-icons">
-								<div class="popup-header-ico">
-									<img class="popup-header-close vert-align" src="img/close.png"></img>
-								</div>
-							</div>
-						</div>
-						
-						<div class="popup-content">
-						
-							<div class="makeofferPopup-inputArea">
-							
-								<div class="conf-jumbotron">
-									<div>Disclaimer</div>
-								</div>	
-								
-								<div class="makeofferPopup-form">
-								
-									<div class="makeofferPopup-form-row">
-										<div class="makeofferPopup-form-label">
-											<span>Price</span>
-										</div>
-										<div class="makeofferPopup-form-input">
-											<input disabled type="text" class="conf-input conf-price">
-											<span class="conf-input-addon refcur-rel"></span>
-										</div>
-									</div>
-								
-									<div class="makeofferPopup-form-row">
-										<div class="makeofferPopup-form-label">
-											<span>Amount</span>
-										</div>
-										<div class="makeofferPopup-form-input">
-											<input disabled type="text" class="conf-input conf-amount">
-											<span class="conf-input-addon refcur-base"></span>
-										</div>
-									</div>
-									
-									
-									<div class="makeofferPopup-form-row">
-										<div class="makeofferPopup-form-label">
-											<span>Total</span>
-										</div>
-										<div class="makeofferPopup-form-input">
-											<input disabled type="text" class="conf-input conf-total">
-											<span class="conf-input-addon refcur-rel"></span>
-										</div>
-									</div>
-									
-									<div class="makeofferPopup-form-row">
-										<div class="makeofferPopup-form-label">
-											<span>Fee</span>
-										</div>
-										<div class="makeofferPopup-form-input">
-											<input disabled type="text" class="conf-input conf-fee">
-											<span class="conf-input-addon">NXT</span>
-										</div>
-									</div>
-									
-									
-									<div class="makeofferPopup-form-row">
-										<div class="makeofferPopup-form-label">
-											<span>Min Perc</span>
-										</div>
-										<div class="makeofferPopup-form-input">
-											<input disabled type="text" class="conf-input conf-minperc">
-											<span class="conf-input-addon">%</span>
-										</div>
-									</div>
-									
-									<div class="makeofferPopup-form-row">
-										<div class="makeofferPopup-form-label">
-											<span>Perc</span>
-										</div>
-										<div class="makeofferPopup-form-input">
-											<input type="text" class="conf-input conf-perc">
-											<span class="conf-input-addon">%</span>
-										</div>
-									</div>
-								
-								</div>
-								
-							</div>
-							
-							<div class="popup-buttonArea makeofferPopup-buttonArea">
-								<div class="nbutton-text-wrap">
-									<div class="nbutton-text-outer">
-										<div class="nbutton-text orderbookSearch-search-trig">
-											<div class="nbutton-text-inner">
-												<div class="nbutton-text-title">
-													<span class="vert-align">Confirm</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						
-						</div>
-					
-					</div>
-					
-					
-					<div id="marketSearch_popup" class="popup marketSearchPopup">
-					
-						<div class="popup-header">
-							<div class="popup-header-title">
-								<span class="vert-align">Market search</span>
-							</div>
-							<div class="popup-header-icons">
-								<div class="popup-header-ico">
-									<img class="popup-header-close vert-align" src="img/close.png"></img>
-								</div>
-							</div>
-						</div>
-						
-						<div class="banner">
-							<span></span>
-						</div>
-						
-						<div class="popup-content marketSearch-popup-content">
-					
-							<div class="marketSearch-popup-inputArea">
-								<form role="form" class="marketSearch-popup-form" autocomplete="off">
-
-									<div class="form-row">
-										<div class="form-label">
-											<span>Base</span>
-										</div>
-										<div class="form-input-outer">
-											<div class="form-input">
-												<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
-											</div>
-										</div>
-									</div>
-
-									<div class="form-row">
-										<div class="form-label">
-											<span>Quote</span>
-										</div>
-										<div class="form-input-outer">
-											<div class="form-input">
-												<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
-											</div>
-										</div>
-									</div>
-
-								</form>
-							</div>
-							
-							<div class="popup-buttonArea marketSearch-popup-buttonArea">
-								<div class="nbutton-text-wrap">
-									<div class="nbutton-text-outer">
-										<div class="nbutton-text marketSearch-add-trig">
-											<div class="nbutton-text-inner">
-												<div class="nbutton-text-title">
-													<span class="vert-align">Add</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						
-						</div>
-					
-					</div>
-					
-					
-					<div class="popup orderbook-label-popup">
-					
-						<div class="popup-header">
-							<div class="popup-header-title">
-								<span class="vert-align">Orderbook labels</span>
-							</div>
-							<div class="popup-header-icons">
-								<div class="popup-header-ico">
-									<img class="popup-header-close vert-align orderbook-label-popup-close" src="img/close.png"></img>
-								</div>
-							</div>
-						</div>
-						
-						<div class="orderbook-label-popup-main">
-						
-							<div class="orderbook-label-popup-banner success">
-								<span id="orderbook_label_popup_banner" class="vert-align"></span>
-							</div>
-						
-							<div class="orderbook-label-popup-left">
-							
-								<div class="label-left-overlay active">
-									<div class="label-left-overlay-title">
-										<span>Load a label</span>
-									</div>
-								</div>
-								
-								<div class="label-example-row label-example">
-									<span id="label_example" class="vert-align label-temp"></span>
-								</div>
-								<div class="orderbook-label-popup-row">
-									<div class="orderbook-label-row-title">
-										<span>Label:</span>
-									</div>
-									<div class="orderbook-label-row-input orderbook-label-conf">
-										<input class="auto-label-exchange" type="text" name="exchange" placeholder="Exchange"></input>
-									</div>
-									<div class="orderbook-label-row-input orderbook-label-conf">
-										<input type="text" name="nxtrs" placeholder="NXT RS"></input>
-									</div>
-								</div>
-								<div class="orderbook-label-popup-row">
-									<div class="orderbook-label-row-title">
-										<span>Text Color</span>
-									</div>
-									<div class="orderbook-label-row-input" data-lower="0">
-										<input readonly type="text" id="" class="orderbook-label-color-trig" data-ltype="text" name="ctext"></input>
-										<input type="hidden" id="orderbook_label_textcolor" class="orderbook-label-color-input" data-ltype="text"></input>
-										<div class="orderbook-label-color-box-wrap">
-										
-										</div>
-									</div>
-								</div>
-								<div class="orderbook-label-popup-row">
-									<div class="orderbook-label-row-title">
-										<span>Background Color</span>
-									</div>
-									<div class="orderbook-label-row-input" data-lower="1">
-										<input readonly type="text" id="" class="orderbook-label-color-trig" data-ltype="bg" name="cbg"></input>
-										<input type="hidden" id="orderbook_label_bgcolor" class="orderbook-label-color-input" data-ltype="bg"></input>
-										<div class="orderbook-label-color-box-wrap">
-										
-										</div>
-									</div>
-								</div>
-								
-								<div class="orderbook-label-popup-left-bottom">
-									<div class="orderbook-label-popup-confirm-wrap">
-										<span>SAVE</span>
-									</div>
-								</div>
-
-							</div>
-								
-								
-							<div class="orderbook-label-popup-right">
-								<div class="orderbook-label-popup-all-header">
-									<div class="orderbook-label-popup-all-header-right">
-										<div  id="delete_orderbook_label" class="orderbook-label-popup-all-header-cell unselectable">
-											<span>DELETE</span>
-										</div>
-										<div id="add_orderbook_label" class="orderbook-label-popup-all-header-cell unselectable">
-											<span>ADD</span>
-										</div>
-									</div>
-								</div>
-								
-								<div class="orderbook-label-popup-table">
-									<!--<div class="orderbook-label-popup-all-row">
-										<div class="orderbook-label-popup-all-row-cell label-popup-all-name">
-											<span>Label 1</span>
-										</div>
-										<div class="orderbook-label-popup-all-row-cell label-popup-all-vis">
-											<img src="img/eye.png"></img>
-										</div>
-									</div>-->
-								</div>
-							</div>
-							
-						</div>
-					</div>
 					
 
 				</div>
 			</div>
 			
+			
 				
 			<div id="tile_template" class="template">
 				<div class="tile">
 					<div class="tile-arrow-wrap">
-						<div id="tile_arrow_left" class="tile-arrow" data-arrow="left">
+						<div class="tile-arrow tile-arrow-left" data-arrow="left">
 							<img src="img/trileft.png"></img>
 						</div>
-						<div id="tile_arrow_right" class="tile-arrow" data-arrow="right">
+						<div class="tile-arrow tile-arrow-right" data-arrow="right">
 							<img src="img/triright.png"></img>
 						</div>
-						<div id="tile_arrow_top" class="tile-arrow" data-arrow="top">
+						<div class="tile-arrow tile-arrow-top" data-arrow="top">
 							<img src="img/triup.png"></img>
 						</div>
-						<div id="tile_arrow_bottom" class="tile-arrow" data-arrow="bottom">
+						<div class="tile-arrow tile-arrow-bottom" data-arrow="bottom">
 							<img src="img/tridown.png"></img>
 						</div>
-						<div id="tile_arrow_middle" class="tile-arrow" data-arrow="middle">
+						<div class="tile-arrow tile-arrow-middle" data-arrow="middle">
 						</div>
 					</div>
 					
@@ -606,7 +656,7 @@
 			
 			<div id="preview_tile_template" class="template">
 			
-				<div class="preview-tile grid">
+				<div class="preview-tile">
 				
 					<div class="preview-tile-header">
 					</div>
@@ -1250,20 +1300,18 @@
 				</div>
 			
 			</div>
-				
-			<!------------------------- END CONTENT WRAP ----------------------------->
-
 			
 			
-			<!------------------------- START FOOTER ----------------------------->
-			<div id="utilArea">
+			<div id="util_grid_tab_template" class="template">
 			
-				<div class="util-grid-cell">
+				<div class="util-grid-tab" data-gridindex="0">
 					<span class="vert-align">Grid-1</span>
 				</div>
-			
+					
 			</div>
-			<!------------------------- END FOOTER ----------------------------->
+				
+
+			
 			
 		</div>
 		

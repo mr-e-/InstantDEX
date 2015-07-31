@@ -2,7 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var $mainGrid = $("#main_grid");
+	var $contentWrap = $("#content_wrap");
 	IDEX.allOrderboxes = [];
 	
 	
@@ -263,7 +263,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 
-	$mainGrid.on("keyup", "input[name='price'], input[name='volume']", function() 
+	$contentWrap.on("keyup", "input[name='price'], input[name='volume']", function() 
 	{
 		var $form = $(this).closest("form");
 		var price = $form.find("input[name='price']").val();
@@ -274,7 +274,7 @@ var IDEX = (function(IDEX, $, undefined)
 	});
 	
 
-	$mainGrid.on("keyup", "input[name='total']", function() 
+	$contentWrap.on("keyup", "input[name='total']", function() 
 	{
 		var $form = $(this).closest("form");
 		var price = $form.find("input[name='price']").val();
@@ -288,7 +288,7 @@ var IDEX = (function(IDEX, $, undefined)
 	});
 	
 	
-	$mainGrid.on("click", ".orderbox-buy .orderbox-balance-val span", function() 
+	$contentWrap.on("click", ".orderbox-buy .orderbox-balance-val span", function() 
 	{
 		var $wrap = $(this).closest(".orderbox-body");
 		var total = $(this).text();
@@ -300,7 +300,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$mainGrid.on("click", ".orderbox-sell .orderbox-balance-val span", function() 
+	$contentWrap.on("click", ".orderbox-sell .orderbox-balance-val span", function() 
 	{
 		var $wrap = $(this).closest(".orderbox-body");
 		var total = $(this).text();
@@ -312,7 +312,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$mainGrid.on("keydown", "input[name='price'], input[name='volume'], input[name='total']", function(e) 
+	$contentWrap.on("keydown", "input[name='price'], input[name='volume'], input[name='total']", function(e) 
 	{
 		var $input = $(this);
 		

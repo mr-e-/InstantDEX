@@ -2,6 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
+	var $contentWrap = $("#content_wrap");
 	
 	
 	$(".popup-header-close").on("click", function()
@@ -38,32 +39,32 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 
-	$("#main_grid").on("mouseover", ".chart-style", function()
+	$contentWrap.on("mouseover", ".chart-style", function()
 	{
 		$(this).find(".dropdown-wrap").addClass("active");
 		$(this).find(".dropdown-title").addClass("active");
 	})
 	
-	$("#main_grid").on("mouseleave", ".chart-style", function()
+	$contentWrap.on("mouseleave", ".chart-style", function()
 	{
 		$(this).find(".dropdown-wrap").removeClass("active");
 		$(this).find(".dropdown-title").removeClass("active");
 	})
 	
 	
-	$("#main_grid").on("mouseover", ".chart-time-button-outer", function()
+	$contentWrap.on("mouseover", ".chart-time-button-outer", function()
 	{
 		var $wrap = $(this).closest(".chart-time-wrap");
 		$wrap.find(".chart-time-dropdown-wrap").addClass("active");
 	})
 	
-	$("#main_grid").on("mouseleave", ".chart-time-button-outer", function()
+	$contentWrap.on("mouseleave", ".chart-time-button-outer", function()
 	{
 		var $wrap = $(this).closest(".chart-time-wrap");
 		$wrap.find(".chart-time-dropdown-wrap").removeClass("active");
 	})
 	
-	$("#main_grid").on("click", ".chart-time-dropdown-wrap li", function()
+	$contentWrap.on("click", ".chart-time-dropdown-wrap li", function()
 	{
 		var $wrap = $(this).closest(".chart-time-wrap");
 		var isSwitch = $(this).hasClass("time-change");		
@@ -96,20 +97,20 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	/*		DROPDOWN		*/
 	
-	$("#main_grid").on("mouseover", ".dropdown-list-wrap", function()
+	$contentWrap.on("mouseover", ".dropdown-list-wrap", function()
 	{
 		$(this).find(".dropdown-list").addClass("active");
 		$(this).find(".dropdown-title").addClass("active");
 	})
 	
-	$("#main_grid").on("mouseleave", ".dropdown-list-wrap", function()
+	$contentWrap.on("mouseleave", ".dropdown-list-wrap", function()
 	{
 		$(this).find(".dropdown-list").removeClass("active");
 		$(this).find(".dropdown-title").removeClass("active");
 	})
 
 	
-	$("#main_grid").on("click", ".dropdown-list li", function()
+	$contentWrap.on("click", ".dropdown-list li", function()
 	{
 		var $wrap = $(this).closest(".dropdown-list-wrap");
 		

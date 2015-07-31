@@ -5,9 +5,43 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	var prevWindowHeight = 0;
 	var prevWindowWidth = 0;
+	var $contentWrap = $("#content_wrap");
 	
 	
-
+	$(".util-grid-newTab").on("click", function()
+	{
+		var $newGridTab = $($("#util_grid_tab_template").html());
+		var $gridTabsWrap = $(".util-grid-tabs");
+		var $gridTabs = $gridTabsWrap.find(".util-grid-tab");
+		
+		var len = $gridTabs.length;
+		
+		var name = "Grid-" + String(len + 1);
+		$newGridTab.find("span").text(name);
+		$newGridTab.attr("data-gridindex", len);
+		$gridTabsWrap.append($newGridTab);
+		
+		var grid = new Sleuthgrids.Grid();
+		//grid.showGrid();
+	})
+	
+	
+	
+	$("body").on("click", ".util-grid-tab", function()
+	{
+		var $gridTab = $(this);
+		var gridIndex = $(this).attr("data-gridindex");
+		
+		var grid = Sleuthgrids.getGrid(gridIndex);
+		
+		Sleuthgrids.hideAllGrids();
+		grid.showGrid();
+		
+	})
+	
+	
+	
+	
 	$(".grid-trig").on("mousedown", function(e)
 	{
 		$(this).addClass("mousedown");
@@ -25,24 +59,29 @@ Sleuthgrids = (function(Sleuthgrids)
 	$(".grid-trig").on("mouseleave", function(e)
 	{
 		if (Sleuthgrids.isGridTrig)
-		{		
-			var has = $tileAdd.hasClass("active")
+		{
+			var $grid = $contentWrap.find(".grid.active");
 			
-			if (!has)
+			if ($grid.length)
 			{
-				Sleuthgrids.updateTileAddPos(e)	
-				$tileAdd.addClass("active");
-				$(".main-grid-arrow").addClass("active");
+				var has = $tileAdd.hasClass("active")
 				
-				var hasGrids = $mainGrid.find(".tile").length;
-				
-				if (!hasGrids)
+				if (!has)
 				{
-					$(".main-grid-arrow-middle").addClass("active");
+					Sleuthgrids.updateTileAddPos(e)	
+					$tileAdd.addClass("active");
+					$grid.find(".grid-arrow").addClass("active");
+					
+					var hasGrids = $grid.find(".tile").length;
+					
+					if (!hasGrids)
+					{
+						$grid.find(".grid-arrow-middle").addClass("active");
+					}
 				}
+				
+				Sleuthgrids.updateTileAddPos(e)
 			}
-			
-			Sleuthgrids.updateTileAddPos(e)
 		}
 	})
 
@@ -60,14 +99,14 @@ Sleuthgrids = (function(Sleuthgrids)
 
 	$(document).on("mouseup", function(e)
 	{
-		$(".main-grid-arrow-middle").removeClass("active");
+		$(".grid-arrow-middle").removeClass("active");
 
 		if (Sleuthgrids.isGridTrig)
 		{
 			Sleuthgrids.isGridTrig = false;
 			Sleuthgrids.triggeredCell = null;
 			$tileAdd.removeClass("active");
-			$(".main-grid-arrow").removeClass("active");
+			$(".grid-arrow").removeClass("active");
 			$(".tile-arrow-wrap").removeClass("active");
 			$(".grid-trig").removeClass("mousedown");
 		}
@@ -98,11 +137,16 @@ Sleuthgrids = (function(Sleuthgrids)
 	$(document).on("mousedown", function(e)
 	{	
 		var $tile = $(e.target).closest(".tile")
-		
-		if (!$tile.length && !$(e.target).hasClass("tile"))
+		var $grid = $contentWrap.find(".grid.active");
+
+		if ($grid.length)
 		{
-			$mainGrid.find(".tile-cells").removeClass("focus-border");
-			$mainGrid.find(".tile-header-tab").removeClass("focus-border");
+			if (!$tile.length && !$(e.target).hasClass("tile"))
+			{
+
+				$grid.find(".tile-cells").removeClass("focus-border");
+				$grid.find(".tile-header-tab").removeClass("focus-border");
+			}
 		}
 	})
 
@@ -112,15 +156,15 @@ Sleuthgrids = (function(Sleuthgrids)
 
 	$(document).ready(function()
 	{
-		prevWindowHeight = $mainGrid.height();
-		prevWindowWidth = $mainGrid.width();
+		prevWindowHeight = $contentWrap.height();
+		prevWindowWidth = $contentWrap.width();
 	})
 
 
 	$(window).resize(function(e)
 	{
-		var windowWidth = $mainGrid.width();
-		var windowHeight = $mainGrid.height();
+		var windowWidth = $contentWrap.width();
+		var windowHeight = $contentWrap.height();
 		
 		var heightDiff = windowHeight - prevWindowHeight;
 		var widthDiff = windowWidth - prevWindowWidth;

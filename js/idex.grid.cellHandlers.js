@@ -111,9 +111,8 @@ var IDEX = (function(IDEX, $, undefined)
 	$(window).load(function()
 	{
 		Sleuthgrids.cellHandlers = cellHandlers;
-		
 		var grid = new Sleuthgrids.Grid();
-		
+		grid.showGrid();
 	})
 	
 	

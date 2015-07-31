@@ -2,6 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
+	var $contentWrap = $("#content_wrap");
 	var $popup = $("#marketSearch_popup");
 
 	
@@ -35,7 +36,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	$("#main_grid").on("click", ".watchlist-add", function(e)
+	$contentWrap.on("click", ".watchlist-add", function(e)
 	{		
 		var isActive = $popup.hasClass("active");
 		

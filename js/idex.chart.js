@@ -1,6 +1,9 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
+	var $contentWrap = $("#content_wrap");
+
+	
 	IDEX.makeChart = function(obj)
 	{
 		var node = obj.node		
@@ -162,7 +165,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 
 
-	$("#main_grid").on("click", ".chart-time-dropdown-wrap li", function()
+	$contentWrap.on("click", ".chart-time-dropdown-wrap li", function()
 	{
 		var $wrap = $(this).closest(".chart-time-wrap");
 		var isSwitch = $(this).hasClass("time-change");		
@@ -212,7 +215,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$("#main_grid").on("click", ".chart-header .mm-chart-config li", function(e)
+	$contentWrap.on("click", ".chart-header .mm-chart-config li", function(e)
 	{
 		$(this).parent().find("li").removeClass("active");
 		$(this).addClass("active");

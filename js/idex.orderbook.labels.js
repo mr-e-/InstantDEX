@@ -3,6 +3,7 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
+	var $contentWrap = $("#content_wrap");
 	var labelPopupClass = ".orderbook-label-popup";
 	var $labelPopup = $(labelPopupClass);
 	var $banner = $(".orderbook-label-popup-banner");
@@ -162,7 +163,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$table.append($(newRow))
 			
 			var li = "<li class='" + "label-" + name + "' data-val='"+name+"'>"+name+"</li>"
-			$("#main_grid").find(".orderbook-label-dropdown ul").append($(li))
+			$contentWrap.find(".orderbook-label-dropdown ul").append($(li))
 			
 			var newLabel = new IDEX.OrderbookLabel({"name":name});
 			IDEX.user.labels.push(newLabel)
@@ -281,7 +282,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 		
 	
-	$("#main_grid").on("click", ".orderbook-label-dropdown li", function()
+	$contentWrap.on("click", ".orderbook-label-dropdown li", function()
 	{
 		IDEX.flipClass($(this), "active");
 

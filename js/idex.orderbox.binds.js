@@ -2,19 +2,19 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var $mainGrid = $("#main_grid");
+	var $contentWrap = $("#content_wrap");
 	
 	
 	
-	$mainGrid.on("mousedown", ".orderbox-order-button", function()
+	$contentWrap.on("mousedown", ".orderbox-order-button", function()
 	{
 		$(this).addClass("order-button-mousedown")
 	})
-	$mainGrid.on("mouseup", ".orderbox-order-button", function()
+	$contentWrap.on("mouseup", ".orderbox-order-button", function()
 	{
 		$(this).removeClass("order-button-mousedown")
 	})
-	$mainGrid.on("mouseleave", ".orderbox-order-button", function()
+	$contentWrap.on("mouseleave", ".orderbox-order-button", function()
 	{
 		$(this).removeClass("order-button-mousedown")
 	})
