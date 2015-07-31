@@ -645,7 +645,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					}
 					else
 					{
-						console.log([size, runningSize])
+						//console.log([size, runningSize])
 						results = [];
 					}
 				}

@@ -100,6 +100,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			tileNavCell.isActive = true;
 			cell.cellDOM.removeClass("tab-hidden");
 			cell.isActive = true;
+			
+			tile.showTileBorder();
 		},
 		
 		
@@ -444,25 +446,26 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tile = this;
 			var $tile = tile.tileDOM;
 			
-			//var $check = $tile.find(".tile-nav-cell");
 			
-			$mainGrid.find(".tile-header").removeClass("focus-border");
+			$mainGrid.find(".tile-header-tab").removeClass("focus-border");
 			$mainGrid.find(".tile-cells").removeClass("focus-border");
 			
 			
-			/*if ($check.length)
+			var activeNavCell = false;
+			
+			for (var i = 0; i < tile.navCells.length; i++)
 			{
-				var $tileNavCell = $(this).find(".tile-nav-cell.active");
-				$tileNavCell.addClass("focus-border");
-				var cellIndex = $tileNavCell.attr("data-tab");
-				var $cell = $(this).find(".cell[data-tab='" + cellIndex + "']")
-				$cell.addClass("focus-border");
-			}*/
-			//else
-			//{
+				if (tile.navCells[i].isActive)
+				{
+					activeNavCell = tile.navCells[i];
+					break;
+				}
+			}
+
 				$tile.find(".tile-cells").addClass("focus-border");
-				$tile.find(".tile-header").addClass("focus-border");
-			//}
+				
+				activeNavCell.tileNavCellDOM.addClass("focus-border");
+				//$tile.find(".tile-header").addClass("focus-border");
 		},
 		
 		

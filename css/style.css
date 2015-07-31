@@ -935,18 +935,9 @@ table.dataTable thead th:last-child {
 	display:block;
 	
 	background-color:#444444;
-	border-bottom:1px solid black;
-	border-top:1px solid #555555;
-	padding-left:5px;
+	/*border-bottom:1px solid black;
+	border-top:1px solid #555555;*/
 	
-}
-
-.tile-header.tile-header-tabs {
-	
-	border-bottom:none;
-	padding-left:0px;
-	background-color:transparent;
-	border-top:none;
 	margin-bottom:-1px;
 }
 
@@ -954,6 +945,24 @@ table.dataTable thead th:last-child {
 	height:100%;
 	width:100%;
 	position:relative;
+	padding-left:5px;
+	border-bottom:1px solid black;
+	z-index:1;
+}
+
+.tile-header .tile-header-tab.focus-border {
+	border:1px solid #329ddc;
+	border-bottom:1px solid black;
+	margin-bottom:-1px;
+	z-index:1;
+}
+
+.tile-header.tile-header-tabs {
+	border-bottom:none;
+	padding-left:0px;
+	background-color:transparent;
+	border-top:none;
+	margin-bottom:-1px;
 }
 
 .tile-header-tabs .tile-header-tab {
@@ -962,22 +971,24 @@ table.dataTable thead th:last-child {
 	position:relative;
 	float:left;
 	background-color:#222222;
+	border-bottom:none;
 	border-top-left-radius:3px;
 	border-top-right-radius:3px;
 
 	padding-left:5px;
 	padding-right:3px;
 	margin-right:2px;
-}
-
-.tile-header-tabs  .tile-header-tab.active {
-	background-color:#333333;
+	z-index:0;
 }
 
 .tile-header-tabs  .tile-header-tab.focus-border {
 	border:1px solid #329ddc;
 	border-bottom:none;
 	z-index:1;
+}
+
+.tile-header-tabs  .tile-header-tab.active {
+	background-color:#333333;
 }
 
 .tile-header-tabs  .tile-header-tab:hover:not(.active) {
@@ -988,12 +999,6 @@ table.dataTable thead th:last-child {
 	margin-right:13px;
 }
 
-.tile-header.focus-border {
-	border:1px solid #329ddc;
-	border-bottom:1px solid black;
-	margin-bottom:-1px;
-	z-index:1;
-}
 
 .tile-header-title-wrap {
 	height:100%;

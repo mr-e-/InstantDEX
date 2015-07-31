@@ -101,7 +101,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		if (!$tile.length && !$(e.target).hasClass("tile"))
 		{
 			$mainGrid.find(".tile-cells").removeClass("focus-border");
-			$mainGrid.find(".tile-header").removeClass("focus-border");
+			$mainGrid.find(".tile-header-tab").removeClass("focus-border");
 		}
 	})
 
