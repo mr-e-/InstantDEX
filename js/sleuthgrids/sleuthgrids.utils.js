@@ -6,6 +6,8 @@ Sleuthgrids = (function(Sleuthgrids)
 
 
 
+
+
 	Sleuthgrids.updateArrayIndex = function(arr)
 	{
 		for (var i = 0; i < arr.length; i++)
@@ -14,6 +16,39 @@ Sleuthgrids = (function(Sleuthgrids)
 		}
 	}
 	
+	
+	Sleuthgrids.makeSearchMap = function(positions)
+	{
+		var searchMap = {};
+		searchMap.left = [["left", "bottom"], ["left", "top"]];
+		searchMap.top = [["left", "top"], ["right", "top"]];
+		searchMap.right = [["right", "top"], ["right", "bottom"]];
+		searchMap.bottom = [["right", "bottom"], ["left", "bottom"]];
+		
+		var map = {};
+		
+		for (searchDirection in searchMap)
+		{
+			searchDirectionLine = searchMap[searchDirection];
+			map[searchDirection] = [];
+			
+			for (var i = 0; i < searchDirectionLine.length; i++)
+			{
+				var coords = [];
+				var searchDirectionPoint = searchDirectionLine[i];
+				
+				for (var j = 0; j < searchDirectionPoint.length; j++)
+				{
+					var searchDirectionCoord = searchDirectionPoint[j];
+					coords.push(positions[searchDirectionCoord]);
+				}
+				
+				map[searchDirection].push(coords);
+			}
+		}
+		
+		return map;
+	}
 	
 	
 	Sleuthgrids.invertDirection = function(direction)

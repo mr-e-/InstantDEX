@@ -65,6 +65,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		if (Sleuthgrids.isGridTrig)
 		{
 			Sleuthgrids.isGridTrig = false;
+			Sleuthgrids.triggeredCell = null;
 			$tileAdd.removeClass("active");
 			$(".main-grid-arrow").removeClass("active");
 			$(".tile-arrow-wrap").removeClass("active");

@@ -17,7 +17,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	
 	Sleuthgrids.isGridTrig = false;
-	Sleuthgrids.triggeredGrid = null;
+	Sleuthgrids.triggeredCell = null;
 	Sleuthgrids.isTriggeredNew = false;
 	Sleuthgrids.triggeredType = "";
 	
@@ -152,12 +152,12 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		makeTile: function(arrowDirections, newTilePositions)
+		makeTile: function(arrowDirections, newTilePositions, tile)
 		{
-
 			var grid = this;
 			var isTriggeredNew = Sleuthgrids.isTriggeredNew;
 
+			//console.log(isTriggeredNew);
 			
 			if (isTriggeredNew)
 			{
@@ -182,7 +182,120 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			else
 			{
-				var triggeredGrid = Sleuthgrids.triggeredGrid;
+				var triggeredCell = Sleuthgrids.triggeredCell;
+				var triggeredTile = triggeredCell.tile;
+				var $triggeredTile = triggeredTile.tileDOM;
+				var cellIndex = triggeredCell.index;
+				var triggeredTileNavCell = triggeredTile.navCells[cellIndex];
+				
+				var numCells = triggeredTile.cells.length;
+				//console.log(numCells);
+				
+				if (numCells == 1)
+				{
+					triggeredTile.closeTileResizer();
+				}
+				
+				if (!arrowDirections.isMiddle)
+				{
+					var $prev = $mainGrid.find(".preview-tile");
+					newTilePositions = Sleuthgrids.getPositions($prev, true);
+				}
+				
+				if (numCells == 1 && !arrowDirections.isMiddle)
+				{
+					$triggeredTile.css("height", newTilePositions.height);
+					$triggeredTile.css("width", newTilePositions.width);
+					$triggeredTile.css("top", newTilePositions.top);
+					$triggeredTile.css("left", newTilePositions.left);
+					$triggeredTile.attr("data-arrow", arrowDirections.direction);	
+				}
+				
+				if (numCells > 1)
+				{
+					triggeredTile.navCells.splice(cellIndex, 1);
+					Sleuthgrids.updateArrayIndex(triggeredTile.navCells);
+					
+					triggeredTile.cells.splice(cellIndex, 1);
+					Sleuthgrids.updateArrayIndex(triggeredTile.cells);
+				}
+				
+				if (numCells > 1 && !arrowDirections.isMiddle)
+				{
+					var $newTile = $($("#tile_template").html())
+
+					$newTile.css("height", newTilePositions.height);
+					$newTile.css("width", newTilePositions.width);
+					$newTile.css("top", newTilePositions.top);
+					$newTile.css("left", newTilePositions.left);
+					$newTile.attr("data-arrow", arrowDirections.direction);
+					
+					var newTile = new Sleuthgrids.Tile(grid, $newTile);
+					newTile.index = grid.tiles.length;
+					grid.tiles.push(newTile);
+					Sleuthgrids.updateArrayIndex(grid.tiles);
+					grid.gridDOM.append($newTile);
+					
+					triggeredCell.tile = newTile;
+					newTile.cells.push(triggeredCell);
+					triggeredCell.cellDOM.appendTo($newTile.find(".tile-cells"))
+					
+					triggeredTileNavCell.tile = newTile;
+					newTile.navCells.push(triggeredTileNavCell);
+					triggeredTileNavCell.tileNavCellDOM.appendTo(newTile.tileHeaderDOM)
+					
+					Sleuthgrids.updateArrayIndex(newTile.cells);
+					Sleuthgrids.updateArrayIndex(newTile.navCells);
+
+					triggeredTileNavCell.unbindEventListeners();
+					triggeredTileNavCell.initEventListeners();
+					
+					var tempIndex = cellIndex - 1 > 0 ? cellIndex - 1 : 0;
+					triggeredTile.navCells[tempIndex].changeCellTabs();	
+				
+				}
+				
+
+				if (arrowDirections.isMiddle)
+				{
+					var $tile = tile.tileDOM;
+					
+					triggeredCell.tile = tile;
+					tile.cells.push(triggeredCell);
+					triggeredCell.cellDOM.appendTo($tile.find(".tile-cells"))
+					
+					triggeredTileNavCell.tile = tile;
+					tile.navCells.push(triggeredTileNavCell);
+					triggeredTileNavCell.tileNavCellDOM.appendTo(tile.tileHeaderDOM)
+					
+					triggeredTileNavCell.unbindEventListeners();
+					triggeredTileNavCell.initEventListeners();
+
+					Sleuthgrids.updateArrayIndex(tile.cells);
+					Sleuthgrids.updateArrayIndex(tile.navCells);
+
+					tile.toggleHeaderTabbed(true);
+
+					triggeredTileNavCell.changeCellTabs();
+					
+				}
+				
+				if (numCells == 1 && arrowDirections.isMiddle)
+				{
+					grid.tiles.splice(triggeredTile.index, 1);
+					Sleuthgrids.updateArrayIndex(grid.tiles);
+					triggeredTile.tileDOM.remove();
+				}
+				
+				if (numCells == 2)
+				{
+					triggeredTile.toggleHeaderTabbed(false);
+				}
+				if (numCells > 1)
+				{
+					var tempIndex = cellIndex - 1 > 0 ? cellIndex - 1 : 0;
+					triggeredTile.navCells[tempIndex].changeCellTabs();	
+				}
 				
 			}
 		
