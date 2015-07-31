@@ -243,12 +243,14 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellHandlers = Sleuthgrids.cellHandlers;
 			var handler = cellHandlers[cellType];
 			
-			
-			if (Sleuthgrids.isTriggeredNew)
+			if (handler)
 			{
-				if ("new" in handler)
+				if (Sleuthgrids.isTriggeredNew)
 				{
-					handler.new(cell);
+					if (handler && "new" in handler)
+					{
+						handler.new(cell);
+					}
 				}
 			}
 		},
@@ -264,9 +266,12 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellHandlers = Sleuthgrids.cellHandlers;
 			var handler = cellHandlers[cellType];
 			
-			if ("remove" in handler)
+			if (handler)
 			{
-				handler.remove(cell);
+				if ("remove" in handler)
+				{
+					handler.remove(cell);
+				}
 			}
 			
 			$cell.remove();
@@ -282,9 +287,12 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellHandlers = Sleuthgrids.cellHandlers;
 			var handler = cellHandlers[cellType];
 			
-			if ("resize" in handler)
+			if (handler)
 			{
-				handler.resize(cell);
+				if ("resize" in handler)
+				{
+					handler.resize(cell);
+				}
 			}
 			
 		},
