@@ -515,46 +515,33 @@
 						</div>
 					</div>
 					
-					
-					
-					
+
 				</div>
 			</div>
 			
 				
-			<div id="grid_template" class="template">
-				<div class="grid">
-					<div class="grid-arrow-wrap">
-						<div id="grid_arrow_left" class="grid-arrow" data-arrow="left">
-							<img src="img/trileft.png"></img>
-						</div>
-						<div id="grid_arrow_right" class="grid-arrow" data-arrow="right">
-							<img src="img/triright.png"></img>
-						</div>
-						<div id="grid_arrow_top" class="grid-arrow" data-arrow="top">
-							<img src="img/triup.png"></img>
-						</div>
-						<div id="grid_arrow_bottom" class="grid-arrow" data-arrow="bottom">
-							<img src="img/tridown.png"></img>
-						</div>
-						<div id="grid_arrow_middle" class="grid-arrow" data-arrow="middle">
-						</div>
-					</div>
-				</div>
-			</div>
-			
-			
 			<div id="tile_template" class="template">
 				<div class="tile">
-				
-					<div class="tile-header">
+					<div class="tile-arrow-wrap">
+						<div id="tile_arrow_left" class="tile-arrow" data-arrow="left">
+							<img src="img/trileft.png"></img>
+						</div>
+						<div id="tile_arrow_right" class="tile-arrow" data-arrow="right">
+							<img src="img/triright.png"></img>
+						</div>
+						<div id="tile_arrow_top" class="tile-arrow" data-arrow="top">
+							<img src="img/triup.png"></img>
+						</div>
+						<div id="tile_arrow_bottom" class="tile-arrow" data-arrow="bottom">
+							<img src="img/tridown.png"></img>
+						</div>
+						<div id="tile_arrow_middle" class="tile-arrow" data-arrow="middle">
+						</div>
+					</div>
 					
+					<div class="tile-header tile-nav">
 						<div class="tile-header-title-wrap">
 							<span class="tile-header-title vert-align"></span>
-						</div>
-						
-						<div class="tile-header-link">
-							
 						</div>
 						
 						<div class="tile-header-icons">
@@ -563,8 +550,8 @@
 							</div>
 						</div>
 					</div>
-	
-					<div class="tile-content">
+					
+					<div class="tile-cells">
 					
 					</div>
 					
@@ -572,7 +559,30 @@
 			</div>
 			
 			
-			<div id="tile_header_template" class="template">
+			<div id="cell_template" class="template">
+				<div class="cell">
+					
+				</div>
+			</div>
+			
+			
+			<div id="tile_header_solo_template" class="template">
+			
+				<div class="tile-header-title-wrap">
+					<span class="tile-header-title vert-align"></span>
+				</div>
+				
+				<div class="tile-header-icons">
+					<div class="tile-header-ico">
+						<img class="tile-header-close vert-align" src="img/close.png"></img>
+					</div>
+				</div>
+				
+			</div>
+			
+			
+			<div id="tile_header_nav_template" class="template">
+			
 				<div class="tile-header-tab" data-tab="1">
 					<div class="tile-header-title-wrap">
 						<span class="tile-header-title vert-align"></span>
@@ -583,9 +593,12 @@
 						</div>
 					</div>
 				</div>
+				
 			</div>
 			
+			
 			<div id="preview_tile_template" class="template">
+			
 				<div class="preview-tile grid">
 				
 					<div class="preview-tile-header">
@@ -596,6 +609,7 @@
 					</div>
 					
 				</div>
+				
 			</div>
 			
 			
@@ -734,6 +748,58 @@
 				
 			<!------------------------- END CHART ----------------------------->
 			
+			
+			
+			<div id="chartTableTemplate" class="template">										
+
+				<table class="chart-table">
+					<tbody>
+						<tr>
+							<td>Chart Type</td>
+							<td>
+								<ul class="mm-chart-config mm-chart-charttype" data-config="charttype">
+									<li class="active" data-val="candlestick">Candlestick</li>
+									<li data-val="ohlc">OHLC</li>
+									<li data-val="line">Line</li>
+									<li data-val="area">Area</li>
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>Indicator</td>
+							<td>
+								<ul class="mm-chart-config mm-chart-indicator" data-config="indicator">
+									<li class="active" data-val="ema">EMA</li>
+									<li data-val="sma">SMA</li>
+									<li data-val="bollin">BBands</li>
+									<li data-val="none">None</li>
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>Time Scale</td>
+							<td>
+								<ul class="mm-chart-config mm-chart-timescale" data-config="timescale">
+									<li class="active" data-val="linear">Linear</li>
+									<li data-val="logarithmic">Logarithmic</li>
+								</ul>
+							</td>
+						</tr>
+						<tr>
+							<td>Depth</td>
+							<td>
+								<ul class="mm-chart-config mm-chart-depth" data-config="depth">
+									<li data-val="0.00">0%</li>
+									<li data-val="0.01">1%</li>
+									<li data-val="0.02">2%</li>
+									<li data-val="0.05">5%</li>
+									<li class="active" data-val="0.10">10%</li>
+								</ul>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
 				
 
 			<!------------------------- START ORDERBOOK WRAP----------------------------->
@@ -1194,58 +1260,6 @@
 			
 		</div>
 		
-		
-		
-		<div id="chartTableTemplate" class="template">										
-
-			<table class="chart-table">
-				<tbody>
-					<tr>
-						<td>Chart Type</td>
-						<td>
-							<ul class="mm-chart-config mm-chart-charttype" data-config="charttype">
-								<li class="active" data-val="candlestick">Candlestick</li>
-								<li data-val="ohlc">OHLC</li>
-								<li data-val="line">Line</li>
-								<li data-val="area">Area</li>
-							</ul>
-						</td>
-					</tr>
-					<tr>
-						<td>Indicator</td>
-						<td>
-							<ul class="mm-chart-config mm-chart-indicator" data-config="indicator">
-								<li class="active" data-val="ema">EMA</li>
-								<li data-val="sma">SMA</li>
-								<li data-val="bollin">BBands</li>
-								<li data-val="none">None</li>
-							</ul>
-						</td>
-					</tr>
-					<tr>
-						<td>Time Scale</td>
-						<td>
-							<ul class="mm-chart-config mm-chart-timescale" data-config="timescale">
-								<li class="active" data-val="linear">Linear</li>
-								<li data-val="logarithmic">Logarithmic</li>
-							</ul>
-						</td>
-					</tr>
-					<tr>
-						<td>Depth</td>
-						<td>
-							<ul class="mm-chart-config mm-chart-depth" data-config="depth">
-								<li data-val="0.00">0%</li>
-								<li data-val="0.01">1%</li>
-								<li data-val="0.02">2%</li>
-								<li data-val="0.05">5%</li>
-								<li class="active" data-val="0.10">10%</li>
-							</ul>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
 
 
 		
@@ -1299,29 +1313,27 @@
 	<script src="js/idex.orderbook.updateorders.js" type="text/javascript"></script>
 	<script src="js/idex.orderbook.labels.js" type="text/javascript"></script>
 	
-	<script src="js/idex.grid.js" type="text/javascript"></script>
-	<script src="js/idex.grid.binds.js" type="text/javascript"></script>
-	<script src="js/idex.grid.close.js" type="text/javascript"></script>
-	<script src="js/idex.grid.gridTypes.js" type="text/javascript"></script>
-	<script src="js/idex.grid.mainArrows.js" type="text/javascript"></script>
-	<script src="js/idex.grid.newGrid.js" type="text/javascript"></script>
-	<script src="js/idex.grid.resize.js" type="text/javascript"></script>
-	<script src="js/idex.grid.subArrows.js" type="text/javascript"></script>
-	<script src="js/idex.grid.utils.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.binds.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.cell.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.tile.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.utils.js" type="text/javascript"></script>
+
+	<script src="js/idex.grid.cellHandlers.js" type="text/javascript"></script>
 
 	
 	<!--<script src="js/chart/highstock.src.js" type="text/javascript"></script>-->
-	<script src="js/chart/d3.min.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.utils.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.axis.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.data.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.drawing.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.indicators.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.eventHandler.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.points.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.render.js" type="text/javascript"></script>
-	<script src="js/chart/sleuthcharts.series.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/d3.min.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.utils.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.axis.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.data.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.drawing.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.indicators.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.eventHandler.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.points.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.render.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.series.js" type="text/javascript"></script>
 	
 	<script src="js/idex.chart.js" type="text/javascript"></script>
 

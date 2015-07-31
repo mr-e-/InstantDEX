@@ -1,32 +1,39 @@
 
 
 
-var IDEX = (function(IDEX, $, undefined) 
+Sleuthgrids = (function(Sleuthgrids) 
 {
-	
-	
-	var $mainGrid = $("#main_grid");
-	var $tileAdd = $("#tile_add");
-	var $contentWrap = $("#content_wrap");
-	
-	
-	$(".mainHeader-grid-ico-wrap").each(function()
+
+
+
+	Sleuthgrids.updateArrayIndex = function(arr)
 	{
-		var gridType = $(this).attr("data-grid");
-		var content = $("<div style='padding:3px 17px;font-size:12px;'><span>" + IDEX.capitalizeFirstLetter(gridType) + "</span></div>")
+		for (var i = 0; i < arr.length; i++)
+		{			
+			arr[i].index = i;
+		}
+	}
+	
+	
+	
+	Sleuthgrids.invertDirection = function(direction)
+	{
+		var dirMap = 
+		{
+			left: "right",
+			right: "left",
+			top: "bottom",
+			bottom: "top"
+		};
 		
-		$(this).tooltipster({
-			content:content,
-			arrow:false,
-			offsetY:-15,
-			delay:130,
-			speed:200,
-			//autoClose:false
-		})
-	})
+		
+		var invertedDirection = dirMap[direction];
+		
+		return invertedDirection;
+	}
 	
 	
-	IDEX.getArrowDirections = function($arrow)
+	Sleuthgrids.getArrowDirections = function($arrow)
 	{
 		var arrowDirections = {};
 		var direction = $arrow.attr("data-arrow");
@@ -41,12 +48,14 @@ var IDEX = (function(IDEX, $, undefined)
 		arrowDirections.isHoriz = (direction == "left" || direction == "right");
 		arrowDirections.isVert = (direction == "top" || direction == "bottom");
 		
+		arrowDirections.isTab = false;
+		
 		return arrowDirections;
 	}
 	
 	
 	
-	IDEX.checkIfMouseIsInsideBorder = function(mouseY, mouseX, pos)
+	Sleuthgrids.checkIfMouseIsInsideBorder = function(mouseY, mouseX, pos)
 	{
 		var isInsideBorder = {};
 		var borderWidth = 4;
@@ -74,7 +83,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.getPositions = function($el, isAbs)
+	Sleuthgrids.getPositions = function($el, isAbs)
 	{
 		var positions = {};
 
@@ -96,11 +105,33 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	Sleuthgrids.capitalizeFirstLetter = function(string) 
+	{
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
 	
 	
-	return IDEX;
+	Sleuthgrids.cloneListOfObjects = function(listObj)
+	{
+		var len = listObj.length;
+		var clone = [];
+		
+		for (var i = 0; i < len; i++)
+		{
+			clone.push($.extend(true, {}, listObj[i]));
+		}
+		
+		return clone;
+	}
+	
+
+
+	return Sleuthgrids;
 	
 	
-}(IDEX || {}, jQuery));
+}(Sleuthgrids || {}));
+
+
 
 	
