@@ -11,6 +11,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			new: newChart,
 			update: updateChart,
+			resize: resizeChart,
 			remove: removeChart
 		},
 		
@@ -51,6 +52,25 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		//var $svgEl = $grid.find(".chart-wrap svg");
 		//var chart = $svgEl.sleuthcharts();
+	}
+	
+	function resizeChart(cell)
+	{
+		var $svgEl = cell.cellDOM.find(".chart-wrap svg");
+		var chart = $svgEl.sleuthcharts();
+		
+		
+		var $chartNode = chart.node;
+		var isVisible = $chartNode.is(":visible")
+
+		if (!isVisible)
+		{
+			chart.needsResize = true;
+		}
+		else
+		{
+			chart.redraw();
+		}
 	}
 	
 	

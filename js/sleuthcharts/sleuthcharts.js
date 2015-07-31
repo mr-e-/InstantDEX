@@ -90,6 +90,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.isCrosshair = true;
 			chart.prevIndex = -2;
 			chart.needsResize = false;
+			chart.hasRenderedOnce = false;
 			
 			
 			chart.DOMEventHandler;
@@ -157,7 +158,8 @@ Sleuthcharts = (function(Sleuthcharts)
 					chart.updateAxisTicks();
 					chart.drawAxisLines();
 					
-					chart.toggleLoading(false);	
+					chart.hasRenderedOnce = true;
+					chart.toggleLoading(false);
 
 					
 					//highLowPrice(chart);
@@ -200,15 +202,12 @@ Sleuthcharts = (function(Sleuthcharts)
 				tempSeries.getPointPositions();
 				
 				chart.equalizeYAxisWidth();
+				
 				chart.resizeAxis();
 				chart.updateAxisPos();
-				
-
 				tempSeries.setDefaultMarketDataRange();
 				tempSeries.getPointPositions();
-				
-				//chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
-				
+								
 				
 				for (var i = 0; i < chart.series.length; i++)
 				{
@@ -226,6 +225,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				dfd.resolve();
 				
 				//highLowPrice(chart);
+				
 			}).fail(function()
 			{
 				chart.editLoading("Error loading market " + marketHandler.marketSettings.pairName);
@@ -241,28 +241,57 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var chart = this;
 			
-			var tempSeries = chart.series[0];
-
-			chart.setContainerSize();
-			chart.resizeAxis();
-			chart.updateAxisPos();
-			tempSeries.getPointPositions();
-			
-			chart.equalizeYAxisWidth();
-			
-			chart.resizeAxis();
-			chart.updateAxisPos();
-			tempSeries.getPointPositions();
-			
-			
-			for (var i = 0; i < chart.series.length; i++)
+			if (chart.hasRenderedOnce)
 			{
-				var series = chart.series[i];
-				series.drawPoints();
+				var tempSeries = chart.series[0];
+
+				chart.setContainerSize();
+				
+				chart.resizeAxis();
+				chart.updateAxisPos();
+				chart.recalcPointWidth(); //hack
+				tempSeries.getPointPositions();
+				
+				chart.equalizeYAxisWidth();
+				
+				chart.resizeAxis();
+				chart.updateAxisPos();
+				chart.recalcPointWidth(); //hack
+				tempSeries.getPointPositions();
+				
+				
+				for (var i = 0; i < chart.series.length; i++)
+				{
+					var series = chart.series[i];
+					series.drawPoints();
+				}
+				
+				chart.updateAxisTicks();
+				chart.drawAxisLines();
 			}
+		},
+		
+		
+		
+		recalcPointWidth: function()
+		{
+			var chart = this;
+			var series = chart.series[0];
+			var xAxis = chart.xAxis[0];
+			var marketHandler = chart.marketHandler;
 			
-			chart.updateAxisTicks();
-			chart.drawAxisLines();
+			//var allPhases = marketHandler.marketData.ohlc;
+			var startIndex = xAxis.minIndex;
+			var endIndex = xAxis.maxIndex;
+			//var visiblePhases = allPhases.slice(startIndex);
+			var visiblePhases = chart.visiblePhases;
+
+			
+			if (series.calcPointWidth(visiblePhases))
+			{
+				chart.visiblePhases = visiblePhases;
+				series.updateAxisMinMax(startIndex, endIndex);
+			}
 		},
 		
 		

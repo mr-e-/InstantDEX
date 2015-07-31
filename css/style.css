@@ -909,6 +909,25 @@ table.dataTable thead th:last-child {
 	padding:1px;
 }
 
+.tile-overlay {
+	height: calc(100% - 6px);
+	width: calc(100% - 10px);
+	position: absolute;
+	display:none;
+	
+
+	border-radius:4px;
+	overflow:hidden;
+	padding:1px;
+	background-color:#333333;
+	z-index:105;
+}
+
+.tile-overlay.active {
+	display: block;
+}
+
+
 .tile-header {
 	height:20px;
 	width:100%;
@@ -1004,10 +1023,6 @@ table.dataTable thead th:last-child {
 .tile-header-close:hover {
 	cursor:pointer;
 }
-
-
-
-
 
 
 
@@ -2188,7 +2203,7 @@ table.dataTable thead th:last-child {
 	z-index:2000;
 	left:50%;
 	top:50%;
-	transform:translateX(-50%) translateY(-50%) translate3d(0.5px, 0.5px, 0);
+	transform:translateX(-50%) translateY(-50%);
 }
 
 .popup.active {

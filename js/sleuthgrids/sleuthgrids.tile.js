@@ -72,7 +72,6 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			if (e && $(e.target).hasClass("tile-header-close"))
 			{
-				console.log('has');
 				return;
 			}
 			
@@ -135,6 +134,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			tile.tileDOM = $tile;
 			tile.tileArrowWrapDOM = tile.tileDOM.find(".tile-arrow-wrap");
 			tile.tileHeaderDOM = tile.tileDOM.find(".tile-header");
+			tile.tileOverlayDOM = tile.tileDOM.find(".tile-overlay");
 			tile.index = -1;
 			
 			
@@ -384,6 +384,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var tile = this;
 			var $tileDOM = tile.tileDOM;
+			var grid = tile.grid;
 			
 			var mouseY = e.clientY
 			var mouseX = e.clientX
@@ -401,7 +402,39 @@ Sleuthgrids = (function(Sleuthgrids)
 				Sleuthgrids.resizeDir = isInsideBorder.direction;
 				Sleuthgrids.isResizing = true;
 				Sleuthgrids.resizeTile = tile;
+				grid.toggleTileResizeOverlay(true);	
 			}
+		},
+		
+		
+		toggleTileOverlay: function(isVisible)
+		{
+			var tile = this;
+			var $tileOverlay = tile.tileOverlayDOM;
+			
+			if (isVisible)
+			{
+				$tileOverlay.addClass("active");
+			}
+			else
+			{
+				$tileOverlay.removeClass("active");
+			}
+		},
+		
+		
+		resizeCells: function()
+		{
+			var tile = this;
+			var cells = tile.cells;
+			
+			for (var i = 0; i < cells.length; i++)
+			{
+				var cell = cells[i];
+				
+				cell.resizeCell();
+			}
+			
 		},
 		
 		

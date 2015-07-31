@@ -54,7 +54,10 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			if (Sleuthgrids.isTriggeredNew)
 			{
-				handler.new(cell);
+				if ("new" in handler)
+				{
+					handler.new(cell);
+				}
 			}
 		},
 		
@@ -75,6 +78,23 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			
 			$cell.remove();
+		},
+		
+		
+		
+		resizeCell: function()
+		{
+			var cell = this;
+			var cellType = cell.cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = cellHandlers[cellType];
+			
+			if ("resize" in handler)
+			{
+				handler.resize(cell);
+			}
+			
 		},
 		
 		

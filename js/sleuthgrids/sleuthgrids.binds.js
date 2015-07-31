@@ -71,9 +71,24 @@ Sleuthgrids = (function(Sleuthgrids)
 			$(".grid-trig").removeClass("mousedown");
 		}
 		
+		if (Sleuthgrids.isResizing)
+		{
+			var allGrids = Sleuthgrids.allGrids;
+			
+			for (var i = 0; i < allGrids.length; i++)
+			{
+				var grid = allGrids[i];
+				grid.toggleTileResizeOverlay(false);
+				grid.resizeTileCells();
+				//grid.resizeTiles();
+			}
+		}
+		
 		Sleuthgrids.isResizing = false;
 		Sleuthgrids.resizeTile = null;
 		Sleuthgrids.resizeDir = "";
+		
+
 	})
 
 

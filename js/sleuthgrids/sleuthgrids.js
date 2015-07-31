@@ -185,8 +185,36 @@ Sleuthgrids = (function(Sleuthgrids)
 				var triggeredGrid = Sleuthgrids.triggeredGrid;
 				
 			}
+		
+			grid.resizeTileCells();
+		},
+		
+		
+		toggleTileResizeOverlay: function(isResizing)
+		{
+			var grid = this;
+			var tiles = grid.tiles;
+			
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				tile.toggleTileOverlay(isResizing);
+			}
 		},
 
+		
+		
+		resizeTileCells: function()
+		{
+			var grid = this;
+			var tiles = grid.tiles;
+			
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				tile.resizeCells();
+			}
+		},
 		
 	
 		mouseover: function($arrow)
@@ -611,13 +639,13 @@ Sleuthgrids = (function(Sleuthgrids)
 						runningSize += results[j][0].el.pos[sizeKey];
 					}
 										
-					if (runningSize == size)
+					if (runningSize == size || Math.abs(runningSize - size) < 0.5)
 					{
 						break;
 					}
 					else
 					{
-						//console.log([size, runningSize])
+						console.log([size, runningSize])
 						results = [];
 					}
 				}
