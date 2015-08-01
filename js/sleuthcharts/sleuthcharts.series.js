@@ -126,6 +126,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var endIndex = allPhases.length - 1;
 			
 			var range = xAxis.range;
+			//range = 500;
 			var minRange = xAxis.minRange
 			
 			if (allPhasesLength > range)
@@ -213,6 +214,11 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			var allPoints = []
 			
+			
+			//var marketHandler = chart.marketHandler;
+			//var phases = marketHandler.marketData.ohlc;
+			//var phasesLength = phases.length;
+			
 			//var a = Date.now()
 			for (var i = 0; i < phasesLength; i++)
 			{
@@ -293,7 +299,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			$pointsDom.empty();
 
-	
+			var ctx = chart.ctx;
+
+			var dn = Date.now()
+
 			for (var i = 0; i < allPointsLength; i++)
 			{
 				var point = allPoints[i];
@@ -325,7 +334,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					topBody -= 0.5;
 				}
 				
-				var d = 
+				/*var d = 
 				[
 					"M", pos.left, topBody, 
 					"L", pos.left, bottomBody, 
@@ -339,17 +348,37 @@ Sleuthcharts = (function(Sleuthcharts)
 				]
 				
 
+				
 				var a = d3PointsDom
-				//.selectAll("path")
-				//.data(allPoints)
-				//.enter()
 				.append("path")
 				.attr("d", d.join(" "))
 				.attr("fill", fillColor)
 				.attr("stroke", strokeColor)
 				.attr("stroke-width", 1)
-				.attr('shape-rendering', "crispEdges")
+				.attr('shape-rendering', "crispEdges")*/
+
+				
+				ctx.beginPath();
+				//ctx.translate(0.5, 0.5);
+				ctx.lineWidth = 1;
+				ctx.strokeStyle = strokeColor;
+				ctx.fillStyle = fillColor;
+				ctx.moveTo(pos.left, topBody);
+				ctx.lineTo(pos.left, bottomBody);
+				ctx.lineTo(pos.right, bottomBody);
+				ctx.lineTo(pos.right, topBody);
+				ctx.closePath();
+				ctx.fill();
+				ctx.moveTo(pos.middle, bottomBody);
+				ctx.lineTo(pos.middle, pos.bottomLeg);
+				ctx.moveTo(pos.middle, topBody);
+				ctx.lineTo(pos.middle, pos.topLeg);
+
+				ctx.stroke();
 			}
+			
+			//console.log(Date.now() - dn)
+			//console.log(a)
 
 			
 		},
@@ -360,7 +389,7 @@ Sleuthcharts = (function(Sleuthcharts)
 	Sleuthcharts.seriesTypes.ohlc = Sleuthcharts.extendClass(Series, 
 	{
 		seriesType: "ohlc",
-	
+
 	
 		drawPoints:function()
 		{
@@ -380,6 +409,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			
 			$pointsDom.empty();
+
+			
 
 	
 			for (var i = 0; i < allPointsLength; i++)
@@ -427,7 +458,11 @@ Sleuthcharts = (function(Sleuthcharts)
 				.attr("stroke", strokeColor)
 				.attr("stroke-width", 1)
 				.attr('shape-rendering', "crispEdges")
+				
+
 			}
+			
+
 			
 		},
 	
@@ -447,6 +482,8 @@ Sleuthcharts = (function(Sleuthcharts)
 	
 		drawPoints:function()
 		{
+			var dn = Date.now()
+
 			var series = this;
 			
 			var $pointsDom = series.pointsDom;
@@ -462,7 +499,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			var pointWidth = xAxis.pointWidth;
 			
-			
+			var ctx = chart.ctx;
 			$pointsDom.empty();
 
 			
@@ -489,7 +526,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					"Z", 
 				]*/
 
-				d3PointsDom
+				/*d3PointsDom
 				.append("rect")
 				.attr("x", pos.left + 1)
 				.attr("y", volTop - 2)
@@ -498,8 +535,22 @@ Sleuthcharts = (function(Sleuthcharts)
 				.attr("fill", fillColor)
 				.attr("stroke", strokeColor)
 				.attr("stroke-width", 1)
-				.attr('shape-rendering', "crispEdges")
+				.attr('shape-rendering', "crispEdges")*/
+				
+				ctx.beginPath();
+				ctx.strokeStyle = strokeColor;
+				ctx.fillStyle = fillColor;
+				ctx.moveTo(pos.left, volTop);
+				ctx.lineTo(pos.left, yAxis.pos.bottom);
+				ctx.lineTo(pos.right, yAxis.pos.bottom);
+				ctx.lineTo(pos.right, volTop);
+				ctx.closePath();
+				ctx.fill();
+				ctx.stroke();
 			}
+			
+			//console.log(Date.now() - dn)
+
 		},
 	
 	})

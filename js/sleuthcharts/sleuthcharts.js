@@ -80,6 +80,21 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			chart.node = chart.userOptions.chart.node;
 			
+			var canvas = document.createElement('canvas');
+			canvas.width = chart.node.parent().width();
+			canvas.height = chart.node.parent().height();
+			canvas.style.position = "absolute";
+			canvas.style.top = "0";
+			canvas.style.left = 0;
+			
+			chart.node.parent().append(canvas);
+
+			chart.canvas = canvas;
+			chart.canvasJQ = $(canvas);
+			chart.ctx = canvas.getContext("2d");
+			chart.ctx.translate(0.5, 0.5);
+
+			
 			chart.allPoints = [];
 			chart.visiblePhases = [];
 			chart.DOMPosition = {};
@@ -188,7 +203,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			//chart.emptyChart();
 			//chart.unbindEventListeners();	//$("#"+node).unbind();
 
-			
+			chart.ctx.clearRect(0, 0, chart.canvas.width, chart.canvas.height);
+
 			marketHandler.getMarketData().done(function()
 			{
 				var tempSeries = chart.series[0];
@@ -241,6 +257,8 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var chart = this;
 			
+			chart.ctx.clearRect(0, 0, chart.canvas.width, chart.canvas.height);
+
 			if (chart.hasRenderedOnce)
 			{
 				var tempSeries = chart.series[0];
@@ -269,6 +287,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				chart.updateAxisTicks();
 				chart.drawAxisLines();
 			}
+			
 		},
 		
 		
@@ -455,6 +474,9 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			chart.plotHeight = chart.plotBottom - chart.plotTop;
 			chart.plotWidth = chart.plotRight - chart.plotLeft;
+			
+			chart.canvas.width = chart.node.parent().width();
+			chart.canvas.height = chart.node.parent().height();
 		},
 		
 		

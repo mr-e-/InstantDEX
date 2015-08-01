@@ -1,5 +1,10 @@
 
 
+$("#content_wrap").on("click", ".chart-tools-crosshair", function()
+{	
+
+})
+
 
 Sleuthcharts = (function(Sleuthcharts) 
 {
@@ -26,6 +31,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var DOMEventHandler = this;
 			var chart = DOMEventHandler.chart;
 			var $chartEl = chart.node;
+			$chartEl = chart.canvasJQ;
 			
 	
 			$chartEl.on('mousewheel DOMMouseScroll', function(e)
