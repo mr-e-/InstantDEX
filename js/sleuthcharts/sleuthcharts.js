@@ -262,7 +262,9 @@ Sleuthcharts = (function(Sleuthcharts)
 			if (chart.hasRenderedOnce)
 			{
 				var tempSeries = chart.series[0];
-
+				
+				//console.log(chart.xAxis[0].series[0].seriesType);
+				//console.log(chart);
 				chart.setContainerSize();
 				
 				chart.resizeAxis();

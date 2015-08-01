@@ -141,9 +141,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 			else if (configType == "charttype")
 			{
-				chart.userOptions.series[0].seriesType = newSettings.configVal;
-				
-				chart.initSeries();
+				var opt = chart.userOptions.series[0];
+				opt.seriesType = newSettings.configVal;
+				opt.index = 0;
+				var seriesType = opt.seriesType;
+				var seriesClass = Sleuthcharts.seriesTypes[seriesType];
+				var series = new seriesClass();
+				series.init(chart, opt);
+				chart.series[0] = series;
 				chart.redraw();
 			}
 			else if (configType == "depth")

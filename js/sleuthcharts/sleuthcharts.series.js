@@ -40,27 +40,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			series.padding = new Sleuthcharts.Padding();
 			series.padding = Sleuthcharts.extend(series.padding, userOptions.padding);
 			
-			if (this.seriesType == "candlestick")
-			{
-				series.pointsDom = chart.node.find(".boxes");
-			}
-			else if (this.seriesType == "ohlc")
-			{
-				series.pointsDom = chart.node.find(".boxes");
-			}
-			else if (this.seriesType == "column")
-			{
-				series.pointsDom = chart.node.find(".volbars");
-			}
-			else if (this.seriesType == "line")
-			{
-				series.pointsDom = chart.node.find(".mainline");
-			}
-			else if (this.seriesType == "area")
-			{
-				series.pointsDom = chart.node.find(".mainline");
-			}
-			
 		},
 		
 		initAxis: function()
@@ -219,7 +198,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			//var phases = marketHandler.marketData.ohlc;
 			//var phasesLength = phases.length;
 			
-			//var a = Date.now()
 			for (var i = 0; i < phasesLength; i++)
 			{
 				var phase = phases[i];
@@ -245,7 +223,6 @@ Sleuthcharts = (function(Sleuthcharts)
 				bottomBody += 0.5;
 				bottomLeg += 0.5;
 				
-				//console.log(String(left) + " " + String(right) + " " + String(middle))
 				
 				var positions = {};
 				positions.left = left;
@@ -265,6 +242,83 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		drawCanvasPath: function(ctx, d, style)
+		{
+			var strokeColor = style.strokeColor;
+			var fillColor = style.fillColor;
+			var lineWidth = 1;
+			
+			var pathKeys = 
+			{
+				M: "moveTo", 
+				L: "lineTo",
+				C: "bezierCurveTo",
+				Z: "closePath"
+			};
+			
+			var all = [];
+			var obj = {};
+			
+			for (var i = 0; i < d.length; i++)
+			{
+				var val = d[i];
+				
+				if (val in pathKeys)
+				{
+					if (i > 0)
+					{
+						all.push(obj);
+					}
+					
+					obj = {};
+					obj.vals = [];
+					obj.func = pathKeys[val];
+					obj.index = i;
+				}
+				else
+				{
+					obj.vals.push(val);
+				}
+				
+				if (i == d.length - 1)
+				{
+					all.push(obj);
+				}
+			}
+			
+			
+			ctx.beginPath();
+			ctx.lineWidth = 1;
+			ctx.strokeStyle = strokeColor;
+			ctx.fillStyle = fillColor;
+			
+			for (var i = 0; i < all.length; i++)
+			{
+				var loop = all[i];
+				var funcName = loop.func;
+				var vals = loop.vals;
+				
+				var ctxFunc = ctx[funcName];
+				
+				ctxFunc.apply(ctx, vals);
+				
+				
+				/*if (vals.length)
+				{
+					ctx[funcName](vals[0], vals[1])
+				}
+				else
+				{
+					ctx[funcName]();
+				}*/
+				
+			}
+			
+			ctx.fill();
+			ctx.stroke();
+			
+		},
+
 		
 	}
 	
@@ -284,24 +338,16 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var series = this;
 			
-			var $pointsDom = series.pointsDom;
-			var d3PointsDom = d3.select($pointsDom.get()[0])
-			
 			var chart = series.chart;
 			var xAxis = series.xAxis;
 			var yAxis = series.yAxis;
-			
+			var ctx = chart.ctx;
+
 			var allPoints = chart.allPoints;
 			var allPointsLength = allPoints.length;
 			
 			var pointWidth = xAxis.pointWidth;
 			
-			
-			$pointsDom.empty();
-
-			var ctx = chart.ctx;
-
-			var dn = Date.now()
 
 			for (var i = 0; i < allPointsLength; i++)
 			{
@@ -326,15 +372,15 @@ Sleuthcharts = (function(Sleuthcharts)
 					topBody = pos.topLeg;
 					bottomBody = pos.bottomLeg;
 				}
-				
-
+	
 				if (bottomBody - topBody < 1)
 				{
 					bottomBody += 0.5;
 					topBody -= 0.5;
 				}
 				
-				/*var d = 
+				
+				var d = 
 				[
 					"M", pos.left, topBody, 
 					"L", pos.left, bottomBody, 
@@ -345,43 +391,22 @@ Sleuthcharts = (function(Sleuthcharts)
 					"L", pos.middle, pos.bottomLeg, 
 					"M", pos.middle, topBody, 
 					"L", pos.middle, pos.topLeg
-				]
+				];
+				
+				var pathStyle = {};
+				pathStyle.strokeColor = strokeColor;
+				pathStyle.fillColor = fillColor;
+				
+				series.drawCanvasPath(ctx, d, pathStyle);
 				
 
-				
-				var a = d3PointsDom
-				.append("path")
-				.attr("d", d.join(" "))
-				.attr("fill", fillColor)
-				.attr("stroke", strokeColor)
-				.attr("stroke-width", 1)
-				.attr('shape-rendering', "crispEdges")*/
-
-				
-				ctx.beginPath();
-				//ctx.translate(0.5, 0.5);
-				ctx.lineWidth = 1;
-				ctx.strokeStyle = strokeColor;
-				ctx.fillStyle = fillColor;
-				ctx.moveTo(pos.left, topBody);
-				ctx.lineTo(pos.left, bottomBody);
-				ctx.lineTo(pos.right, bottomBody);
-				ctx.lineTo(pos.right, topBody);
-				ctx.closePath();
-				ctx.fill();
-				ctx.moveTo(pos.middle, bottomBody);
-				ctx.lineTo(pos.middle, pos.bottomLeg);
-				ctx.moveTo(pos.middle, topBody);
-				ctx.lineTo(pos.middle, pos.topLeg);
-
-				ctx.stroke();
 			}
 			
-			//console.log(Date.now() - dn)
-			//console.log(a)
-
 			
 		},
+		
+		
+		
 	
 	})
 	
@@ -395,9 +420,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var series = this;
 			
-			var $pointsDom = series.pointsDom;
-			var d3PointsDom = d3.select($pointsDom.get()[0])
-			
 			var chart = series.chart;
 			var xAxis = series.xAxis;
 			var yAxis = series.yAxis;
@@ -407,10 +429,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			var pointWidth = xAxis.pointWidth;
 			
-			
-			$pointsDom.empty();
-
-			
+			var ctx = chart.ctx;
 
 	
 			for (var i = 0; i < allPointsLength; i++)
@@ -437,8 +456,9 @@ Sleuthcharts = (function(Sleuthcharts)
 				var leftPos = (pos.left - 0.5) - (xAxis.pointPadding/2)
 				var rightPos = (pos.right + 0.5) + (xAxis.pointPadding/2)
 
-				strokeColor = "#66CCCC";
-				fillColor = "transparent"
+				var strokeColor = "#66CCCC";
+				var fillColor = "transparent";
+				
 				var d = 
 				[
 					"M", leftPos, openPos, 
@@ -449,17 +469,14 @@ Sleuthcharts = (function(Sleuthcharts)
 					"L", pos.middle, openPos, 
 					"M", rightPos, closePos, 
 					"L", pos.middle, closePos 
-				]
+				];
 				
-				var a = d3PointsDom
-				.append("path")
-				.attr("d", d.join(" "))
-				.attr("fill", fillColor)
-				.attr("stroke", strokeColor)
-				.attr("stroke-width", 1)
-				.attr('shape-rendering', "crispEdges")
+				var pathStyle = {};
+				pathStyle.strokeColor = strokeColor;
+				pathStyle.fillColor = fillColor;
 				
-
+				series.drawCanvasPath(ctx, d, pathStyle);
+				
 			}
 			
 
@@ -486,21 +503,16 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			var series = this;
 			
-			var $pointsDom = series.pointsDom;
-			var d3PointsDom = d3.select($pointsDom.get()[0])
-			
 			var chart = series.chart;
 			var xAxis = series.xAxis;
 			var yAxis = series.yAxis;
 			
-			var chartData = chart.chartData;
 			var allPoints = chart.allPoints;
 			var allPointsLength = allPoints.length;
 			
 			var pointWidth = xAxis.pointWidth;
 			
 			var ctx = chart.ctx;
-			$pointsDom.empty();
 
 			
 			for (var i = 0; i < allPointsLength; i++)
@@ -517,39 +529,22 @@ Sleuthcharts = (function(Sleuthcharts)
 				var strokeColor = closedHigher ? series.closedHigherStroke : series.closedLowerStroke;
 				var fillColor = closedHigher ? series.closedHigherFill : series.closedLowerFill;
 				
-				/*var d = 
+				var d = 
 				[
 					"M", pos.left, volTop, 
-					"L", pos.left, volAxis.pos.bottom, 
-					"L", pos.right, volAxis.pos.bottom, 
+					"L", pos.left, yAxis.pos.bottom, 
+					"L", pos.right, yAxis.pos.bottom, 
 					"L", pos.right, volTop, 
 					"Z", 
-				]*/
+				]
 
-				/*d3PointsDom
-				.append("rect")
-				.attr("x", pos.left + 1)
-				.attr("y", volTop - 2)
-				.attr("height", volHeight)
-				.attr("width", pointWidth - 1)
-				.attr("fill", fillColor)
-				.attr("stroke", strokeColor)
-				.attr("stroke-width", 1)
-				.attr('shape-rendering', "crispEdges")*/
+				var pathStyle = {};
+				pathStyle.strokeColor = strokeColor;
+				pathStyle.fillColor = fillColor;
 				
-				ctx.beginPath();
-				ctx.strokeStyle = strokeColor;
-				ctx.fillStyle = fillColor;
-				ctx.moveTo(pos.left, volTop);
-				ctx.lineTo(pos.left, yAxis.pos.bottom);
-				ctx.lineTo(pos.right, yAxis.pos.bottom);
-				ctx.lineTo(pos.right, volTop);
-				ctx.closePath();
-				ctx.fill();
-				ctx.stroke();
+				series.drawCanvasPath(ctx, d, pathStyle);
 			}
 			
-			//console.log(Date.now() - dn)
 
 		},
 	
@@ -560,15 +555,12 @@ Sleuthcharts = (function(Sleuthcharts)
 	{
 		seriesType: "line",
 		
-		lineColor: "#54BF39",
+		lineColor: "#9D24C9",
 		
 		
 		drawPoints:function()
 		{
 			var series = this;
-			
-			var $pointsDom = series.pointsDom;
-			var rawPointsDom = $pointsDom.get()[0]
 			
 			var chart = series.chart;
 			var xAxis = series.xAxis;
@@ -577,11 +569,9 @@ Sleuthcharts = (function(Sleuthcharts)
 			var allPoints = chart.allPoints;
 			var allPointsLength = allPoints.length;
 			
+			var ctx = chart.ctx;
 			
-			$pointsDom.empty()
-
-			
-			var positions = []
+			var positions = [];
 
 			for (var i = 0; i < allPointsLength; i++)
 			{
@@ -601,14 +591,23 @@ Sleuthcharts = (function(Sleuthcharts)
 				.interpolate("basis")
 				
 
-			var d = lineFunc(positions);
+			var rawPath = lineFunc(positions);
+			var d = rawPath.split(/(M|L|Z|C)+/);
+			d = d.join(",");
+			d = d.split(",");			
+
+			if (d.length && !d[0].length)
+			{
+				d.shift();
+			}
 			
-			d3.select(rawPointsDom)
-			.append("path")
-			.attr("d", d)
-			.attr("stroke", series.lineColor)
-			.attr("stroke-width", "1.5px")
-			.attr("fill", "none")
+			//console.log(d);
+			
+			var pathStyle = {};
+			pathStyle.strokeColor = series.lineColor;
+			pathStyle.fillColor = "transparent";
+			
+			series.drawCanvasPath(ctx, d, pathStyle);
 		},
 		
 	})
@@ -617,28 +616,23 @@ Sleuthcharts = (function(Sleuthcharts)
 	Sleuthcharts.seriesTypes.area = Sleuthcharts.extendClass(Series, 
 	{
 		seriesType: "area",
-		fillColor: "#2B8714",
-		lineColor: "#54BF39",
+		fillColor: "#425A70",
+		lineColor: "#6797c5",
 		
 		drawPoints:function()
 		{
 			var series = this;
 			
-			var $pointsDom = series.pointsDom;
-			var rawPointsDom = $pointsDom.get()[0]
-			
 			var chart = series.chart;
 			var xAxis = series.xAxis;
 			var yAxis = series.yAxis;
+			var ctx = chart.ctx;
 			
 			var allPoints = chart.allPoints;
 			var allPointsLength = allPoints.length;
 			
 			
-			$pointsDom.empty()
-
-			
-			var positions = []
+			var positions = [];
 
 			for (var i = 0; i < allPointsLength; i++)
 			{
@@ -651,36 +645,64 @@ Sleuthcharts = (function(Sleuthcharts)
 				positions.push({"x":pos.middle, "y":pixel})
 			}
 			
-			
-			var lineFunc = d3.svg.line()
-				.x(function(d) { return d.x; })
-				.y(function(d) { return d.y; })
-				.interpolate("basis")
+				
 				
 			var area = d3.svg.area()
 				.x(function(d) { return d.x; })
 				.y0(yAxis.pos.bottom)
 				.y1(function(d) { return d.y; })
 				.interpolate("basis");
-					
-
-			d3.select(rawPointsDom)
-			.append("path")
-			.attr("d", area(positions))
-			.attr("stroke-width", 0)
-			.attr("fill", series.fillColor)
-			.attr("fill-opacity", 0.7)
-
 				
-
-			var d = lineFunc(positions)
+			var rawAreaPath = area(positions);
+			var areaPath = rawAreaPath.split(/(M|L|Z|C)+/);
+			areaPath = areaPath.join(",");
+			areaPath = areaPath.split(",");	
 			
-			d3.select(rawPointsDom)
-			.append("path")
-			.attr("d", d)
-			.attr("stroke", series.lineColor)
-			.attr("stroke-width", "1.5px")
-			.attr("fill", "none")
+			
+			if (areaPath.length && !areaPath[0].length)
+			{
+				areaPath.shift();
+			}
+			
+			//console.log(areaPath);
+			
+			var areaPathStyle = {};
+			areaPathStyle.strokeColor = "transparent";
+			areaPathStyle.fillColor = series.fillColor;
+			areaPathStyle.fillOpacity = 0.7;
+			areaPathStyle.strokeWidth = 0;
+			
+					
+			
+			
+			var lineFunc = d3.svg.line()
+				.x(function(d) { return d.x; })
+				.y(function(d) { return d.y; })
+				.interpolate("basis")
+				
+					
+			var rawLinePath = lineFunc(positions);
+			var linePath = rawLinePath.split(/(M|L|Z|C)+/);
+			linePath = linePath.join(",");
+			linePath = linePath.split(",");	
+			
+			
+			if (linePath.length && !linePath[0].length)
+			{
+				linePath.shift();
+			}
+			
+			//console.log(linePath);
+			
+			var linePathStyle = {};
+			linePathStyle.strokeColor = series.lineColor;
+			linePathStyle.fillColor = "transparent";
+			
+			
+			
+			series.drawCanvasPath(ctx, linePath, linePathStyle);
+			series.drawCanvasPath(ctx, areaPath, areaPathStyle);
+		
 
 		},
 		

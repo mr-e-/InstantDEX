@@ -96,6 +96,8 @@ var IDEX = (function(IDEX, $, undefined)
 				
                 if (IDEX.isWindows)
                 {
+					console.log(data)
+					console.log(data['result'])
                     var data = data['result']['retval'];
                     //console.log(typeof data)
                     if (typeof data == "string")
