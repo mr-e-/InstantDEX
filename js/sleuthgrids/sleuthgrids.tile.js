@@ -11,7 +11,6 @@ Sleuthgrids = (function(Sleuthgrids)
 	{	
 		init: function(grid)
 		{
-			
 			var previewTile = this;
 
 			previewTile.grid = grid;
@@ -146,13 +145,11 @@ Sleuthgrids = (function(Sleuthgrids)
 				tile.onTileArrowMouseout($(this));
 			})
 
-			
 			tile.tileDOM.find(".tile-arrow").on("mouseup", function()
 			{
 				tile.onTileArrowMouseup($(this));
 			})
 			
-
 		},
 		
 		
@@ -253,6 +250,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		addCell: function(cellType, arrowDirections, isNewCell)
 		{
 			//force = typeof force === "undefined" ? false : true;
@@ -289,24 +287,138 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 		},
 		
-
 		
-		toggleHeaderTabbed: function(isTabbed)
+		
+		resizeCells: function()
 		{
 			var tile = this;
-			var $tileHeader = tile.tileHeaderDOM;
+			var cells = tile.cells;
 			
-			if (isTabbed)
+			for (var i = 0; i < cells.length; i++)
 			{
-				$tileHeader.addClass("tile-header-tabs");					
-				tile.isTileHeaderTabbed = true;
+				var cell = cells[i];
+				
+				cell.resizeCell();
+			}
+		},
+		
+		
+		
+		closeTile: function(tileNavCell)
+		{
+			var tile = this;
+			var grid = tile.grid;
+			var numCells = tile.cells.length;
+			
+			if (numCells > 1)
+			{	
+				tile.closeCell(tileNavCell);
 			}
 			else
 			{
-				$tileHeader.removeClass("tile-header-tabs");					
-				tile.isTileHeaderTabbed = false;
+				tile.closeTileResizer();
+
+				//tile.removeCell();
+				grid.removeTile(tile);
+			}
+		},
+		
+		
+		
+		closeCell: function(tileNavCell)
+		{
+			var tile = this;
+			var cellIndex = tileNavCell.index;
+			var cell = tile.cells[cellIndex];			
+			var numCells = tile.cells.length;
+
+
+			if (numCells == 2)
+			{
+				tile.toggleHeaderTabbed(false);
+			}
+			
+			tile.removeCell(cell);
+			
+			
+			var activeNavCell = false;
+			for (var i = 0; i < tile.navCells.length; i++)
+			{
+				if (tile.navCells[i].isActive)
+				{
+					activeNavCell = tile.navCells[i];
+					break;
+				}
+			}
+			
+			if (!activeNavCell)
+			{
+				var newIndex = cellIndex - 1;
+				newIndex = newIndex < 0 ? 0 : newIndex;
+				activeNavCell = tile.navCells[newIndex];
 			}
 
+			activeNavCell.changeCellTabs();
+		},
+	
+		
+		
+		closeTileResizer: function(withPrev)
+		{
+			var tile = this;
+			var grid = tile.grid;
+			var $tile = tile.tileDOM;
+			
+			var allTiles = grid.tiles.slice();
+			allTiles.splice(tile.index, 1);
+			if (withPrev)
+				allTiles.push(grid.previewTile);
+			
+			var tilePositions = tile.positions;
+			var searchMap = Sleuthgrids.makeSearchMap(tilePositions);
+			
+			for (searchDirection in searchMap)
+			{
+				var searchPoints = searchMap[searchDirection];
+				var searchResults = grid.searchForAdjacentTiles(allTiles, searchPoints, searchDirection)
+				
+				if (searchResults.length)
+				{
+					break;
+				}
+			}
+			
+			var isLeftOrTop = (searchDirection == "left" || searchDirection == "top");
+			var isHoriz = (searchDirection == "top" || searchDirection == "bottom"); //backwards
+			var isVert = (searchDirection == "left" || searchDirection == "right");
+			var absKey = isVert ? "left" : "top";
+			var sizeKey = isVert ? "width" : "height";
+
+			for (var i = 0; i < searchResults.length; i++)
+			{
+				var loopTile = searchResults[i][0].tile;
+				var loopTilePositions = loopTile.positions;
+				var $loopTile = loopTile.tileDOM;
+				
+				var size = loopTilePositions[sizeKey] + tilePositions[sizeKey];
+				var abs = isLeftOrTop ? loopTilePositions[absKey] : loopTilePositions[absKey] - tilePositions[sizeKey];
+				
+				$loopTile.css(absKey, abs);
+				$loopTile.css(sizeKey, size);
+				loopTile.updateInternalTilePositions();
+			}
+		},
+		
+		
+		
+		removeTile: function()
+		{
+			var tile = this;
+			var $tile = tile.tileDOM;
+			
+			tile.removeCell();
+			//$tile.unbind();
+			$tile.remove();
 		},
 		
 		
@@ -344,17 +456,22 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
-
 		
-		
-		removeTile: function()
+		toggleHeaderTabbed: function(isTabbed)
 		{
 			var tile = this;
-			var $tile = tile.tileDOM;
+			var $tileHeader = tile.tileHeaderDOM;
 			
-			tile.removeCell();
-			//$tile.unbind();
-			$tile.remove();
+			if (isTabbed)
+			{
+				$tileHeader.addClass("tile-header-tabs");					
+				tile.isTileHeaderTabbed = true;
+			}
+			else
+			{
+				$tileHeader.removeClass("tile-header-tabs");					
+				tile.isTileHeaderTabbed = false;
+			}
 		},
 		
 		
@@ -453,6 +570,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		toggleTileOverlay: function(isVisible)
 		{
 			var tile = this;
@@ -466,21 +584,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				$tileOverlay.removeClass("active");
 			}
-		},
-		
-		
-		resizeCells: function()
-		{
-			var tile = this;
-			var cells = tile.cells;
-			
-			for (var i = 0; i < cells.length; i++)
-			{
-				var cell = cells[i];
-				
-				cell.resizeCell();
-			}
-			
 		},
 		
 		
@@ -566,113 +669,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 		},
 		
-		
-		
-		closeTile: function(tileNavCell)
-		{
-			var tile = this;
-			var grid = tile.grid;
-			var numCells = tile.cells.length;
-			
-			if (numCells > 1)
-			{	
-				tile.closeCell(tileNavCell);
-			}
-			else
-			{
-				tile.closeTileResizer();
-
-				//tile.removeCell();
-				grid.removeTile(tile);
-			}
-		},
-		
-		
-		closeCell: function(tileNavCell)
-		{
-			var tile = this;
-			var cellIndex = tileNavCell.index;
-			var cell = tile.cells[cellIndex];			
-			var numCells = tile.cells.length;
-
-
-			if (numCells == 2)
-			{
-				tile.toggleHeaderTabbed(false);
-			}
-			
-			tile.removeCell(cell);
-			
-			
-			var activeNavCell = false;
-			for (var i = 0; i < tile.navCells.length; i++)
-			{
-				if (tile.navCells[i].isActive)
-				{
-					activeNavCell = tile.navCells[i];
-					break;
-				}
-			}
-			
-			if (!activeNavCell)
-			{
-				var newIndex = cellIndex - 1;
-				newIndex = newIndex < 0 ? 0 : newIndex;
-				activeNavCell = tile.navCells[newIndex];
-			}
-
-			activeNavCell.changeCellTabs();
-		},
-	
-		
-		
-		closeTileResizer: function(withPrev)
-		{
-			var tile = this;
-			var grid = tile.grid;
-			var $tile = tile.tileDOM;
-			
-			var allTiles = grid.tiles.slice();
-			allTiles.splice(tile.index, 1);
-			if (withPrev)
-				allTiles.push(grid.previewTile);
-			
-			var tilePositions = tile.positions;
-			var searchMap = Sleuthgrids.makeSearchMap(tilePositions);
-			
-			for (searchDirection in searchMap)
-			{
-				var searchPoints = searchMap[searchDirection];
-				var searchResults = grid.searchForAdjacentTiles(allTiles, searchPoints, searchDirection)
-				
-				if (searchResults.length)
-				{
-					break;
-				}
-			}
-			
-			var isLeftOrTop = (searchDirection == "left" || searchDirection == "top");
-			var isHoriz = (searchDirection == "top" || searchDirection == "bottom"); //backwards
-			var isVert = (searchDirection == "left" || searchDirection == "right");
-			var absKey = isVert ? "left" : "top";
-			var sizeKey = isVert ? "width" : "height";
-
-			for (var i = 0; i < searchResults.length; i++)
-			{
-				var loopTile = searchResults[i][0].tile;
-				var loopTilePositions = loopTile.positions;
-				var $loopTile = loopTile.tileDOM;
-				
-				var size = loopTilePositions[sizeKey] + tilePositions[sizeKey];
-				var abs = isLeftOrTop ? loopTilePositions[absKey] : loopTilePositions[absKey] - tilePositions[sizeKey];
-				
-				$loopTile.css(absKey, abs);
-				$loopTile.css(sizeKey, size);
-				loopTile.updateInternalTilePositions();
-			}
-		},
-		
-
 		
 		
 		addResizeClass: function(resizeClassName)
@@ -761,6 +757,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			previewTile.showPreviewTile();
 			previewTile.updateInternalTilePositions();
 		},
+		
 		
 		
 		onTileArrowMouseout: function($arrow)

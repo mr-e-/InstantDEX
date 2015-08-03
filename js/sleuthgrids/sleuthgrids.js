@@ -318,83 +318,6 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
-		resizeGrid: function()
-		{
-			var grid = this;
-			
-			var prevGridHeight = grid.prevGridHeight;
-			var prevGridWidth = grid.prevGridWidth;
-			var gridHeight = grid.gridDOM.height();
-			var gridWidth = grid.gridDOM.width();
-						
-			var heightDiff = gridHeight - prevGridHeight;
-			var widthDiff = gridWidth - prevGridWidth;
-						
-			var tiles = grid.tiles;
-			
-			for (var i = 0; i < tiles.length; i++)
-			{
-				var tile = tiles[i];
-				var $tile = tile.tileDOM;
-				var tilePositions = tile.positions;
-				
-				grid.changeHW($tile, tilePositions, "height", prevGridHeight, heightDiff);
-				grid.changeHW($tile, tilePositions, "width", prevGridWidth, widthDiff);
-				tile.updateInternalTilePositions();
-				tile.resizeCells();
-			}
-
-					
-			grid.prevGridHeight = gridHeight;
-			grid.prevGridWidth = gridWidth;
-		},
-		
-		
-		changeHW: function($el, pos, sizeKey, prevWin, diff)
-		{
-			if (diff != 0)
-			{
-				var absKey = sizeKey == "width" ? "left" : "top";
-				var ratio = pos[sizeKey] / prevWin;
-				var change = diff * ratio;
-
-				var size = pos[sizeKey] + change;
-				
-				
-				var prevAbs = pos[absKey]
-				var adjustRatio = prevAbs/prevWin
-				var adjustChange = diff * adjustRatio
-				var abs = (prevAbs + adjustChange);
-							
-				$el.css(sizeKey, size);
-				$el.css(absKey, abs);
-			}
-		},
-		
-		
-		
-		showGrid: function(resize)
-		{
-			var grid = this;
-			
-			grid.gridDOM.addClass("active");
-			grid.isActive = true;
-			if (resize)
-				grid.resizeGrid();
-		},
-		
-		
-		
-		hideGrid: function()
-		{
-			var grid = this;
-			
-			grid.gridDOM.removeClass("active");
-			grid.isActive = false;
-		},
-		
-		
-		
 		initEventListeners: function()
 		{
 			var grid = this;
@@ -417,47 +340,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 		},
 		
-		saveGrid: function()
-		{
-			var grid = this;
-			
-			var saveObj = {};
-			
-			var isActiveGrid = grid.isActive;
-			if (!isActiveGrid)
-			{
-				grid.showGrid(true);
-			}
-			saveObj.tileSaves = grid.saveTiles();
-			if (!isActiveGrid)
-			{
-				grid.hideGrid();
-			}
-			
-			saveObj.index = grid.index;
-			saveObj.isActive = grid.isActive;
-			
-			grid.saveObj = saveObj;
-		},
-		
-		
-		saveTiles: function()
-		{
-			var grid = this;
-			var tiles = grid.tiles;
-			
-			var tileSaves = [];
-			
-			for (var i = 0; i < tiles.length; i++)
-			{
-				var tile = tiles[i];
-				
-				tile.saveTile();
-				tileSaves.push(tile.saveObj);
-			}
-			
-			return tileSaves;
-		},
 		
 		
 		initTilesFromSave: function(tileSaves)
@@ -491,39 +373,6 @@ Sleuthgrids = (function(Sleuthgrids)
 				var cellSaves = tileSave.cellSaves;
 				tile.initCellsFromSave(cellSaves);
 			}
-			
-		},
-		
-		
-		removeGrid: function()
-		{
-			var grid = this;
-			var tiles = grid.tiles;
-			
-			for (var i = 0; i < tiles.length; i++)
-			{
-				var tile = tiles[i];
-				grid.removeTile(tile);
-			}
-			
-			Sleuthgrids.allGrids.splice(grid.index, 1);
-			Sleuthgrids.updateArrayIndex(Sleuthgrids.allGrids);
-			grid.gridDOM.remove();
-			Sleuthgrids.updateGridTabs();
-		},
-		
-		
-		
-		removeTile: function(tile)
-		{
-			var grid = this;
-			var tileIndex = tile.index;
-			
-			tile.removeTile();
-			
-			grid.tiles.splice(tileIndex, 1);
-			
-			Sleuthgrids.updateArrayIndex(grid.tiles);
 		},
 		
 		
@@ -683,6 +532,163 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 			grid.resizeTileCells();
 		},
+		
+		
+		
+		showGrid: function(resize)
+		{
+			var grid = this;
+			
+			grid.gridDOM.addClass("active");
+			grid.isActive = true;
+			if (resize)
+				grid.resizeGrid();
+		},
+		
+		
+		
+		hideGrid: function()
+		{
+			var grid = this;
+			
+			grid.gridDOM.removeClass("active");
+			grid.isActive = false;
+		},
+	
+		
+		
+		saveGrid: function()
+		{
+			var grid = this;
+			
+			var saveObj = {};
+			
+			var isActiveGrid = grid.isActive;
+			if (!isActiveGrid)
+			{
+				grid.showGrid(true);
+			}
+			saveObj.tileSaves = grid.saveTiles();
+			if (!isActiveGrid)
+			{
+				grid.hideGrid();
+			}
+			
+			saveObj.index = grid.index;
+			saveObj.isActive = grid.isActive;
+			
+			grid.saveObj = saveObj;
+		},
+		
+		
+		
+		saveTiles: function()
+		{
+			var grid = this;
+			var tiles = grid.tiles;
+			
+			var tileSaves = [];
+			
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				
+				tile.saveTile();
+				tileSaves.push(tile.saveObj);
+			}
+			
+			return tileSaves;
+		},
+			
+			
+			
+		removeGrid: function()
+		{
+			var grid = this;
+			var tiles = grid.tiles;
+			
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				grid.removeTile(tile);
+			}
+			
+			Sleuthgrids.allGrids.splice(grid.index, 1);
+			Sleuthgrids.updateArrayIndex(Sleuthgrids.allGrids);
+			grid.gridDOM.remove();
+			Sleuthgrids.updateGridTabs();
+		},
+		
+		
+		
+		removeTile: function(tile)
+		{
+			var grid = this;
+			var tileIndex = tile.index;
+			
+			tile.removeTile();
+			
+			grid.tiles.splice(tileIndex, 1);
+			
+			Sleuthgrids.updateArrayIndex(grid.tiles);
+		},
+		
+		
+		
+		resizeGrid: function()
+		{
+			var grid = this;
+			
+			var prevGridHeight = grid.prevGridHeight;
+			var prevGridWidth = grid.prevGridWidth;
+			var gridHeight = grid.gridDOM.height();
+			var gridWidth = grid.gridDOM.width();
+						
+			var heightDiff = gridHeight - prevGridHeight;
+			var widthDiff = gridWidth - prevGridWidth;
+						
+			var tiles = grid.tiles;
+			
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				var $tile = tile.tileDOM;
+				var tilePositions = tile.positions;
+				
+				grid.changeHW($tile, tilePositions, "height", prevGridHeight, heightDiff);
+				grid.changeHW($tile, tilePositions, "width", prevGridWidth, widthDiff);
+				tile.updateInternalTilePositions();
+				tile.resizeCells();
+			}
+
+					
+			grid.prevGridHeight = gridHeight;
+			grid.prevGridWidth = gridWidth;
+		},
+		
+		
+		
+		changeHW: function($el, pos, sizeKey, prevWin, diff)
+		{
+			if (diff != 0)
+			{
+				var absKey = sizeKey == "width" ? "left" : "top";
+				var ratio = pos[sizeKey] / prevWin;
+				var change = diff * ratio;
+
+				var size = pos[sizeKey] + change;
+				
+				
+				var prevAbs = pos[absKey]
+				var adjustRatio = prevAbs/prevWin
+				var adjustChange = diff * adjustRatio
+				var abs = (prevAbs + adjustChange);
+							
+				$el.css(sizeKey, size);
+				$el.css(absKey, abs);
+			}
+		},
+		
 		
 		
 		toggleTileResizeOverlay: function(isResizing)

@@ -2,23 +2,8 @@
 
 Sleuthgrids = (function(Sleuthgrids) 
 {
-	
-	var prevWindowHeight = 0;
-	var prevWindowWidth = 0;
 	var $contentWrap = $("#content_wrap");
 	
-
-	
-	$(".util-grid-newTab").on("click", function()
-	{
-		//makeNewGridTab();
-		
-		var grid = new Sleuthgrids.Grid();
-		//grid.showGrid();
-	})
-	
-	
-
 
 	$(window).on("beforeunload", function()
 	{
@@ -27,23 +12,50 @@ Sleuthgrids = (function(Sleuthgrids)
 		//console.log(saves);
 		localStorage.setItem('grids', JSON.stringify(saves));
 	})
-
-	$(".mainHeader-menu-ico-orders").on("click", function()
+	
+	
+	
+	$(window).resize(function(e)
 	{
-		var saves = Sleuthgrids.saveAllGrids();
-		
-		console.log(saves);
-		localStorage.setItem('grids', JSON.stringify(saves));
+		Sleuthgrids.resizeAllGrids();
 	})
 	
 	
-	$(".mainHeader-menu-ico-markets").on("click", function()
+	
+	$(".util-grid-newTab").on("click", function()
 	{
-		var saves = JSON.parse(localStorage.getItem('grids'));
-		console.log(saves);
-		//console.log(JSON.stringify(saves))
+		var grid = new Sleuthgrids.Grid();
+		grid.gridTab.gridTabDOM.trigger("click");
 	})
+	
+	
+	
+	$(document).on("mousemove", function(e)
+	{
+		if (Sleuthgrids.isGridTrig)
+		{
+			Sleuthgrids.updateTileAddPos(e)
+		}
+	})
+	
+	
+	
+	$(document).on("mousedown", function(e)
+	{	
+		var $tile = $(e.target).closest(".tile")
+		var $grid = $contentWrap.find(".grid.active");
 
+		if ($grid.length)
+		{
+			if (!$tile.length && !$(e.target).hasClass("tile"))
+			{
+
+				$grid.find(".tile-cells").removeClass("focus-border");
+				$grid.find(".tile-header-tab").removeClass("focus-border");
+			}
+		}
+	})
+	
 	
 
 	$(".grid-trig").on("mousedown", function(e)
@@ -90,16 +102,6 @@ Sleuthgrids = (function(Sleuthgrids)
 	})
 
 
-	
-	$(document).on("mousemove", function(e)
-	{
-		if (Sleuthgrids.isGridTrig)
-		{
-			Sleuthgrids.updateTileAddPos(e)
-		}
-	})
-
-
 
 	$(document).on("mouseup", function(e)
 	{
@@ -131,45 +133,29 @@ Sleuthgrids = (function(Sleuthgrids)
 		Sleuthgrids.isResizing = false;
 		Sleuthgrids.resizeTile = null;
 		Sleuthgrids.resizeDir = "";
-		
-
 	})
-
-
-
-
-	$(document).on("mousedown", function(e)
-	{	
-		var $tile = $(e.target).closest(".tile")
-		var $grid = $contentWrap.find(".grid.active");
-
-		if ($grid.length)
-		{
-			if (!$tile.length && !$(e.target).hasClass("tile"))
-			{
-
-				$grid.find(".tile-cells").removeClass("focus-border");
-				$grid.find(".tile-header-tab").removeClass("focus-border");
-			}
-		}
-	})
-
 	
-
-
-	$(window).resize(function(e)
+	
+	
+	/*
+	
+	$(".mainHeader-menu-ico-orders").on("click", function()
 	{
-		Sleuthgrids.resizeAllGrids();
+		var saves = Sleuthgrids.saveAllGrids();
+		
+		console.log(saves);
+		localStorage.setItem('grids', JSON.stringify(saves));
 	})
-
-
 	
-
-
 	
-
-
+	$(".mainHeader-menu-ico-markets").on("click", function()
+	{
+		var saves = JSON.parse(localStorage.getItem('grids'));
+		console.log(saves);
+		console.log(JSON.stringify(saves))
+	})
 	
+	*/
 	
 
 

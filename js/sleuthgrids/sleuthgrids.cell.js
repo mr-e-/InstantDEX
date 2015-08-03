@@ -196,6 +196,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	}
 	
 	
+	
 	var Cell = Sleuthgrids.Cell = function()
 	{
 		this.init.apply(this, arguments)
@@ -219,6 +220,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			cell.cellDOM;
 		},
+		
 		
 		
 		makeCellDOM: function(cellType)
@@ -260,6 +262,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		loadCellFromSettings: function(settings)
 		{
 			var cell = this;
@@ -281,6 +284,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				}
 			}
 		},
+		
 		
 		
 		triggerVisible: function()
@@ -305,26 +309,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 		},
 		
-		removeCell: function()
-		{
-			var cell = this;
-			var $cell = cell.cellDOM;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
-			
-			if (handler)
-			{
-				if ("remove" in handler)
-				{
-					handler.remove(cell);
-				}
-			}
-			
-			$cell.remove();
-		},
-		
 		
 		
 		resizeCell: function()
@@ -344,6 +328,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			
 		},
+		
 		
 		
 		saveCell: function()
@@ -372,8 +357,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.saveObj = saveObj;
 		},
 		
-
-		
 		
 		
 		closeCell: function($tabHeader)
@@ -397,18 +380,28 @@ Sleuthgrids = (function(Sleuthgrids)
 			$tabHeader.remove()
 			$tabContent.remove()
 			$nextTabHeader.trigger("click");
-			
-			if (len == 2)
-			{
-				/*var firstTitle = $nextTabHeader.find(".tile-header-title").text();
-				var $firstTab = $($("#tile_template").find(".tile-header").html());
-				$firstTab.find(".tile-header-title").text(firstTitle);
-				//$firstTab.attr("data-tab", "1");
-				
-				$tileHeader.empty().addClass("tile-header-tabs");
-				$tileHeader.append($firstTab);*/
-			}
+		},
 		
+		
+		
+		removeCell: function()
+		{
+			var cell = this;
+			var $cell = cell.cellDOM;
+			var cellType = cell.cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = cellHandlers[cellType];
+			
+			if (handler)
+			{
+				if ("remove" in handler)
+				{
+					handler.remove(cell);
+				}
+			}
+			
+			$cell.remove();
 		},
 		
 	}

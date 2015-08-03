@@ -4,10 +4,6 @@
 Sleuthgrids = (function(Sleuthgrids) 
 {
 
-
-
-
-
 	Sleuthgrids.updateArrayIndex = function(arr)
 	{
 		for (var i = 0; i < arr.length; i++)
@@ -15,6 +11,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			arr[i].index = i;
 		}
 	}
+	
 	
 	
 	Sleuthgrids.makeSearchMap = function(positions)
@@ -51,6 +48,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	}
 	
 	
+	
 	Sleuthgrids.invertDirection = function(direction)
 	{
 		var dirMap = 
@@ -66,6 +64,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		return invertedDirection;
 	}
+	
 	
 	
 	Sleuthgrids.getArrowDirections = function($arrow)
@@ -118,6 +117,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	}
 	
 	
+	
 	Sleuthgrids.getPositions = function($el, isAbs)
 	{
 		var positions = {};
@@ -140,11 +140,12 @@ Sleuthgrids = (function(Sleuthgrids)
 	}
 	
 	
+	
 	Sleuthgrids.capitalizeFirstLetter = function(string) 
 	{
 		return string.charAt(0).toUpperCase() + string.slice(1);
 	}
-
+	
 	
 	
 	Sleuthgrids.cloneListOfObjects = function(listObj)
