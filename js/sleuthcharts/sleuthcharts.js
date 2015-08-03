@@ -141,7 +141,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				{
 					var tempSeries = chart.series[0];
 					
-
+					//console.log(chart);
 					chart.resizeAxis();
 					chart.updateAxisPos();
 					

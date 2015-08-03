@@ -77,7 +77,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		init: function(chart, userOptions)
 		{
 			var marketHandler = this;
-			var marketSettings =
+			marketHandler.marketSettings =
 			{
 				baseID: "6932037131189568014_NXT",
 				relID: "5527630",
@@ -109,7 +109,8 @@ Sleuthcharts = (function(Sleuthcharts)
 		changeMarket: function(newMarket)
 		{
 			var marketHandler = this;
-			var settings = marketHandler.marketSettings;
+			var settings = {};
+			//var settings = marketHandler.marketSettings;
 
 			//var pair = (newRelID == 5527630) ? newBaseID + "_" + "NXT" : newBaseID + "_" + newRelID;
 			var pair = newMarket.baseID + "_" + newMarket.relID;
@@ -123,6 +124,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			settings.baseName = newMarket.baseName;
 			settings.relName = newMarket.relName;
 			settings.exchange = newMarket.exchange;
+			
+			marketHandler.marketSettings = Sleuthcharts.extend(marketHandler.marketSettings, settings);
+
+			//marketHandler.marketSettings = settings;
 		},
 		
 		
@@ -232,6 +237,10 @@ Sleuthcharts = (function(Sleuthcharts)
 					dfd.resolve();
 				}
 			
+			}).fail(function(data)
+			{
+				console.log(data);
+				dfd.reject(data);
 			})
 			
 			return dfd.promise();
@@ -264,6 +273,9 @@ Sleuthcharts = (function(Sleuthcharts)
 			$.getJSON(url, function(data)
 			{
 				dfd.resolve(data)	
+			}).fail(function(data)
+			{
+				dfd.reject(data);
 			})
 			
 			return dfd.promise()
