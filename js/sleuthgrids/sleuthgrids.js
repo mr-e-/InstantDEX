@@ -422,8 +422,9 @@ Sleuthgrids = (function(Sleuthgrids)
 				
 				if (numCells == 1)
 				{
-					triggeredTile.closeTileResizer(true);
+					triggeredTile.closeTileResizer(!arrowDirections.isMiddle);
 				}
+
 				
 				if (!arrowDirections.isMiddle)
 				{
