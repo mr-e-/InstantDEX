@@ -408,7 +408,7 @@ Sleuthgrids = (function(Sleuthgrids)
 						runningSize += searchResults[j][0].tile.positions[sizeKey];
 					}
 										
-					if (runningSize == size || Math.abs(runningSize - size) <= 1)
+					if (runningSize == size || Math.abs(runningSize - size) <= 0.5)
 					{
 						//console.log([size, runningSize, "yes"])
 						break;
@@ -692,7 +692,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				
 				var isInsideBorder = Sleuthgrids.checkIfMouseIsInsideBorder(mouseY, mouseX, tilePositions)
 				
-				if (!isInsideBorder.top)
+				if (!isInsideBorder.isInside)
 				{
 					
 					$tileAdd.addClass("active");
