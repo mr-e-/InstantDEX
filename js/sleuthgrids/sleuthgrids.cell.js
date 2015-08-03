@@ -179,6 +179,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.cellDOM.removeClass("tab-hidden");
 			cell.isActive = true;
 			
+			cell.triggerVisible();
+			
 			tile.showTileBorder();
 		},
 		
@@ -213,12 +215,13 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.index = index;
 			cell.linkIndex = -1;
 			cell.isActive = false;
+			cell.cellType = "";
 			
 			cell.cellDOM;
 		},
 		
 		
-		makeCellDOM: function(cellType, arrowDirections)
+		makeCellDOM: function(cellType)
 		{
 			var cell = this;
 			cell.cellType = cellType;
@@ -237,25 +240,70 @@ Sleuthgrids = (function(Sleuthgrids)
 		loadCell: function()
 		{
 			var cell = this;
+			var tile = cell.tile;
+			var grid = tile.grid;
 			var $cell = cell.cellDOM;
 			var cellType = cell.cellType;
 
 			var cellHandlers = Sleuthgrids.cellHandlers;
 			var handler = cellHandlers[cellType];
 			
+
+			
 			if (handler)
 			{
-				if (Sleuthgrids.isTriggeredNew)
+				if (handler && "new" in handler)
 				{
-					if (handler && "new" in handler)
-					{
-						handler.new(cell);
-					}
+					handler.new(cell);
 				}
 			}
 		},
 		
 		
+		loadCellFromSettings: function(settings)
+		{
+			var cell = this;
+			var tile = cell.tile;
+			var grid = tile.grid;
+			var $cell = cell.cellDOM;
+			var cellType = cell.cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = cellHandlers[cellType];
+			
+
+			
+			if (handler)
+			{
+				if (handler && "loadCustom" in handler)
+				{
+					handler.loadCustom(cell, settings);
+				}
+			}
+		},
+		
+		
+		triggerVisible: function()
+		{
+			var cell = this;
+			var tile = cell.tile;
+			var grid = tile.grid;
+			var $cell = cell.cellDOM;
+			var cellType = cell.cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = cellHandlers[cellType];
+			
+
+			
+			if (handler)
+			{
+				if (handler && "update" in handler)
+				{
+					handler.update(cell);
+				}
+			}
+		},
 		
 		removeCell: function()
 		{
@@ -297,6 +345,32 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 		},
 		
+		
+		saveCell: function()
+		{
+			var cell = this;
+			var cellType = cell.cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = cellHandlers[cellType];
+			
+			var cellTypeSettings = {};
+			
+			if (handler)
+			{
+				if ("save" in handler)
+				{
+					cellTypeSettings = handler.save(cell);
+				}
+			}
+			
+			saveObj = {};
+			saveObj.isActive = cell.isActive;
+			saveObj.linkIndex = cell.linkIndex;
+			saveObj.cellType = cell.cellType;
+			saveObj.cellTypeSettings = cellTypeSettings;
+			cell.saveObj = saveObj;
+		},
 		
 
 		

@@ -71,28 +71,29 @@ Sleuthcharts = (function(Sleuthcharts)
 	MarketHandler.prototype = 
 	{
 		
-		marketSettings:
-		{
-			baseID: "6932037131189568014_NXT",
-			relID: "5527630",
-			baseName: "jl777hodl",
-			relName: "NXT",
-			pair: "6932037131189568014_NXT",
-			pairName: "jl777hodl_NXT",
 
-			barType: "tick",
-			barWidth: "25",
-
-			exchange: "nxtae",
-
-			isVirtual: false,
-			isFlipped: false,
-		},
 		
 		
 		init: function(chart, userOptions)
 		{
 			var marketHandler = this;
+			var marketSettings =
+			{
+				baseID: "6932037131189568014_NXT",
+				relID: "5527630",
+				baseName: "jl777hodl",
+				relName: "NXT",
+				pair: "6932037131189568014_NXT",
+				pairName: "jl777hodl_NXT",
+
+				barType: "tick",
+				barWidth: "25",
+
+				exchange: "nxtae",
+
+				isVirtual: false,
+				isFlipped: false,
+			};
 			
 			marketHandler.chart = chart;
 			
@@ -100,8 +101,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			marketHandler.tradeData = [];
 			marketHandler.marketData = {};
 			
-			marketHandler.marketSettings = Sleuthcharts.extend(marketHandler.marketSettings, userOptions.marketSettings);
-
+			
+			marketHandler.marketSettings = Sleuthcharts.extend(marketHandler.marketSettings, userOptions);
 		},
 		
 		

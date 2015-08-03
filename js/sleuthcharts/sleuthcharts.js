@@ -84,7 +84,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			canvas.width = chart.node.parent().width();
 			canvas.height = chart.node.parent().height();
 			canvas.style.position = "absolute";
-			canvas.style.top = "0";
+			canvas.style.top = 0;
 			canvas.style.left = 0;
 			
 			chart.node.parent().append(canvas);
@@ -465,9 +465,19 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chartPadding = chart.padding;
 			var $chartNode = chart.node;
 			
-			var DOMPosition = Sleuthcharts.getDOMPosition($chartNode);
+			//console.log(chart.canvas.getBoundingClientRect());
+
+			var $copied_elem = chart.canvasJQ.clone()
+							  .attr("id", false)
+							  .css({visibility:"hidden", display:"block", 
+									   position:"absolute"});
+			$("body").append($copied_elem);
 			
+			var DOMPosition = Sleuthcharts.getDOMPosition($copied_elem);
+			$copied_elem.remove();
+
 			chart.DOMPosition = DOMPosition;
+			
 			
 			chart.plotTop = DOMPosition.top + chartPadding.top;
 			chart.plotBottom = DOMPosition.bottom - chartPadding.bottom;
@@ -477,8 +487,11 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.plotHeight = chart.plotBottom - chart.plotTop;
 			chart.plotWidth = chart.plotRight - chart.plotLeft;
 			
+
 			chart.canvas.width = chart.node.parent().width();
 			chart.canvas.height = chart.node.parent().height();
+			//chart.canvas.height = DOMPosition.height;
+			//chart.canvas.width = DOMPosition.width;
 		},
 		
 		

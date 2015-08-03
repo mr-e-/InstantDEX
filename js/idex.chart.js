@@ -116,7 +116,11 @@ var IDEX = (function(IDEX, $, undefined)
 			
 		}
 		
-		
+		if ("marketSettings" in obj)
+		{
+			chartOptions.marketSettings = obj.marketSettings;
+		}
+
 		obj.node.sleuthcharts(chartOptions);
 		//var chart = new Sleuthcharts.Chart(chartOptions);
 
@@ -128,7 +132,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.changeChartMarket = function(obj)
 	{
-		var $node = obj.node.closest(".tile").find(".chart-wrap svg");
+		var $node = obj.node.closest(".cell").find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
 		var marketHandler = chart.marketHandler;
 		
@@ -197,7 +201,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		
 		
-		var $node = $(this).closest(".tile").find(".chart-wrap svg");
+		var $node = $(this).closest(".cell").find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
 		var marketHandler = chart.marketHandler;
 
@@ -221,7 +225,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).addClass("active");
 		
 				
-		var $node = $(this).closest(".tile").find(".chart-wrap svg");
+		var $node = $(this).closest(".cell").find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
 		var marketHandler = chart.marketHandler;
 		

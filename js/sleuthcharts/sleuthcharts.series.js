@@ -31,7 +31,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			series.yAxis = chart.yAxis[series.index];
 			series.xAxis = chart.xAxis[0];
 			
-			
+			series.isResizingSeries = false;
 			series.height = 0;
 			series.width = 0;
 			
@@ -99,6 +99,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var marketHandler = chart.marketHandler;
 			var allPhases = marketHandler.marketData.ohlc;
 			var allPhasesLength = allPhases.length;
+			
 			
 
 			var startIndex = 0;
@@ -192,7 +193,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			var pointWidth = xAxis.pointWidth;
 
 			var allPoints = []
-			
 			
 			//var marketHandler = chart.marketHandler;
 			//var phases = marketHandler.marketData.ohlc;

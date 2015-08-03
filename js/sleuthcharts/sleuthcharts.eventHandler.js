@@ -1,11 +1,5 @@
 
 
-$("#content_wrap").on("click", ".chart-tools-crosshair", function()
-{	
-
-})
-
-
 Sleuthcharts = (function(Sleuthcharts) 
 {
 	
@@ -125,6 +119,8 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			e = DOMEventHandler.normalizeMouseEvent(e);
 
+			
+			//DOMEventHandler.resizeSeriesMousedown(e);
 
 			var mouseX = e.pageX;
 			var mouseY = e.pageY;
@@ -161,6 +157,87 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 
+		resizeSeries: function(e)
+		{
+			var DOMEventHandler = this;
+			var chart = DOMEventHandler.chart;
+			var $canvas = chart.canvasJQ;
+			var ctx = chart.ctx;
+			
+			var mouseX = e.pageX;
+			var mouseY = e.pageY;
+			var insideX = e.chartX;
+			var insideY = e.chartY;
+			
+			
+			
+			
+			var series = chart.series[0];
+
+			var yAxis = series.yAxis;
+			var xAxis = series.xAxis;
+			var lineWidth = 4;
+			var checkPos = {};
+			checkPos.bottomPos = yAxis.pos.bottom;
+			checkPos.leftPos = xAxis.pos.left;
+			checkPos.rightPos = xAxis.pos.right;
+
+			console.log(checkPos);
+			console.log([insideX, insideY]);
+			
+			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
+			
+			if (isInsideLine)
+			{
+				$canvas.css("cursor", "ns-resize");
+			}
+			else
+			{
+				$canvas.css("cursor", "default");
+			}
+		},
+		
+		
+		resizeSeriesMousedown: function(e)
+		{
+			var DOMEventHandler = this;
+			var chart = DOMEventHandler.chart;
+			var $canvas = chart.canvasJQ;
+			var ctx = chart.ctx;
+			
+			var mouseX = e.pageX;
+			var mouseY = e.pageY;
+			var insideX = e.chartX;
+			var insideY = e.chartY;
+			
+			
+			
+			
+			var series = chart.series[0];
+
+			var yAxis = series.yAxis;
+			var xAxis = series.xAxis;
+			var lineWidth = 4;
+			var checkPos = {};
+			checkPos.bottomPos = yAxis.pos.bottom;
+			checkPos.leftPos = xAxis.pos.left;
+			checkPos.rightPos = xAxis.pos.right;
+
+			console.log(checkPos);
+			console.log([insideX, insideY]);
+			
+			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
+			
+			if (isInsideLine)
+			{
+				$canvas.css("cursor", "ns-resize");
+			}
+			else
+			{
+				$canvas.css("cursor", "default");
+			}
+		},
+		
 		
 		onContainerMouseMove: function(e)
 		{
@@ -174,10 +251,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			var mouseY = e.pageY;
 			var insideX = e.chartX;
 			var insideY = e.chartY;
-
 			
-			if (chart.isInsidePlot(mouseX, mouseY))
+			//DOMEventHandler.resizeSeries(e);
+			
+			if (chart.isInsidePlot(insideX, insideY))
 			{
+				//console.log('isinside');
 				var closestPoint = chart.getPoint(chart.allPoints, insideX)
 				var index = chart.visiblePhases.indexOf(closestPoint.phase)
 				

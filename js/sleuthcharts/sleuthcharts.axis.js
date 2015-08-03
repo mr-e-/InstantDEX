@@ -554,7 +554,8 @@ Sleuthcharts = (function(Sleuthcharts)
 								
 			
 			var showTicks = []
-			
+			//console.log(chart.node[0].getBoundingClientRect().height);
+			//console.log(chart.canvas.height);
 			if (tickStep >= allPointsLength)
 			{
 				var index = Math.floor((allPointsLength - 1) / 2)
@@ -711,7 +712,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			//var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();	
 			var bbox = chart.node[0].getBoundingClientRect()
-			
+			//bbox.right = chart.plotRight;
 			//var $axisGroup = this.axisGroupDom;
 			
 			if (isXAxis)

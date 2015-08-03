@@ -7,41 +7,45 @@ Sleuthgrids = (function(Sleuthgrids)
 	var prevWindowWidth = 0;
 	var $contentWrap = $("#content_wrap");
 	
+
 	
 	$(".util-grid-newTab").on("click", function()
 	{
-		var $newGridTab = $($("#util_grid_tab_template").html());
-		var $gridTabsWrap = $(".util-grid-tabs");
-		var $gridTabs = $gridTabsWrap.find(".util-grid-tab");
-		
-		var len = $gridTabs.length;
-		
-		var name = "Grid-" + String(len + 1);
-		$newGridTab.find("span").text(name);
-		$newGridTab.attr("data-gridindex", len);
-		$gridTabsWrap.append($newGridTab);
+		//makeNewGridTab();
 		
 		var grid = new Sleuthgrids.Grid();
 		//grid.showGrid();
 	})
 	
 	
-	
-	$("body").on("click", ".util-grid-tab", function()
+
+
+	$(window).on("beforeunload", function()
 	{
-		var $gridTab = $(this);
-		var gridIndex = $(this).attr("data-gridindex");
+		var saves = Sleuthgrids.saveAllGrids();
 		
-		var grid = Sleuthgrids.getGrid(gridIndex);
+		//console.log(saves);
+		localStorage.setItem('grids', JSON.stringify(saves));
+	})
+
+	$(".mainHeader-menu-ico-orders").on("click", function()
+	{
+		var saves = Sleuthgrids.saveAllGrids();
 		
-		Sleuthgrids.hideAllGrids();
-		grid.showGrid();
-		
+		console.log(saves);
+		localStorage.setItem('grids', JSON.stringify(saves));
 	})
 	
 	
+	$(".mainHeader-menu-ico-markets").on("click", function()
+	{
+		var saves = JSON.parse(localStorage.getItem('grids'));
+		console.log(saves);
+		//console.log(JSON.stringify(saves))
+	})
+
 	
-	
+
 	$(".grid-trig").on("mousedown", function(e)
 	{
 		$(this).addClass("mousedown");
@@ -150,76 +154,16 @@ Sleuthgrids = (function(Sleuthgrids)
 		}
 	})
 
-
-
-
-
-	$(document).ready(function()
-	{
-		prevWindowHeight = $contentWrap.height();
-		prevWindowWidth = $contentWrap.width();
-	})
+	
 
 
 	$(window).resize(function(e)
 	{
-		var windowWidth = $contentWrap.width();
-		var windowHeight = $contentWrap.height();
-		
-		var heightDiff = windowHeight - prevWindowHeight;
-		var widthDiff = windowWidth - prevWindowWidth;
-		
-		var grids = Sleuthgrids.allGrids;
-		
-		for (var i = 0; i < grids.length; i++)
-		{
-			var grid = grids[i];
-			var tiles = grid.tiles;
-			
-			for (var j = 0; j < tiles.length; j++)
-			{
-				var tile = tiles[j];
-				var $tile = tile.tileDOM;
-				changeHW("width", widthDiff, $tile);
-				changeHW("height", heightDiff, $tile);
-			}
-		}
-
-				
-		prevWindowHeight = windowHeight;
-		prevWindowWidth = windowWidth;
+		Sleuthgrids.resizeAllGrids();
 	})
 
 
-
-	function changeHW(sizeKey, diff, $el)
-	{
-		var change = null;
-		
-		if (diff != 0)
-		{
-			var prevWin = sizeKey == "width" ? prevWindowWidth : prevWindowHeight;
-			var pos = Sleuthgrids.getPositions($el, true);
-			var absKey = sizeKey == "width" ? "left" : "top";
-
-			var ratio = pos[sizeKey] / prevWin;
-			var change = diff * ratio;
-
-			var size = pos[sizeKey] + change;
-			
-			
-			var prevAbs = pos[absKey]
-			var adjustRatio = prevAbs/prevWin
-			var adjustChange = diff * adjustRatio
-			var abs = (prevAbs + adjustChange);
-						
-			$el.css(sizeKey, size)
-			$el.css(absKey, abs)
-		}
-		
-		return change;
-	}
-
+	
 
 
 	
