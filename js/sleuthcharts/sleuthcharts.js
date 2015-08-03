@@ -155,6 +155,8 @@ Sleuthcharts = (function(Sleuthcharts)
 						var series = chart.series[i];
 						//console.log(series);
 						series.drawPoints();
+						series.seriesTab.updatePositions();
+
 					}
 					
 					//chart.drawBothInds();
@@ -231,6 +233,125 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		
 		
+		initMarketHandler: function()
+		{
+			var chart = this;
+			
+			var marketSettings = chart.userOptions.marketSettings || {};
+			
+			//console.log(marketSettings);
+			
+			var marketHandler = new Sleuthcharts.MarketHandler(chart, marketSettings);
+			chart.marketHandler = marketHandler;
+		},
+		
+	
+		
+		initSeries: function()
+		{
+			var chart = this;
+			var seriesOptions = chart.userOptions.series;
+			
+			
+			for (var i = 0; i < seriesOptions.length; i++)
+			{
+				var opt = seriesOptions[i];
+				opt.index = i;
+				var seriesType = opt.seriesType;
+				var seriesClass = Sleuthcharts.seriesTypes[seriesType];
+				var series = new seriesClass();
+				series.init(chart, opt);
+				chart.series.push(series);
+			}
+		},
+		
+		
+		
+		initAxes: function()
+		{
+			var chart = this;
+			var xAxisOptions = chart.userOptions.xAxis;
+			var yAxisOptions = chart.userOptions.yAxis;
+			
+			for (var i = 0; i < xAxisOptions.length; i++)
+			{
+				var opt = xAxisOptions[i];
+				opt.isXAxis = true;
+				opt.index = i;
+				
+				var axis = new Sleuthcharts.Axis(chart, opt)
+				chart.xAxis.push(axis)
+			}
+			
+			for (var i = 0; i < yAxisOptions.length; i++)
+			{
+				var opt = yAxisOptions[i];
+				opt.isXAxis = false;
+				opt.index = i;
+				
+				var axis = new Sleuthcharts.Axis(chart, opt)
+				chart.yAxis.push(axis)
+			}
+			
+			chart.axes = chart.xAxis.concat(chart.yAxis);
+		},
+		
+		
+		
+		initDOMEventHandler: function()
+		{
+			var chart = this;
+			var DOMEventHandler = new Sleuthcharts.DOMEventHandler(chart);
+			DOMEventHandler.setDOMEvents();
+			
+			chart.DOMEventHandler = DOMEventHandler;
+		},
+		
+		
+		
+		setContainerSize: function()
+		{
+			var chart = this;
+			var chartPadding = chart.padding;
+			var $chartNode = chart.node;
+			
+			//console.log(chart.canvas.getBoundingClientRect());
+
+			var $copied_elem = chart.canvasJQ.clone()
+							  .attr("id", false)
+							  .css({visibility:"hidden", display:"block", 
+									   position:"absolute"});
+			$("body").append($copied_elem);
+			
+			var DOMPosition = Sleuthcharts.getDOMPosition($copied_elem);
+			$copied_elem.remove();
+
+			chart.DOMPosition = DOMPosition;
+			
+			
+			chart.plotTop = DOMPosition.top + chartPadding.top;
+			chart.plotBottom = DOMPosition.bottom - chartPadding.bottom;
+			chart.plotLeft = DOMPosition.left + chartPadding.left;
+			chart.plotRight = DOMPosition.right - chartPadding.right;
+			
+			chart.plotHeight = chart.plotBottom - chart.plotTop;
+			chart.plotWidth = chart.plotRight - chart.plotLeft;
+			
+
+			var height = chart.node.parent().height();
+			var width = chart.node.parent().width();
+			chart.canvas.height = height;
+			chart.canvas.width = width;
+			chart.infoCanvas.height = height;
+			chart.infoCanvas.width = width;
+			chart.crosshairCanvas.height = height;
+			chart.crosshairCanvas.width = width;
+			//chart.canvas.height = DOMPosition.height;
+			//chart.canvas.width = DOMPosition.width;
+		},
+		
+		
+		
 		updateChart: function()
 		{
 
@@ -271,6 +392,8 @@ Sleuthcharts = (function(Sleuthcharts)
 				{
 					var series = chart.series[i];
 					series.drawPoints();
+					series.seriesTab.updatePositions();
+
 				}
 				
 				//chart.drawBothInds();
@@ -327,6 +450,8 @@ Sleuthcharts = (function(Sleuthcharts)
 				{
 					var series = chart.series[i];
 					series.drawPoints();
+					series.seriesTab.updatePositions();
+
 				}
 				
 				chart.updateAxisTicks();
@@ -355,6 +480,43 @@ Sleuthcharts = (function(Sleuthcharts)
 			{
 				chart.visiblePhases = visiblePhases;
 				series.updateAxisMinMax(startIndex, endIndex);
+			}
+		},
+		
+		
+		
+		equalizeYAxisWidth: function()
+		{
+			var chart = this;
+			var allSeries = chart.series;
+			var biggestWidth = 0;
+			
+			for (var i = 0; i < allSeries.length; i++)
+			{
+				var yAxis = allSeries[i].yAxis;
+				
+				var paddedMax = yAxis.max + (yAxis.max * (yAxis.maxPadding))
+				var paddedMin = yAxis.min - (yAxis.min * (yAxis.minPadding))
+				
+				var scale = d3.scale.linear()
+				.domain([paddedMin, paddedMax])
+				.range([yAxis.height, yAxis.pos.top])
+				
+				var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
+				
+				
+				var maxTextWidth = Sleuthcharts.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
+				var textPadding = yAxis.labels.textPadding;
+				var combinedWidth = maxTextWidth + (yAxis.tickLength * 2) + (textPadding * 2);
+				var newAxisWidth = combinedWidth;
+
+				biggestWidth = newAxisWidth > biggestWidth ? newAxisWidth : biggestWidth;
+			}
+			for (var i = 0; i < allSeries.length; i++)
+			{
+				var yAxis = allSeries[i].yAxis
+				yAxis.widthInit = biggestWidth
+				yAxis.width = biggestWidth;
 			}
 		},
 		
@@ -455,7 +617,49 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			chart.redraw()
 		},
-
+		
+		
+		
+		resizeAxis: function()
+		{
+			var chart = this;
+			
+			for (var i = 0; i < chart.axes.length; i++)
+			{
+				chart.axes[i].resizeAxis();
+			}
+		},
+		
+		updateAxisPos: function()
+		{
+			var chart = this;
+			
+			for (var i = 0; i < chart.axes.length; i++)
+			{
+				chart.axes[i].updateAxisPos();
+			}
+		},
+		
+		updateAxisTicks: function()
+		{
+			var chart = this;
+			
+			for (var i = 0; i < chart.axes.length; i++)
+			{
+				chart.axes[i].makeAxis();
+			}
+		},
+		
+		drawAxisLines: function()
+		{
+			var chart = this;
+			
+			for (var i = 0; i < chart.axes.length; i++)
+			{
+				chart.axes[i].drawAxisLines();
+			}
+		},
+		
 		
 	
 		isInsidePlot: function(mouseX, mouseY)
@@ -502,204 +706,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 	
-	
-		setContainerSize: function()
-		{
-			var chart = this;
-			var chartPadding = chart.padding;
-			var $chartNode = chart.node;
-			
-			//console.log(chart.canvas.getBoundingClientRect());
 
-			var $copied_elem = chart.canvasJQ.clone()
-							  .attr("id", false)
-							  .css({visibility:"hidden", display:"block", 
-									   position:"absolute"});
-			$("body").append($copied_elem);
-			
-			var DOMPosition = Sleuthcharts.getDOMPosition($copied_elem);
-			$copied_elem.remove();
-
-			chart.DOMPosition = DOMPosition;
-			
-			
-			chart.plotTop = DOMPosition.top + chartPadding.top;
-			chart.plotBottom = DOMPosition.bottom - chartPadding.bottom;
-			chart.plotLeft = DOMPosition.left + chartPadding.left;
-			chart.plotRight = DOMPosition.right - chartPadding.right;
-			
-			chart.plotHeight = chart.plotBottom - chart.plotTop;
-			chart.plotWidth = chart.plotRight - chart.plotLeft;
-			
-
-			var height = chart.node.parent().height();
-			var width = chart.node.parent().width();
-			chart.canvas.height = height;
-			chart.canvas.width = width;
-			chart.infoCanvas.height = height;
-			chart.infoCanvas.width = width;
-			chart.crosshairCanvas.height = height;
-			chart.crosshairCanvas.width = width;
-			//chart.canvas.height = DOMPosition.height;
-			//chart.canvas.width = DOMPosition.width;
-		},
-		
-		
-		
-		initMarketHandler: function()
-		{
-			var chart = this;
-			
-			var marketSettings = chart.userOptions.marketSettings || {};
-			
-			//console.log(marketSettings);
-			
-			var marketHandler = new Sleuthcharts.MarketHandler(chart, marketSettings);
-			chart.marketHandler = marketHandler;
-		},
-		
-	
-		
-		initSeries: function()
-		{
-			var chart = this;
-			var seriesOptions = chart.userOptions.series;
-			
-			
-			for (var i = 0; i < seriesOptions.length; i++)
-			{
-				var opt = seriesOptions[i];
-				opt.index = i;
-				var seriesType = opt.seriesType;
-				var seriesClass = Sleuthcharts.seriesTypes[seriesType];
-				var series = new seriesClass();
-				series.init(chart, opt);
-				chart.series.push(series);
-			}
-		},
-		
-		
-		
-		initAxes: function()
-		{
-			var chart = this;
-			var xAxisOptions = chart.userOptions.xAxis;
-			var yAxisOptions = chart.userOptions.yAxis;
-			
-			for (var i = 0; i < xAxisOptions.length; i++)
-			{
-				var opt = xAxisOptions[i];
-				opt.isXAxis = true;
-				opt.index = i;
-				
-				var axis = new Sleuthcharts.Axis(chart, opt)
-				chart.xAxis.push(axis)
-			}
-			
-			for (var i = 0; i < yAxisOptions.length; i++)
-			{
-				var opt = yAxisOptions[i];
-				opt.isXAxis = false;
-				opt.index = i;
-				
-				var axis = new Sleuthcharts.Axis(chart, opt)
-				chart.yAxis.push(axis)
-			}
-			
-			chart.axes = chart.xAxis.concat(chart.yAxis);
-		},
-		
-		
-		
-		initDOMEventHandler: function()
-		{
-			var chart = this;
-			var DOMEventHandler = new Sleuthcharts.DOMEventHandler(chart);
-			DOMEventHandler.setDOMEvents();
-			
-			chart.DOMEventHandler = DOMEventHandler;
-		},
-		
-		
-		
-		equalizeYAxisWidth: function()
-		{
-			var chart = this;
-			var allSeries = chart.series;
-			var biggestWidth = 0;
-			
-			for (var i = 0; i < allSeries.length; i++)
-			{
-				var yAxis = allSeries[i].yAxis;
-				
-				var paddedMax = yAxis.max + (yAxis.max * (yAxis.maxPadding))
-				var paddedMin = yAxis.min - (yAxis.min * (yAxis.minPadding))
-				
-				var scale = d3.scale.linear()
-				.domain([paddedMin, paddedMax])
-				.range([yAxis.height, yAxis.pos.top])
-				
-				var tickVals = scale.ticks(yAxis.numTicks) //.map(o.tickFormat(8))
-				
-				
-				var maxTextWidth = Sleuthcharts.getMaxTextWidth(tickVals, yAxis.labels.fontSize, yAxis.ctx)
-				var textPadding = yAxis.labels.textPadding;
-				var combinedWidth = maxTextWidth + (yAxis.tickLength * 2) + (textPadding * 2);
-				var newAxisWidth = combinedWidth;
-
-				biggestWidth = newAxisWidth > biggestWidth ? newAxisWidth : biggestWidth;
-			}
-			for (var i = 0; i < allSeries.length; i++)
-			{
-				var yAxis = allSeries[i].yAxis
-				yAxis.widthInit = biggestWidth
-				yAxis.width = biggestWidth;
-			}
-		},
-		
-
-		
-		resizeAxis: function()
-		{
-			var chart = this;
-			
-			for (var i = 0; i < chart.axes.length; i++)
-			{
-				chart.axes[i].resizeAxis();
-			}
-		},
-		
-		updateAxisPos: function()
-		{
-			var chart = this;
-			
-			for (var i = 0; i < chart.axes.length; i++)
-			{
-				chart.axes[i].updateAxisPos();
-			}
-		},
-		
-		updateAxisTicks: function()
-		{
-			var chart = this;
-			
-			for (var i = 0; i < chart.axes.length; i++)
-			{
-				chart.axes[i].makeAxis();
-			}
-		},
-		
-		drawAxisLines: function()
-		{
-			var chart = this;
-			
-			for (var i = 0; i < chart.axes.length; i++)
-			{
-				chart.axes[i].drawAxisLines();
-			}
-		},
-		
-		
 		toggleLoading: function(isLoading)
 		{
 			var chart = this;

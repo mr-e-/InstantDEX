@@ -1571,6 +1571,60 @@ table.dataTable thead th:last-child {
 	display:block;
 }
 
+.series-tab {
+	height:14px;
+
+	border:1px solid #444444;
+	position:absolute;
+	font-size:10px;
+	padding-right:6px;
+	padding-left:6px;
+}
+
+.series-tab.main-series-tab {
+	display:none;
+}
+
+.series-tab-title {
+	height:100%;
+	position:relative;
+	float:left;
+}
+
+.series-tab-icons {
+	height:100%;
+	position:relative;
+	float:right;
+	margin-left:15px;
+}
+
+.series-tab-ico {
+	height:100%;
+	position:relative;
+	float:right;
+	padding-left:8px;
+}
+
+.series-tab-ico img {
+	opacity:0.8
+}
+
+.series-tab-ico img:hover {
+	cursor:pointer;
+	opacity:1;
+}
+
+
+.series-tab-close {
+	height:9px;
+	width:9px;
+}
+
+.series-tab-settings{
+	height:7px;
+	width:7px;
+}
+
 
 
 /* ------------------------- FOOTER ------------------------- */

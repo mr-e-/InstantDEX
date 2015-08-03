@@ -125,7 +125,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			e = DOMEventHandler.normalizeMouseEvent(e);
 
 			
-			//DOMEventHandler.resizeSeriesMousedown(e);
+			DOMEventHandler.resizeSeriesMousedown(e);
 
 			var mouseX = e.pageX;
 			var mouseY = e.pageY;
@@ -152,57 +152,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		
 		
-		onContainerMouseUp: function(e)
-		{				
-			var DOMEventHandler = this;
-			var chart = DOMEventHandler.chart;
-
-			chart.node.css("cursor", "default");
-			chart.isDragging = false;
-		},
-		
-
-		resizeSeries: function(e)
-		{
-			var DOMEventHandler = this;
-			var chart = DOMEventHandler.chart;
-			var $canvas = chart.canvasJQ;
-			var ctx = chart.ctx;
-			
-			var mouseX = e.pageX;
-			var mouseY = e.pageY;
-			var insideX = e.chartX;
-			var insideY = e.chartY;
-			
-			
-			
-			
-			var series = chart.series[0];
-
-			var yAxis = series.yAxis;
-			var xAxis = series.xAxis;
-			var lineWidth = 4;
-			var checkPos = {};
-			checkPos.bottomPos = yAxis.pos.bottom;
-			checkPos.leftPos = xAxis.pos.left;
-			checkPos.rightPos = xAxis.pos.right;
-
-			console.log(checkPos);
-			console.log([insideX, insideY]);
-			
-			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
-			
-			if (isInsideLine)
-			{
-				$canvas.css("cursor", "ns-resize");
-			}
-			else
-			{
-				$canvas.css("cursor", "default");
-			}
-		},
-		
-		
 		resizeSeriesMousedown: function(e)
 		{
 			var DOMEventHandler = this;
@@ -216,8 +165,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			var insideY = e.chartY;
 			
 			
-			
-			
 			var series = chart.series[0];
 
 			var yAxis = series.yAxis;
@@ -228,18 +175,94 @@ Sleuthcharts = (function(Sleuthcharts)
 			checkPos.leftPos = xAxis.pos.left;
 			checkPos.rightPos = xAxis.pos.right;
 
-			console.log(checkPos);
-			console.log([insideX, insideY]);
+			//console.log(checkPos);
+			//console.log([insideX, insideY]);
 			
 			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
 			
 			if (isInsideLine)
 			{
-				$canvas.css("cursor", "ns-resize");
+				chart.isResizingSeries = true;
 			}
 			else
 			{
-				$canvas.css("cursor", "default");
+				//$(chart.crosshairCanvas).css("cursor", "default");
+			}
+		},
+		
+		
+		
+		onContainerMouseUp: function(e)
+		{				
+			var DOMEventHandler = this;
+			var chart = DOMEventHandler.chart;
+
+			chart.node.css("cursor", "default");
+			chart.isDragging = false;
+			chart.isResizingSeries = false;
+		},
+		
+		
+
+		resizeSeriesMousemove: function(e)
+		{
+			var DOMEventHandler = this;
+			var chart = DOMEventHandler.chart;
+			var $canvas = chart.canvasJQ;
+			var ctx = chart.ctx;
+			
+			var mouseX = e.pageX;
+			var mouseY = e.pageY;
+			var insideX = e.chartX;
+			var insideY = e.chartY;
+		
+		
+			var series = chart.series[0];
+
+			var yAxis = series.yAxis;
+			var xAxis = series.xAxis;
+			var lineWidth = 4;
+			var checkPos = {};
+			checkPos.bottomPos = yAxis.pos.bottom;
+			checkPos.leftPos = xAxis.pos.left;
+			checkPos.rightPos = xAxis.pos.right;
+
+			
+			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
+			
+			if (isInsideLine)
+			{
+				$(chart.crosshairCanvas).css("cursor", "ns-resize");
+			}
+			else
+			{
+				$(chart.crosshairCanvas).css("cursor", "default");
+			}
+		},
+		
+		
+
+		resizeSeries: function(e)
+		{
+			var DOMEventHandler = this;
+			var chart = DOMEventHandler.chart;
+			var $canvas = chart.canvasJQ;
+			var ctx = chart.ctx;
+			
+			if (chart.isResizingSeries)
+			{
+			
+				var mouseX = e.pageX;
+				var mouseY = e.pageY;
+				var insideX = e.chartX;
+				var insideY = e.chartY;
+
+				var series = chart.series[0];
+				//console.log('moving');
+			}
+			else
+			{
+				//console.log('NOT moving');
 			}
 		},
 		
@@ -257,7 +280,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			var insideX = e.chartX;
 			var insideY = e.chartY;
 			
-			//DOMEventHandler.resizeSeries(e);
+			DOMEventHandler.resizeSeriesMousemove(e);
+			DOMEventHandler.resizeSeries(e);
+
+			
 			chart.crosshairCTX.clearRect(0, 0, chart.crosshairCanvas.width, chart.crosshairCanvas.height);
 			chart.infoCTX.clearRect(0, 0, chart.infoCanvas.width, chart.infoCanvas.height);
 			
@@ -389,7 +415,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		onContainerResize: function(e)
 		{
-			console.log('resize');
+
 		},
 		
 
@@ -407,6 +433,27 @@ Sleuthcharts = (function(Sleuthcharts)
 
 
 
+
+	/*
+	
+	$(".mainHeader-menu-ico-orders").on("click", function()
+	{
+		var saves = Sleuthgrids.saveAllGrids();
+		
+		console.log(saves);
+		localStorage.setItem('grids', JSON.stringify(saves));
+	})
+	
+	
+	$(".mainHeader-menu-ico-markets").on("click", function()
+	{
+		var saves = JSON.parse(localStorage.getItem('grids'));
+		console.log(saves);
+		console.log(JSON.stringify(saves))
+	})
+	
+	*/
+	
 
 
 

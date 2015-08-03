@@ -6,6 +6,145 @@ Sleuthcharts = (function(Sleuthcharts)
 	
 	Sleuthcharts.seriesTypes = {};
 	
+	
+	
+	
+	var SeriesTab = Sleuthcharts.SeriesTab = function()
+	{
+		this.init.apply(this, arguments)
+	}
+	
+	
+	SeriesTab.prototype = 
+	{
+		init: function(series, index)
+		{
+			var seriesTab = this;
+			seriesTab.series = series;
+			
+			seriesTab.index = index;
+			
+			seriesTab.seriesTabDOM;
+			seriesTab.seriesTabCloseDOM;
+			seriesTab.seriesTabTitleDOM;
+			
+
+			seriesTab.initDOM();
+			seriesTab.initEventListeners();
+		},
+		
+		
+		initDOM: function()
+		{
+			var seriesTab = this;
+			var series = seriesTab.series;
+			var chart = series.chart;
+			var index = seriesTab.index;
+			
+			seriesTab.seriesTabDOM = $($("#series_tab_template").html());
+			seriesTab.seriesTabTitleDOM = seriesTab.seriesTabDOM.find(".series-tab-title span");
+			seriesTab.seriesTabCloseDOM = seriesTab.seriesTabDOM.find(".series-tab-close");
+			seriesTab.seriesTabSettingsDOM = seriesTab.seriesTabDOM.find(".series-tab-settings");
+			
+			seriesTab.seriesTabTitleDOM.text(series.seriesType);
+			
+			if (series.isMainSeries)
+			{
+				seriesTab.seriesTabDOM.addClass("main-series-tab");
+			}
+			
+			chart.node.parent().append(seriesTab.seriesTabDOM);
+		},
+		
+		
+		
+		initEventListeners: function()
+		{
+			var seriesTab = this;
+			
+			seriesTab.seriesTabSettingsDOM.on("click", function(e)
+			{
+				seriesTab.openSeriesSettings(e);
+			})
+			
+			seriesTab.seriesTabCloseDOM.on("click", function()
+			{
+				seriesTab.removeSeries();
+			})
+			
+		},
+		
+		
+		
+		openSeriesSettings: function(e)
+		{
+			var seriesTab = this;
+			var series = seriesTab.series;
+			var isClose = $(e.target).hasClass("series-tab-close");
+			
+			if (!isClose)
+			{
+				console.log('open settings');
+			}
+		},
+		
+		
+		
+		removeSeries: function()
+		{
+			var seriesTab = this;
+			var series = seriesTab.series;
+			var chart = series.chart;
+			var yAxis = series.yAxis;
+			
+			var removeHeight = yAxis.height;
+			
+			//var allSeries = chart.series.slice();
+			chart.series.splice(series.index, 1);
+			chart.yAxis.splice(yAxis.index, 1);
+			chart.axes = chart.xAxis.concat(chart.yAxis);
+			
+			var numYAxis = chart.yAxis.length;
+			var heightPortion = removeHeight/numYAxis;
+			
+			for (var i = 0; i < chart.yAxis.length; i++)
+			{
+				var loopYAxis = chart.yAxis[i];
+				var heightPerc = loopYAxis.heightInit;
+				heightPerc = parseInt(heightPerc);
+				
+				var percDiff = 100 - heightPerc;
+				
+				loopYAxis.heightInit = String(heightPerc + (percDiff/numYAxis)) + "%";
+				
+				loopYAxis.height = (loopYAxis.height + heightPortion);
+			}
+			
+			seriesTab.seriesTabDOM.remove();
+			
+			
+			chart.redraw();
+			console.log('remove series');
+		},
+		
+		
+		
+		updatePositions: function()
+		{
+			var seriesTab = this;
+			var series = seriesTab.series;
+			var yAxis = series.yAxis;
+			var xAxis = series.xAxis;
+			
+			seriesTab.seriesTabDOM.css("left", 0);
+			seriesTab.seriesTabDOM.css("top", yAxis.pos.top - yAxis.padding.top);
+
+		}
+	}
+
+	
+	
+	
 	var Series = Sleuthcharts.Series = function()
 	{
 		//this.init.apply(this, arguments)
@@ -25,6 +164,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			series.seriesType = userOptions.seriesType;
 			series.index = userOptions.index;
+			series.isMainSeries = series.index == 0;
 
 			series.xAxis = [];
 			series.yAxis = [];
@@ -40,7 +180,13 @@ Sleuthcharts = (function(Sleuthcharts)
 			series.padding = new Sleuthcharts.Padding();
 			series.padding = Sleuthcharts.extend(series.padding, userOptions.padding);
 			
+			series.seriesTab = new Sleuthcharts.SeriesTab(series, series.index);
+			series.seriesTab.updatePositions();
+			
+			
 		},
+		
+		
 		
 		initAxis: function()
 		{
@@ -50,45 +196,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			//axis.width = this.width * options.widthPerc;
 		},
 		
-		drawYAxisFollowLine: function(yPos)
-		{
-			var axis = this;
-			var chart = axis.chart;
-			
-			if (!chart.isCrosshair)
-				return
-			
-			var width = axis.pos.left;
-			var $cursor_follow_x = chart.node.find(".cursor_follow_x");
-
-			$cursor_follow_x
-			.attr("x1", 0)
-			.attr("x2", width)
-			.attr("y1", yPos + 0.5)
-			.attr("y2", yPos + 0.5)
-			.attr("stroke-width", 1)
-			.attr("stroke", "#a5a5a5")
-			.attr("pointer-events", "none");
-		},
-		
-		drawXAxisFollowLine: function(closestPoint)
-		{
-			if (!chart.isCrosshair)
-				return
-			
-			var xAxis = chart.xAxis[0];
-			var height = xAxis.pos['bottom'];
-			var $cursor_follow_y = $(chart.node).find(".cursor_follow_y");
-		
-			$cursor_follow_y
-			.attr("x1", closestPoint.pos.middle)
-			.attr("x2", closestPoint.pos.middle)
-			.attr("y1", 0)
-			.attr("y2", height)
-			.attr("stroke-width", 1)
-			.attr("stroke", "#a5a5a5")
-			.attr("pointer-events", "none");
-		},
 		
 		
 		setDefaultMarketDataRange: function()
@@ -125,6 +232,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		updateAxisMinMax: function(startIndex, endIndex)
 		{
 			var series = this;
@@ -135,6 +243,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				chart.axes[i].updateMinMax(startIndex, endIndex);
 			}				
 		},
+		
 		
 		
 		calcPointWidth: function(visiblePhases)
@@ -175,6 +284,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			return ret
 		},
+		
 		
 		
 		getPointPositions: function()

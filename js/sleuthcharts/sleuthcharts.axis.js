@@ -192,11 +192,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 
-
-		
-		
-	/***************		RESIZE AXIS		****************/
-
 		
 		resizeAxis: function()
 		{
@@ -254,19 +249,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (hasPct)
 			{
-				var valNum = parseInt(strVal)/100			;
+				var valNum = parseInt(strVal)/100;
 				var converted = Math.round(valNum * Number(wrapHW));
 			}
 			
 			return converted
 		},
 		
-		
-		
-		
-		
-	/***************		UPDATE INTERNAL DOM POSITIONS		****************/
-	
+			
 	
 		updateAxisPos: function()
 		{

@@ -718,6 +718,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 	
+	
 		mouseover: function($arrow)
 		{
 			var grid = this;
