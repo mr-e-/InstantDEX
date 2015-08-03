@@ -921,7 +921,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		searchForAdjacentTiles: function(searchTiles, points, direction)
+		searchForParallelTiles: function(searchTiles, points, direction)
 		{
 			var grid = this;
 			
@@ -983,21 +983,12 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		
-		resizeTile: function(mouseX, mouseY)
+		searchForAdjacentTiles: function(tile, searchDirection)
 		{
 			var grid = this;
-			var tile = Sleuthgrids.resizeTile;
-			var $tile = tile.tileDOM;
 			var tilePositions = tile.positions;
-			
-			var resizeDirection = Sleuthgrids.resizeDir;
-			var isLeftOrTop =  (resizeDirection == "left" || resizeDirection == "top");
-			var isHoriz = (resizeDirection == "top" || resizeDirection == "bottom"); //backwards
-			var isVert = (resizeDirection == "left" || resizeDirection == "right");
-			var absKey = isVert ? "left" : "top";
-			var sizeKey = isVert ? "width" : "height";
-			
+			var isVert = (searchDirection == "left" || searchDirection == "right");
+
 			
 			var allTiles = grid.tiles.slice();
 			allTiles.splice(tile.index, 1);
@@ -1015,6 +1006,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			all[flip[0]] = [];
 			all[flip[1]] = [];
 			
+			//console.log(searchDirection);
+			
 			for (var i = 0; i < cloneTiles.length; i++)
 			{
 				var cloneTile = cloneTiles[i];
@@ -1023,8 +1016,8 @@ Sleuthgrids = (function(Sleuthgrids)
 				{
 					var adjTile = adjTiles[v]
 				
-					if (Math.abs(cloneTile.positions[resizeDirection] - adjTile.positions[resizeDirection]) <= 0.5)
-					{		
+					if (Math.abs(cloneTile.positions[searchDirection] - adjTile.positions[searchDirection]) <= 0.5)
+					{
 						var check = false;
 						
 						for (var k = 0; k < flip.length; k++)
@@ -1034,6 +1027,7 @@ Sleuthgrids = (function(Sleuthgrids)
 							for (var j = 0; j < flip.length; j++)
 							{
 								var flipKey = flip[j];
+								//console.log(Math.abs(cloneTile.positions[key] - adjTile.positions[flipKey]))
 
 								if (Math.abs(cloneTile.positions[key] - adjTile.positions[flipKey]) <= 0.5)
 								{
@@ -1056,7 +1050,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					}
 				}
 			}
-			
+						
 
 			var poss = [];
 			
@@ -1064,25 +1058,28 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			var first = all[flip[0]]
 			var second = all[flip[1]];
-			var constant = tilePositions[resizeDirection];
+			var constant = tilePositions[searchDirection];
 			
 			for (var i = 0; i < first.length; i++)
 			{
-				var minor = first[i].positions[flip[0]]
-				var major = tilePositions[flip[1]]
+				//var obj = {};
+				var minor = first[i].positions[flip[0]];
+				var major = tilePositions[flip[1]];
+				//obj.tiles = [tile, first[i]];
+				//obj.coord = [minor, major];
 				poss.push([minor, major])
 			}
 			
 			for (var i = 0; i < second.length; i++)
 			{
-				var minor = tilePositions[flip[0]]
-				var major = second[i].positions[flip[1]]
-				poss.push([minor, major])
+				var minor = tilePositions[flip[0]];
+				var major = second[i].positions[flip[1]];
+				poss.push([minor, major]);
 			}
 			
 			for (var i = 0; i < first.length; i++)
 			{
-				var minor = first[i].positions[flip[0]]
+				var minor = first[i].positions[flip[0]] // check same as tilePositions?
 				
 				for (var j = 0; j < second.length; j++)
 				{
@@ -1096,29 +1093,48 @@ Sleuthgrids = (function(Sleuthgrids)
 			for (var i = 0; i < poss.length; i++)
 			{
 				var pos = poss[i]
-				
-				if (isVert)
-				{
-					var one = [[constant, pos[0]],[constant, pos[1]]]
-				}
-				else
-				{
-					var one = [[pos[0], constant],[pos[1],constant]]
-				}
+				var formattedCoord = isVert ? [[constant, pos[0]],[constant, pos[1]]] : [[pos[0], constant],[pos[1],constant]]
 
-				points.push(one)
+				points.push(formattedCoord);
 			}
 			
+			var retObj = {};
+			retObj.adjTiles = adjTiles;
+			retObj.nonAdjTiles = cloneTiles;
+			retObj.formattedCoords = points;
 			
-			for (var i = 0; i < points.length; i++)
+			return retObj;
+		},
+		
+		
+		
+		resizeTile: function(mouseX, mouseY)
+		{
+			var grid = this;
+			var tile = Sleuthgrids.resizeTile;
+			var $tile = tile.tileDOM;
+			var tilePositions = tile.positions;
+			
+			var resizeDirection = Sleuthgrids.resizeDir;
+			var isVert = (resizeDirection == "left" || resizeDirection == "right");
+
+			
+			var adjData = grid.searchForAdjacentTiles(tile, resizeDirection);
+			
+			var adjTiles = adjData.adjTiles;
+			var nonAdjTiles = adjData.nonAdjTiles;
+			var formattedCoords = adjData.formattedCoords;
+
+			
+			for (var i = 0; i < formattedCoords.length; i++)
 			{
-				var point = points[i];
-				var results = grid.searchForAdjacentTiles(cloneTiles, point, resizeDirection); // cloneTiles == filtered list
+				var formattedCoord = formattedCoords[i];
+				var results = grid.searchForParallelTiles(nonAdjTiles, formattedCoord, resizeDirection); // nonAdjTiles == filtered list
 				
 				if (results.length)
 				{
-					var coordOne = isVert ? point[0][1] : point[0][0];
-					var coordTwo = isVert ? point[1][1] : point[1][0];
+					var coordOne = isVert ? formattedCoord[0][1] : formattedCoord[0][0];
+					var coordTwo = isVert ? formattedCoord[1][1] : formattedCoord[1][0];
 					var min = Math.min(coordOne, coordTwo)
 					var max = Math.max(coordOne, coordTwo)
 					var size = max - min;
@@ -1148,12 +1164,14 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			
 			
-			var tes = [];
+			var adjTilesInRange = [];
 			
+			var flip = isVert ? ["top", "bottom"] : ["left", "right"];
+
 			for (var i = 0; i < adjTiles.length; i++)
 			{
-				var coordOne = isVert ? point[0][1] : point[0][0];
-				var coordTwo = isVert ? point[1][1] : point[1][0];
+				var coordOne = isVert ? formattedCoord[0][1] : formattedCoord[0][0];
+				var coordTwo = isVert ? formattedCoord[1][1] : formattedCoord[1][0];
 				
 				var pos = adjTiles[i].positions;
 					
@@ -1165,7 +1183,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				
 				if (firstBetween && secondBetween)
 				{
-					tes.push(adjTiles[i])
+					adjTilesInRange.push(adjTiles[i])
 				}
 			}
 
@@ -1181,9 +1199,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			var diff = loopMouse - tilePositions[resizeDirection];
 			
 			
-			for (var i = 0; i < tes.length; i++)
+			for (var i = 0; i < adjTilesInRange.length; i++)
 			{
-				var tile = tes[i];
+				var tile = adjTilesInRange[i];
 				var $el = tile.tileDOM;
 				var pos = tile.positions;
 				

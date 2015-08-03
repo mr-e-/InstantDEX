@@ -377,17 +377,55 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tilePositions = tile.positions;
 			var searchMap = Sleuthgrids.makeSearchMap(tilePositions);
 			
+			/*for (searchDirection in searchMap)
+			{
+				var adjData = grid.searchForAdjacentTiles(tile, resizeDirection);
+				
+				var adjTiles = adjData.adjTiles;
+				var nonAdjTiles = adjData.nonAdjTiles;
+				var formattedCoords = adjData.formattedCoords;
+			}*/
+			
 			for (searchDirection in searchMap)
 			{
 				var searchPoints = searchMap[searchDirection];
-				var searchResults = grid.searchForAdjacentTiles(allTiles, searchPoints, searchDirection)
+				var searchResults = grid.searchForParallelTiles(allTiles, searchPoints, searchDirection)
 				
 				if (searchResults.length)
 				{
-					break;
+					var isVert = (searchDirection == "left" || searchDirection == "right");
+
+					var coordOne = isVert ? searchPoints[0][1] : searchPoints[0][0];
+					var coordTwo = isVert ? searchPoints[1][1] : searchPoints[1][0];
+					var min = Math.min(coordOne, coordTwo)
+					var max = Math.max(coordOne, coordTwo)
+					var size = max - min;
+					var runningSize = 0;
+					var sizeKey = isVert ? "height" : "width";
+					
+					for (var j = 0; j < searchResults.length; j++)
+					{
+						runningSize += searchResults[j][0].tile.positions[sizeKey];
+					}
+										
+					if (runningSize == size || Math.abs(runningSize - size) <= 1)
+					{
+						//console.log([size, runningSize, "yes"])
+						break;
+					}
+					else
+					{
+						//console.log([size, runningSize, "no"])
+						searchResults = [];
+					}				
 				}
 			}
 			
+			if (!searchResults.length)
+			{
+				
+			}
+						
 			var isLeftOrTop = (searchDirection == "left" || searchDirection == "top");
 			var isHoriz = (searchDirection == "top" || searchDirection == "bottom"); //backwards
 			var isVert = (searchDirection == "left" || searchDirection == "right");
