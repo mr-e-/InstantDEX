@@ -965,15 +965,16 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		compareCoord: function(mainPoints, compPoint, direction)
 		{
-			var isVert = (direction == "left" || direction == "right")
+			var isVert = (direction == "left" || direction == "right");
 			var indexOfSame = isVert ? 0 : 1;
 			var indexOfBetween = isVert ? 1 : 0;
 			
-			var min = Math.min(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween])
-			var max = Math.max(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween])
+			var min = Math.min(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween]);
+			var max = Math.max(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween]);
 
-			var isSame = (mainPoints[0][indexOfSame] == compPoint[indexOfSame])
-			var isBetween = (compPoint[indexOfBetween] >= min && compPoint[indexOfBetween] <= max)
+			var isSame = Math.abs(mainPoints[0][indexOfSame] - compPoint[indexOfSame]) <= 0.5;
+			//console.log([min, compPoint[indexOfBetween], max]);
+			var isBetween = (compPoint[indexOfBetween] >= min - 0.5) && (compPoint[indexOfBetween] <= max + 0.5);
 
 
 			return isSame && isBetween
@@ -1006,7 +1007,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			adjTiles.push(tile)
 			
 			//var cloneTiles = Sleuthgrids.cloneListOfObjects(allTiles);
-			var cloneTiles = allTiles;
+			var cloneTiles = allTiles.slice();
 
 			var flip = isVert ? ["top", "bottom"] : ["left", "right"];
 
@@ -1022,7 +1023,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				{
 					var adjTile = adjTiles[v]
 				
-					if (cloneTile.positions[resizeDirection] == adjTile.positions[resizeDirection])
+					if (Math.abs(cloneTile.positions[resizeDirection] - adjTile.positions[resizeDirection]) <= 0.5)
 					{		
 						var check = false;
 						
@@ -1034,7 +1035,7 @@ Sleuthgrids = (function(Sleuthgrids)
 							{
 								var flipKey = flip[j];
 
-								if (cloneTile.positions[key] == adjTile.positions[flipKey])
+								if (Math.abs(cloneTile.positions[key] - adjTile.positions[flipKey]) <= 0.5)
 								{
 									check = true;
 									break
@@ -1140,7 +1141,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					}
 				}
 			}
-
+			
 			if (!results.length)
 			{
 				return;

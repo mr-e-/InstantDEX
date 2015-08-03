@@ -488,7 +488,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			var isInsideBorder = Sleuthgrids.checkIfMouseIsInsideBorder(mouseY, mouseX, tilePositions);
 			
-			if (isInsideBorder.isInside)
+			if (isInsideBorder.isInside && !Sleuthgrids.isResizing)
 			{
 				var borderMap = ["top", "bottom", "left", "right"]
 				var dirMap = ["N", "S", "W", "E"]

@@ -28,6 +28,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		initDOM: function()
 		{
 			var tileNavCell = this;
@@ -50,10 +51,12 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		updateToNewTile: function()
 		{
 			
 		},
+		
 		
 		
 		initEventListeners: function()
@@ -87,12 +90,14 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		unbindEventListeners: function()
 		{
 			var tileNavCell = this;
 			tileNavCell.tileNavCellDOM.off();
 			tileNavCell.tileNavCellDOM.find("*").off();
 		},
+		
 		
 		
 		cellLinkClick: function($li)
@@ -146,6 +151,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		changeCellTabs: function(e)
 		{
 			if (e && $(e.target).hasClass("tile-header-close"))
@@ -183,6 +189,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			tile.showTileBorder();
 		},
+		
 		
 		
 		removeTileNavCell: function()
