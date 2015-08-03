@@ -1540,6 +1540,38 @@ table.dataTable thead th:last-child {
 	background-color:black;
 }
 
+.chart-marketInfo {
+	height:18px;
+	width:100%;
+	position:absolute;
+	z-index:3;
+	background-color:#151515;
+	padding-top:4px;
+	padding-left:5px;
+	font-size:10px;
+	color:#aaaaaa;
+
+}
+
+.chart-marketName {
+	height:100%;
+	position:relative;
+	float:left;
+}
+
+.chart-candleInfo {
+	height:100%;
+	position:relative;
+	float:left;
+	margin-left:15px;
+	display:none;
+}
+
+.chart-candleInfo.active {
+	display:block;
+}
+
+
 
 /* ------------------------- FOOTER ------------------------- */
 

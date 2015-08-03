@@ -24,43 +24,50 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var DOMEventHandler = this;
 			var chart = DOMEventHandler.chart;
-			var $chartEl = chart.node;
-			$chartEl = chart.canvasJQ;
+			var $mainCanvas = chart.canvasJQ;
+			var $crosshairCanvas = $(chart.crosshairCanvas);
+			var $infoCanvas = $(chart.infoCanvas);
 			
+			var els = [$mainCanvas, $crosshairCanvas, $infoCanvas];
+			
+			$.each(els, function()
+			{
+				var $chartEl = $(this);
 	
-			$chartEl.on('mousewheel DOMMouseScroll', function(e)
-			{
-				DOMEventHandler.onContainerMouseWheel(e);
-			})
-			
-			$chartEl.on('mousedown', function(e)
-			{
-				DOMEventHandler.onContainerMouseDown(e);
-			})
-			
-			$chartEl.on('mouseup', function(e)
-			{
-				DOMEventHandler.onContainerMouseUp(e);
-			})
-			
-			$chartEl.on('mousemove', function(e)
-			{
-				DOMEventHandler.onContainerMouseMove(e);
-			})
-			
-			$chartEl.on('mouseleave', function(e)
-			{
-				DOMEventHandler.onContainerMouseLeave(e);
-			})
-			
-			$chartEl.on('click', function(e)
-			{
-				DOMEventHandler.onContainerMouseClick(e);
-			})
+				$chartEl.on('mousewheel DOMMouseScroll', function(e)
+				{
+					DOMEventHandler.onContainerMouseWheel(e);
+				})
+				
+				$chartEl.on('mousedown', function(e)
+				{
+					DOMEventHandler.onContainerMouseDown(e);
+				})
+				
+				$chartEl.on('mouseup', function(e)
+				{
+					DOMEventHandler.onContainerMouseUp(e);
+				})
+				
+				$chartEl.on('mousemove', function(e)
+				{
+					DOMEventHandler.onContainerMouseMove(e);
+				})
+				
+				$chartEl.on('mouseleave', function(e)
+				{
+					DOMEventHandler.onContainerMouseLeave(e);
+				})
+				
+				$chartEl.on('click', function(e)
+				{
+					DOMEventHandler.onContainerMouseClick(e);
+				})
 
-			$chartEl.on('resize', function(e)
-			{
-				DOMEventHandler.onContainerResize(e);
+				$chartEl.on('resize', function(e)
+				{
+					DOMEventHandler.onContainerResize(e);
+				})
 			})
 			
 		},
@@ -106,8 +113,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			var DOMEventHandler = this;
 			var chart = DOMEventHandler.chart;
 			
-			//console.log('click');
-			//console.log(chart);
 		},
 		
 		
@@ -253,10 +258,11 @@ Sleuthcharts = (function(Sleuthcharts)
 			var insideY = e.chartY;
 			
 			//DOMEventHandler.resizeSeries(e);
+			chart.crosshairCTX.clearRect(0, 0, chart.crosshairCanvas.width, chart.crosshairCanvas.height);
+			chart.infoCTX.clearRect(0, 0, chart.infoCanvas.width, chart.infoCanvas.height);
 			
 			if (chart.isInsidePlot(insideX, insideY))
 			{
-				//console.log('isinside');
 				var closestPoint = chart.getPoint(chart.allPoints, insideX)
 				var index = chart.visiblePhases.indexOf(closestPoint.phase)
 				
@@ -275,22 +281,17 @@ Sleuthcharts = (function(Sleuthcharts)
 						if (index != chart.prevIndex && index >= 0) //&& (closestTime % pointRange <= pointRange/2))
 						{
 							chart.prevIndex = index;
-							
 							chart.drawMarketInfo(closestPoint);
-							
-							
-							if (insideX >= axis.pos.left && insideX <= axis.pos.right)
-							{
-								var time = closestPoint.phase.startTime;
-								axis.drawTimeBox(closestPoint.pos.middle, time);
-							}
-							else
-							{
-								var $timeFollowWrap = chart.node.find(".xAxis-follow");
-
-								chart.prevIndex = -2;
-								$timeFollowWrap.hide();
-							}
+						}
+						
+						if (insideX >= axis.pos.left && insideX <= axis.pos.right)
+						{
+							var time = closestPoint.phase.startTime;
+							axis.drawTimeBox(closestPoint.pos.middle, time);
+						}
+						else
+						{
+							chart.prevIndex = -2;
 						}
 					}
 					else
@@ -301,8 +302,7 @@ Sleuthcharts = (function(Sleuthcharts)
 						}
 						else
 						{
-							var $yAxisFollowWrap = chart.node.find(".yAxis-follow[data-axisNum='" + String(axisIndex + 1) + "']");
-							$yAxisFollowWrap.hide();
+
 						}
 					}
 				}

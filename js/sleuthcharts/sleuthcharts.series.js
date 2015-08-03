@@ -240,84 +240,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			chart.allPoints = allPoints;
 		},
-		
-		
-		drawCanvasPath: function(ctx, d, style)
-		{
-			var strokeColor = style.strokeColor;
-			var fillColor = style.fillColor;
-			var lineWidth = 1;
-			
-			var pathKeys = 
-			{
-				M: "moveTo", 
-				L: "lineTo",
-				C: "bezierCurveTo",
-				Z: "closePath"
-			};
-			
-			var all = [];
-			var obj = {};
-			
-			for (var i = 0; i < d.length; i++)
-			{
-				var val = d[i];
-				
-				if (val in pathKeys)
-				{
-					if (i > 0)
-					{
-						all.push(obj);
-					}
-					
-					obj = {};
-					obj.vals = [];
-					obj.func = pathKeys[val];
-					obj.index = i;
-				}
-				else
-				{
-					obj.vals.push(val);
-				}
-				
-				if (i == d.length - 1)
-				{
-					all.push(obj);
-				}
-			}
-			
-			
-			ctx.beginPath();
-			ctx.lineWidth = 1;
-			ctx.strokeStyle = strokeColor;
-			ctx.fillStyle = fillColor;
-			
-			for (var i = 0; i < all.length; i++)
-			{
-				var loop = all[i];
-				var funcName = loop.func;
-				var vals = loop.vals;
-				
-				var ctxFunc = ctx[funcName];
-				
-				ctxFunc.apply(ctx, vals);
-				
-				
-				/*if (vals.length)
-				{
-					ctx[funcName](vals[0], vals[1])
-				}
-				else
-				{
-					ctx[funcName]();
-				}*/
-				
-			}
-			
-			ctx.fill();
-			ctx.stroke();
-			
-		},
 
 		
 	}
@@ -397,7 +319,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				pathStyle.strokeColor = strokeColor;
 				pathStyle.fillColor = fillColor;
 				
-				series.drawCanvasPath(ctx, d, pathStyle);
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 				
 
 			}
@@ -475,7 +397,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				pathStyle.strokeColor = strokeColor;
 				pathStyle.fillColor = fillColor;
 				
-				series.drawCanvasPath(ctx, d, pathStyle);
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 				
 			}
 			
@@ -542,7 +464,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				pathStyle.strokeColor = strokeColor;
 				pathStyle.fillColor = fillColor;
 				
-				series.drawCanvasPath(ctx, d, pathStyle);
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 			}
 			
 
@@ -607,7 +529,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			pathStyle.strokeColor = series.lineColor;
 			pathStyle.fillColor = "transparent";
 			
-			series.drawCanvasPath(ctx, d, pathStyle);
+			Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 		},
 		
 	})
@@ -700,8 +622,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			
 			
-			series.drawCanvasPath(ctx, linePath, linePathStyle);
-			series.drawCanvasPath(ctx, areaPath, areaPathStyle);
+			Sleuthcharts.drawCanvasPath(ctx, linePath, linePathStyle);
+			Sleuthcharts.drawCanvasPath(ctx, areaPath, areaPathStyle);
 		
 
 		},

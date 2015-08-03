@@ -20,29 +20,6 @@ Sleuthcharts = (function(Sleuthcharts)
 	};
 	
 
-	Sleuthcharts.getYAxisNodes = function($node, index)
-	{	
-		var obj = {}
-		var $axisGroup = $node.find(".sleuthYAxis[data-axisnum='" + String(index) +"']")
-		
-		obj['labels'] = $axisGroup.find(".yLabels")
-		obj['ticksLeft'] = $axisGroup.find(".yTicksLeft")
-		obj['ticksRight'] = $axisGroup.find(".yTicksRight")
-		obj['gridLines'] = $axisGroup.find(".yGridLines")
-		
-		return obj;
-	}
-
-	Sleuthcharts.getXAxisNodes = function($node, index)
-	{	
-		var obj = {}
-		var $axisGroup = $node.find(".sleuthXAxis[data-axisnum='" + String(index) +"']")
-		
-		obj['labels'] = $axisGroup.find(".xLabels")
-		obj['ticks'] = $axisGroup.find(".xTicks")
-		
-		return obj;
-	}
 
 
 
@@ -163,11 +140,10 @@ Sleuthcharts = (function(Sleuthcharts)
 				axis.minRange = options.minRange;
 				
 				axis.tickStep = options.tickStep;
-				axis.nodes = Sleuthcharts.getXAxisNodes(chart.node, axis.index + 1);
 			}
 			else
 			{
-				axis.nodes = Sleuthcharts.getYAxisNodes(chart.node, axis.index + 1);
+
 			}
 									
 			axis.canvas = document.createElement('canvas');
@@ -333,9 +309,10 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		makeAxis: function()
 		{
-			
 			var axis = this;
+			var chart = axis.chart;
 			var isXAxis = axis.isXAxis;
+			
 			
 			
 			var ticksLeft = [];
@@ -395,11 +372,17 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 
 			
+	
 
-			
+			var canvas = chart.canvas;
+			var ctx = chart.ctx;
 			
 			var tickLength = axis.tickLength;
 
+			var tickPathStyle = {};
+			tickPathStyle.strokeColor = "white";
+			tickPathStyle.lineWidth = 0.5;
+			
 			var fontLabelAttr = {
 				"fill": axis.labels.fontColor,
 				"font-family": "Roboto",
@@ -409,102 +392,89 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (isXAxis)
 			{
-				var $axisLabels = axis.nodes.labels;
-				var $axisTicks = axis.nodes.ticks;
+				for (var i = 0; i < labels.length; i++)
+				{
+					var label = labels[i];
+					
+					ctx.font = axis.labels.fontSize + " Roboto";
+					ctx.fillStyle = axis.labels.fontColor;
+					ctx.fillText(label.text, label.x - 20, label.y + 16);
+				}
 				
-				$axisLabels.empty();
-				$axisTicks.empty();
-				
-				
-				var SVGTimeLabels = d3.select($axisLabels.get()[0]).selectAll("text")
-				.data(labels)
-				.enter()
-				.append("text")
-				
-				SVGTimeLabels
-				.attr("x", function (d) { return d.x - 20})
-				.attr("y", function (d) { return d.y + 16 })
-				.text(function (d) { return d.text })
-				.attr(fontLabelAttr)
-				
-				var SVGTimeTicks = d3.select($axisTicks.get()[0]).selectAll("line")
-				.data(ticksDom)
-				.enter()
-				.append("line")
-				
-				SVGTimeTicks
-				.attr("x1", function (d) { return d.x })
-				.attr("x2", function (d) { return d.x })
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y + tickLength})
-				.attr(tickAttr)
-				
+				for (var i = 0; i < ticksDom.length; i++)
+				{
+					var tickDom = ticksDom[i];
+					var pathStyle = tickPathStyle;
+					
+					var d = 
+					[
+						"M", tickDom.x, tickDom.y, 
+						"L", tickDom.x, tickDom.y + tickLength, 
+					]
+					
+					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+				}
+
 				axis.ticks = [];
 			}
 			else
 			{
 				
-				var $axisLabels = axis.nodes.labels;
-				var $axisTicksLeft = axis.nodes.ticksLeft;
-				var $axisTicksRight = axis.nodes.ticksRight;
-				var $axisGridLines = axis.nodes.gridLines;
-				
-				$axisLabels.empty();
-				$axisTicksLeft.empty();
-				$axisTicksRight.empty();
-				$axisGridLines.empty();
-
-
-				var SVGLabels = d3.select($axisLabels.get()[0]).selectAll("text")
-				.data(labels)
-				.enter()
-				.append("text")
-				
-				SVGLabels.attr("x", function (d) { return d.x })
-				.attr("y", function (d) { return d.y + 4 })
-				.text(function (d) { return d.text })
-				.attr(fontLabelAttr)
-				//.attr("text-anchor", "end")
+				for (var i = 0; i < labels.length; i++)
+				{
+					var label = labels[i];
+					
+					ctx.font = axis.labels.fontSize + " Roboto";
+					ctx.fillStyle = axis.labels.fontColor;
+					ctx.fillText(label.text, label.x, label.y + 4);
+				}
 
 				
-				var SVGTicks = d3.select($axisTicksLeft.get()[0]).selectAll("line")
-				.data(ticksLeft)
-				.enter()
-				.append("line")
+				for (var i = 0; i < ticksLeft.length; i++)
+				{
+					var tickLeft = ticksLeft[i];
+					var pathStyle = tickPathStyle;
+					
+					var d = 
+					[
+						"M", tickLeft.x, tickLeft.y, 
+						"L", tickLeft.x + tickLength, tickLeft.y, 
+					]
+					
+					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+				}
 				
-				SVGTicks
-				.attr("x1", function (d) { return d.x })
-				.attr("x2", function (d) { return d.x + tickLength})
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y })
-				.attr(tickAttr)
+				for (var i = 0; i < ticksRight.length; i++)
+				{
+					var tickRight = ticksRight[i];
+					var pathStyle = tickPathStyle;
+					
+					var d = 
+					[
+						"M", tickRight.x, tickRight.y, 
+						"L", tickRight.x - tickLength, tickRight.y, 
+					]
+					
+					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+				}
 				
 				
-				var SVGTicksRight = d3.select($axisTicksRight.get()[0]).selectAll("line")
-				.data(ticksRight)
-				.enter()
-				.append("line")
-				
-				SVGTicksRight
-				.attr("x1", function (d) { return d.x })
-				.attr("x2", function (d) { return d.x - tickLength})
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y })
-				.attr(tickAttr)
-				
-				
-				var SVGGridLines = d3.select($axisGridLines.get()[0]).selectAll("line")
-				.data(gridLines)
-				.enter()
-				.append("line")
-				
-				SVGGridLines
-				.attr("x1", function (d) { return 0 })
-				.attr("x2", function (d) { return d.x })
-				.attr("y1", function (d) { return d.y })
-				.attr("y2", function (d) { return d.y })
-				.attr(gridLineAttr)
-			
+				for (var i = 0; i < gridLines.length; i++)
+				{
+					var gridLine = gridLines[i];
+					var pathStyle = {};
+					pathStyle.strokeColor = "#404040";
+					pathStyle.lineWidth = "1";
+					pathStyle.lineDash = [1,3];
+
+					var d = 
+					[
+						"M", 0, gridLine.y, 
+						"L", gridLine.x, gridLine.y, 
+					]
+					
+					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+				}
 			}
 			
 		},
@@ -709,72 +679,53 @@ Sleuthcharts = (function(Sleuthcharts)
 			var axis = this;
 			var chart = axis.chart;
 			var isXAxis = axis.isXAxis;
+			var ctx = chart.ctx;
 			
-			//var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();	
-			var bbox = chart.node[0].getBoundingClientRect()
-			//bbox.right = chart.plotRight;
-			//var $axisGroup = this.axisGroupDom;
+			var pathStyle = {};
+			pathStyle.strokeColor = "#555555";
+			pathStyle.lineWidth = 1;
+			
+			var bbox = chart.node[0].getBoundingClientRect()			
+			
+
+			var d = [];
 			
 			if (isXAxis)
 			{
-				var $axisGroup = chart.node.find(".sleuthXAxis[data-axisNum='" + String(axis.index + 1) +"']")
-				var $axisLinesGroup = $axisGroup.find(".xAxisLines");
+				d = 
+				[
+					"M", 0, axis.pos.top + 0.5, 
+					"L", bbox.right, axis.pos.top + 0.5, 
+				]
+				
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+				
+				d = 
+				[
+					"M", 0, axis.pos.bottom + 0.5, 
+					"L", bbox.right, axis.pos.bottom + 0.5, 
+				]
+				
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 			}
 			else
 			{
-				var $axisGroup = chart.node.find(".sleuthYAxis[data-axisNum='" + String(axis.index + 1) +"']")
-				var $axisLinesGroup = $axisGroup.find(".yAxisLines");
-			}
-
-
-			var rawgroup = $axisLinesGroup.get()[0]
-			
-			var lineAttr = {
-				"stroke-width": 1,
-				"stroke": "#555555"
-			}
-			
-			$axisLinesGroup.empty();
-
-			
-			//var firstPos = isXAxis ? this.pos.top + 0.5 : this.pos.bottom + 0.5;
-			
-			
-			if (isXAxis)
-			{
-				d3.select(rawgroup).append("line")
-				.attr("x1", 0 )
-				.attr("x2", bbox.right)
-				.attr("y1", axis.pos.top + 0.5)
-				.attr("y2", axis.pos.top + 0.5)
-				.attr(lineAttr)
+				d = 
+				[
+					"M", 0, axis.pos.bottom + 0.5, 
+					"L", bbox.right, axis.pos.bottom + 0.5, 
+				]
 				
-				d3.select(rawgroup).append("line")
-				.attr("x1", 0 )
-				.attr("x2", bbox.right)
-				.attr("y1", axis.pos.bottom + 0.5)
-				.attr("y2", axis.pos.bottom + 0.5)
-				.attr(lineAttr)
-			}
-			else
-			{
-				d3.select(rawgroup).append("line")
-				.attr("x1", 0 )
-				.attr("x2", bbox.right)
-				.attr("y1", axis.pos.bottom + 0.5)
-				.attr("y2", axis.pos.bottom + 0.5)
-				.attr(lineAttr)
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 				
-				d3.select(rawgroup).append("line")
-				.attr("x1", axis.pos.left + 0.5)
-				.attr("x2", axis.pos.left + 0.5)
-				.attr("y1", 0)
-				.attr("y2", axis.pos.bottom)
-				.attr(lineAttr)
+				d = 
+				[
+					"M", axis.pos.left + 0.5, 0, 
+					"L", axis.pos.left + 0.5, axis.pos.bottom, 
+				]
+				
+				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 			}
-			
-
-			
 		},
 		
 		
@@ -782,42 +733,18 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var axis = this;
 			var chart = axis.chart;
-			var axisIndex = axis.index;
+			var canvas = chart.infoCanvas
+			var ctx = chart.infoCTX;
+			//ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
 
-			var $followWrap = chart.node.find(".yAxis-follow[data-axisnum='"+ String(axisIndex + 1) +"']");
-			var $followBackbox = $followWrap.find(".yAxis-follow-backbox");
-			var $followText = $followWrap.find(".yAxis-follow-text");
-			
-			var textAttr = {
-				"fill":"#D3D3D3",
-				"font-family":"Roboto",
-				"font-size":"12px"
-			}
-			
-			var leftPos = axis.pos.left;
-			var width = axis.width;
-			
-			var insideY = mousePosY - axis.pos.top;
-			var val = axis.getValueFromPosition(insideY);
-			val = Sleuthcharts.formatNumWidth(Number(val));
-			
-			var textWidth = axis.ctx.measureText(val).width;
-			var move = (width - textWidth) / 2;
-		
-			$followText
-			.text(val)
-			.attr("y", mousePosY + 5)
-			.attr("x", leftPos + move)
-			.attr(textAttr)
-
-			
-			var backboxRect = d3.select($followText.get()[0]).node().getBBox();
 			var rightPos = axis.pos.right - 1;
 			var leftPos = axis.pos.left;
-			var topPos = backboxRect.y - 3;
-			var bottomPos = topPos + backboxRect.height + 6;
+			var topPos = mousePosY - 8;
+			var bottomPos = topPos + 18;
 			var yMiddlePos = topPos + ((bottomPos - topPos) / 2) + 0.5;
 			var leftPosPad = leftPos + 7;
+			
 			
 			var d = 
 			[
@@ -829,13 +756,31 @@ Sleuthcharts = (function(Sleuthcharts)
 				"L", rightPos, topPos, 
 			]
 
+			var pathStyle = {};
+			pathStyle.strokeColor = "#D3D3D3";
+			pathStyle.lineWidth = 1;
+			pathStyle.fillColor = "black";
 
-			d3.select($followBackbox.get()[0])
-			.attr("d", d.join(" "))
-			.attr("stroke", "#D3D3D3")
-			.attr("stroke-width", 0.5)
-		
-			$followWrap.show();
+			Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+			
+			
+			
+			var leftPos = axis.pos.left;
+			var width = axis.width;
+			
+			var insideY = mousePosY - axis.pos.top;
+			var val = axis.getValueFromPosition(insideY);
+			val = Sleuthcharts.formatNumWidth(Number(val));
+			
+			var textWidth = axis.ctx.measureText(val).width;
+			var move = (width - textWidth) / 2;
+			
+
+			ctx.font = "12px Roboto";
+			ctx.fillStyle = "#D3D3D3";
+			
+			ctx.fillText(String(val), leftPos + move, mousePosY + 6);
+			
 		},
 		
 		
@@ -844,45 +789,38 @@ Sleuthcharts = (function(Sleuthcharts)
 		{	
 			var axis = this;
 			var chart = axis.chart;
+			var canvas = chart.infoCanvas
+			var ctx = chart.infoCTX;
 			time = Sleuthcharts.formatTime(new Date(time), true)
 
 			
-			var textAttr = {
-				"fill":"#D3D3D3",
-				"font-family":"Roboto",
-				"font-size":"13px"
-			}
-			
-			var boxAttr = {
-				"fill":"#black",
-				"stroke":"#a5a5a5",
-				"stroke-width":1
-			}
-			
-			var $followWrap = chart.node.find(".xAxis-follow");
-			var $followBackbox = $followWrap.find(".xAxis-follow-backbox");
-			var $followText = $followWrap.find(".xAxis-follow-text");
-			
-			
+			var leftPos = mousePosX - 55;
+			var rightPos = leftPos + 110;
 			var topPos = axis.pos.top;
-			var height = axis.height;
+			var bottomPos = topPos + axis.height;
 			
-								
-			$followText
-			.text(time)
-			.attr("y", topPos + 15)
-			.attr("x", mousePosX - 37)
-			.attr(textAttr)
+			var d = 
+			[
+				"M", leftPos, topPos, 
+				"L", rightPos, topPos, 
+				"L", rightPos, bottomPos, 
+				"L", leftPos, bottomPos, 
+				"Z"
+			]
+			
+			var pathStyle = {};
+			pathStyle.strokeColor = "#a5a5a5";
+			pathStyle.lineWidth = 1;
+			pathStyle.fillColor = "black";
 
-			//var timerect = d3.select($cursor_follow_time.get()[0]).node().getBBox();
-			d3.select($followBackbox.get()[0])
-			.attr("x", mousePosX - 55)
-			.attr("y", topPos)
-			.attr("width", 110)
-			.attr("height", height)
-			.attr(boxAttr)
+			Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 			
-			$followWrap.show()
+		
+			
+			ctx.font = "13px Roboto";
+			ctx.fillStyle = "#D3D3D3";
+			
+			ctx.fillText(String(time), mousePosX - 37, topPos + 15);
 		},
 		
 		

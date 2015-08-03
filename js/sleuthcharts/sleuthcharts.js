@@ -79,21 +79,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.chartOptions = userOptions.chart;
 			
 			chart.node = chart.userOptions.chart.node;
+			chart.pointInfoDOM = chart.node.parent().find(".chart-marketInfo");
 			
-			var canvas = document.createElement('canvas');
-			canvas.width = chart.node.parent().width();
-			canvas.height = chart.node.parent().height();
-			canvas.style.position = "absolute";
-			canvas.style.top = 0;
-			canvas.style.left = 0;
+			chart.initCanvas();
 			
-			chart.node.parent().append(canvas);
-
-			chart.canvas = canvas;
-			chart.canvasJQ = $(canvas);
-			chart.ctx = canvas.getContext("2d");
-			chart.ctx.translate(0.5, 0.5);
-
 			
 			chart.allPoints = [];
 			chart.visiblePhases = [];
@@ -189,6 +178,59 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
+		initCanvas: function()
+		{
+			var chart = this;
+			
+			var canvas = document.createElement('canvas');
+			canvas.width = chart.node.parent().width();
+			canvas.height = chart.node.parent().height();
+			canvas.style.position = "absolute";
+			canvas.style.top = 0;
+			canvas.style.left = 0;
+			//canvas.style.zIndex = 2;
+			
+			chart.node.parent().append(canvas);
+
+			chart.canvas = canvas;
+			chart.canvasJQ = $(canvas);
+			chart.ctx = canvas.getContext("2d");
+			chart.ctx.translate(0.5, 0.5);
+			
+			
+			var infoCanvas = document.createElement('canvas');
+			infoCanvas.width = chart.node.parent().width();
+			infoCanvas.height = chart.node.parent().height();
+			infoCanvas.style.position = "absolute";
+			infoCanvas.style.top = 0;
+			infoCanvas.style.left = 0;
+			
+			
+			chart.node.parent().append(infoCanvas);
+
+			chart.infoCanvas = infoCanvas;
+			chart.infoCTX = infoCanvas.getContext("2d");
+			chart.infoCTX.translate(0.5, 0.5);
+			
+			
+			var crosshairCanvas = document.createElement('canvas');
+			crosshairCanvas.width = chart.node.parent().width();
+			crosshairCanvas.height = chart.node.parent().height();
+			crosshairCanvas.style.position = "absolute";
+			crosshairCanvas.style.top = 0;
+			crosshairCanvas.style.left = 0;
+			
+			
+			chart.node.parent().append(crosshairCanvas);
+
+			chart.crosshairCanvas = crosshairCanvas;
+			chart.crosshairCTX = crosshairCanvas.getContext("2d");
+			chart.crosshairCTX.translate(0.5, 0.5);
+		},
+		
+		
+		
 		updateChart: function()
 		{
 
@@ -251,6 +293,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			return dfd.promise()
 		},
+		
 		
 		
 		redraw: function()
@@ -359,6 +402,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		zoomChart: function(isZoomOut)
 		{
 			var chart = this;
@@ -413,9 +457,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 
 		
-		
-		
-		
+	
 		isInsidePlot: function(mouseX, mouseY)
 		{
 			var chart = this;
@@ -427,6 +469,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			return isInside
 		},
+		
 		
 		
 		getPoint: function(points, value) 
@@ -459,6 +502,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 	
+	
 		setContainerSize: function()
 		{
 			var chart = this;
@@ -488,11 +532,18 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.plotWidth = chart.plotRight - chart.plotLeft;
 			
 
-			chart.canvas.width = chart.node.parent().width();
-			chart.canvas.height = chart.node.parent().height();
+			var height = chart.node.parent().height();
+			var width = chart.node.parent().width();
+			chart.canvas.height = height;
+			chart.canvas.width = width;
+			chart.infoCanvas.height = height;
+			chart.infoCanvas.width = width;
+			chart.crosshairCanvas.height = height;
+			chart.crosshairCanvas.width = width;
 			//chart.canvas.height = DOMPosition.height;
 			//chart.canvas.width = DOMPosition.width;
 		},
+		
 		
 		
 		initMarketHandler: function()
@@ -528,6 +579,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		initAxes: function()
 		{
 			var chart = this;
@@ -556,6 +608,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			chart.axes = chart.xAxis.concat(chart.yAxis);
 		},
+		
 		
 		
 		initDOMEventHandler: function()
@@ -665,6 +718,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		editLoading: function(text)
 		{
 			var chart = this;
@@ -687,37 +741,17 @@ Sleuthcharts = (function(Sleuthcharts)
 			var pair = marketSettings.pairName;
 			var exchange = marketSettings.exchange;
 			
-			var $el = chart.node.find(".cur-market");
+			var $el = chart.node.parent().find(".chart-marketName span");
 			
-			d3.select($el.get()[0])
-			.text(pair.toUpperCase() + " - " + exchange.toUpperCase())
-			.attr("y", 20)
-			.attr("x", 20)
-			.attr("font-family", "Roboto")
-			.attr("fill", "#bbbbbb")
-			.attr("font-size", "12px")
+			$el.text(pair.toUpperCase() + " - " + exchange.toUpperCase());
 		},
+		
 		
 		
 		drawMarketInfo: function(closestPoint)
 		{
 			var chart = this;
 			var $node = chart.node;
-			
-			//var fontSize = chart.marketInfoFontSize
-			var textAttr = {
-				"fill":"#bbbbbb",
-				"font-family":"Roboto",
-				"font-size":"12px"
-			}
-			
-			var $marketNameEl = $node.find(".cur-market")
-			var marketNameBbox = d3.select($marketNameEl.get()[0]).node().getBBox();
-			var leftPos = marketNameBbox.x + marketNameBbox.width + 10;
-			var topPos = marketNameBbox.y + marketNameBbox.height - 3;
-			
-			//leftPos = 10;
-			//topPos = 10;
 
 			var openStr = "O: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.open))
 			var highStr = " H: " + Sleuthcharts.formatNumWidth(Number(closestPoint.phase.high))
@@ -733,82 +767,83 @@ Sleuthcharts = (function(Sleuthcharts)
 			str += volStr
 
 			
-			var $candleInfoEl = $node.find(".candleInfo");
-			d3.select($candleInfoEl.get()[0])
-			.text(str)
-			.attr("y", topPos)
-			.attr("x", leftPos)
-			.attr(textAttr)
+			var $candleInfoWrap = chart.pointInfoDOM.find(".chart-candleInfo");
+			var $candleInfoText = $candleInfoWrap.find("span");
+			$candleInfoText.text(str);
+			
+			$candleInfoWrap.addClass("active");
 		},
+		
 		
 		
 		drawCrosshairX: function(yPos)
 		{
 			var chart = this;
+			var canvas = chart.crosshairCanvas
+			var ctx = chart.crosshairCTX;
 			
 			if (!chart.isCrosshair)
 				return;
 			
 			var lineLeft = chart.xAxis[0].pos.left;
 			var lineRight = chart.yAxis[0].pos.left;
-			var $cursor_follow_x = chart.node.find(".cursor_follow_x");
+			
+			//ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-			$cursor_follow_x
-			.attr("x1", lineLeft)
-			.attr("x2", lineRight)
-			.attr("y1", yPos + 0.5)
-			.attr("y2", yPos + 0.5)
-			.attr("stroke-width", 1)
-			.attr("stroke", "#a5a5a5")
-			.attr("pointer-events", "none");
+			
+			var d = 
+			[
+				"M", lineLeft, yPos + 0.5, 
+				"L", lineRight, yPos + 0.5,  
+			]
+
+			var pathStyle = {};
+			pathStyle.strokeColor = "#a5a5a5";
+			pathStyle.lineWidth = 1;
+
+			Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 		},
+		
 		
 		
 		drawCrosshairY: function(closestPoint)
 		{
 			var chart = this;
+			var canvas = chart.crosshairCanvas
+			var ctx = chart.crosshairCTX;
 			
 			if (!chart.isCrosshair)
 				return;
 			
-			var $cursor_follow_y = chart.node.find(".cursor_follow_y");
 			
 			var xAxis = chart.xAxis[0];
 			var lineTop = 0;
 			var lineBottom = chart.xAxis[0].pos.top;
-		
-			$cursor_follow_y
-			.attr("x1", closestPoint.pos.middle)
-			.attr("x2", closestPoint.pos.middle)
-			.attr("y1", lineTop)
-			.attr("y2", lineBottom)
-			.attr("stroke-width", 1)
-			.attr("stroke", "#a5a5a5")
-			.attr("pointer-events", "none");
+			
+			var d = 
+			[
+				"M", closestPoint.pos.middle, lineTop, 
+				"L", closestPoint.pos.middle, lineBottom,  
+			]
+
+			var pathStyle = {};
+			pathStyle.strokeColor = "#a5a5a5";
+			pathStyle.lineWidth = 1;
+
+			Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 		},
+		
 		
 		
 		hideRenders: function()
 		{
 			var chart = this;
 			
-			var $node = chart.node;
-			var $candleInfoEl = $node.find(".candleInfo");
-			var $cursor_follow_x = $node.find(".cursor_follow_x");
-			var $cursor_follow_y = $node.find(".cursor_follow_y");
-			var $priceFollowWrap = $node.find(".yAxis-follow[data-axisNum='1']");
-			var $volFollowWrap = $node.find(".yAxis-follow[data-axisNum='2']");
-			var $timeFollowWrap = $node.find(".xAxis-follow");
-
+			var $candleInfoWrap = chart.pointInfoDOM.find(".chart-candleInfo");
+			$candleInfoWrap.removeClass("active");
 			
-			$cursor_follow_x.attr("stroke-width", 0);
-			$cursor_follow_y.attr("stroke-width", 0);
-
-			$priceFollowWrap.hide()
-			$volFollowWrap.hide()
-			$timeFollowWrap.hide()
-			
-			$candleInfoEl.text(""); 
+			chart.crosshairCTX.clearRect(0, 0, chart.crosshairCanvas.width, chart.crosshairCanvas.height);
+			chart.infoCTX.clearRect(0, 0, chart.infoCanvas.width, chart.infoCanvas.height);
 		}
 		
 	}
