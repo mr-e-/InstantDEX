@@ -22,6 +22,7 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbook:
 		{
 			new: newOrderbook,
+			loadCustom: loadCustomOrderbook,
 			remove: removeOrderbook,
 			save: saveOrderbook,
 		},
@@ -149,6 +150,21 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.newOrderbook($orderbook);
 	}
 	
+	
+	function loadCustomOrderbook(cell, settings)
+	{
+		var $cell = cell.cellDOM;
+		
+		var $orderbook = $cell.find(".orderbook-wrap");
+		IDEX.newOrderbook($orderbook);
+	}
+
+	
+	function saveOrderbook(cell)
+	{
+		
+	}
+	
 	function removeOrderbook(cell)
 	{
 		var $cell = cell.cellDOM;
@@ -157,11 +173,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.removeOrderbook($orderbook)
 	}
 	
-	
-	function saveOrderbook(cell)
-	{
-		
-	}
+
 	
 	
 	
