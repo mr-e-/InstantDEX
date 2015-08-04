@@ -373,33 +373,29 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var chart = this;
 			
-			console.log(settings);
 			
 			var chart = this;
 			var seriesOptions = chart.userOptions.series;
 
 			var addedHeightInit = settings.yAxis.heightInit;
 			
-			var addedHeightPerc = parseInt(addedHeightInit);
+			var addedHeightPerc = parseFloat(addedHeightInit);
 
 			var numYAxis = chart.yAxis.length;
-			//var heightPortion = removeHeight/numYAxis;
-			//console.log(addedHeightPerc)
-			//var running = 0 + addedHeightPerc
+			//var running = 0 + ((addedHeightPerc/100) * chart.plotHeight)
+			//console.log(running);
 			
 			for (var i = 0; i < chart.yAxis.length; i++)
 			{
 				var loopYAxis = chart.yAxis[i];
-				var heightPerc = loopYAxis.heightInit;
-				heightPerc = parseFloat(heightPerc);
 				
-				var minus = (heightPerc * (addedHeightPerc / 100))
-				//var percDiff = 100 - heightPerc;
-				//console.log(heightPerc - minus)
-				loopYAxis.heightInit = String(heightPerc - minus) + "%";
+				var minus = (loopYAxis.fullHeight * (addedHeightPerc / 100))
+				loopYAxis.fullHeight = loopYAxis.fullHeight - minus;
+				loopYAxis.height = loopYAxis.fullHeight - (loopYAxis.padding.top + loopYAxis.padding.bottom);
 				
-				//running += (heightPerc - minus);
-				//loopYAxis.height = (loopYAxis.height + heightPortion);
+				//running += (loopYAxis.fullHeight - minus);
+				//console.log(loopYAxis.fullHeight - minus)
+				//console.log(running)
 			}
 			
 			//console.log(running);
@@ -409,6 +405,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			var axis = new Sleuthcharts.Axis(chart, yAxisOptions);
 			chart.yAxis.push(axis);
+			
+			//axis.initAxisHeightWidth();
+			axis.fullHeight = ((addedHeightPerc/100) * (chart.plotHeight - chart.xAxis[0].fullHeight));
+			axis.height = axis.fullHeight - (axis.padding.top + axis.padding.bottom);
+			axis.width = chart.yAxis[0].width;
+			axis.fullWidth = chart.yAxis[0].fullWidth;
 			
 			chart.axes = chart.xAxis.concat(chart.yAxis);
 

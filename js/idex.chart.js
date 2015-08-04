@@ -258,12 +258,12 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var yAxisSettings = 
 		{
-			"heightInit":"35%",
+			"heightInit":"25%",
 			"widthInit":50,
 			
 			"padding":{
 				"top":20,
-				"left":20,
+				"left":0,
 			},
 			
 			"minPadding":0.1,

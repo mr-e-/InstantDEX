@@ -97,8 +97,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chart = series.chart;
 			var yAxis = series.yAxis;
 			
-			var removeHeight = yAxis.height;
-			var removeHeightInit = parseFloat(yAxis.heightInit);
+			var removeHeight = yAxis.fullHeight;
+			//var removeHeightInit = parseFloat(yAxis.heightInit);
 			
 			//var allSeries = chart.series.slice();
 			chart.series.splice(series.index, 1);
@@ -106,23 +106,19 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.axes = chart.xAxis.concat(chart.yAxis);
 			
 			var numYAxis = chart.yAxis.length;
-			var heightPortion = Math.round(removeHeight/numYAxis);
+			var heightPortion = removeHeight/numYAxis;
 			
 			//var running = 0;
 			//running += removeHeightInit;
 			
 			for (var i = 0; i < chart.yAxis.length; i++)
 			{
-				var loopYAxis = chart.yAxis[i];
-				var heightPerc = loopYAxis.heightInit;
-				heightPerc = parseFloat(heightPerc);
+				var loopYAxis = chart.yAxis[i];;
 				
-				//var percDiff = 100 - heightPerc;
 				
-				var plus = removeHeightInit/numYAxis
-				//loopYAxis.heightInit = String(heightPerc + (percDiff/numYAxis)) + "%";
-				loopYAxis.heightInit = String(heightPerc + plus) + "%";
-				loopYAxis.height = (loopYAxis.height + heightPortion);
+				//var plus = removeHeightInit/numYAxis
+				loopYAxis.fullHeight = (loopYAxis.fullHeight + heightPortion);
+				loopYAxis.height = loopYAxis.fullHeight - (loopYAxis.padding.top + loopYAxis.padding.bottom);
 				
 				//console.log(heightPerc + plus);
 				//running += heightPerc + plus;
@@ -292,6 +288,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				ret = true;
 			}
 			
+
 			return ret
 		},
 		
