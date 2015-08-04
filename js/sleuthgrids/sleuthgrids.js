@@ -976,7 +976,7 @@ Sleuthgrids = (function(Sleuthgrids)
 
 			var isSame = Math.abs(mainPoints[0][indexOfSame] - compPoint[indexOfSame]) <= 0.5;
 			//console.log([min, compPoint[indexOfBetween], max]);
-			var isBetween = (compPoint[indexOfBetween] >= min - 0.5) && (compPoint[indexOfBetween] <= max + 0.5);
+			var isBetween = (compPoint[indexOfBetween] >= min - 1) && (compPoint[indexOfBetween] <= max + 1);
 
 
 			return isSame && isBetween
@@ -1018,7 +1018,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				{
 					var adjTile = adjTiles[v]
 				
-					if (Math.abs(cloneTile.positions[searchDirection] - adjTile.positions[searchDirection]) <= 0.5)
+					if (Math.abs(cloneTile.positions[searchDirection] - adjTile.positions[searchDirection]) <= 1)
 					{
 						var check = false;
 						
@@ -1031,7 +1031,7 @@ Sleuthgrids = (function(Sleuthgrids)
 								var flipKey = flip[j];
 								//console.log(Math.abs(cloneTile.positions[key] - adjTile.positions[flipKey]))
 
-								if (Math.abs(cloneTile.positions[key] - adjTile.positions[flipKey]) <= 0.5)
+								if (Math.abs(cloneTile.positions[key] - adjTile.positions[flipKey]) <= 1)
 								{
 									check = true;
 									break
@@ -1148,8 +1148,9 @@ Sleuthgrids = (function(Sleuthgrids)
 						runningSize += results[j][0].tile.positions[sizeKey];
 					}
 										
-					if (runningSize == size || Math.abs(runningSize - size) < 0.5)
+					if (runningSize == size || Math.abs(runningSize - size) <= 1)
 					{
+						//console.log([size, runningSize])
 						break;
 					}
 					else

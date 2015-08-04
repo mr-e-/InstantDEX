@@ -435,7 +435,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				var pathStyle = {};
 				pathStyle.strokeColor = strokeColor;
 				pathStyle.fillColor = fillColor;
-				
+
 				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 				
 

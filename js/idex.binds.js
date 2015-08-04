@@ -58,9 +58,9 @@ var IDEX = (function(IDEX, $, undefined)
 		$wrap.find(".chart-time-dropdown-wrap").addClass("active");
 	})
 	
-	$contentWrap.on("mouseleave", ".chart-time-button-outer", function()
+	$contentWrap.on("mouseleave", ".chart-time-wrap", function()
 	{
-		var $wrap = $(this).closest(".chart-time-wrap");
+		var $wrap = $(this)
 		$wrap.find(".chart-time-dropdown-wrap").removeClass("active");
 	})
 	

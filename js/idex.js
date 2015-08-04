@@ -113,6 +113,14 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		IDEX.isWindows = window.jscd.os == "Windows";
 		
+		if (window.jscd.browser == "Firefox")
+		{
+			$(".popup").each(function()
+			{
+				$(this).addClass("popup-firefox");
+			})
+		}
+		
 		$(".mainHeader-grid-ico-wrap").each(function()
 		{
 			var gridType = $(this).attr("data-grid");

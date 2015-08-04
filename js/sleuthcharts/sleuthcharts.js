@@ -345,7 +345,6 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			chart.DOMPosition = DOMPosition;
 			
-			
 			chart.plotTop = DOMPosition.top + chartPadding.top;
 			chart.plotBottom = DOMPosition.bottom - chartPadding.bottom;
 			chart.plotLeft = DOMPosition.left + chartPadding.left;

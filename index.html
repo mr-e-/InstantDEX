@@ -150,65 +150,68 @@
 				
 				<div id="orderbookSearch_popup" class="popup orderbookSearchPopup">
 				
-					<div class="popup-header">
-						<div class="popup-header-title">
-							<span class="vert-align">Market search</span>
-						</div>
-						<div class="popup-header-icons">
-							<div class="popup-header-ico">
-								<img class="popup-header-close vert-align" src="img/close.png"></img>
+					<div class="popup-wrap">
+					
+						<div class="popup-header">
+							<div class="popup-header-title">
+								<span class="vert-align">Market search</span>
+							</div>
+							<div class="popup-header-icons">
+								<div class="popup-header-ico">
+									<img class="popup-header-close vert-align" src="img/close.png"></img>
+								</div>
 							</div>
 						</div>
-					</div>
-					
-					<div class="banner">
-						<span></span>
-					</div>
-					
-					<div class="popup-content orderbookSearch-popup-content">
-					
-						<div class="orderbookSearch-popup-inputArea">
-							<form role="form" class="orderbookSearch-popup-form" autocomplete="off">
-
-								<div class="form-row">
-									<div class="form-label">
-										<span>Base</span>
-									</div>
-									<div class="form-input-outer">
-										<div class="form-input">
-											<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
-										</div>
-									</div>
-								</div>
-
-								<div class="form-row">
-									<div class="form-label">
-										<span>Quote</span>
-									</div>
-									<div class="form-input-outer">
-										<div class="form-input">
-											<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
-										</div>
-									</div>
-								</div>
-
-							</form>
+						
+						<div class="banner">
+							<span></span>
 						</div>
 						
-						<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
-							<div class="nbutton-text-wrap">
-								<div class="nbutton-text-outer">
-									<div class="nbutton-text orderbookSearch-search-trig">
-										<div class="nbutton-text-inner">
-											<div class="nbutton-text-title">
-												<span class="vert-align">Open orderbook</span>
+						<div class="popup-content orderbookSearch-popup-content">
+						
+							<div class="orderbookSearch-popup-inputArea">
+								<form role="form" class="orderbookSearch-popup-form" autocomplete="off">
+
+									<div class="form-row">
+										<div class="form-label">
+											<span>Base</span>
+										</div>
+										<div class="form-input-outer">
+											<div class="form-input">
+												<input type="text" name="baseid" class="asset-search" data-asset="-1"></input>
+											</div>
+										</div>
+									</div>
+
+									<div class="form-row">
+										<div class="form-label">
+											<span>Quote</span>
+										</div>
+										<div class="form-input-outer">
+											<div class="form-input">
+												<input type="text" name="relid" class="asset-search" data-asset="-1"></input>
+											</div>
+										</div>
+									</div>
+
+								</form>
+							</div>
+							
+							<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
+								<div class="nbutton-text-wrap">
+									<div class="nbutton-text-outer">
+										<div class="nbutton-text orderbookSearch-search-trig">
+											<div class="nbutton-text-inner">
+												<div class="nbutton-text-title">
+													<span class="vert-align">Open orderbook</span>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+						
 						</div>
-					
 					</div>
 				
 				</div>
@@ -645,16 +648,15 @@
 									</div>-->
 								</div>
 							</div>
-							
-							<div class="dropdown-list">
-								<ul class="active">
-									<li class="active" data-val="1">1</li>
-									<li data-val="2">2</li>
-									<li data-val="3">3</li>
-									<li data-val="4">4</li>
-									<li data-val="5">5</li>
-								</ul>
-							</div>
+						</div>
+						<div class="dropdown-list">
+							<ul class="active">
+								<li class="active" data-val="1">1</li>
+								<li data-val="2">2</li>
+								<li data-val="3">3</li>
+								<li data-val="4">4</li>
+								<li data-val="5">5</li>
+							</ul>
 						</div>
 					</div>
 				</div>
@@ -687,30 +689,33 @@
 			
 				<div class="chart-header" data-chart="">
 					
+					<div class="cell-header-wrap">
 				
-					<div class="chart-search-wrap">
-						<div class="chart-search-input vert-align">
-							<input type="text" name="pair" class="skynet-search" id="main_chart_pair_input"></input>
-							<div class="chart-search-input-img">
-								<div class="chart-search-input-img-inner">
-									<img src="img/search.png" class="vert-align"></img>
+						<div class="chart-search-wrap">
+							<div class="chart-search-input vert-align">
+								<input type="text" name="pair" class="skynet-search" id="main_chart_pair_input"></input>
+								<div class="chart-search-input-img">
+									<div class="chart-search-input-img-inner">
+										<img src="img/search.png" class="vert-align"></img>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					
-					<!-- mm-chart-config mm-chart-bartype -->
-					<div class="chart-time-wrap">
-						<div class="chart-time-button-outer vert-align">
-							<div class="chart-time-button">
-								<div class="chart-time-button-inner">
-									<div class="chart-time-button-title">
-										<span class="vert-align">25 ticks</span>
-									</div>
-									<div class="chart-time-button-img">
-										<img src="img/tridownwhite.png" class="vert-align"></img>
+						
+						<!-- mm-chart-config mm-chart-bartype -->
+						<div class="chart-time-wrap">
+							<div class="chart-time-button-outer vert-align">
+								<div class="chart-time-button">
+									<div class="chart-time-button-inner">
+										<div class="chart-time-button-title">
+											<span class="vert-align">25 ticks</span>
+										</div>
+										<div class="chart-time-button-img">
+											<img src="img/tridownwhite.png" class="vert-align"></img>
+										</div>
 									</div>
 								</div>
+								
 							</div>
 							
 							<div class="chart-time-dropdown-wrap">
@@ -737,68 +742,68 @@
 								</ul>
 								
 							</div>
+						</div>
+						
+
+						
+						<div class="chart-config-wrap chart-style">
+							<div class="chart-config-outer vert-align">
+								<div class="chart-config">
+									<div class="chart-config-inner">
+										<div class="chart-config-title">
+											<span class="vert-align ">Config</span>
+										</div>
+										<div class="chart-config-img">
+											<img src="img/tridownwhite.png" class="vert-align"></img>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="dropdown-wrap">
+							
+							</div>
+						</div>
+						
+						<div class="chart-tools-wrap">
+
+							<div class="nbutton-icon-wrap chart-tools-crosshair">
+								<div class="nbutton-icon-outer vert-align">
+									<div class="nbutton-icon">
+										<div class="nbutton-icon-inner">
+											<div class="nbutton-icon-img vert-align">
+												<img src="img/cross.png" class=""></img>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+							<div class="nbutton-icon-wrap chart-tools-line">
+								<div class="nbutton-icon-outer vert-align">
+									<div class="nbutton-icon">
+										<div class="nbutton-icon-inner">
+											<div class="nbutton-icon-img vert-align">
+												<img src="img/squiggle.png" class=""></img>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="nbutton-icon-wrap chart-tools-fib">
+								<div class="nbutton-icon-outer vert-align">
+									<div class="nbutton-icon">
+										<div class="nbutton-icon-inner">
+											<div class="nbutton-icon-img vert-align">
+												<img src="img/list.png" class=""></img>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 							
 						</div>
-					</div>
 					
-
-					
-					<div class="chart-config-wrap chart-style">
-						<div class="chart-config-outer vert-align">
-							<div class="chart-config">
-								<div class="chart-config-inner">
-									<div class="chart-config-title">
-										<span class="vert-align ">Config</span>
-									</div>
-									<div class="chart-config-img">
-										<img src="img/tridownwhite.png" class="vert-align"></img>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="dropdown-wrap">
-						
-						</div>
-					</div>
-					
-					<div class="chart-tools-wrap">
-
-						<div class="nbutton-icon-wrap chart-tools-crosshair">
-							<div class="nbutton-icon-outer vert-align">
-								<div class="nbutton-icon">
-									<div class="nbutton-icon-inner">
-										<div class="nbutton-icon-img vert-align">
-											<img src="img/cross.png" class=""></img>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					
-						<div class="nbutton-icon-wrap chart-tools-line">
-							<div class="nbutton-icon-outer vert-align">
-								<div class="nbutton-icon">
-									<div class="nbutton-icon-inner">
-										<div class="nbutton-icon-img vert-align">
-											<img src="img/squiggle.png" class=""></img>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="nbutton-icon-wrap chart-tools-fib">
-							<div class="nbutton-icon-outer vert-align">
-								<div class="nbutton-icon">
-									<div class="nbutton-icon-inner">
-										<div class="nbutton-icon-img vert-align">
-											<img src="img/list.png" class=""></img>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						
 					</div>
 					
 				</div>
@@ -871,8 +876,8 @@
 									<li data-val="0.00">0%</li>
 									<li data-val="0.01">1%</li>
 									<li data-val="0.02">2%</li>
-									<li data-val="0.05">5%</li>
-									<li class="active" data-val="0.10">10%</li>
+									<li class="active" data-val="0.05">5%</li>
+									<li data-val="0.10">10%</li>
 								</ul>
 							</td>
 						</tr>
@@ -888,32 +893,34 @@
 				<div class="orderbook-wrap">
 				
 					<div class="orderbook-header">		
+						<div class="cell-header-wrap">
 						
-						<div class="nSearch-wrap orderbook-search-wrap">
-							<div class="nSearch-input vert-align">
-								<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
-								<div class="nSearch-input-img">
-									<div class="nSearch-input-img-inner orderbook-search-popup-trig">
-										<img src="img/search.png" class="vert-align"></img>
+							
+							<div class="nSearch-wrap orderbook-search-wrap">
+								<div class="nSearch-input vert-align">
+									<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
+									<div class="nSearch-input-img">
+										<div class="nSearch-input-img-inner orderbook-search-popup-trig">
+											<img src="img/search.png" class="vert-align-horiz-align"></img>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-						
-						
-						<div class="dropdown-list-wrap orderbook-exchange-dropdown">
-							<div class="dropdown-outer vert-align">
-								<div class="dropdown">
-									<div class="dropdown-inner">
-										<div class="dropdown-title">
-											<span class="vert-align orderbook-exchange-dropdown-title">All exchanges</span>
-										</div>
-										<div class="dropdown-img">
-											<img src="img/tridownwhite.png" class="vert-align"></img>
+							
+							
+							<div class="dropdown-list-wrap orderbook-exchange-dropdown">
+								<div class="dropdown-outer vert-align">
+									<div class="dropdown">
+										<div class="dropdown-inner">
+											<div class="dropdown-title">
+												<span class="vert-align orderbook-exchange-dropdown-title">All exchanges</span>
+											</div>
+											<div class="dropdown-img">
+												<img src="img/tridownwhite.png" class="vert-align"></img>
+											</div>
 										</div>
 									</div>
 								</div>
-								
 								<div class="dropdown-list">
 									<ul class="active">
 										<li class="active" data-val="all">All exchanges</li>
@@ -922,35 +929,36 @@
 									</ul>
 								</div>
 							</div>
-						</div>
+							
 						
-					
-						<div class="dropdown-list-wrap dropdown-list-mult-wrap orderbook-label-dropdown">
-							<div class="dropdown-outer vert-align">
-								<div class="dropdown">
-									<div class="dropdown-inner">
-										<div class="dropdown-title">
-											<span class="vert-align orderbook-exchange-dropdown-title">Labels</span>
-										</div>
-										<div class="dropdown-img">
-											<img src="img/tridownwhite.png" class="vert-align"></img>
+							<div class="dropdown-list-wrap dropdown-list-mult-wrap orderbook-label-dropdown">
+								<div class="dropdown-outer vert-align">
+									<div class="dropdown">
+										<div class="dropdown-inner">
+											<div class="dropdown-title">
+												<span class="vert-align orderbook-exchange-dropdown-title">Labels</span>
+											</div>
+											<div class="dropdown-img">
+												<img src="img/tridownwhite.png" class="vert-align"></img>
+											</div>
 										</div>
 									</div>
 								</div>
-								
 								<div class="dropdown-list">
 									<ul class="active">
 									</ul>
 								</div>
 							</div>
-						</div>
+							
+							
+							
+							<div class="orderbook-header-status">
+								<span class="vert-align"><span>Last updated: </span><span class="orderbook-lastUpdated">0s</span></span>
+							</div>
 						
-						
-						
-						<div class="orderbook-header-status">
-							<span class="vert-align"><span>Last updated: </span><span class="orderbook-lastUpdated">0s</span></span>
 						</div>
 					</div>
+					
 					
 					
 					<!--<div class="orderbook-summary">
