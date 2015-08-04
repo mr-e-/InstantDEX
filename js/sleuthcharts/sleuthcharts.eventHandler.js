@@ -431,28 +431,6 @@ Sleuthcharts = (function(Sleuthcharts)
 
 
 
-
-
-
-	/*
-	
-	$(".mainHeader-menu-ico-orders").on("click", function()
-	{
-		var saves = Sleuthgrids.saveAllGrids();
-		
-		console.log(saves);
-		localStorage.setItem('grids', JSON.stringify(saves));
-	})
-	
-	
-	$(".mainHeader-menu-ico-markets").on("click", function()
-	{
-		var saves = JSON.parse(localStorage.getItem('grids'));
-		console.log(saves);
-		console.log(JSON.stringify(saves))
-	})
-	
-	*/
 	
 
 

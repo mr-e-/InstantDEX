@@ -98,6 +98,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var yAxis = series.yAxis;
 			
 			var removeHeight = yAxis.height;
+			var removeHeightInit = parseFloat(yAxis.heightInit);
 			
 			//var allSeries = chart.series.slice();
 			chart.series.splice(series.index, 1);
@@ -105,20 +106,29 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.axes = chart.xAxis.concat(chart.yAxis);
 			
 			var numYAxis = chart.yAxis.length;
-			var heightPortion = removeHeight/numYAxis;
+			var heightPortion = Math.round(removeHeight/numYAxis);
+			
+			//var running = 0;
+			//running += removeHeightInit;
 			
 			for (var i = 0; i < chart.yAxis.length; i++)
 			{
 				var loopYAxis = chart.yAxis[i];
 				var heightPerc = loopYAxis.heightInit;
-				heightPerc = parseInt(heightPerc);
+				heightPerc = parseFloat(heightPerc);
 				
-				var percDiff = 100 - heightPerc;
+				//var percDiff = 100 - heightPerc;
 				
-				loopYAxis.heightInit = String(heightPerc + (percDiff/numYAxis)) + "%";
-				
+				var plus = removeHeightInit/numYAxis
+				//loopYAxis.heightInit = String(heightPerc + (percDiff/numYAxis)) + "%";
+				loopYAxis.heightInit = String(heightPerc + plus) + "%";
 				loopYAxis.height = (loopYAxis.height + heightPortion);
+				
+				//console.log(heightPerc + plus);
+				//running += heightPerc + plus;
 			}
+			
+			//console.log(running);
 			
 			seriesTab.seriesTabDOM.remove();
 			

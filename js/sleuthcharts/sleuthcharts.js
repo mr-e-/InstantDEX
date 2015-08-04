@@ -75,6 +75,8 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			
 			var chart = this;
+			chart.prevHeight = -1;
+			chart.prevWidth = -1;
 			chart.userOptions = userOptions;
 			chart.chartOptions = userOptions.chart;
 			
@@ -132,6 +134,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					
 					//console.log(chart);
 					chart.resizeAxis();
+					chart.setContainerSize();
 					chart.updateAxisPos();
 					
 					chart.drawMarketName();
@@ -281,6 +284,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				
 				var axis = new Sleuthcharts.Axis(chart, opt)
 				chart.xAxis.push(axis)
+
 			}
 			
 			for (var i = 0; i < yAxisOptions.length; i++)
@@ -294,6 +298,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 			
 			chart.axes = chart.xAxis.concat(chart.yAxis);
+			
+			for (var i = 0; i < chart.axes.length; i++)
+			{
+				chart.axes[i].initAxisHeightWidth();
+			}
+			
 		},
 		
 		
@@ -314,6 +324,13 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chart = this;
 			var chartPadding = chart.padding;
 			var $chartNode = chart.node;
+			
+			
+			if ("plotHeight" in chart)
+			{
+				chart.prevHeight = chart.plotHeight;
+				chart.prevWidth = chart.plotWidth;
+			}
 			
 			//console.log(chart.canvas.getBoundingClientRect());
 
@@ -352,6 +369,66 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		
 		
+		addSeries: function(settings)
+		{
+			var chart = this;
+			
+			console.log(settings);
+			
+			var chart = this;
+			var seriesOptions = chart.userOptions.series;
+
+			var addedHeightInit = settings.yAxis.heightInit;
+			
+			var addedHeightPerc = parseInt(addedHeightInit);
+
+			var numYAxis = chart.yAxis.length;
+			//var heightPortion = removeHeight/numYAxis;
+			//console.log(addedHeightPerc)
+			//var running = 0 + addedHeightPerc
+			
+			for (var i = 0; i < chart.yAxis.length; i++)
+			{
+				var loopYAxis = chart.yAxis[i];
+				var heightPerc = loopYAxis.heightInit;
+				heightPerc = parseFloat(heightPerc);
+				
+				var minus = (heightPerc * (addedHeightPerc / 100))
+				//var percDiff = 100 - heightPerc;
+				//console.log(heightPerc - minus)
+				loopYAxis.heightInit = String(heightPerc - minus) + "%";
+				
+				//running += (heightPerc - minus);
+				//loopYAxis.height = (loopYAxis.height + heightPortion);
+			}
+			
+			//console.log(running);
+			var yAxisOptions = settings.yAxis;
+			yAxisOptions.isXAxis = false;
+			yAxisOptions.index = chart.yAxis.length;
+			
+			var axis = new Sleuthcharts.Axis(chart, yAxisOptions);
+			chart.yAxis.push(axis);
+			
+			chart.axes = chart.xAxis.concat(chart.yAxis);
+
+			
+			var seriesOptions = settings.series;
+			seriesOptions.index = chart.series.length;
+			var seriesType = seriesOptions.seriesType;
+			var seriesClass = Sleuthcharts.seriesTypes[seriesType];
+			
+			var series = new seriesClass();
+			series.init(chart, seriesOptions);
+			chart.series.push(series);
+	
+	
+			chart.redraw();
+			
+		},
+		
+		
+		
 		updateChart: function()
 		{
 
@@ -373,6 +450,8 @@ Sleuthcharts = (function(Sleuthcharts)
 				var tempSeries = chart.series[0];
 				
 				chart.resizeAxis();
+				chart.setContainerSize();
+
 				chart.updateAxisPos();
 				
 				chart.drawMarketName();
@@ -434,6 +513,8 @@ Sleuthcharts = (function(Sleuthcharts)
 				chart.setContainerSize();
 				
 				chart.resizeAxis();
+				chart.setContainerSize();
+
 				chart.updateAxisPos();
 				chart.recalcPointWidth(); //hack
 				tempSeries.getPointPositions();
@@ -490,6 +571,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chart = this;
 			var allSeries = chart.series;
 			var biggestWidth = 0;
+			var oldw = chart.yAxis[0].fullWidth;
 			
 			for (var i = 0; i < allSeries.length; i++)
 			{
@@ -515,9 +597,15 @@ Sleuthcharts = (function(Sleuthcharts)
 			for (var i = 0; i < allSeries.length; i++)
 			{
 				var yAxis = allSeries[i].yAxis
-				yAxis.widthInit = biggestWidth
+				//yAxis.widthInit = biggestWidth
 				yAxis.width = biggestWidth;
+				yAxis.fullWidth = yAxis.width + yAxis.padding.left + yAxis.padding.right;
 			}
+			
+			var xAxis = chart.xAxis[0];
+			var diff = oldw - biggestWidth;
+			xAxis.width = xAxis.width + diff;
+			xAxis.fullWidth = xAxis.width + xAxis.padding.left + xAxis.padding.right;
 		},
 		
 		

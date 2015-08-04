@@ -149,8 +149,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			axis.canvas = document.createElement('canvas');
 			axis.ctx = axis.canvas.getContext("2d");
 			axis.ctx.font = axis.labels.fontSize + " Roboto"; 
-
-
 		},
 		
 		
@@ -193,34 +191,24 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 
 		
-		resizeAxis: function()
+		initAxisHeightWidth: function()
 		{
 			var axis = this;
 			var chart = axis.chart;
 			var chartPadding = chart.padding;
 			var isXAxis = axis.isXAxis;
 			
-			var bbox = d3.select(chart.node.get()[0])[0][0].getBoundingClientRect();
+			var bbox = chart.node[0].getBoundingClientRect();
 			var wrapWidth = chart.plotWidth;
 			var wrapHeight = chart.plotHeight;
 			
-			
 			if (isXAxis)
 			{
-				var widest = 0;
-				
-				for (var i = 0; i < chart.yAxis.length; i++)
-				{
-					var yAxis = chart.yAxis[i];
-					
-					if (yAxis.width > widest)
-						widest = yAxis.width;
-				}
-				
+				var yAxis = chart.yAxis[0];
 				var convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
 				
 				var convertedWidth = axis.resizeHW("100%", wrapWidth);
-				convertedWidth = convertedWidth - (widest + yAxis.padding.left) - axis.padding.left;
+				convertedWidth = convertedWidth - (50 + axis.padding.left + axis.padding.right);
 			}
 			
 			else
@@ -229,7 +217,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				var len = chart.yAxis.length;
 				
 				var convertedHeight = axis.resizeHW(axis.heightInit, wrapHeight);
-				convertedHeight = ((convertedHeight - (xAxis.height / len)) - (xAxis.padding.top / len)) - axis.padding.top
+				convertedHeight = (convertedHeight - (xAxis.fullHeight / len)) - (axis.padding.top + axis.padding.bottom);
 				
 				var convertedWidth = axis.resizeHW(axis.widthInit, wrapWidth);
 			}
@@ -237,6 +225,48 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			axis.height = convertedHeight;
 			axis.width = convertedWidth;
+			axis.fullWidth = convertedWidth + axis.padding.left + axis.padding.right;
+			axis.fullHeight = convertedHeight + axis.padding.top + axis.padding.bottom;
+
+		},
+		
+		
+		
+		resizeAxis: function()
+		{
+			var axis = this;
+			var chart = axis.chart;
+			var chartPadding = chart.padding;
+			var isXAxis = axis.isXAxis;
+			
+			var bbox = chart.node[0].getBoundingClientRect();
+			var wrapWidth = chart.plotWidth;
+			var wrapHeight = chart.plotHeight;
+			
+			
+			var prevHeight = chart.prevHeight;
+			var prevWidth = chart.prevWidth;
+			var plotHeight = chart.plotHeight;
+			var plotWidth = chart.plotWidth;
+			var diffHeight = plotHeight - prevHeight;
+			var diffWidth = plotWidth - prevWidth;
+			
+			
+			
+			if (!isXAxis)
+			{
+				var xAxis = chart.xAxis[0];
+				axis.fullHeight = axis.fullHeight + ((axis.fullHeight / (prevHeight - xAxis.fullHeight)) * diffHeight);
+				//axis.fullHeight
+				axis.height = axis.fullHeight - (axis.padding.top + axis.padding.bottom);
+			}
+			else
+			{
+				//axis.fullWidth = axis.fullWidth + ((axis.fullWidth / prevWidth) * diffWidth);
+				axis.fullWidth = axis.fullWidth + diffWidth;
+				axis.width = axis.fullWidth - (axis.padding.left + axis.padding.right);
+			}
+
 		},
 		
 		
@@ -249,8 +279,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (hasPct)
 			{
-				var valNum = parseInt(strVal)/100;
-				var converted = Math.round(valNum * Number(wrapHW));
+				var valNum = parseFloat(strVal)/100;
+				var converted = (valNum * Number(wrapHW));
 			}
 			
 			return converted
@@ -279,7 +309,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				var xAxis = chart.xAxis[0];
 				var axisIndex = axis.index;
 				
-				var leftAdd = xAxis.padding['left'] + xAxis.width;
+				var leftAdd = xAxis.padding.left + xAxis.width;
 				var topAdd = 0;
 				
 				if (axisIndex > 0)
@@ -290,9 +320,9 @@ Sleuthcharts = (function(Sleuthcharts)
 				
 				axis.pos.top = axis.padding.top + topAdd + (chartPadding.top / chart.yAxis.length);
 				axis.pos.bottom = axis.pos.top + axis.height;
-				axis.pos.left = axis.padding.left + leftAdd + chartPadding.left;
+				axis.pos.left = xAxis.fullWidth + chartPadding.left + axis.padding.left;
 				axis.pos.right = axis.pos.left + axis.width;
-			}
+			}			
 		},
 		
 		
@@ -470,6 +500,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		getXAxisTicks: function()
 		{
 			var axis = this;
@@ -551,6 +582,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		getYAxisTicks: function()
 		{
 			var axis = this;
@@ -581,9 +613,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			return ticks;
 		},
 		
-		
-	/***************		LABEL/TICK FUNCTIONS		****************/
-		
+				
 		
 		calcLabelPosition: function(xPos, yPos, text)
 		{
@@ -627,6 +657,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		calcLeftTickPosition: function(xPos, yPos)
 		{
 			var tick = {};
@@ -661,8 +692,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
-	/***************		DRAW LINES		****************/
-
 
 		drawAxisLines: function()
 		{
@@ -717,6 +746,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 			}
 		},
+		
 		
 		
 		drawYAxisFollow: function(mousePosY)
@@ -814,6 +844,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
 		// highcharts
 		normalizeTimeTickInterval: function(tickInterval, unitsOption)
 		{
@@ -890,8 +921,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 
 		
-	/***************		CONVERT PIXEL/VALUE		****************/
-
 	
 		getPositionFromValue: function(pointValue)
 		{
@@ -904,10 +933,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			var range = paddedMax - paddedMin;
 			var ratio = num / range;
 			var pos = Number((axis.pos.bottom - (ratio * axis.height)).toFixed(4));
-			//console.log(String(pointValue) + "    " + String(ratio) + "  " + String(pos));
 			
 			return pos
 		},
+		
 		
 		
 		getValueFromPosition: function(pos)

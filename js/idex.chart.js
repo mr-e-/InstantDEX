@@ -8,8 +8,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var node = obj.node		
 		
-		var volAxisHeight = "20%"
-		var priceAxisHeight = "80%"
+		var volAxisHeight = "22%"
+		var priceAxisHeight = "78%"
 		var priceAxisTopPadding = 35;
 		var yLabelStyle =
 		{
@@ -46,6 +46,7 @@ var IDEX = (function(IDEX, $, undefined)
 					"padding":{
 						"top":0,
 						"left":10,
+						"right":20,
 					},
 					
 					"numTicks":8,
@@ -68,7 +69,7 @@ var IDEX = (function(IDEX, $, undefined)
 					"padding":
 					{
 						"top":priceAxisTopPadding,
-						"left":20,
+						//"left":20,
 					},
 					
 					"minPadding":0.05,
@@ -86,7 +87,7 @@ var IDEX = (function(IDEX, $, undefined)
 					
 					"padding":{
 						"top":20,
-						"left":20,
+						//"left":20,
 					},
 					
 					"minPadding":0.1,
@@ -241,6 +242,63 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 
+	
+	$contentWrap.on("click", ".chart-tools-line", function()
+	{
+		
+		var $node = $(this).closest(".cell").find(".chart-wrap svg");
+		var chart = Sleuthcharts.getChart($node);
+		
+		var yLabelStyle =
+		{
+			"textPadding":5,
+			"fontSize":"13px",
+			"fontColor":"#8C8C8C",
+		};
+		
+		var yAxisSettings = 
+		{
+			"heightInit":"35%",
+			"widthInit":50,
+			
+			"padding":{
+				"top":20,
+				"left":20,
+			},
+			
+			"minPadding":0.1,
+			"maxPadding":0.05,
+			
+			"numTicks":3,
+			"tickLength":7,
+			
+			"labels":yLabelStyle
+		};
+
+		var seriesSettings = 
+		{
+			seriesType: "column"
+		};
+		
+		
+		var newSeriesSettings = {};
+		newSeriesSettings.series = seriesSettings;
+		newSeriesSettings.yAxis = yAxisSettings;
+		
+		chart.addSeries(newSeriesSettings);
+
+	})
+	
+	
+	$(".mainHeader-menu-ico-markets").on("click", function()
+	{
+		var saves = JSON.parse(localStorage.getItem('grids'));
+		console.log(saves);
+		console.log(JSON.stringify(saves))
+	})
+	
+	
+	
 	
 	
 	
