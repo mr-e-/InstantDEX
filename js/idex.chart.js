@@ -8,8 +8,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var node = obj.node		
 		
-		var volAxisHeight = "22%"
-		var priceAxisHeight = "78%"
+		var volAxisHeight = "25%"
+		var priceAxisHeight = "75%"
 		var priceAxisTopPadding = 35;
 		var yLabelStyle =
 		{
@@ -243,8 +243,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
-	$contentWrap.on("click", ".chart-tools-line", function()
+	$contentWrap.on("click", ".chart-tools-line, .chart-tools-crosshair, .chart-tools-fib", function()
 	{
+		var isCross = $(this).hasClass("chart-tools-crosshair");
+		var isFib = $(this).hasClass("chart-tools-fib");
 		
 		var $node = $(this).closest(".cell").find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
@@ -266,8 +268,8 @@ var IDEX = (function(IDEX, $, undefined)
 				"left":0,
 			},
 			
-			"minPadding":0.1,
-			"maxPadding":0.05,
+			"minPadding":0.0,
+			"maxPadding":0.0,
 			
 			"numTicks":3,
 			"tickLength":7,
@@ -277,9 +279,39 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var seriesSettings = 
 		{
-			seriesType: "column"
+			seriesType: "indicator",
+			indicatorSettings: 
+			{
+				icode: "macd",
+				ion: "cl",
+				ilen: 9
+				//icode: "storsi",
+				//ion: "cl", //vol
+				//ilen: 14
+			}
 		};
 		
+		if (isCross)
+		{
+			seriesSettings = 
+			{
+				seriesType: "indicator",
+				indicatorSettings: 
+				{
+					icode: "storsi",
+					ion: "cl", //vol
+					ilen: 14
+				}
+			};
+		}
+		
+		if (isFib)
+		{
+			seriesSettings = 
+			{
+				seriesType: "column",
+			};
+		}
 		
 		var newSeriesSettings = {};
 		newSeriesSettings.series = seriesSettings;
@@ -288,6 +320,8 @@ var IDEX = (function(IDEX, $, undefined)
 		chart.addSeries(newSeriesSettings);
 
 	})
+	
+	
 	
 	
 	$(".mainHeader-menu-ico-markets").on("click", function()

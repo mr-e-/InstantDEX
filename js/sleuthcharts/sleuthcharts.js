@@ -108,13 +108,12 @@ Sleuthcharts = (function(Sleuthcharts)
 							
 			
 			chart.setContainerSize();
+			chart.initMarketHandler();
 			chart.initAxes();
 			chart.initSeries();
-			chart.initMarketHandler();
 			chart.initDOMEventHandler();
 
 
-				
 			chart.node.attr("data-sleuthcharts", Sleuthcharts.allCharts.length)
 
 			Sleuthcharts.allCharts.push(chart);
@@ -124,62 +123,49 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (load)
 			{
-				var marketHandler = chart.marketHandler;
-				
-				chart.toggleLoading(true);
-
-				marketHandler.getMarketData().done(function()
-				{
-					var tempSeries = chart.series[0];
-					
-					//console.log(chart);
-					chart.resizeAxis();
-					chart.setContainerSize();
-					chart.updateAxisPos();
-					
-					chart.drawMarketName();
-
-					tempSeries.setDefaultMarketDataRange();
-					tempSeries.getPointPositions();
-					
-					chart.equalizeYAxisWidth();
-					chart.resizeAxis();
-					chart.updateAxisPos();
-					
-	
-					tempSeries.setDefaultMarketDataRange();
-					tempSeries.getPointPositions();
-					
-					//chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
-					
-					
-					for (var i = 0; i < chart.series.length; i++)
-					{
-						var series = chart.series[i];
-						//console.log(series);
-						series.drawPoints();
-						series.seriesTab.updatePositions();
-
-					}
-					
-					//chart.drawBothInds();
-
-					chart.updateAxisTicks();
-					chart.drawAxisLines();
-					
-					chart.hasRenderedOnce = true;
-					chart.toggleLoading(false);
-
-					
-					//highLowPrice(chart);
-				}).fail(function()
-				{
-					chart.editLoading("Error loading market " + marketHandler.marketSettings.pairName);
-				})
-				
+				chart.updateChart();
 			}
 			
 			return chart;
+		},
+		
+		
+		
+		getAllSeriesData: function()
+		{
+			var dfd = new $.Deferred();
+			var chart = this;
+			var allSeries = chart.series;
+			var len = allSeries.length;
+			
+			chart.getAllSeriesDataLoop(0, function()
+			{
+				dfd.resolve();
+			})
+			
+			return dfd.promise();
+		},
+		
+		
+		getAllSeriesDataLoop: function(index, callback)
+		{
+			var chart = this;
+			var allSeries = chart.series;
+			var len = allSeries.length;
+			var series = allSeries[index];
+			
+			series.getSeriesData().done(function()
+			{
+				if (index == len - 1)
+				{
+					callback();
+				}
+				else
+				{
+					chart.getAllSeriesDataLoop(index + 1, callback)
+				}
+			});
+			
 		},
 		
 		
@@ -369,10 +355,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		
 		addSeries: function(settings)
-		{
-			var chart = this;
-			
-			
+		{			
 			var chart = this;
 			var seriesOptions = chart.userOptions.series;
 
@@ -424,7 +407,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.series.push(series);
 	
 	
-			chart.redraw();
+			chart.getAllSeriesData().done(function()
+			{
+				chart.redraw();
+			})
 			
 		},
 		
@@ -432,7 +418,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		updateChart: function()
 		{
-
 			var dfd = new $.Deferred();
 			var chart = this;
 			var marketHandler = chart.marketHandler;
@@ -440,9 +425,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.toggleLoading(true);
 			chart.editLoading();
 			chart.prevIndex = -2;
-			
-			//chart.emptyChart();
-			//chart.unbindEventListeners();	//$("#"+node).unbind();
+
 
 			chart.ctx.clearRect(0, 0, chart.canvas.width, chart.canvas.height);
 
@@ -452,7 +435,6 @@ Sleuthcharts = (function(Sleuthcharts)
 				
 				chart.resizeAxis();
 				chart.setContainerSize();
-
 				chart.updateAxisPos();
 				
 				chart.drawMarketName();
@@ -464,10 +446,12 @@ Sleuthcharts = (function(Sleuthcharts)
 				
 				chart.resizeAxis();
 				chart.updateAxisPos();
+				
 				tempSeries.setDefaultMarketDataRange();
 				tempSeries.getPointPositions();
 								
-				
+				//chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
+
 				for (var i = 0; i < chart.series.length; i++)
 				{
 					var series = chart.series[i];
@@ -481,8 +465,9 @@ Sleuthcharts = (function(Sleuthcharts)
 				chart.updateAxisTicks();
 				chart.drawAxisLines();
 				
-				chart.toggleLoading(false);	
-
+				chart.hasRenderedOnce = true;
+				chart.toggleLoading(false);
+				
 				dfd.resolve();
 				
 				//highLowPrice(chart);
@@ -498,6 +483,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+
 		
 		redraw: function()
 		{
@@ -509,8 +495,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			{
 				var tempSeries = chart.series[0];
 				
-				//console.log(chart.xAxis[0].series[0].seriesType);
-				//console.log(chart);
 				chart.setContainerSize();
 				
 				chart.resizeAxis();

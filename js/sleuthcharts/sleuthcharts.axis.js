@@ -86,7 +86,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var axis = this;
 			axis.chart = chart;
-			axis.series = [];
+			axis.series;
 			axis.options = options;
 			
 
@@ -179,10 +179,23 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 			else
 			{
-				var minMax = Sleuthcharts.getMinMax(visiblePhases, axis.index == 0);
+				if (axis.series.usesMainData || axis.series.isMainSeries)
+				{
+					var visiblePhases = chart.visiblePhases;
+					var minMax = Sleuthcharts.getMinMax(visiblePhases, axis.index == 0);
 
-				axis.min = minMax[0];
-				axis.max = minMax[1];			
+					axis.min = minMax[0];
+					axis.max = minMax[1];
+				}
+				else
+				{
+					//console.log(axis.series);
+					//var visiblePhases = axis.series.marketHandler.indData.slice(chart.xAxis.minIndex, chart.xAxis.maxIndex);
+					axis.min = axis.series.marketHandler.formattedData.min;
+					axis.max = axis.series.marketHandler.formattedData.max;
+				}
+
+			
 			}
 			
 			axis.paddedMax = axis.max + (axis.max * (axis.maxPadding));

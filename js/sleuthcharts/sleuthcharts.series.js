@@ -128,6 +128,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			seriesTab.seriesTabDOM.remove();
 			
+			Sleuthcharts.updateArrayIndex(chart.series);
+			Sleuthcharts.updateArrayIndex(chart.yAxis);
 			
 			chart.redraw();
 			console.log('remove series');
@@ -143,7 +145,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var xAxis = series.xAxis;
 			
 			seriesTab.seriesTabDOM.css("left", 0);
-			seriesTab.seriesTabDOM.css("top", yAxis.pos.top - yAxis.padding.top);
+			seriesTab.seriesTabDOM.css("top", (yAxis.pos.top - yAxis.padding.top) + 3);
 
 		}
 	}
@@ -171,12 +173,15 @@ Sleuthcharts = (function(Sleuthcharts)
 			series.seriesType = userOptions.seriesType;
 			series.index = userOptions.index;
 			series.isMainSeries = series.index == 0;
+			series.usesMainData = series.seriesType == "column";
+			
 
-			series.xAxis = [];
-			series.yAxis = [];
+
 			series.yAxis = chart.yAxis[series.index];
 			series.xAxis = chart.xAxis[0];
-			
+			series.yAxis.series = series;
+			series.xAxis.series = series;
+
 			series.isResizingSeries = false;
 			series.height = 0;
 			series.width = 0;
@@ -189,6 +194,15 @@ Sleuthcharts = (function(Sleuthcharts)
 			series.seriesTab = new Sleuthcharts.SeriesTab(series, series.index);
 			series.seriesTab.updatePositions();
 			
+			if (series.seriesType == "indicator")
+			{
+				var indSettings = userOptions.indicatorSettings || {};
+				var marketSettings = chart.marketHandler.marketSettings || {};
+				series.marketHandler = new Sleuthcharts.MarketHandler(chart, marketSettings);
+				series.marketHandler.series = series;
+				series.marketHandler.indicatorSettings = indSettings;
+				series.seriesTab.seriesTabTitleDOM.text(indSettings.icode);
+			}
 			
 		},
 		
@@ -357,9 +371,164 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			chart.allPoints = allPoints;
 		},
+		
+		
+		
+		getSeriesData: function()
+		{
+			var dfd = new $.Deferred();
+			var series = this;
+			var chart = series.chart;
+			
+			var isMain = series.isMainSeries
+			
+			if (isMain)
+			{
+				chart.marketHandler.getMarketData().done(function()
+				{
+					//console.log('main');
+					dfd.resolve();
+				})
+			}
+			else
+			{
+				if (series.usesMainData)
+				{
+					//console.log('vol');
+					dfd.resolve();
+				}
+				
+				else
+				{
+					series.marketHandler.getSeriesData().done(function()
+					{
+						//console.log('ind');
+						//console.log(series.marketHandler.formattedData);
+						dfd.resolve();
+					})
+					
+				}
+			}
+			
+			return dfd.promise();
+
+		},	
+	}
+	
+	
+	
+	
+	Sleuthcharts.seriesTypes.indicator = Sleuthcharts.extendClass(Series, 
+	{
+		seriesType: "indicator",
+		
+		lineColor: "#FFB669",	//FFB669 D4F6FF
+		
+		closedHigherFill: "#39A033",
+		closedHigherStroke: "#19B34C",
+		closedLowerFill: "#9C0505",
+		closedLowerStroke: "#D12E2E",
 
 		
-	}
+		
+		drawPoints:function()
+		{
+			var series = this;
+			var chart = series.chart;
+			var xAxis = series.xAxis;
+			var yAxis = series.yAxis;
+			var ctx = chart.ctx;
+			
+			var allIndData = series.marketHandler.formattedData.inds;
+			var allPoints = chart.allPoints;
+			
+			
+			for (var i = 0; i < allIndData.length; i++)
+			{
+				var indDataObj = allIndData[i];
+				var drawType = indDataObj.drawType;
+				var indData = indDataObj.data;
+				var visIndData = indData.slice(xAxis.minIndex, xAxis.maxIndex+1);
+
+				
+				if (drawType == "line")
+				{
+					//console.log(drawType);
+
+					var positions = [];
+
+					for (var j = 0; j < visIndData.length; j++)
+					{
+						var point = allPoints[j];
+						var indPoint = visIndData[j];
+
+						var pixel = Math.floor(yAxis.getPositionFromValue(indPoint));
+						positions.push({"x":point.pos.middle, "y":pixel})
+					}
+					
+					
+					var lineFunc = d3.svg.line()
+						.x(function(d) { return d.x; })
+						.y(function(d) { return d.y; })
+						.interpolate("basis")
+						
+
+					var rawPath = lineFunc(positions);
+					var d = rawPath.split(/(M|L|Z|C)+/);
+					d = d.join(",");
+					d = d.split(",");			
+
+					if (d.length && !d[0].length)
+					{
+						d.shift();
+					}
+					
+					//console.log(d);
+					
+					var pathStyle = {};
+					pathStyle.strokeColor = series.lineColor;
+					pathStyle.fillColor = "transparent";
+					pathStyle.lineWidth = 1.5;
+					
+					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+				}
+				
+				else if (drawType == "column-middle")
+				{
+					for (var j = 0; j < visIndData.length; j++)
+					{
+						var point = allPoints[j];
+						var indPoint = visIndData[j];
+
+						
+						var topPos = yAxis.getPositionFromValue(indPoint);
+						var height = yAxis.pos.bottom - topPos;
+						var middlePos = yAxis.getPositionFromValue(0);
+						
+						var strokeColor = indPoint >= 0 ? series.closedHigherStroke : series.closedLowerStroke;
+						var fillColor = indPoint >= 0 ? series.closedHigherFill : series.closedLowerFill;
+						
+						var d = 
+						[
+							"M", point.pos.left, topPos, 
+							"L", point.pos.left, middlePos, 
+							"L", point.pos.right, middlePos, 
+							"L", point.pos.right, topPos, 
+							"Z", 
+						]
+
+						var pathStyle = {};
+						pathStyle.strokeColor = strokeColor;
+						pathStyle.fillColor = fillColor;
+						
+						Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
+					}
+				}
+				
+			}
+		},
+		
+	})
 	
 	
 	
@@ -594,7 +763,7 @@ Sleuthcharts = (function(Sleuthcharts)
 	{
 		seriesType: "line",
 		
-		lineColor: "#9D24C9",
+		lineColor: "#D4F6FF",
 		
 		
 		drawPoints:function()

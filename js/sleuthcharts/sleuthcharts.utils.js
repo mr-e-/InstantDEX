@@ -252,6 +252,15 @@ Sleuthcharts = (function(Sleuthcharts)
 	}
 	
 	
+	
+	Sleuthcharts.updateArrayIndex = function(arr)
+	{
+		for (var i = 0; i < arr.length; i++)
+		{			
+			arr[i].index = i;
+		}
+	}
+	
 
 	return Sleuthcharts;
 	

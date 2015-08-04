@@ -71,9 +71,6 @@ Sleuthcharts = (function(Sleuthcharts)
 	MarketHandler.prototype = 
 	{
 		
-
-		
-		
 		init: function(chart, userOptions)
 		{
 			var marketHandler = this;
@@ -94,6 +91,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				isVirtual: false,
 				isFlipped: false,
 			};
+			
 			
 			marketHandler.chart = chart;
 			
@@ -168,47 +166,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				return;
 				
 				var indicatorType = newSettings.configVal;
-				
-				if (indicatorType == "none")
-				{
-					$(sleuthchart.node).find(".volInd").empty()
-					$(sleuthchart.node).find(".candleInd").empty()
 
-					sleuthchart.settings.isInd = false;
-					toggleLoading(node, false)
-					redraw(sleuthchart)
-				}
-				else
-				{
-					sleuthchart.settings.isInd = true;
-					settings.candleInd[0].type = indicatorType
-					settings.candleInd[1].type = indicatorType
-					settings.volInd[0].type = indicatorType
-					settings.volInd[1].type = indicatorType
-					
-					if (indicatorType == "bollin")
-					{
-						settings.candleInd[0].len = "1|2"
-						settings.candleInd[1].len = "1|2"
-						settings.volInd[0].len = "1|2"
-						settings.volInd[1].len = "1|2"
-					}
-					else
-					{
-						settings.candleInd[0].len = "7"
-						settings.candleInd[1].len = "20"
-						settings.volInd[0].len = "7"
-						settings.volInd[1].len = "20"
-					}
-					
-					sleuthchart.settings = settings
-					toggleLoading(node, true)
-					Sleuthcharts.getBothInds(sleuthchart, settings).done(function()
-					{
-						toggleLoading(node, false)
-						redraw(sleuthchart)
-					});
-				}
 			}
 		},
 		
@@ -217,7 +175,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var marketHandler = this;
 			var dfd = new $.Deferred();
-			
 			
 			var isTime = marketHandler.marketSettings.barType == "time";
 
@@ -242,9 +199,34 @@ Sleuthcharts = (function(Sleuthcharts)
 				console.log(data);
 				dfd.reject(data);
 			})
+		
 			
 			return dfd.promise();
 		},
+		
+		
+		
+		getSeriesData: function()
+		{
+			var marketHandler = this;
+			var dfd = new $.Deferred();
+			var series = marketHandler.series;
+			
+			
+			marketHandler.getSkynetIndicatorData().done(function(data)
+			{
+				data = data.results.data;
+				var formattedData = marketHandler.formatIndicatorData(data);
+				marketHandler.formattedData = formattedData;
+				
+				dfd.resolve(formattedData);
+			});
+
+			return dfd.promise();
+		},
+		
+		
+		
 		
 		
 		getSkynetMarketData: function()
@@ -282,14 +264,103 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
+		
+		formatIndicatorData: function(rawData)
+		{
+			var marketHandler = this;
+			var icode = marketHandler.indicatorSettings.icode;
+			
+			var formattedData = {};
+			var inds = [];
+			
+			if (icode == "storsi")
+			{
+				var obj = {};
+				obj.drawType = "line";
+				obj.data = rawData;
+				
+				formattedData.max = 100;
+				formattedData.min = 0;
+				
+				inds.push(obj);
+				
+				//obj.max = Math.max.apply(Math, obj.data);
+				//obj.min = Math.max.apply(Math, obj.data);
+				
+			}
+			else if (icode == "macd")
+			{
+				var obj = {};
+				
+				obj.data = rawData.macd;
+				obj.drawType = "column-middle";
+				
+				inds.push(obj);
+				
+				obj = {};
+				
+				obj.data = rawData.signal;
+				obj.drawType = "line";
+				
+				inds.push(obj);
+				
+				var all = marketHandler.getAll(inds);
+				
+				formattedData.max = Math.max.apply(Math, all);
+				formattedData.min = Math.min.apply(Math, all);
+
+			}
+			
+			
+			formattedData.inds = inds;
+			
+			return formattedData;
+			
+		},
+		
+		
+		getAll: function(arr)
+		{
+			var all = [];
+			for (var i = 0; i < arr.length; i++)
+			{
+				all = all.concat(arr[i].data);
+			}
+			return all;
+		},
+		
+		
+		getMinMax: function(arr)
+		{
+			var min = 0;
+			var max = 0;
+			
+			for (var i = 0; i < arr.length; i++)
+			{
+				var point = arr[i];
+				
+				min = point > min ? point : min;
+			}
+			
+		},
+		
+		
+		
 		getSkynetIndicatorData: function()
 		{
 			var dfd = new $.Deferred();
-
-			var settings = this.settings;
-			var indSettings = this.indicatorSettings;
 			
-			var iret = (indSettings.type == "bollin") ? "solo" : "merge";
+			var marketHandler = this;
+			var settings = marketHandler.marketSettings;
+			var indSettings = marketHandler.indicatorSettings;
+			
+			//var indCode = "storsi";
+			//var indType = "cl";
+			//var indLen = 14;
+			
+			//http://api.finhive.com/v1.0/run.cgi?section=crypto&run=indicator&exchg=coinbase&pair=btc_usd&bars=tick&len=1000&icode=ind_storsi&ion=cl&ilen=14&inum=100&iret=solo&key=beta_test
+			
+			//var iret = (indSettings.type == "bollin") ? "solo" : "merge";
 
 	
 			var obj = {}
@@ -303,12 +374,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			obj.len = settings.barWidth
 			obj.order = "asc"
 			
-			obj.icode = "ind_" + indSettings.type
-			obj.ion = indSettings.price
-			obj.ilen = indSettings.len
+			obj.icode = "ind_" + indSettings.icode;
+			obj.ion = indSettings.ion;
+			obj.ilen = indSettings.ilen;
 			obj.inum = "500"
-			obj.iret = iret
-			obj.order = "asc"
+			obj.iret = "solo";
+			obj.order = "asc";
 
 			var params = new Sleuthcharts.SkyNETParams(obj)
 			var url = params.makeURL()
@@ -316,12 +387,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			$.getJSON(url, function(data)
 			{
+				//console.log(data);
 				dfd.resolve(data)	
 			})
 			
 			return dfd.promise()
 		},
 		
+
 		
 		
 		formatMarketData: function(data, isTime)
