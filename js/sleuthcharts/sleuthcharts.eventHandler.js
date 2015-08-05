@@ -285,13 +285,14 @@ Sleuthcharts = (function(Sleuthcharts)
 				//console.log(diff);
 				otherSeries.yAxis.fullHeight = otherSeries.yAxis.fullHeight - diff;
 				otherSeries.yAxis.height = otherSeries.yAxis.fullHeight - (otherSeries.yAxis.padding.top + otherSeries.yAxis.padding.bottom);
+				chart.redraw();
+
 				//console.log('moving');
 			}
 			else
 			{
 				//console.log('NOT moving');
 			}
-			chart.redraw();
 		},
 		
 		
