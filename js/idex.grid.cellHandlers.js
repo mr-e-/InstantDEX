@@ -175,9 +175,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
-	
-	
-	
 	function newWatchlist(cell)
 	{
 		var $cell = cell.cellDOM;

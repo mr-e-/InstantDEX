@@ -164,30 +164,37 @@ Sleuthcharts = (function(Sleuthcharts)
 			var insideX = e.chartX;
 			var insideY = e.chartY;
 			
-			
-			var series = chart.series[0];
-
-			var yAxis = series.yAxis;
-			var xAxis = series.xAxis;
+	
 			var lineWidth = 4;
-			var checkPos = {};
-			checkPos.bottomPos = yAxis.pos.bottom;
-			checkPos.leftPos = xAxis.pos.left;
-			checkPos.rightPos = xAxis.pos.right;
 
-			//console.log(checkPos);
-			//console.log([insideX, insideY]);
+			var allSeries = chart.series;
 			
-			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
 			
-			if (isInsideLine)
+			for (var i = 0; i < allSeries.length - 1; i++)
 			{
-				chart.isResizingSeries = true;
+				var checkSeries = allSeries[i];
+				var checkYAxis = checkSeries.yAxis;
+				var checkXAxis = checkSeries.xAxis;
+				var checkPos = {};
+				checkPos.bottomPos = checkYAxis.pos.bottom;
+				checkPos.leftPos = checkXAxis.pos.left;
+				checkPos.rightPos = checkXAxis.pos.right;
+				
+				var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
+
+				
+				if (isInsideLine)
+				{
+					chart.isResizingSeries = true;
+					chart.resizeSeries = checkSeries;
+					break;
+				}
+				else
+				{
+					//$(chart.crosshairCanvas).css("cursor", "default");
+				}
 			}
-			else
-			{
-				//$(chart.crosshairCanvas).css("cursor", "default");
-			}
+
 		},
 		
 		
@@ -216,28 +223,34 @@ Sleuthcharts = (function(Sleuthcharts)
 			var insideX = e.chartX;
 			var insideY = e.chartY;
 		
-		
-			var series = chart.series[0];
-
-			var yAxis = series.yAxis;
-			var xAxis = series.xAxis;
+			var allSeries = chart.series;
 			var lineWidth = 4;
-			var checkPos = {};
-			checkPos.bottomPos = yAxis.pos.bottom;
-			checkPos.leftPos = xAxis.pos.left;
-			checkPos.rightPos = xAxis.pos.right;
 
-			
-			var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
-			
-			if (isInsideLine)
+			for (var i = 0; i < allSeries.length - 1; i++)
 			{
-				$(chart.crosshairCanvas).css("cursor", "ns-resize");
+				var checkSeries = allSeries[i];
+				var checkYAxis = checkSeries.yAxis;
+				var checkXAxis = checkSeries.xAxis;
+				var checkPos = {};
+				checkPos.bottomPos = checkYAxis.pos.bottom;
+				checkPos.leftPos = checkXAxis.pos.left;
+				checkPos.rightPos = checkXAxis.pos.right;
+				
+				var isInsideLine = (insideY > checkPos.bottomPos - lineWidth) && (insideY < checkPos.bottomPos + lineWidth);
+
+				
+				if (isInsideLine)
+				{
+					$(chart.crosshairCanvas).css("cursor", "ns-resize");
+					break;
+				}
+				else
+				{
+					$(chart.crosshairCanvas).css("cursor", "default");
+				}
 			}
-			else
-			{
-				$(chart.crosshairCanvas).css("cursor", "default");
-			}
+		
+
 		},
 		
 		
@@ -257,13 +270,28 @@ Sleuthcharts = (function(Sleuthcharts)
 				var insideX = e.chartX;
 				var insideY = e.chartY;
 
-				var series = chart.series[0];
+				var resizeSeries = chart.resizeSeries;
+				
+				var curBottom = resizeSeries.yAxis.pos.bottom;
+				var curHeight = resizeSeries.yAxis.fullHeight;
+				
+				var diff = insideY - curBottom;
+				
+				resizeSeries.yAxis.fullHeight = curHeight + diff;
+				resizeSeries.yAxis.height = resizeSeries.yAxis.fullHeight - (resizeSeries.yAxis.padding.top + resizeSeries.yAxis.padding.bottom);
+				
+				var otherSeries = chart.series[resizeSeries.index + 1];
+
+				//console.log(diff);
+				otherSeries.yAxis.fullHeight = otherSeries.yAxis.fullHeight - diff;
+				otherSeries.yAxis.height = otherSeries.yAxis.fullHeight - (otherSeries.yAxis.padding.top + otherSeries.yAxis.padding.bottom);
 				//console.log('moving');
 			}
 			else
 			{
 				//console.log('NOT moving');
 			}
+			chart.redraw();
 		},
 		
 		

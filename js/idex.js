@@ -157,8 +157,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	
 
-		IDEX.pingSupernet().done(function()
-		{	
+		//IDEX.pingSupernet().done(function()
+		//{	
 			IDEX.initTimer().done(function()
 			{
 				timeoutFinished.resolve();
@@ -187,13 +187,14 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				IDEX.hideLoading();
 			})
+			IDEX.hideLoading();
 			
 					
 			
-		}).fail(function()
-		{
-			IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
-		})
+		//}).fail(function()
+		//{
+		//	IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
+		//})
 	}
 	
 	
