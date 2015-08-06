@@ -146,7 +146,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			seriesTab.seriesTabDOM.css("left", 0);
 			seriesTab.seriesTabDOM.css("top", (yAxis.pos.top - yAxis.padding.top) + 3);
-
 		}
 	}
 

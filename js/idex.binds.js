@@ -5,10 +5,25 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	
 	
+	IDEX.togglePopup = function($popup, show, withOverlay)
+	{
+		var $overlay = $(".popup-overlay");
+		
+		var func = show ? "addClass" : "removeClass";
+
+		$popup[func]("active");
+		
+		if (withOverlay)
+			$overlay[func]("active");
+	}
+	
+	
 	$(".popup-header-close").on("click", function()
 	{
+		var $overlay = $(".popup-overlay");
 		var $popup = $(this).closest(".popup");
 		$popup.removeClass("active");
+		$overlay.removeClass("active");
 	})
 	
 	

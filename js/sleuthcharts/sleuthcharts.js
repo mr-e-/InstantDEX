@@ -407,9 +407,9 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.series.push(series);
 	
 	
-			chart.getAllSeriesData().done(function()
+			chart.updateChart().done(function()
 			{
-				chart.redraw();
+				//chart.redraw();
 			})
 			
 		},
@@ -429,7 +429,7 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			chart.ctx.clearRect(0, 0, chart.canvas.width, chart.canvas.height);
 
-			marketHandler.getMarketData().done(function()
+			chart.getAllSeriesData().done(function()
 			{
 				var tempSeries = chart.series[0];
 				

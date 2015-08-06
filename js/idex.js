@@ -148,6 +148,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		IDEX.user.initFavorites();
 		IDEX.user.initLabels();
+		IDEX.initChartIndicators();
 
 		
 		IDEX.user.options = 
@@ -205,6 +206,8 @@ var IDEX = (function(IDEX, $, undefined)
 					initializedAssets.resolve()
 				})
 			});
+			
+			//IDEX.hideLoading();
 		})
 	}
 	

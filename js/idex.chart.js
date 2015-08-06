@@ -243,96 +243,163 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
-	$contentWrap.on("click", ".chart-tools-line, .chart-tools-crosshair, .chart-tools-fib", function()
-	{
-		var isCross = $(this).hasClass("chart-tools-crosshair");
-		var isFib = $(this).hasClass("chart-tools-fib");
-		
-		var $node = $(this).closest(".cell").find(".chart-wrap svg");
-		var chart = Sleuthcharts.getChart($node);
-		
-		var yLabelStyle =
+	
+	IDEX.chartIndicators = 
+	[
 		{
-			"textPadding":5,
-			"fontSize":"13px",
-			"fontColor":"#8C8C8C",
-		};
-		
-		var yAxisSettings = 
-		{
-			"heightInit":"25%",
-			"widthInit":50,
-			
-			"padding":{
-				"top":20,
-				"left":0,
-			},
-			
-			"minPadding":0.0,
-			"maxPadding":0.0,
-			
-			"numTicks":3,
-			"tickLength":7,
-			
-			"labels":yLabelStyle
-		};
-
-		var seriesSettings = 
-		{
-			seriesType: "indicator",
+			fullName: "MACD",
+			shortName: "MACD",
+			skynetCode: "macd",
 			indicatorSettings: 
 			{
 				icode: "macd",
 				ion: "cl",
 				ilen: 9
-				//icode: "storsi",
-				//ion: "cl", //vol
-				//ilen: 14
+			}
+
+		},
+		{
+			fullName: "Stoch RSI",
+			shortName: "Stock RSI",
+			skynetCode: "storsi",
+			indicatorSettings: 
+			{
+				icode: "storsi",
+				ion: "cl", //vol
+				ilen: 14
+			}
+
+		}
+	]
+	
+	
+	IDEX.addChartIndicator = function(chart, indicatorSettings)
+	{
+		var yAxisSettings = 
+		{
+			heightInit:"25%",
+			widthInit:50,
+			
+			padding:
+			{
+				"top":20,
+				"left":0,
+			},
+			
+			minPadding:0.0,
+			maxPadding:0.0,
+			
+			numTicks:3,
+			tickLength:7,
+			
+			labels:
+			{
+				textPadding:5,
+				fontSize:"13px",
+				fontColor:"#8C8C8C",
 			}
 		};
-		
-		if (isCross)
+
+		var seriesSettings = 
 		{
-			seriesSettings = 
-			{
-				seriesType: "indicator",
-				indicatorSettings: 
-				{
-					icode: "storsi",
-					ion: "cl", //vol
-					ilen: 14
-				}
-			};
-		}
+			seriesType: "indicator",
+			indicatorSettings: indicatorSettings
+		};
 		
-		if (isFib)
+		/*
+		seriesSettings = 
 		{
-			seriesSettings = 
-			{
-				seriesType: "column",
-			};
-		}
+			seriesType: "column",
+		};
+		*/
+		
 		
 		var newSeriesSettings = {};
 		newSeriesSettings.series = seriesSettings;
 		newSeriesSettings.yAxis = yAxisSettings;
 		
 		chart.addSeries(newSeriesSettings);
+		IDEX.togglePopup($chartIndicatorPopup, false, true);
+	};
+	
+	
+	
 
-	})
+	
+	var $chartIndicatorPopup = $("#chartIndicator_popup");
+	IDEX.indChart;
 	
 	
-	
-	
-	$(".mainHeader-menu-ico-markets").on("click", function()
+	$contentWrap.on("click", ".chartIndicatorPopup-indList-row", function(e)
 	{
-		var saves = JSON.parse(localStorage.getItem('grids'));
-		console.log(saves);
-		console.log(JSON.stringify(saves))
+		var chart = IDEX.indChart;
+		var rowIndCode = $(this).attr("data-ind");
+		var indicator;
+		
+		for (var i = 0; i < IDEX.chartIndicators.length; i++)
+		{
+			indicator = IDEX.chartIndicators[i];
+			if (indicator.skynetCode == rowIndCode)
+				break;
+		}
+		
+		
+		IDEX.addChartIndicator(chart, indicator.indicatorSettings);
 	})
+
+	
+	$contentWrap.on("click", ".chart-indicator-popup-trig", function(e)
+	{
+		var $node = $(this).closest(".cell").find(".chart-wrap svg");
+		var chart = Sleuthcharts.getChart($node);
+	
+		IDEX.indChart = chart;
+
+		
+		var isActive = $chartIndicatorPopup.hasClass("active");
+		IDEX.togglePopup($chartIndicatorPopup, !isActive, true);
+	})
+
 	
 	
-	
+	IDEX.initChartIndicators = function()
+	{	
+		var rows = [];
+		
+		for (var i = 0; i < IDEX.chartIndicators.length; i++)
+		{
+			var indicator = IDEX.chartIndicators[i];
+			var row = IDEX.addChartIndicatorDOM(indicator);
+			rows.push(row);
+		}
+		
+		//console.log(rows);
+		$(".chartIndicatorPopup-indList").append($(rows.join("")))
+	}
+
+
+
+	IDEX.addChartIndicatorDOM = function(indicator)
+	{
+		var fullName = indicator.fullName;
+		var shortName = indicator.shortName;
+		var nameCode = indicator.skynetCode;
+		
+		var rowWrap = "<div class='chartIndicatorPopup-indList-row' data-ind='"+nameCode+"'></div>"
+		var tdWrapFullName = "<div class='chartIndicatorPopup-indList-cell'></div>";
+		var tdWrapShortName = "<div class='chartIndicatorPopup-indList-cell'></div>";
+		var tdFullName = "<span>" + fullName + "</span>";
+		var tdShortName = "<span>" + shortName + "</span>";		
+
+		var tdFullNameStr = $(tdWrapFullName).html(tdFullName)[0].outerHTML;
+		var tdWrapShortNameStr = $(tdWrapShortName).html(tdShortName)[0].outerHTML;
+			
+		var combined = tdFullNameStr + tdWrapShortNameStr
+			
+		var row = $(combined).wrapAll(rowWrap).parent()[0].outerHTML
+		
+		return row
+	}
 	
 	
 	
