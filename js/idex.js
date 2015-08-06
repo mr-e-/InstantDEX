@@ -195,6 +195,16 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$(".temp-exit").addClass("active");
 			IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
+			
+			IDEX.user.initAllAssets().done(function()
+			{
+				IDEX.initAutocomplete();
+				
+				IDEX.getSkynet().done(function(data)
+				{
+					initializedAssets.resolve()
+				})
+			});
 		})
 	}
 	
