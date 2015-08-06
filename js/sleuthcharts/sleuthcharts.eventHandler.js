@@ -104,6 +104,8 @@ Sleuthcharts = (function(Sleuthcharts)
 				e.clientY = e['clientY'];
 			}
 			
+			e.wheelDeltaY = e.deltaY
+			
 			e.chartX = chartX;
 			e.chartY = chartY;
 
@@ -419,12 +421,13 @@ Sleuthcharts = (function(Sleuthcharts)
 			e.preventDefault();
 			e.stopPropagation();
 			
+			
 			var DOMEventHandler = this;
 			var chart = DOMEventHandler.chart;
 			
 			e = DOMEventHandler.normalizeMouseEvent(e);
 
-			//console.log(e.wheelDeltaY);
+			//console.log(e);
 			
 			if (e.wheelDeltaY == 0)
 				return;

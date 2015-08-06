@@ -834,7 +834,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				var phase = point.phase;
 				var pos = point.pos;
 				
-				var volTop = yAxis.getPositionFromValue(phase.vol);
+				var volTop = Math.floor(yAxis.getPositionFromValue(phase.vol)) + 0.5;;
 				var volHeight = yAxis.pos.bottom - volTop;
 				
 				var closedHigher = phase.close > phase.open;
