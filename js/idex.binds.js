@@ -134,6 +134,11 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 
 	
+	$(".temp-exit").on("click", function()
+	{
+		IDEX.hideLoading();
+	})
+	
 	
 	
 	return IDEX;

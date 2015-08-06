@@ -628,7 +628,25 @@ table.dataTable thead th:last-child {
 	color:#e5e5e5;
 }
 
+.temp-exit {
+	height:50px;
+	width:100%;
+	position:absolute;
+	bottom:20px;
+	color:#e5e5e5;
+	font-size:16px;
+	text-align:center;
+	display:none;
+}
 
+.temp-exit.active {
+	display:block;
+}
+
+.temp-exit:hover {
+	cursor:pointer;
+	color:white;
+}
 
 /* ------------------------- MAIN HEADER ------------------------- */
 
