@@ -28,7 +28,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			strokeColor: "transparent",
 			fillColor: "transparent",
 			lineWidth: 1,
-			lineDash: [0, 0],
+			lineDash: [1, 0],
 		};
 		
 		

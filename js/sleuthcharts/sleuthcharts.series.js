@@ -324,7 +324,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			//console.log([numPhases, realNumPhases]);
 			//console.log([newStartIndex, numMissingPoints, missingPixelWidth, pixelWidthUnder]);
-			console.log([fullPointWidth, pointPadding, pointWidth]);
+			//console.log([fullPointWidth, pointPadding, pointWidth]);
 			
 	
 			xAxis.fullPointWidth = fullPointWidth;
