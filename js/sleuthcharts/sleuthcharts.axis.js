@@ -132,8 +132,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			if (axis.isXAxis)
 			{
 				axis.fullPointWidth = 10;
-				axis.pointPadding = 5;
-				axis.pointWidth = 5;
+				axis.pointPadding = 4;
+				axis.pointWidth = 6;
 				axis.numPoints = 0;
 				axis.pixelWidthUnder = 0;
 				axis.missingPixelWidth = 0;

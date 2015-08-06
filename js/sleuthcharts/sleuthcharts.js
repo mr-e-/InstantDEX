@@ -452,6 +452,9 @@ Sleuthcharts = (function(Sleuthcharts)
 								
 				//chart.updateAxisMinMax(chart.visiblePhases, chart.xAxis[0].minIndex, chart.xAxis[0].maxIndex);
 
+				chart.updateAxisTicks();
+				chart.drawAxisLines();
+				
 				for (var i = 0; i < chart.series.length; i++)
 				{
 					var series = chart.series[i];
@@ -462,8 +465,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				
 				//chart.drawBothInds();
 
-				chart.updateAxisTicks();
-				chart.drawAxisLines();
+
 				
 				chart.hasRenderedOnce = true;
 				chart.toggleLoading(false);
@@ -512,6 +514,9 @@ Sleuthcharts = (function(Sleuthcharts)
 				tempSeries.getPointPositions();
 				
 				
+				chart.updateAxisTicks();
+				chart.drawAxisLines();
+				
 				for (var i = 0; i < chart.series.length; i++)
 				{
 					var series = chart.series[i];
@@ -520,8 +525,7 @@ Sleuthcharts = (function(Sleuthcharts)
 
 				}
 				
-				chart.updateAxisTicks();
-				chart.drawAxisLines();
+
 			}
 			
 		},

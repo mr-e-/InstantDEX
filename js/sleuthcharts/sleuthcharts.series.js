@@ -314,15 +314,17 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			if (fullPointWidth >= 3) pointPadding = 2;
 			if (fullPointWidth >= 6) pointPadding = 3;
-			if (fullPointWidth >= 10) pointPadding = 5;
-			if (fullPointWidth >= 20) pointPadding = 10;
+			if (fullPointWidth >= 10) pointPadding = 4;
+			if (fullPointWidth >= 15) pointPadding = 5;
+			if (fullPointWidth >= 20) pointPadding = 6;
+			if (fullPointWidth >= 30) pointPadding = 8;
 			if (fullPointWidth >= 100) pointPadding = 20;
 			
 			var pointWidth = fullPointWidth - pointPadding;
 			
 			//console.log([numPhases, realNumPhases]);
 			//console.log([newStartIndex, numMissingPoints, missingPixelWidth, pixelWidthUnder]);
-			//console.log([fullPointWidth, pointPadding, pointWidth]);
+			console.log([fullPointWidth, pointPadding, pointWidth]);
 			
 	
 			xAxis.fullPointWidth = fullPointWidth;
@@ -622,7 +624,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		seriesType: "candlestick",
 		
 		closedHigherFill: "transparent",
-		closedHigherStroke: "#19B34C",
+		closedHigherStroke: "#19B34C", //49c143 btcw
 		closedLowerFill: "#9C0505",
 		closedLowerStroke: "#D12E2E",
 
