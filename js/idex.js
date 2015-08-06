@@ -188,6 +188,7 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.hideLoading();
 			})
 			
+			//IDEX.hideLoading();
 					
 			
 		}).fail(function()

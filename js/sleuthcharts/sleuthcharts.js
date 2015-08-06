@@ -533,20 +533,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chart = this;
 			var series = chart.series[0];
 			var xAxis = chart.xAxis[0];
-			var marketHandler = chart.marketHandler;
 			
-			//var allPhases = marketHandler.marketData.ohlc;
 			var startIndex = xAxis.minIndex;
 			var endIndex = xAxis.maxIndex;
-			//var visiblePhases = allPhases.slice(startIndex);
 			var visiblePhases = chart.visiblePhases;
 
-			
-			if (series.calcPointWidth(visiblePhases))
-			{
-				chart.visiblePhases = visiblePhases;
-				series.updateAxisMinMax(startIndex, endIndex);
-			}
+			series.calcPointWidth();
 		},
 		
 		
@@ -615,24 +607,34 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 			else
 			{
-				if (xAxis.maxIndex < allPhases.length - 1)
-				{
-					var startIndex = xAxis.minIndex + shifts;
-					var endIndex = xAxis.maxIndex + shifts;
-					vis = allPhases.slice(startIndex, endIndex+1);
-				}
+				//if (xAxis.minIndex < allPhases.length - 1)
+				//{
+					/*if (xAxis.maxIndex < allPhases.length - 1)
+					{
+						var startIndex = xAxis.minIndex + shifts;
+						var endIndex = xAxis.maxIndex + shifts;
+						vis = allPhases.slice(startIndex, endIndex+1);
+					}
+					else
+					{
+						var startIndex = xAxis.minIndex + shifts;
+						var endIndex = xAxis.maxIndex;
+						vis = allPhases.slice(startIndex, endIndex+1);
+					}*/
+				//}
 			}
+
 
 			if (vis.length)
 			{
-				//console.log(vis);
 				var series = chart.series[0];
 
-				if (series.calcPointWidth(vis))
-				{
-					chart.visiblePhases = vis;
-					series.updateAxisMinMax(startIndex, endIndex);
-				}
+				//var allPhases = chart.marketHandler.marketData.ohlc;
+				//visiblePhases = allPhases.slice(startIndex, endIndex);
+
+				chart.visiblePhases = vis;
+				series.updateAxisMinMax(startIndex, endIndex);
+				series.calcPointWidth();
 			}
 		},
 		
@@ -682,11 +684,9 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			var series = chart.series[0];
 
-			if (series.calcPointWidth(vis))
-			{
-				chart.visiblePhases = vis;
-				series.updateAxisMinMax(startIndex, endIndex);
-			}
+			
+			series.changeZoomState(isZoomOut);
+
 
 			chart.redraw()
 		},

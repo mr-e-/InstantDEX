@@ -131,11 +131,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (axis.isXAxis)
 			{
-				axis.fullPointWidth = 0;
-				axis.pointPadding = 0;
-				axis.pointWidth = 0;
+				axis.fullPointWidth = 10;
+				axis.pointPadding = 5;
+				axis.pointWidth = 5;
 				axis.numPoints = 0;
-				
+				axis.pixelWidthUnder = 0;
+				axis.missingPixelWidth = 0;
 				axis.range = options.range;
 				axis.minRange = options.minRange;
 				
@@ -171,7 +172,7 @@ Sleuthcharts = (function(Sleuthcharts)
 
 				axis.dataMin = allPhases[0].startTime;
 				axis.dataMax = allPhases[allPhases.length-1].startTime;
-				
+
 				axis.minIndex = startIndex;
 				axis.maxIndex = endIndex;
 				axis.min = visiblePhases[0].startTime;
@@ -448,7 +449,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 				}
 
-				axis.ticks = [];
+				//axis.ticks = [];
 			}
 			else
 			{
@@ -491,7 +492,7 @@ Sleuthcharts = (function(Sleuthcharts)
 					Sleuthcharts.drawCanvasPath(ctx, d, pathStyle);
 				}
 				
-				
+				//return;
 				for (var i = 0; i < gridLines.length; i++)
 				{
 					var gridLine = gridLines[i];
@@ -519,62 +520,65 @@ Sleuthcharts = (function(Sleuthcharts)
 			var axis = this;
 			var chart = axis.chart;
 
-			
 			var tickStep = axis.tickStep;
 			var tickStepStart = 0;
-			
-			
+						
 			var allPoints = chart.allPoints;
 			var allPointsLength = allPoints.length;
 			
 			var ticks = axis.ticks;
 			var ticksLength = ticks.length;
 			
+			var numTicks =  Math.floor(axis.width / tickStep);
+			var tickJump = Math.floor(numTicks / axis.fullPointWidth);
 
+			if (tickJump < 1)
+				tickJump = 1
+			
+
+			//var a = axis.normalizeTimeTickInterval(chart.marketHandler.marketSettings.barWidth * 1000)
+			//console.log(a);
 			
 			var index = -1;
 				
-			for (var j = 0; j < ticksLength; j++)
+			for (var i = 0; i < ticksLength; i++)
 			{
-				var tick = ticks[j];
+				var tick = ticks[i];
 				
-				for (var i = 0; i < allPointsLength; i++)
+				for (var j = 0; j < allPointsLength; j++)
 				{
-					var point = allPoints[i]
+					var point = allPoints[j]
 					
 					if (point.phase.startTime == tick.val)
 					{
-						index = i;
+						index = j;
 						break;
 					}
 				}
 				
 				if (index != -1)
 				{
-					tickStepStart = index % tickStep;
+					//tickStepStart = index % tickStep;
+					tickStepStart = index - tickJump < 0 ? index : index - tickJump;
+
 					break;
 				}
 			}
-								
 			
-			var showTicks = []
-			//console.log(chart.node[0].getBoundingClientRect().height);
-			//console.log(chart.canvas.height);
+			
+			ticks = [];
+			axis.ticks = [];	
+			
+			var showTicks = [];
+
 			if (tickStep >= allPointsLength)
 			{
-				var index = Math.floor((allPointsLength - 1) / 2)
-				showTicks.push(allPoints[index])
+				var index = Math.floor((allPointsLength - 1) / 2);
+				showTicks.push(allPoints[index]);
 			}
 			else
 			{
-				var numTicks =  Math.floor(axis.width / tickStep);
-				var tickJump = Math.floor(numTicks / axis.fullPointWidth);
-				
-				if (tickJump < 1)
-					tickJump = 1
-				
-				var tickStepPos = tickStepStart;
-				
+				var tickStepPos = tickStepStart;	
 
 				while (tickStepPos < allPointsLength)
 				{
@@ -592,6 +596,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			axis.ticks = ticks;
 			
 			return ticks;
+		
+
 		},
 		
 		
@@ -609,6 +615,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			.range([axis.height, axis.pos.top])
 			
 			
+			//var range = paddedMax - paddedMin
+			//var tickInterval = range/4;
+			//var mag = axis.getMagnitude(tickInterval);
+			//console.log([tickInterval, mag]);
+			//console.log(axis.norm(mag, tickInterval));
+			
 			var tickVals = scale.ticks(axis.numTicks) //.map(o.tickFormat(8))
 							
 			for (var i = 0; i < tickVals.length; i++)
@@ -624,6 +636,176 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			
 			return ticks;
+		},
+		
+		
+		getMagnitude: function(num) 
+		{
+			return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
+		},
+
+		
+		norm: function(magnitude, interval)
+		{
+			var retInterval;
+			var multiples = [1, 2, 2.5, 5, 10];
+			var preventExceed = false;
+
+			//magnitude = pick(magnitude, 1);
+			normalized = interval / magnitude;
+
+
+			for (var i = 0; i < multiples.length; i++) 
+			{
+				retInterval = multiples[i];
+				
+				if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+					(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) 
+				{
+					break;
+				}
+			}
+
+			// multiply back to the correct magnitude
+			retInterval *= magnitude;
+			
+			return retInterval;
+		},
+		
+		
+		normalizeTickInterval: function(interval, multiples, magnitude, allowDecimals, preventExceed)
+		{
+			var normalized;
+			var i;
+			var retInterval = interval;
+
+			// round to a tenfold of 1, 2, 2.5 or 5
+			magnitude = pick(magnitude, 1);
+			normalized = interval / magnitude;
+
+			// multiples for a linear scale
+			if (!multiples) 
+			{
+				multiples = [1, 2, 2.5, 5, 10];
+
+				// the allowDecimals option
+				if (allowDecimals === false) 
+				{
+					if (magnitude === 1) 
+					{
+						multiples = [1, 2, 5, 10];
+					} 
+					else if (magnitude <= 0.1) 
+					{
+						multiples = [1 / magnitude];
+					}
+				}
+			}
+
+			// normalize the interval to the nearest multiple
+			for (i = 0; i < multiples.length; i++) 
+			{
+				retInterval = multiples[i];
+				
+				if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+					(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) 
+				{
+					break;
+				}
+			}
+
+			// multiply back to the correct magnitude
+			retInterval *= magnitude;
+			
+			return retInterval;
+		},
+
+
+		// highcharts
+		normalizeTimeTickInterval: function(tickInterval, unitsOption)
+		{
+			var timeUnits = 
+			{
+				millisecond: 1,
+				second: 1000,
+				minute: 60000,
+				hour: 3600000,
+				day: 24 * 3600000,
+				week: 7 * 24 * 3600000,
+				month: 28 * 24 * 3600000,
+				year: 364 * 24 * 3600000
+			};
+			var units = unitsOption || 
+			[[
+					'millisecond', // unit name
+					[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+				], [
+					'second',
+					[1, 2, 5, 10, 15, 30]
+				], [
+					'minute',
+					[1, 2, 5, 10, 15, 30]
+				], [
+					'hour',
+					[1, 2, 3, 4, 6, 8, 12]
+				], [
+					'day',
+					[1, 2]
+				], [
+					'week',
+					[1, 2]
+				], [
+					'month',
+					[1, 2, 3, 4, 6]
+				], [
+					'year',
+					null
+			]];
+			
+			var unit = units[units.length - 1];
+			var interval = timeUnits[unit[0]];
+			var multiples = unit[1];
+			var count;
+				
+			// loop through the units to find the one that best fits the tickInterval
+			for (i = 0; i < units.length; i++)
+			{
+				unit = units[i];
+				interval = timeUnits[unit[0]];
+				multiples = unit[1];
+
+
+				if (units[i + 1])
+				{
+					// lessThan is in the middle between the highest multiple and the next unit.
+					var lessThan = (interval * multiples[multiples.length - 1] +
+								timeUnits[units[i + 1][0]]) / 2;
+
+					// break and keep the current unit
+					if (tickInterval <= lessThan)
+						break;
+				}
+			}
+			
+			// prevent 2.5 years intervals, though 25, 250 etc. are allowed
+			if (interval === timeUnits.year && tickInterval < 5 * interval)
+			{
+				multiples = [1, 2, 5];
+			}
+
+			return {unitRange: interval, unitName: unit[0]};
+			// get the count
+			/*count = normalizeTickInterval(
+				tickInterval / interval, 
+				multiples,
+				unit[0] === 'year' ? Math.max(axis.getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+			);
+			
+			return {
+				unitRange: interval,
+				count: count,
+				unitName: unit[0]
+			};*/
 		},
 		
 				
@@ -857,84 +1039,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		},
 		
 		
-		
-		// highcharts
-		normalizeTimeTickInterval: function(tickInterval, unitsOption)
-		{
-			var units = unitsOption || 
-			[[
-					'millisecond', // unit name
-					[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-				], [
-					'second',
-					[1, 2, 5, 10, 15, 30]
-				], [
-					'minute',
-					[1, 2, 5, 10, 15, 30]
-				], [
-					'hour',
-					[1, 2, 3, 4, 6, 8, 12]
-				], [
-					'day',
-					[1, 2]
-				], [
-					'week',
-					[1, 2]
-				], [
-					'month',
-					[1, 2, 3, 4, 6]
-				], [
-					'year',
-					null
-			]];
-			
-			var unit = units[units.length - 1];
-			var interval = timeUnits[unit[0]];
-			var multiples = unit[1];
-			var count;
-				
-			// loop through the units to find the one that best fits the tickInterval
-			for (i = 0; i < units.length; i++)
-			{
-				unit = units[i];
-				interval = timeUnits[unit[0]];
-				multiples = unit[1];
-
-
-				if (units[i + 1])
-				{
-					// lessThan is in the middle between the highest multiple and the next unit.
-					var lessThan = (interval * multiples[multiples.length - 1] +
-								timeUnits[units[i + 1][0]]) / 2;
-
-					// break and keep the current unit
-					if (tickInterval <= lessThan)
-						break;
-				}
-			}
-			
-			// prevent 2.5 years intervals, though 25, 250 etc. are allowed
-			if (interval === timeUnits.year && tickInterval < 5 * interval)
-			{
-				multiples = [1, 2, 5];
-			}
-
-			// get the count
-			count = normalizeTickInterval(
-				tickInterval / interval, 
-				multiples,
-				unit[0] === 'year' ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
-			);
-			
-			return {
-				unitRange: interval,
-				count: count,
-				unitName: unit[0]
-			};
-		},
-
-		
-	
 		getPositionFromValue: function(pointValue)
 		{
 			var axis = this;

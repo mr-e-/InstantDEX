@@ -45,8 +45,8 @@ var IDEX = (function(IDEX, $, undefined)
 					
 					"padding":{
 						"top":0,
-						"left":10,
-						"right":20,
+						"left":0,
+						"right":10,
 					},
 					
 					"numTicks":8,
@@ -69,7 +69,7 @@ var IDEX = (function(IDEX, $, undefined)
 					"padding":
 					{
 						"top":priceAxisTopPadding,
-						//"left":20,
+						//"bottom":10,
 					},
 					
 					"minPadding":0.05,
@@ -87,7 +87,7 @@ var IDEX = (function(IDEX, $, undefined)
 					
 					"padding":{
 						"top":20,
-						//"left":20,
+						//"bottom":10,
 					},
 					
 					"minPadding":0.1,

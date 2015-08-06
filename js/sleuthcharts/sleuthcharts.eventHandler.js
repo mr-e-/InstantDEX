@@ -133,7 +133,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var insideY = e.chartY;
 			
 
-			if (chart.isInsidePlot(mouseX, mouseY))
+			if (chart.isInsidePlot(insideX, insideY))
 			{
 				var xAxis = chart.xAxis[0];
 				var leftCheck = xAxis.pos.left;
@@ -387,12 +387,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			var direction = diff < 0;
 			diff = Math.abs(diff);
 			
+
 			if (diff != 0 && diff > xAxis.fullPointWidth)
 			{	
 				var shifts = Math.floor(diff / xAxis.fullPointWidth)
 				
 				chart.draggingPos = insideTimeX;
-				
 				chart.shiftXAxis(shifts, direction);
 				chart.redraw();
 			}
@@ -419,6 +419,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			e = DOMEventHandler.normalizeMouseEvent(e);
 
+			//console.log(e.wheelDeltaY);
+			
+			if (e.wheelDeltaY == 0)
+				return;
 			
 			var mouseX = e.pageX;
 			var mouseY = e.pageY;

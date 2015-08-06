@@ -442,22 +442,8 @@ Sleuthcharts = (function(Sleuthcharts)
 
 
 
-
-
 /*
 
-IDEX.OHLC = function(obj) 
-{
-	this.startTime = ""
-	this.endTime = ""
-	this.open = ""
-	this.high = ""
-	this.low = ""
-	this.close = ""
-	this.vol = ""
-	
-	IDEX.constructFromObject(this, obj);
-}
 
 
 function fixSpikes()
