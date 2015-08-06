@@ -14,7 +14,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var yLabelStyle =
 		{
 			"textPadding":5,
-			"fontSize":"13px",
+			"fontSize":"11.5px",
 			"fontColor":"#8C8C8C",
 		};
 		

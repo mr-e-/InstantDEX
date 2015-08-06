@@ -149,7 +149,7 @@ Sleuthcharts = (function(Sleuthcharts)
 									
 			axis.canvas = document.createElement('canvas');
 			axis.ctx = axis.canvas.getContext("2d");
-			axis.ctx.font = axis.labels.fontSize + " Roboto"; 
+			axis.ctx.font = axis.labels.fontSize + " Monospace"; 
 		},
 		
 		
@@ -419,7 +419,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			var fontLabelAttr = {
 				"fill": axis.labels.fontColor,
-				"font-family": "Roboto",
+				"font-family": "Monospace",
 				"font-size": axis.labels.fontSize
 			}
 			
@@ -458,7 +458,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				{
 					var label = labels[i];
 					
-					ctx.font = axis.labels.fontSize + " Roboto";
+					ctx.font = axis.labels.fontSize + " Monospace";
 					ctx.fillStyle = axis.labels.fontColor;
 					ctx.fillText(label.text, label.x, label.y + 4);
 				}
