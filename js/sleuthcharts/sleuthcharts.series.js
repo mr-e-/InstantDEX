@@ -624,8 +624,8 @@ Sleuthcharts = (function(Sleuthcharts)
 		seriesType: "candlestick",
 		
 		closedHigherFill: "transparent",
-		closedHigherStroke: "#19B34C", //49c143 btcw
-		closedLowerFill: "#9C0505",
+		closedHigherStroke: "#19B34C", //49c143 btcw 19B34C
+		closedLowerFill: "#990F0F", //990F0F btcw 9C0505
 		closedLowerStroke: "#D12E2E",
 
 		
@@ -806,7 +806,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		closedHigherFill: "transparent",
 		closedHigherStroke: "#19B34C",
-		closedLowerFill: "#9C0505",
+		closedLowerFill: "#990F0F",
 		closedLowerStroke: "#D12E2E",	
 
 	

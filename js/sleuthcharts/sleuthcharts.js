@@ -598,34 +598,45 @@ Sleuthcharts = (function(Sleuthcharts)
 			var vis = [];
 			var marketHandler = chart.marketHandler;
 			var allPhases = marketHandler.marketData.ohlc;
+			allPhasesLength = allPhases.length;
 
+			
+			shifts = direction ? shifts : shifts * -1;
+			var startIndex = xAxis.minIndex;
+			var endIndex = xAxis.maxIndex;
+
+			
 			
 			if (direction == false)
 			{
-				if (xAxis.minIndex > 0)
+				if (startIndex > 0)
 				{
-					var startIndex = xAxis.minIndex - shifts;
-					var endIndex = xAxis.maxIndex - shifts;
-					vis = allPhases.slice(startIndex, endIndex+1);
+					var diff = startIndex + shifts;
+					var fixedShifts = diff < 0 ? diff : 0;
+					fixedShifts = shifts - fixedShifts;
+					var newStartIndex = startIndex + fixedShifts;
+					var newEndIndex = endIndex + fixedShifts;
+					vis = allPhases.slice(newStartIndex, newEndIndex+1);
 				}
 			}
 			else
 			{
-				//if (xAxis.minIndex < allPhases.length - 1)
-				//{
-					/*if (xAxis.maxIndex < allPhases.length - 1)
-					{
-						var startIndex = xAxis.minIndex + shifts;
-						var endIndex = xAxis.maxIndex + shifts;
-						vis = allPhases.slice(startIndex, endIndex+1);
-					}
-					else
-					{
-						var startIndex = xAxis.minIndex + shifts;
-						var endIndex = xAxis.maxIndex;
-						vis = allPhases.slice(startIndex, endIndex+1);
-					}*/
-				//}
+
+				if (endIndex < allPhasesLength - 1)
+				{
+					var diff = endIndex + shifts;
+					var fixedShifts = diff > allPhasesLength-1 ? diff - (allPhasesLength-1) : 0;
+					fixedShifts = shifts - fixedShifts;
+					var newStartIndex = startIndex + fixedShifts;
+					var newEndIndex = endIndex + fixedShifts;
+					vis = allPhases.slice(newStartIndex, newEndIndex+1);
+				}
+				/*else
+				{
+					var startIndex = xAxis.minIndex + shifts;
+					var endIndex = xAxis.maxIndex;
+					vis = allPhases.slice(startIndex, endIndex+1);
+				}*/
 			}
 
 
@@ -637,7 +648,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				//visiblePhases = allPhases.slice(startIndex, endIndex);
 
 				chart.visiblePhases = vis;
-				series.updateAxisMinMax(startIndex, endIndex);
+				series.updateAxisMinMax(newStartIndex, newEndIndex);
 				series.calcPointWidth();
 			}
 		},

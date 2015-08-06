@@ -70,6 +70,11 @@ Sleuthcharts = (function(Sleuthcharts)
 				})
 			})
 			
+			$(window).on('mouseup', function(e)
+			{
+				DOMEventHandler.onContainerMouseUp(e);
+			})
+			
 		},
 		
 		
