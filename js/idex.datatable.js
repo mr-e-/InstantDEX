@@ -17,10 +17,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$(".idextable").each(function()
 		{
 			$(this).DataTable(dataTableSettings)
-			/*.on("page.dt draw.dt column-sizing.dt", function() 
-			{ 
-				adjustDataTableHeight($(this)) 
-			})*/
 		})
 	}
 	
@@ -32,7 +28,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var oTable = $table.dataTable();
 		var oSettings = oTable.fnSettings();
-		//console.log(oSettings);
 		var $wrapper = $table.closest(".modal-table-body");
 		var maxRows = oSettings.oInit.pageLength;
 		var $scrollBody = $wrapper.find('.dataTables_scrollBody');
@@ -46,7 +41,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var scrollBodyMarginBottom = allowedHeight - newScrollBodyHeight;
 		
 		$scrollBody.css('margin-bottom', String(scrollBodyMarginBottom + 15)+"px");
-		// && $table.find("tr td").eq(0).hasClass("dataTables_empty")
+
 		if (numRows == 1)
 		{
 			$scrollBody.css('border','none');
@@ -56,11 +51,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$scrollBody.css('height', String(newScrollBodyHeight)+"px");
 		}
-
-		/*console.log(String(rowHeight) + " " + String(maxRows) + " " + String(allowedHeight))
-		console.log(String(wrapperHeight) + "  " + scrollHeadHeight + "  "  + String($(document).height()));
-		console.log(String(newScrollBodyHeight) + " " + String(numRows))
-		console.log(oSettings);*/
 	};
 	
 	

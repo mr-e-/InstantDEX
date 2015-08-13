@@ -2,10 +2,6 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-
-	//$button.prop('disabled', true);
-	//"perc":$(".conf-perc").val();
-	//$button.prop('disabled', false);
 	
 	var $makeofferPopup = $(".makeofferPopup");
 	var $makeofferPopupOverlay = $(".makeofferPopup-overlay")

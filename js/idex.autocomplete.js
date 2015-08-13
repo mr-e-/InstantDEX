@@ -15,7 +15,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function initAssetAutocomplete()
 	{
-		var assets = IDEX.user.allAssets;
+		var assets = IDEX.nxtae.assets.allAssets;
 		var len = assets.length;
 
 		for (var i = 0; i < len; i++)
@@ -176,7 +176,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				var func = function(obj, defaultName, typeAsset) 
 				{	
-					var assetObj = IDEX.user.getAssetInfo("assetID", defaultName)
+					var assetObj = IDEX.nxtae.assets.getAsset("assetID", defaultName)
 					obj[typeAsset + "Name"] = defaultName;
 					
 					if ("name" in assetObj)

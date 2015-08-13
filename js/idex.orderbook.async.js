@@ -14,7 +14,7 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbook.orderbox.updateOrderBoxBalance();
 		
 		orderbook.setTimeout(timeout).then(function(wasCleared)
-		{			
+		{
 			if (wasCleared)
 			{
 				orderbook.counter = false;
@@ -45,7 +45,7 @@ var IDEX = (function(IDEX, $, undefined)
 						
 						retDFD.resolve(orderbookData, IDEX.OK);
 					}
-				})
+				});
 			}
 		})
 

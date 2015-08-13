@@ -3,146 +3,47 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 
-	IDEX.Account.prototype.setNXTRS = function(nxtIDAndRS)
+
+
+	IDEX.Account = function(obj)
 	{
-		this.nxtID = "";
 		this.nxtRS = "";
-		
-		if (nxtIDAndRS.length == 1)
-		{
-			
-		}
-		else if (nxtIDAndRS.length == 2)
-		{
-			this.nxtID = nxtIDAndRS[0];
-			this.nxtRS = nxtIDAndRS[1];
-		}
-	}
+		this.nxtID = "";
+		this.balances = {};
+		this.openOrders = [];
+		this.timeoutDFD = false;
+		this.openOrdersTimeout;
+		this.openOrdersLastUpdated = 0;
+		this.balancesLastUpdated = 0;
+
+		IDEX.constructFromObject(this, obj);
+	};
+	
+	
 
 	
-	IDEX.Account.prototype.updateNXTRS = function()
+	
+	IDEX.Balance = function(constructorObj) 
 	{
-		var dfd = new $.Deferred();
-		var nxtIDAndRS = [];
-		var account = this;
-		var params = {"method":"orderbook"};
-		params.baseid = "12071612744977229797";
-		params.relid = "5527630";
-		params.maxdepth = "1";
+		this.availableBalance = 0;
+		this.unconfirmedBalance = 0;
 		
-		IDEX.sendPost(params, false).then(function(data)
+		var __construct = function(that, constructorObj)
 		{
-			if ('NXT' in data && data['NXT'].length)
+			var asset = IDEX.nxtae.assets.getAsset("assetID", constructorObj['assetID']);
+			
+			if (asset)
 			{
-				var id = data['NXT']
-				var rs = IDEX.toRS(id);
-				nxtIDAndRS.push(id);
-				nxtIDAndRS.push(rs);
+				IDEX.constructFromObject(that, asset);
+				var avail = that.name == "NXT" ? constructorObj['balanceNQT'] : constructorObj['quantityQNT'];
+				var unconf = that.name == "NXT" ? constructorObj['unconfirmedBalanceNQT'] : constructorObj['unconfirmedQuantityQNT'];
+				
+				that.availableBalance = avail / Math.pow(10, asset.decimals);
+				that.unconfirmedBalance = unconf / Math.pow(10, asset.decimals);				
 			}
-
-			account.setNXTRS(nxtIDAndRS);
 			
-			dfd.resolve([account.nxtID, account.nxtRS])
-		})
-		
-		return dfd.promise()
-	}
-	
-	
-	IDEX.Account.prototype.updateOpenOrders = function(forceUpdate)
-	{
-		var dfd = new $.Deferred();
-		var params = {"method":"openorders"};
-		var account = this;
-		var time = new Date().getTime()
-				
-		if (!forceUpdate && time - this.openOrdersLastUpdated < 1000)
-		{
-			dfd.resolve()
-		}
-		else
-		{
-			IDEX.sendPost(params, false).then(function(data)
-			{
-				var temp = [];
-
-				if ("openorders" in data)
-				{
-					data = data.openorders;
-					
-					for (var i = 0; i < data.length; i++)
-						if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
-							temp.push(data[i]);
-				}
-				else
-				{
-					data = [];
-				}
-				
-				account.openOrders = data;
-				account.marketOpenOrders = temp;
-				dfd.resolve();
-			})
-		}
-		
-		this.openOrdersLastUpdated = time;
-		return dfd.promise();
-	}
-	
-	
-	IDEX.Account.prototype.pollOpenOrders = function(timeout)
-	{
-		var account = this;
-		timeout = typeof timeout === "undefined" ? 1 : timeout;
-
-		this.setTimeout(timeout).done(function(a)
-		{
-			IDEX.makeTable("marketOpenOrdersTable", function()
-			{
-				timeout = 4000;
-				account.pollOpenOrders(timeout);
-			});
-		})
-	}
-	
-	
-	IDEX.Account.prototype.stopPollingOpenOrders = function()
-	{
-		
-	}
-	
-	
-	IDEX.Account.prototype.refreshOpenOrdersPoll = function()
-	{
-		
-	}
-	
-	
-	IDEX.Account.prototype.setTimeout = function(timeout)
-	{
-		this.timeoutDFD = new $.Deferred();
-		var account = this;
-
-		this.openOrdersTimeout = setTimeout(function() 
-		{
-			account.timeoutDFD.resolve(false);
-			account.timeoutDFD = false;
-			
-		}, timeout)
-		
-		return this.timeoutDFD.promise();
-	}
-	
-	
-	IDEX.Account.prototype.clearTimeout = function()
-	{
-		if (this.timeoutDFD)
-		{
-			clearTimeout(this.openOrdersTimeout);
-			this.timeoutDFD.resolve(true);
-			this.timeoutDFD = false;
-		}
-	}
+		}(this, constructorObj)
+	};
 	
 	
 	

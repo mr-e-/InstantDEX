@@ -98,6 +98,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	}
 	
+	
 	function resizeChart(cell)
 	{
 		var $svgEl = cell.cellDOM.find(".chart-wrap svg");
@@ -118,7 +119,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			chart.redraw();
 		}
-	}
+	}	
 	
 	
 	function removeChart(cell)
@@ -126,6 +127,7 @@ var IDEX = (function(IDEX, $, undefined)
 		//var $svgEl = $grid.find(".chart-wrap svg");
 		//var chart = $svgEl.sleuthcharts();
 	}
+	
 	
 	function saveChart(cell)
 	{
@@ -191,7 +193,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	$(window).load(function()
+	IDEX.initGrids = function()
 	{
 		Sleuthgrids.cellHandlers = cellHandlers;
 		
@@ -208,7 +210,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var prevWidth = saveObj.windowWidth;
 		var gridSaves = saveObj.gridSaves;
 		
-		console.log(gridSaves)
 		
 		for (var i = 0; i < gridSaves.length; i++)
 		{
@@ -224,21 +225,15 @@ var IDEX = (function(IDEX, $, undefined)
 					
 			if (grid.isActive)
 			{
-				//console.log(grid)
 				grid.gridTab.gridTabDOM.trigger("click");
 				//grid.showGrid();
 			}
 		}
-		/*else
-		{
-			var grid = new Sleuthgrids.Grid();
-			grid.gridTab.gridTabDOM.trigger("click");
-		}*/
+
 		
 		Sleuthgrids.resizeAllGrids();
-		
+	}
 
-	})
 	
 	
 	return IDEX;

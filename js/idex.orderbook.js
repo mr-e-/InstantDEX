@@ -271,6 +271,7 @@ var IDEX = (function(IDEX, $, undefined)
 					orderbook.animateOrderbook();
 					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
 				}
+				
 				if (!(orderbook.isStoppingOrderbook))
 					orderbook.orderbookHandler(timeout);
 			}

@@ -23,19 +23,18 @@ var IDEX = (function(IDEX, $, undefined)
 		var url = isNXT ? nxtURL : snURL;
 
 		var time = new Date().getTime()
-		lastTime = time
 		var waitTime = 0;
+
+		lastTime = time
 
 		if (time - lastTime < 300)
 			waitTime = 300 + (q.length * 300)
 						
-		
-		//params = isNXT ? params : JSON.
-		
+				
 		if (!isNXT)
 			params['plugin'] = "InstantDEX";
         else
-            params['plugin'] = "nxt";
+			params['plugin'] = "nxt";
             
 		
 		
@@ -47,7 +46,7 @@ var IDEX = (function(IDEX, $, undefined)
             a.id = idCounter++;
             a.params = params
             a = JSON.stringify(a);
-            //console.log(params)
+
             var ajaxSettings = 
             {
                 type: "POST",
@@ -57,7 +56,6 @@ var IDEX = (function(IDEX, $, undefined)
 				beforeSend: function (xhr) {
 					xhr.setRequestHeader("Authorization", "Basic " + windowsServerAuth);
 				},
-                //dataType: 'application/json-rpc'
             };
         }
         else
@@ -81,9 +79,7 @@ var IDEX = (function(IDEX, $, undefined)
 		obj.dfd = dfd;
 		obj.params = params;
 		q.push(obj)
-		
-		//var index = q.length - 1;
-		//console.log(params)
+
 		
 		setTimeout(function()
 		{
@@ -91,42 +87,34 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			xhr.done(function(data)
 			{
-					//console.log(data)
 
 				
                 if (IDEX.isWindows)
                 {
-					console.log(data)
-					console.log(data['result'])
                     var data = data['result']['retval'];
-                    //console.log(typeof data)
+
                     if (typeof data == "string")
                         data = $.parseJSON(data)
-                        
-                    //console.log(data)
-                    //data = $.parseJSON(retObj);
                 }
                 else
                 {
                     data = $.parseJSON(data);
                 }
 				
+
 				dfd.resolve(data);
 				
 				if (callback)
 					callback(data);
+				
 				q.pop()
-				//q.splice(index, 1);
 			})
 			
 			xhr.fail(function(data)
 			{
-				//console.log(data)
-				//$.growl.error({'message':message, 'location':"tl"});
-
 				if (data.statusText == "abort")
 				{
-					//data = "abort";
+
 				}
 				
 				dfd.reject(data);
@@ -136,6 +124,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				q.pop()
 			})
+			
 			
 			
 		}, waitTime)

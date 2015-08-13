@@ -5,6 +5,20 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	
 	
+	
+	$(".fullPopup-trig").on("click", function()
+	{
+		var popupID = $(this).attr("data-popup");
+		
+		var $targetPopup = $("#"+popupID);
+		
+		//IDEX.togglePopup($targetPopup, true, true);
+	})
+	
+	
+	
+	
+	
 	IDEX.togglePopup = function($popup, show, withOverlay)
 	{
 		var $overlay = $(".popup-overlay");
@@ -21,7 +35,7 @@ var IDEX = (function(IDEX, $, undefined)
 	$(".popup-header-close").on("click", function()
 	{
 		var $overlay = $(".popup-overlay");
-		var $popup = $(this).closest(".popup");
+		var $popup = $(this).closest(".popup, .fullPopup");
 		$popup.removeClass("active");
 		$overlay.removeClass("active");
 	})

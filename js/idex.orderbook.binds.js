@@ -136,12 +136,11 @@ var IDEX = (function(IDEX, $, undefined)
 		$banner.removeClass("success")
 		$banner.addClass("active");
 		
-		//console.log([baseid, relid])
 
 		if (baseid != "-1" && relid != "-1")
 		{
-			var base = IDEX.user.getAssetInfo("assetID", baseid);	
-			var rel = IDEX.user.getAssetInfo("assetID", relid);
+			var base = IDEX.nxtae.assets.getAsset("assetID", baseid);	
+			var rel = IDEX.nxtae.assets.getAsset("assetID", relid);
 
 			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
 			orderbook.changeMarket(base, rel);

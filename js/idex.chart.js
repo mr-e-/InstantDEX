@@ -152,7 +152,7 @@ var IDEX = (function(IDEX, $, undefined)
 	function getName(assetID)
 	{
 		//var nxtAssetID = "5527630"
-		var asset = IDEX.user.getAssetInfo("assetID", assetID)
+		var asset = IDEX.nxtae.assets.getAsset("assetID", assetID)
 		
 		if (!($.isEmptyObject(asset)))
 		{
@@ -295,7 +295,7 @@ var IDEX = (function(IDEX, $, undefined)
 			labels:
 			{
 				textPadding:5,
-				fontSize:"13px",
+				fontSize:"11.5px",
 				fontColor:"#8C8C8C",
 			}
 		};

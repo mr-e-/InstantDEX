@@ -3,6 +3,18 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
+	IDEX.snPostParams = 
+	{
+		'orderbook':["baseid","relid","allfields"],
+		'allorderbooks':[],
+		'placebid':["baseid","relid","price","volume"],
+		'placeask':["baseid","relid","price","volume"],
+		'openorders':[],
+		'tradehistory':["timestamp"],
+		'cancelorder':["quoteid"],
+		'makeoffer3':["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset","offerNXT"]
+	};
+	
 	IDEX.SATOSHI = 100000000;
 	//var GENESIS_TIMESTAMP = 1385294400;
 

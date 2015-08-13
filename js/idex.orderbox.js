@@ -98,7 +98,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var rel = orderbox.relAsset;
 
 		
-		IDEX.account.updateBalances().then(function()
+		/*IDEX.account.updateBalances().then(function()
 		{
 			var relBal = parseBalance(IDEX.account.getBalance(rel.assetID));
 			var baseBal = parseBalance(IDEX.account.getBalance(base.assetID));
@@ -108,7 +108,7 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			orderbox.buyBox.balanceTitleDom.html(rel.name + ":&nbsp;");
 			orderbox.sellBox.balanceTitleDom.html(base.name + ":&nbsp;");
-		})
+		})*/
 	}
 	
 	

@@ -71,8 +71,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 		if (baseid != "-1" && relid != "-1")
 		{
-			var base = IDEX.user.getAssetInfo("assetID", baseid);	
-			var rel = IDEX.user.getAssetInfo("assetID", relid);
+			var base = IDEX.nxtae.assets.getAsset("assetID", baseid);	
+			var rel = IDEX.nxtae.assets.getAsset("assetID", relid);
 			
 			var retbool = IDEX.user.addFavorite(baseid, relid);
 
@@ -110,8 +110,8 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.User.prototype.addFavorite = function(baseID, relID)
 	{
 		var retbool = false;
-		var base = this.getAssetInfo("assetID", baseID);	
-		var rel = this.getAssetInfo("assetID", relID);
+		var base = IDEX.nxtae.assets.getAsset("assetID", baseID);	
+		var rel = IDEX.nxtae.assets.getAsset("assetID", relID);
 		
 		if (!($.isEmptyObject(base)) && !($.isEmptyObject(rel)))
 		{

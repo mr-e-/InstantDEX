@@ -5,25 +5,26 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.Orderbook.prototype.formatOrderbookData = function(orderbookData)
 	{
-		formatOrderData(orderbookData.bids);
-		formatOrderData(orderbookData.asks);
+		var orderbook = this;
+
+		formatOrderData(orderbookData.bids, false);
+		formatOrderData(orderbookData.asks, true);
 		
 		formatOrderNumbers(orderbookData.bids, orderbookData.asks);
 
-		this.groupedBids = groupOrders(IDEX.cloneListOfObjects(orderbookData.bids), IDEX.cloneListOfObjects(this.currentOrderbook.bids));
-		this.groupedAsks = groupOrders(IDEX.cloneListOfObjects(orderbookData.asks), IDEX.cloneListOfObjects(this.currentOrderbook.asks));
+		orderbook.groupedBids = groupOrders(IDEX.cloneListOfObjects(orderbookData.bids), IDEX.cloneListOfObjects(orderbook.currentOrderbook.bids));
+		orderbook.groupedAsks = groupOrders(IDEX.cloneListOfObjects(orderbookData.asks), IDEX.cloneListOfObjects(orderbook.currentOrderbook.asks));
 
-		formatNewOrders(this.groupedBids.newOrders, this)
-		formatNewOrders(this.groupedAsks.newOrders, this)
+		formatNewOrders(orderbook.groupedBids.newOrders, false, orderbook)
+		formatNewOrders(orderbook.groupedAsks.newOrders, true, orderbook)
 	}
 
 	
-	function formatOrderData(orders)
+	function formatOrderData(orders, isAsk)
 	{
 
 		var len = orders.length;
 		var runningTotal = 0;
-		var isAsk = len && orders[0].askoffer;
 		orders.sort(IDEX.compareProp('price'))
 		if (!isAsk)
 			orders.reverse();
@@ -100,13 +101,12 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 
-	function formatNewOrders(newOrders, orderbook)
+	function formatNewOrders(newOrders, isAsk, orderbook)
 	{	
 		
 		for (var i = 0; i < newOrders.length; i++)
 		{
 			var order = newOrders[i];
-			var isAsk = order.askoffer;
 			
 			var arr = isAsk ? [[order.price, order.volume, order.total, order.sum]] : [[order.total, order.volume, order.price, order.sum]];
 			var trString = IDEX.buildTableRows(arr, "span");
@@ -117,7 +117,7 @@ var IDEX = (function(IDEX, $, undefined)
 			//trString = orderTooltip(trString, order);
 			
 			var trClasses = "fadeSlowIndy";
-			trClasses += (order['offerNXT'] == IDEX.account.nxtID) ? " own-order" : "";
+			trClasses += (order['offerNXT'] == IDEX.nxtae.nxtID) ? " own-order" : "";
 			trClasses += " " + getLabelClass(order, orderbook)
 			
 			trString = IDEX.addElClass(trString, trClasses);
