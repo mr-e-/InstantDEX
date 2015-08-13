@@ -12,7 +12,6 @@ var IDEX = (function(IDEX, $, undefined)
 		'openorders':[],
 		'tradehistory':["timestamp"],
 		'cancelorder':["quoteid"],
-		'makeoffer3':["baseid","relid","quoteid","askoffer","price","volume","exchange","baseamount","relamount","baseiQ","reliQ","minperc","jumpasset","offerNXT"]
 	};
 	
 	IDEX.SATOSHI = 100000000;

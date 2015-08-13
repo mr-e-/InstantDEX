@@ -266,6 +266,7 @@ var IDEX = (function(IDEX, $, undefined)
 				}
 				else
 				{
+					//orderbook.rawData = $.extend(true, {}, orderbookData);
 					orderbook.formatOrderbookData(orderbookData);
 					orderbook.updateOrders(orderbook.buyBookDom.find(".twrap"), orderbook.groupedBids);
 					orderbook.updateOrders(orderbook.sellBookDom.find(".twrap"), orderbook.groupedAsks);

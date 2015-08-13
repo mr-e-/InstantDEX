@@ -75,6 +75,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		IDEX.sendPost(params, false).done(function(orderbookData)
 		{
+			console.log(orderbookData);
 			thisScope.isWaitingForOrderbook = false;
 			retDFD.resolve(orderbookData);
 		}).fail(function(data)

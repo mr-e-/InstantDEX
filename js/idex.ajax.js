@@ -60,7 +60,7 @@ var IDEX = (function(IDEX, $, undefined)
                 if (typeof data == "string")
                     data = $.parseJSON(data);
 				
-				console.log(data);
+				//console.log(data);
 				
 
 				dfd.resolve(data);

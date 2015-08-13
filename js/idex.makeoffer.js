@@ -4,11 +4,11 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	
 	var $tradesequencePopup = $(".tradesequencePopup");
-	var $tradesequencePopupConfirm = $(".makeofferPopup-confirm");
+	var $tradesequencePopupConfirm = $(".tradesequencePopup-confirm");
 	var $tradesequenceTable = $tradesequencePopup.find("table");
 	
 	
-	$(".makeofferPopup-confirm").on("click", function()
+	$tradesequencePopupConfirm.on("click", function()
 	{
 		var isDisabled = $(this).hasClass("disabled")
 		
@@ -19,26 +19,27 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.makeOffer = function()
 	{	
-		params = IDEX.buildPostPayload("makeoffer3", IDEX.user.pendingOrder)
-		params['perc'] = $(".conf-perc").val();
+		//params = IDEX.buildPostPayload("makeoffer3", IDEX.user.pendingOrder)
+
+		var order = IDEX.user.pendingOrder;
+		var params = $.extend(true, {}, order.rawData);
 		
 		console.log(params);
 		
 		$tradesequencePopupConfirm.addClass('disabled');
 		
-		IDEX.sendPost(params).done(function(data)
-		{			
+		IDEX.sendPost(params, false).done(function(data)
+		{
+			console.log(data);
+
 			if ("error" in data && data.error.length)
 			{
-				console.log("error");
-				$(".conf-jumbotron").show().find("div").text(data['error']);
+				//console.log("error");
+				//$(".conf-jumbotron").show().find("div").text(data['error']);
 			}
 			else
-			{
-				var message = "makeoffer placed!"
-				$.growl.notice({'message':message, 'location':"tl"});
-				
-				IDEX.togglePopup($tradesequencePopup, false, true);
+			{	
+				//IDEX.togglePopup($tradesequencePopup, false, true);
 			}
 			
 			$tradesequencePopupConfirm.removeClass('disabled');
@@ -52,7 +53,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.buildMakeofferModal = function(order, orderbook)
 	{
-		console.log(order);
+		//console.log(order);
+		//console.log(orderbook);
 		var market = orderbook.market;
 		var baseName = orderbook.baseName;
 		var relName = orderbook.relName;
@@ -76,8 +78,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var trades = order.trades;
 		var len = trades.length;
 		
-		if (typeof trades == "object")
-			trades = [trades];
+		//if (typeof trades == "object")
+		//	trades = [trades];
 		
 		var keys = "trade asset orderprice ordervolume exchange".split(" ");
 		var rows = IDEX.buildTableRows(IDEX.objToList(trades, keys), "table");

@@ -35,6 +35,8 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = loopStart; i != loopEnd; i += loopInc)
 		{
 			var order = orders[i];
+			order.rawData = $.extend(true, {}, order);
+
 			order.index = i;
 			order.price = IDEX.toSatoshi(order.price).toFixed(8);
 			order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
