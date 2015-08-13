@@ -80,7 +80,7 @@
 							<img class="vert-align mainHeader-grid-ico-orderbook" src="img/clipboard.png"></img>
 						</div>
 					</div>
-					<div class="mainHeader-grid-ico-section">
+					<!--<div class="mainHeader-grid-ico-section">
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-orders" data-grid="orders">
 							<img class="vert-align mainHeader-grid-ico-orders" src="img/orders.png"></img>
 						</div>
@@ -90,7 +90,7 @@
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-balances" data-grid="balances">
 							<img class="vert-align mainHeader-grid-ico-balances" src="img/wallet.png"></img>
 						</div>
-					</div>
+					</div>-->
 					<div class="mainHeader-grid-ico-section">
 						<div class="mainHeader-grid-ico-wrap popup-trig grid-trig-labels" data-grid="labels">
 							<img class="vert-align mainHeader-grid-ico-labels" src="img/paint2.png"></img>
@@ -574,26 +574,12 @@
 		
 		
 		
-				<div id="makeofferPopup" class="popup makeofferPopup">
+				<div id="tradesequencePopup" class="popup tradesequencePopup">
 				
-				
-								
-					<!--<div class="makeofferPopup-header">
-					
-						<div class="makeofferPopup-header-left">
-							<span class="makeofferPopup-orderType conf-title">Confirm Sell Order</span>
-						</div>
-						
-						<div class="makeofferPopup-header-right">
-							<span class="conf-exchange">test</span>
-						</div>
-					
-					</div>-->
-			
 				
 					<div class="popup-header">
 						<div class="popup-header-title">
-							<span class="vert-align">Makeoffer</span>
+							<span class="vert-align">Execute Trade Sequence</span>
 						</div>
 						<div class="popup-header-icons">
 							<div class="popup-header-ico">
@@ -602,97 +588,116 @@
 						</div>
 					</div>
 					
-					<div class="popup-content">
 					
-						<div class="makeofferPopup-inputArea">
+					<div class="popup-content tradesequencePopup-content">
+					
 						
-							<div class="conf-jumbotron">
-								<div>Disclaimer</div>
-							</div>	
-							
-							<div class="makeofferPopup-form">
-							
-								<div class="makeofferPopup-form-row">
-									<div class="makeofferPopup-form-label">
-										<span>Price</span>
-									</div>
-									<div class="makeofferPopup-form-input">
-										<input disabled type="text" class="conf-input conf-price">
-										<span class="conf-input-addon refcur-rel"></span>
-									</div>
-								</div>
-							
-								<div class="makeofferPopup-form-row">
-									<div class="makeofferPopup-form-label">
-										<span>Amount</span>
-									</div>
-									<div class="makeofferPopup-form-input">
-										<input disabled type="text" class="conf-input conf-amount">
-										<span class="conf-input-addon refcur-base"></span>
-									</div>
-								</div>
-								
-								
-								<div class="makeofferPopup-form-row">
-									<div class="makeofferPopup-form-label">
-										<span>Total</span>
-									</div>
-									<div class="makeofferPopup-form-input">
-										<input disabled type="text" class="conf-input conf-total">
-										<span class="conf-input-addon refcur-rel"></span>
-									</div>
-								</div>
-								
-								<div class="makeofferPopup-form-row">
-									<div class="makeofferPopup-form-label">
-										<span>Fee</span>
-									</div>
-									<div class="makeofferPopup-form-input">
-										<input disabled type="text" class="conf-input conf-fee">
-										<span class="conf-input-addon">NXT</span>
-									</div>
-								</div>
-								
-								
-								<div class="makeofferPopup-form-row">
-									<div class="makeofferPopup-form-label">
-										<span>Min Perc</span>
-									</div>
-									<div class="makeofferPopup-form-input">
-										<input disabled type="text" class="conf-input conf-minperc">
-										<span class="conf-input-addon">%</span>
-									</div>
-								</div>
-								
-								<div class="makeofferPopup-form-row">
-									<div class="makeofferPopup-form-label">
-										<span>Perc</span>
-									</div>
-									<div class="makeofferPopup-form-input">
-										<input type="text" class="conf-input conf-perc">
-										<span class="conf-input-addon">%</span>
-									</div>
-								</div>
-							
+						<!--<div class="conf-jumbotron">
+							<div>Disclaimer</div>
+						</div>	-->
+						
+						<div class="tradesequencePopup-summary">
+						
+							<div class="tradesequencePopup-marketName">
+								<span></span>
 							</div>
+						
+							<div class="tradesequencePopup-orderType">
+								<span></span>
+							</div>
+						
+						</div>
+						
+						
+						
+						<div class="tradesequencePopup-overview">
+						
+							<div class="makeofferPopup-form-row">
+								<div class="makeofferPopup-form-label">
+									<span>Price</span>
+								</div>
+								<div class="makeofferPopup-form-input">
+									<input disabled type="text" class="conf-input conf-price">
+									<span class="conf-input-addon refcur-rel"></span>
+								</div>
+							</div>
+						
+							<div class="makeofferPopup-form-row">
+								<div class="makeofferPopup-form-label">
+									<span>Amount</span>
+								</div>
+								<div class="makeofferPopup-form-input">
+									<input disabled type="text" class="conf-input conf-amount">
+									<span class="conf-input-addon refcur-base"></span>
+								</div>
+							</div>
+							
+							
+							<div class="makeofferPopup-form-row">
+								<div class="makeofferPopup-form-label">
+									<span>Total</span>
+								</div>
+								<div class="makeofferPopup-form-input">
+									<input disabled type="text" class="conf-input conf-total">
+									<span class="conf-input-addon refcur-rel"></span>
+								</div>
+							</div>
+							
+							<!--
+							<div class="makeofferPopup-form-row">
+								<div class="makeofferPopup-form-label">
+									<span>Fee</span>
+								</div>
+								<div class="makeofferPopup-form-input">
+									<input disabled type="text" class="conf-input conf-fee">
+									<span class="conf-input-addon"></span>
+								</div>
+							</div>
+							-->
+						
+						</div>
+						
+						
+						<div class="tradesequencePopup-tradesTable">
+							
+							<div class="tradesequencePopup-tradesTable-header">
+								<span>Trades to execute:</span>
+							</div>
+							
+							<table>
+								<thead>
+									<th>Type</th>
+									<th>Market</th>
+									<th>Price</th>
+									<th>Amount</th>
+									<th>Exchange</th>
+								</thead>
+								
+								<tbody>
+									
+								</tbody>
+								
+							</table>
 							
 						</div>
 						
-						<div class="popup-buttonArea makeofferPopup-buttonArea">
-							<div class="nbutton-text-wrap">
-								<div class="nbutton-text-outer">
-									<div class="nbutton-text orderbookSearch-search-trig">
-										<div class="nbutton-text-inner">
-											<div class="nbutton-text-title">
-												<span class="vert-align">Confirm</span>
-											</div>
+
+					</div>
+					
+					<div class="popup-buttonArea makeofferPopup-buttonArea">
+						<div class="nbutton-text-wrap">
+							<div class="nbutton-text-outer">
+								<div class="nbutton-text orderbookSearch-search-trig">
+									<div class="nbutton-text-inner">
+										<div class="nbutton-text-title">
+											<span class="vert-align">Confirm</span>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					
 					</div>
+					
 				
 				</div>
 		

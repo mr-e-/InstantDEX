@@ -62,27 +62,19 @@ var IDEX = (function(IDEX, $, undefined)
 			'plugin':"InstantDEX",
 			'method':"orderbook", 
 			'baseid':this.baseAsset.assetID, 
-			'relid':this.relAsset.assetID, 
+			'relid':this.relAsset.assetID,
+			//'base':this.baseAsset.name, 
+			//'rel':this.relAsset.name,
 			'allfields':1,
 			'maxdepth':30,
 			'showall':1,
-			'timeout':10000
 		};
-		//console.log(params)
 		
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
-		//console.log('starting orderbook ajax');
 
 		IDEX.sendPost(params, false).done(function(orderbookData)
 		{
-			//orderbookData = $.parseJSON(orderbookData);
-			//console.log(orderbookData);
-			//console.log("finished orderbook ajax " + String((Date.now() - time)/1000) + "s");
-			
-			//if (orderbookData == "abort")
-			//	orderbookData = false;
-
 			thisScope.isWaitingForOrderbook = false;
 			retDFD.resolve(orderbookData);
 		}).fail(function(data)

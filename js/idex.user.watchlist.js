@@ -79,13 +79,13 @@ var IDEX = (function(IDEX, $, undefined)
 			if (retbool)
 			{
 				$banner.addClass("success")
-				$banner.find("span").text("Success: " + base.name + "_" + rel.name + " added to favorite markets.")
+				$banner.find("span").text("Success: " + base.name + "_" + rel.name + " added to watchlist.")
 				clearAssetInput($wrap);
 			}
 			else
 			{
 				$banner.addClass("error")
-				$banner.find("span").text("Error: This market is already one of your favorites.")
+				$banner.find("span").text("Error: This market is already in your watchlist.")
 			}
 
 		}
@@ -97,6 +97,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
+	
 	function clearAssetInput($wrap)
 	{		
 		$wrap.find("input").each(function()
@@ -105,6 +106,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$(this).attr("data-asset", "-1")
 		})
 	}
+	
 	
 	
 	IDEX.User.prototype.addFavorite = function(baseID, relID)
@@ -129,6 +131,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		return retbool
 	}
+	
 	
 	
 	IDEX.User.prototype.getFavoriteIndex = function(baseID, relID)
@@ -192,8 +195,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	
-	
 	IDEX.User.prototype.removeFavorite = function(baseID, relID)
 	{
 		var index = this.getFavoriteIndex(baseID, relID)
@@ -205,8 +206,6 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	}
 	
-	
-
 	
 	
 	$("#marketFavorites").on("mouseover", "tbody tr", function(e)

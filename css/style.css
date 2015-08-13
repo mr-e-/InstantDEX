@@ -3000,17 +3000,17 @@ table.dataTable thead th:last-child {
 /* ------------------------- MAKEOFFER POPUP ------------------------- */
 
 
-#makeofferPopup {
+#tradesequencePopup {
 	width:675px;
 }
 
-.makeofferPopup-inputArea {
+.tradesequencePopup-content {
 	position:relative;
 	display:block;
 	padding-top:10px;
 	padding-left:22px;
 	padding-right:22px;
-	padding-bottom:5px;
+	padding-bottom:10px;
 }
 
 .conf-jumbotron {
@@ -3034,11 +3034,33 @@ table.dataTable thead th:last-child {
     font-size: 14px;
 }
 
-.makeofferPopup-form {
+
+.tradesequencePopup-summary {
+	height:20px;
 	width:100%;
 	position:relative;
 	display:block;
-	padding-top:10px;
+	border-bottom:1px solid black;
+	
+}
+
+.tradesequencePopup-marketName {
+	position:relative;
+	float:left;
+	font-size:14px;
+}
+
+.tradesequencePopup-orderType {
+	position:relative;
+	float:right;
+	font-size:14px;
+}
+
+.tradesequencePopup-overview {
+	width:100%;
+	position:relative;
+	display:block;
+	padding-top:15px;
 	padding-left:10px;
 	padding-right:10px;
 }
@@ -3071,6 +3093,26 @@ table.dataTable thead th:last-child {
 	padding-right:3px;
 }
 
+.tradesequencePopup-tradesTable {
+	width:100%;
+	position:relative;
+	display:block;
+	padding-top:5px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.tradesequencePopup-tradesTable-header {
+	height:16px;
+	width:100%;
+	position:relative;
+	display:block;
+	margin-bottom:4px;
+}
+
+.tradesequencePopup-tradesTable table {
+	width:100%;
+}
 
 
 /* ------------------------- ORDERBOOK LABEL POPUP ------------------------- */

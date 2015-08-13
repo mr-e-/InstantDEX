@@ -22,9 +22,8 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.togglePopup = function($popup, show, withOverlay)
 	{
 		var $overlay = $(".popup-overlay");
-		
 		var func = show ? "addClass" : "removeClass";
-
+		
 		$popup[func]("active");
 		
 		if (withOverlay)

@@ -3,22 +3,9 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	var $makeofferPopup = $(".makeofferPopup");
-	var $makeofferPopupOverlay = $(".makeofferPopup-overlay")
-	var $makeofferPopupConfirm = $(".makeofferPopup-confirm");
-	
-	
-	function showMakeofferPopup()
-	{
-		$makeofferPopup.addClass("active");
-		$makeofferPopupOverlay.addClass("active");
-	}
-	
-	function hideMakeofferPopup()
-	{
-		$makeofferPopup.removeClass("active");
-		$makeofferPopupOverlay.removeClass("active");
-	}
+	var $tradesequencePopup = $(".tradesequencePopup");
+	var $tradesequencePopupConfirm = $(".makeofferPopup-confirm");
+	var $tradesequenceTable = $tradesequencePopup.find("table");
 	
 	
 	$(".makeofferPopup-confirm").on("click", function()
@@ -37,12 +24,10 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		console.log(params);
 		
-		$makeofferPopupConfirm.addClass('disabled');
+		$tradesequencePopupConfirm.addClass('disabled');
 		
 		IDEX.sendPost(params).done(function(data)
-		{
-			console.log(data);
-			
+		{			
 			if ("error" in data && data.error.length)
 			{
 				console.log("error");
@@ -53,45 +38,56 @@ var IDEX = (function(IDEX, $, undefined)
 				var message = "makeoffer placed!"
 				$.growl.notice({'message':message, 'location':"tl"});
 				
-				hideMakeofferPopup();
+				IDEX.togglePopup($tradesequencePopup, false, true);
 			}
 			
-			$makeofferPopupConfirm.removeClass('disabled');
+			$tradesequencePopupConfirm.removeClass('disabled');
 
 		}).fail(function()
 		{
-			$makeofferPopupConfirm.removeClass('disabled');
+			$tradesequencePopupConfirm.removeClass('disabled');
 		})
 	}
 	
-	
-	$(".makeofferPopup-close").on("click", function()
-	{
-		//var $popup = $(this).closest(".makeofferPopup");
-		hideMakeofferPopup();
-	})
-	
 
-	IDEX.buildMakeofferModal = function($modal, order)
+	IDEX.buildMakeofferModal = function(order, orderbook)
 	{
-		//$makeofferPopupConfirm.removeClass('disabled');
-
-		$modal.find(".conf-title").text("Confirm " + (order.askoffer ? "Buy" : "Sell") + " Order");
-		console.log(order)
-		$modal.find(".conf-pair").text(IDEX.user.curBase.name+"/"+IDEX.user.curRel.name);
-		$modal.find(".conf-exchange").text(order.exchange);
-		$modal.find(".conf-amount").val(order.volume);
-		$modal.find(".conf-price").val(order.price);
-		$modal.find(".conf-total").val((order.price*order.volume).toFixed(8));
-		$modal.find(".conf-minperc").val(order.minperc);
-		$modal.find(".conf-perc").val("100");
-		$modal.find(".conf-fee").val(((order.exchange == "nxtae_nxtae") ? "5" : "2.5"));
-		$(".conf-jumbotron").hide().find("div").empty();
+		console.log(order);
+		var market = orderbook.market;
+		var baseName = orderbook.baseName;
+		var relName = orderbook.relName;
 		
-		showMakeofferPopup();
+		$tradesequencePopup.find(".tradesequencePopup-marketName span").text(market);
+		$tradesequencePopup.find(".tradesequencePopup-orderType span").text((order.askoffer ? "Buy" : "Sell") + " " + baseName);
+		$tradesequencePopup.find(".conf-amount").val(order.volume);
+		$tradesequencePopup.find(".conf-price").val(order.price);
+		$tradesequencePopup.find(".conf-total").val(order.total);
+		
+		$tradesequenceTable.find("tbody").empty();
+		buildTradesequenceTable(order);
+		
+		IDEX.togglePopup($tradesequencePopup, true, true);
 	}
 
 	
+	
+	function buildTradesequenceTable(order)
+	{
+		var trades = order.trades;
+		var len = trades.length;
+		
+		if (typeof trades == "object")
+			trades = [trades];
+		
+		var keys = "trade asset orderprice ordervolume exchange".split(" ");
+		var rows = IDEX.buildTableRows(IDEX.objToList(trades, keys), "table");
+
+		$tradesequenceTable.find("tbody").append(rows);
+	}
+	
+
+	
+	/*
 	function checkPerc(perc, minperc)
 	{
 		var text = "";
@@ -151,7 +147,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	});
 	
-	
+	*/
 
 	
 	return IDEX;

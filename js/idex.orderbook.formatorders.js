@@ -35,12 +35,13 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = loopStart; i != loopEnd; i += loopInc)
 		{
 			var order = orders[i];
-			order['index'] = i;
+			order.index = i;
 			order.price = IDEX.toSatoshi(order.price).toFixed(8);
 			order.volume = IDEX.toSatoshi(order.volume).toFixed(6);
-			order['total'] = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
+			order.total = IDEX.toSatoshi(order.price*order.volume).toFixed(6);
 			runningTotal = (Number(runningTotal) + Number(order['total'])).toFixed(6);
-			order['sum'] = runningTotal;
+			order.sum = runningTotal;
+			order.askoffer = isAsk ? 1 : 0;
 		}
 	}
 	

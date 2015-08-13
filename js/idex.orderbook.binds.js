@@ -26,12 +26,6 @@ var IDEX = (function(IDEX, $, undefined)
 			var bookID = $(this).closest(".bookname").attr("data-book").toLowerCase();
 			var rowIndex = $(this).index(".bookname-"+bookID+" .order-row")
 			var order = IDEX.getRowData($(this), rowIndex);
-			IDEX.user.pendingOrder = order;
-			console.log(order);
-
-			var $popup = $("#makeofferPopup")
-			IDEX.buildMakeofferModal($popup, order);
-
 			
 			var $orderbook = $(this).closest(".orderbook-wrap");
 			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
@@ -40,9 +34,12 @@ var IDEX = (function(IDEX, $, undefined)
 			var orderbox = IDEX.getObjectByElement($orderbox, IDEX.allOrderboxes, "orderboxDom");
 			
 			
-			
-			console.log(orderbox)
+			IDEX.user.pendingOrder = order;
 
+			
+			IDEX.buildMakeofferModal(order, orderbook);
+
+			
 			//var isAsk = order.askoffer ? "Bid" : "Ask";
 			//$("#place"+isAsk+"Price").val(order.price);
 			//$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");

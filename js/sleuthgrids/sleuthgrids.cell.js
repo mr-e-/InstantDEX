@@ -125,30 +125,11 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			
 			
-			var obj = {};
-			var allGridTiles = grid.tiles;
+
+			//tileNavCell.getLinkedCells();
 			
-			for (var i = 0; i < allGridTiles.length; i++)
-			{
-				var loopTile = allGridTiles[i];
-				var allLoopTileCells = loopTile.cells;
-				
-				for (var j = 0; j < allLoopTileCells.length; j++)
-				{
-					var loopCell = allLoopTileCells[j];
-					var loopCellLinkIndex = loopCell.linkIndex;
-					
-					if (!(String(loopCellLinkIndex) in obj))
-					{
-						obj[String(loopCellLinkIndex)] = [];
-					}
-					
-					obj[String(loopCellLinkIndex)].push(loopCell);
-				}
-			}
-			
-			//console.log(obj);
 		},
+		
 		
 		
 		
@@ -270,6 +251,58 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
+		getLinkedCells: function()
+		{
+			var cell = this
+			var tile = cell.tile;
+			var grid = cell.grid;
+			
+			var cellIndex = cell.index;
+			var linkIndex = cell.linkIndex;
+			
+			
+			var obj = {};
+			var allGridTiles = grid.tiles;
+			
+			
+			for (var i = 0; i < allGridTiles.length; i++)
+			{
+				var loopTile = allGridTiles[i];
+				var allLoopTileCells = loopTile.cells;
+				
+				for (var j = 0; j < allLoopTileCells.length; j++)
+				{
+					var loopCell = allLoopTileCells[j];
+					var loopCellLinkIndex = loopCell.linkIndex;
+					
+					if (!(String(loopCellLinkIndex) in obj))
+					{
+						obj[String(loopCellLinkIndex)] = [];
+					}
+					
+					obj[String(loopCellLinkIndex)].push(loopCell);
+				}
+			}
+			
+			var linkedCells = obj[linkIndex];
+			
+		},
+		
+		
+		
+		updateCellLink: function()
+		{
+			var tileNavCell = this;
+			var cellIndex = tileNavCell.index;
+			var tile = tileNavCell.tile;
+			var cell = tile.cells[cellIndex];
+			var grid = tile.grid;
+			
+			var linkIndex = cell.linkIndex;
+		},
+		
+		
+		
 		loadCellFromSettings: function(settings)
 		{
 			var cell = this;
@@ -281,7 +314,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellHandlers = Sleuthgrids.cellHandlers;
 			var handler = cellHandlers[cellType];
 			
-
 			
 			if (handler)
 			{

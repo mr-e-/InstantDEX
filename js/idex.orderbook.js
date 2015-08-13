@@ -132,7 +132,10 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		orderbook.baseAsset = base;
 		orderbook.relAsset = rel;
-		
+		orderbook.baseName = base.name;
+		orderbook.relName = rel.name;
+		orderbook.market = orderbook.baseName + "/" + orderbook.relName;
+
 		orderbook.emptyOrderbook("Loading...");
 		orderbook.updateMarketDom();
 		
@@ -270,6 +273,12 @@ var IDEX = (function(IDEX, $, undefined)
 					orderbook.updateLastPrice(orderbookData);
 					orderbook.animateOrderbook();
 					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
+					
+					/*var market = orderbook.currentOrderbook.contract;
+					var baseRel = market.split("/");
+					var baseName = baseRel[0];
+					var relName = baseRel[1];*/
+		
 				}
 				
 				if (!(orderbook.isStoppingOrderbook))

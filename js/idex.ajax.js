@@ -2,19 +2,12 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var windowsServerUsername = "user";
-	var windowsServerPassword = "pass";
-	var windowsServerAuth = btoa (windowsServerUsername + ":" + windowsServerPassword);
-	
-	var nxtURL = "http://127.0.0.1:7777/nxt?";
-	var snURL = "http://127.0.0.1:7777/InstantDEX?";
+	var nxtURL = "http://127.0.0.1:7777/nxt";
+	var snURL = "http://127.0.0.1:7777/InstantDEX";
 	
 	var lastTime = new Date().getTime()
 	var q = []
 
-    
-    var windowsURL = "http://127.0.0.1:12345";
-    var idCounter = 1;
 	
 	
 	IDEX.sendPost = function(params, isNXT, callback) 
@@ -38,39 +31,16 @@ var IDEX = (function(IDEX, $, undefined)
             
 		
 		
-        if (IDEX.isWindows)
-        {
-            url = windowsURL;
-            var a = {};
-            a.method = "sendPost"
-            a.id = idCounter++;
-            a.params = params
-            a = JSON.stringify(a);
-
-            var ajaxSettings = 
-            {
-                type: "POST",
-                url: url,
-                data: a,
-                contentType: 'application/json-rpc',
-				beforeSend: function (xhr) {
-					xhr.setRequestHeader("Authorization", "Basic " + windowsServerAuth);
-				},
-            };
-        }
-        else
-        {
-            var ajaxSettings = 
-            {
-                type: "POST",
-                url: url,
-                data: params,
-                contentType: 'application/x-www-form-urlencoded',
-                xhrFields: {
-                    withCredentials: true
-                },
-            };
-        }
+		var ajaxSettings = 
+		{
+			type: "POST",
+			url: url,
+			data: params,
+			contentType: 'application/x-www-form-urlencoded',
+			xhrFields: {
+				withCredentials: true
+			},
+		};
 		
 		
 		var obj = {}
@@ -87,19 +57,10 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			xhr.done(function(data)
 			{
-
-				
-                if (IDEX.isWindows)
-                {
-                    var data = data['result']['retval'];
-
-                    if (typeof data == "string")
-                        data = $.parseJSON(data)
-                }
-                else
-                {
+                if (typeof data == "string")
                     data = $.parseJSON(data);
-                }
+				
+				console.log(data);
 				
 
 				dfd.resolve(data);
