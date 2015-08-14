@@ -4,6 +4,11 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	
 	
+	IDEX.snAssets = 
+	{
+		'nxt':{'name':"NXT",'assetID':"5527630", 'decimals':8}
+	};
+	
 	var GENESIS_TIMESTAMP = 1385294400000;
 
 	
@@ -198,10 +203,10 @@ var IDEX = (function(IDEX, $, undefined)
 				var firstIndex = 1;
 				var lastIndex = 99;
 				
-				getAssetsLoop([], 0, 99, function(assets)
+				assetsHandler.getAssetsLoop([], 0, 99, function(assets)
 				{
 
-					assets = parseAllAssets(assets);
+					assets = assetsHandler.parseAllAssets(assets);
 					localStorage.setItem('allAssets', JSON.stringify(assets));
 					//console.log(assets.length)
 					dfd.resolve(assets);
@@ -223,6 +228,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		getAssetsLoop: function(assets, firstIndex, lastIndex, callback)
 		{
+			var assetsHandler = this;
 			var params = {}
 			params['requestType'] = "getAllAssets";
 			params['firstIndex'] = firstIndex;
@@ -235,7 +241,7 @@ var IDEX = (function(IDEX, $, undefined)
 					if (data.assets.length)
 					{
 						var addedAssets = assets.concat(data.assets)
-						getAssetsLoop(addedAssets, firstIndex+100, lastIndex+100, callback)
+						assetsHandler.getAssetsLoop(addedAssets, firstIndex+100, lastIndex+100, callback)
 					}
 					else
 					{
