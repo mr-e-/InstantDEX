@@ -23,7 +23,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var order = IDEX.user.pendingOrder;
 		var params = $.extend(true, {}, order.rawData);
-		params.dotrade = 1;
+		//params.dotrade = 1;
 		console.log(JSON.stringify(params));
 		
 		$tradesequencePopupConfirm.addClass('disabled');
