@@ -30,6 +30,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		IDEX.sendPost(params, false).done(function(data)
 		{
+			console.log(JSON.stringify(data));
 			console.log(data);
 
 			if ("error" in data && data.error.length)

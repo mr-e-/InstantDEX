@@ -67,7 +67,7 @@ var IDEX = (function(IDEX, $, undefined)
 			//'rel':this.relAsset.name,
 			'allfields':1,
 			'maxdepth':30,
-			'showall':1,
+			'exchange':'nxtae',
 		};
 		
 		this.isWaitingForOrderbook = true;
