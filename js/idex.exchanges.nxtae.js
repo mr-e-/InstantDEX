@@ -139,7 +139,7 @@ var IDEX = (function(IDEX, $, undefined)
 				account.setNXTRS(nxtIDAndRS);
 				
 				dfd.resolve([account.nxtID, account.nxtRS])
-			})
+			});
 			
 			
 			return dfd.promise()
@@ -340,8 +340,9 @@ var IDEX = (function(IDEX, $, undefined)
 			balancesHandler.nxtAE = nxtAE;
 			
 			balancesHandler.updater = new IDEX.NxtAE.Updater();
+			balancesHandler.balancesLastUpdated = new Date().getTime();
 			
-			balancesHandler.balances = [];
+			balancesHandler.balances = {};
 		},
 		
 		
@@ -397,7 +398,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var balances = [];
 			var time = new Date().getTime()
 
-			if (!forceUpdate && time - this.balancesLastUpdated < 1000)
+			if (!forceUpdate && time - this.balancesLastUpdated < 1000 && !($.isEmptyObject(balancesHandler.balances)))
 			{
 				dfd.resolve()
 			}
@@ -447,16 +448,20 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var openOrdersHandler = this;
 			
+			openOrdersHandler.openOrders = [];
+			openOrdersHandler.openOrdersLastUpdated = new Date().getTime();
+			
+			
 			openOrdersHandler.nxtAE = nxtAE;
 		},
 		
 		
 		
-		updateOpenOrders: function()
+		updateOpenOrders: function(forceUpdate)
 		{
+			var openOrdersHandler = this;
 			var dfd = new $.Deferred();
-			var params = {"method":"openorders"};
-			var account = this;
+			var params = {"method":"openorders", "allorders":1};
 			var time = new Date().getTime()
 					
 			if (!forceUpdate && time - this.openOrdersLastUpdated < 1000)
@@ -469,26 +474,29 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					var temp = [];
 
+					console.log(data);
 					if ("openorders" in data)
 					{
 						data = data.openorders;
 						
-						for (var i = 0; i < data.length; i++)
-							if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
-								temp.push(data[i]);
+						//for (var i = 0; i < data.length; i++)
+						//	if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
+						//		temp.push(data[i]);
 					}
 					else
 					{
 						data = [];
 					}
 					
-					account.openOrders = data;
-					account.marketOpenOrders = temp;
+					openOrdersHandler.openOrders = data;
+					openOrdersHandler.marketOpenOrders = temp;
 					dfd.resolve();
 				})
 			}
 			
-			this.openOrdersLastUpdated = time;
+			
+			openOrdersHandler.openOrdersLastUpdated = time;
+			
 			return dfd.promise();
 		}
 

@@ -3,7 +3,6 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-	
     IDEX.isWindows = false;
 	IDEX.user;
 
@@ -50,17 +49,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.user.initLabels();
 		IDEX.initChartIndicators();
 
-		IDEX.nxtae = new IDEX.NxtAE();
-
-		
-		IDEX.user.options = 
-		{
-			"duration":6000,
-			"minperc":75
-		}
 	
-		//IDEX.hideLoading();
-
 		IDEX.pingSupernet().done(function()
 		{
 			
@@ -70,7 +59,7 @@ var IDEX = (function(IDEX, $, undefined)
 			})
 			
 
-			IDEX.nxtae.initState().done(function()
+			IDEX.initExchanges().done(function()
 			{
 				IDEX.initAutocomplete();
 				
@@ -93,18 +82,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			$(".temp-exit").addClass("active");
 			IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
-			
-			/*IDEX.nxtae.initState().done(function()
-			{
-				IDEX.initAutocomplete();
-				
-				IDEX.getSkynet().done(function()
-				{
-					IDEX.initGrids();
-				})
-			});
-			
-			IDEX.hideLoading();*/
 		})
 	}
 	

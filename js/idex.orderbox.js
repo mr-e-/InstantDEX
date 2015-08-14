@@ -6,10 +6,12 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allOrderboxes = [];
 	
 	
+	
 	IDEX.Orderbox = function(obj) 
 	{	
 		this.baseAsset;
 		this.relAsset;
+		this.hasMarket = false;
 		
 		this.orderboxDom;
 		this.buyBox;
@@ -20,8 +22,9 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
-	IDEX.OrderboxType = function(type, $orderboxWrap) 
+	IDEX.OrderboxType = function(type, $orderboxWrap, orderbox) 
 	{	
+		this.orderbox = orderbox;
 		this.type = type;
 		this.dom;
 		this.balanceTitleDom;
@@ -29,6 +32,8 @@ var IDEX = (function(IDEX, $, undefined)
 		this.exchangeDom
 		this.formDom;
 		this.buttonDom;
+		this.exchange = "nxtae";
+
 
 		var __construct = function(that, type, $orderboxWrap)
 		{
@@ -38,6 +43,10 @@ var IDEX = (function(IDEX, $, undefined)
 			that.exchangeDom = that.dom.find(".orderbox-exchange-title");
 			that.formDom = that.dom.find("form");
 			that.buttonDom = that.dom.find(".orderbox-order-button");
+			
+			that.dom.find(".orderbox-exchange-dropdown .dropdown-list li").on("click", function() { that.changeExchange($(this)) } );
+			that.dom.find(".orderbox-order-button").on("click", function() { that.placeOrderButtonClick($(this)) });
+
 		}(this, type, $orderboxWrap)
 	};
 	
@@ -53,10 +62,10 @@ var IDEX = (function(IDEX, $, undefined)
 			orderbox = new IDEX.Orderbox();
 
 			orderbox.orderboxDom = $el
-			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom)
-			orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom)
+			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom, orderbox)
+			orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom, orderbox)
 
-			orderbox.orderboxDom.find(".orderbox-order-button").on("click", function() { orderbox.placeOrderButtonClick($(this)) })
+
 
 			IDEX.allOrderboxes.push(orderbox)
 		}
@@ -66,15 +75,39 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
+	IDEX.OrderboxType.prototype.changeExchange = function($li)
+	{
+		var orderboxType = this;
+		var orderbox = orderboxType.orderbox;
+		var isBuyBox = orderboxType.type == "buy";
+		var exchange = $li.attr("data-val");
+				
+				
+		orderboxType.exchange = exchange;
+
+		if (orderbox.hasMarket)
+		{
+			orderboxType.updateOrderBoxBalance();
+		}
+	}
+	
+	
+	
 	IDEX.Orderbox.prototype.changeMarket = function(base, rel)
 	{
 		var orderbox = this;
 		orderbox.baseAsset = base;
 		orderbox.relAsset = rel;
+		orderbox.hasMarket = true;
+		
+		//orderbox.buyBox.balanceTitleDom.text(orderbox.relAsset.name + ": ");
+		//orderbox.sellBox.balanceTitleDom.text(orderbox.baseAsset.name + ": ");
+
 		
 		orderbox.resetOrderBoxForm();
 		orderbox.updateOrderBoxBalance();
 	}
+	
 	
 	
 	IDEX.Orderbox.prototype.updateOrderBox = function()
@@ -84,33 +117,51 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 	
+	
 	IDEX.Orderbox.prototype.resetOrderBoxForm = function()
 	{
-		this.buyBox.formDom.trigger("reset")
-		this.sellBox.formDom.trigger("reset")
+		this.buyBox.formDom.trigger("reset");
+		this.sellBox.formDom.trigger("reset");
 	}
+	
 	
 	
 	IDEX.Orderbox.prototype.updateOrderBoxBalance = function()
 	{
 		var orderbox = this;
-		var base = orderbox.baseAsset;
-		var rel = orderbox.relAsset;
-
 		
-		/*IDEX.account.updateBalances().then(function()
+		if (orderbox.hasMarket)
 		{
-			var relBal = parseBalance(IDEX.account.getBalance(rel.assetID));
-			var baseBal = parseBalance(IDEX.account.getBalance(base.assetID));
-
-			orderbox.buyBox.balanceValDom.text(relBal.whole + relBal.dec);
-			orderbox.sellBox.balanceValDom.text(baseBal.whole + baseBal.dec);
-			
-			orderbox.buyBox.balanceTitleDom.html(rel.name + ":&nbsp;");
-			orderbox.sellBox.balanceTitleDom.html(base.name + ":&nbsp;");
-		})*/
+			orderbox.buyBox.updateOrderBoxBalance();
+			orderbox.sellBox.updateOrderBoxBalance();
+		}
 	}
 	
+	
+	
+	IDEX.OrderboxType.prototype.updateOrderBoxBalance = function()
+	{
+		var orderboxType = this;
+		var isBuyBox = orderboxType.type == "buy";
+		var orderbox = orderboxType.orderbox;
+		
+		var exchange = orderboxType.exchange;
+		var baseOrRel = isBuyBox ? orderbox.relAsset : orderbox.baseAsset;
+		
+		var exchangeHandler = IDEX.allExchanges[exchange];
+		exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+
+		var balancesHandler = exchangeHandler.balances;
+
+		
+		orderboxType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
+
+		balancesHandler.updateBalances().done(function()
+		{
+			var bal = parseBalance(balancesHandler.getBalance(baseOrRel.assetID));
+			orderboxType.balanceValDom.text(bal.whole + bal.dec);			
+		})
+	}
 	
 	function parseBalance(balance)
 	{
@@ -132,29 +183,37 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.Orderbox.prototype.placeOrderButtonClick = function($button)
+	
+	IDEX.OrderboxType.prototype.placeOrderButtonClick = function($button)
 	{
-		var orderbox = this;
+		
+		var orderboxType = this;
+		var isBuyBox = orderboxType.type == "buy";
+		var orderbox = orderboxType.orderbox;
 		var isButtonDisabled = $button.hasClass("disabled");
+		
+		var method = $button.attr("data-method");
+		var exchange = orderboxType.exchange;
 		var base = orderbox.baseAsset;
 		var rel = orderbox.relAsset;
-		var method = $button.attr("data-method");
-		var box = method == "placebid" ? orderbox.buyBox : orderbox.sellBox
-		
+
+		console.log(orderboxType);
 		if (!isButtonDisabled)
 		{
-			var $form = box.formDom;
-			var params = IDEX.getFormData($form);
-			params = IDEX.buildPostPayload(method, params);
-			
-			var exchange = box.exchangeDom.text();
-			
+			var $form = orderboxType.formDom;
+			var params = {};
+			var formData = IDEX.getFormData($form);
+			//params = IDEX.buildPostPayload(method, formData);
+						
 					
 			if (checkOrderboxInputValues($form))
 			{
+				params.method = method
 				params.exchange = exchange;
 				params.baseid = base.assetID;
 				params.relid = rel.assetID;
+				params.price = formData.price;
+				params.volume = formData.volume;
 				
 				if (exchange == "InstantDEX")
 				{
@@ -203,7 +262,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		console.log(params);
 
-		IDEX.sendPost(params).done(function(data)
+		IDEX.sendPost(params, false).done(function(data)
 		{
 			//IDEX.updateUserState(true);
 			

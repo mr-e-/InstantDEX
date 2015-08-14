@@ -203,7 +203,10 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var saveObj = JSON.parse(localStorage.getItem('grids'));	
+			var saveObj = JSON.parse(localStorage.getItem('grids'));
+			
+			if (!saveObj.gridSaves.length)
+				saveObj = defaultSave;
 		}
 			
 		var prevHeight = saveObj.windowHeight;

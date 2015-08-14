@@ -3,6 +3,57 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
+	IDEX.exchangeList = ["NxtAE"];
+	IDEX.allExchanges = {};
+	
+	
+	
+	
+	IDEX.initExchanges = function()
+	{
+		var dfd = new $.Deferred();
+		
+		IDEX.initExchangesLoop(0, function()
+		{
+			IDEX.allExchanges.nxtae = IDEX.allExchanges.NxtAE;
+			IDEX.nxtae = IDEX.allExchanges.NxtAE;
+
+			dfd.resolve();
+		})
+		
+		return dfd.promise();
+	}
+	
+	
+	
+	IDEX.initExchangesLoop = function(exchangeListIndex, callback)
+	{
+		var exchangeName = IDEX.exchangeList[exchangeListIndex];
+		var exchangeToInit = new IDEX[exchangeName]();
+		var exchangeListLength = IDEX.exchangeList.length;
+		
+		IDEX.allExchanges[exchangeName] = exchangeToInit;
+		
+		exchangeToInit.initState().done(function()
+		{
+			exchangeListIndex++;
+			
+			if (exchangeListIndex < exchangeListLength)
+				IDEX.initExchangesLoop(exchangeListIndex, callback)
+			else
+				callback();
+		});
+	}
+	
+	
+	
+	IDEX.updateExchangeBalances = function()
+	{
+		
+	}
+	
+	
+	
 	$(".allExchanges-nav-cell").on("click", function()
 	{
 		var $wrap = $(this).closest(".allExchangesFullPopup");

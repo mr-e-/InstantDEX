@@ -84,7 +84,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var currentOrder = currentOrders[j];
 
-				if (IDEX.compObjs(order, currentOrder, ['quoteid']))
+				if (compOrders(order, currentOrder))
 				{
 					order['index'] = currentOrder['index'];
 					oldOrders.push(order);
@@ -103,6 +103,30 @@ var IDEX = (function(IDEX, $, undefined)
 		return {'expiredOrders':expiredOrders, 'newOrders':newOrders, 'oldOrders':oldOrders};
 	}
 
+	
+	function compOrders(order, currentOrder)
+	{
+		var ret = true;
+		
+		if (order.trades.length == currentOrder.trades.length)
+		{
+			for (var i = 0; i < order.trades.length; i++)
+			{
+				if (!IDEX.compObjs(order.trades[i], currentOrder.trades[i], ['orderid']))
+				{
+					ret = false;
+					break;
+				}
+			}
+		}
+		else
+		{
+			ret = false;
+		}
+		
+		return ret;
+	}
+	
 
 	function formatNewOrders(newOrders, isAsk, orderbook)
 	{	
@@ -120,7 +144,7 @@ var IDEX = (function(IDEX, $, undefined)
 			//trString = orderTooltip(trString, order);
 			
 			var trClasses = "fadeSlowIndy";
-			trClasses += (order['offerNXT'] == IDEX.nxtae.nxtID) ? " own-order" : "";
+			//trClasses += (order['offerNXT'] == IDEX.nxtae.nxtID) ? " own-order" : "";
 			trClasses += " " + getLabelClass(order, orderbook)
 			
 			trString = IDEX.addElClass(trString, trClasses);

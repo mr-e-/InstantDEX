@@ -66,13 +66,15 @@ var IDEX = (function(IDEX, $, undefined)
 			//'base':this.baseAsset.name, 
 			//'rel':this.relAsset.name,
 			'allfields':1,
-			'maxdepth':30,
-			'exchange':'nxtae',
+			//'maxdepth':30,
+			//'exchange':'nxtae',
 		};
 		
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
 
+		console.log(JSON.stringify(params));
+		
 		IDEX.sendPost(params, false).done(function(orderbookData)
 		{
 			console.log(orderbookData);
