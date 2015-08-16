@@ -31,7 +31,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var __construct = function(that, constructorObj)
 		{
 			var asset = IDEX.nxtae.assets.getAsset("assetID", constructorObj['assetID']);
-			
+			if (constructorObj['assetID'] == "5527630")
+				asset = IDEX.snAssets.nxt;
 			if (asset)
 			{
 				IDEX.constructFromObject(that, asset);

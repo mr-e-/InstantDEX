@@ -93,11 +93,11 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.Orderbox.prototype.changeMarket = function(base, rel)
+	IDEX.Orderbox.prototype.changeMarket = function(market)
 	{
 		var orderbox = this;
-		orderbox.baseAsset = base;
-		orderbox.relAsset = rel;
+		orderbox.market = market;
+
 		orderbox.hasMarket = true;
 		
 		//orderbox.buyBox.balanceTitleDom.text(orderbox.relAsset.name + ": ");
@@ -146,7 +146,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbox = orderboxType.orderbox;
 		
 		var exchange = orderboxType.exchange;
-		var baseOrRel = isBuyBox ? orderbox.relAsset : orderbox.baseAsset;
+		var baseOrRel = isBuyBox ? orderbox.market.base : orderbox.market.rel;
 		
 		var exchangeHandler = IDEX.allExchanges[exchange];
 		exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
@@ -158,7 +158,14 @@ var IDEX = (function(IDEX, $, undefined)
 
 		balancesHandler.updateBalances().done(function()
 		{
-			var bal = parseBalance(balancesHandler.getBalance(baseOrRel.assetID));
+			var isNxt = baseOrRel.isAsset == false && baseOrRel.name == "NXT";
+			if (isNxt)
+				var bal = parseBalance(balancesHandler.getBalance(false, isNxt));
+			else if ("assetID" in baseOrRel)
+				var bal = parseBalance(balancesHandler.getBalance(baseOrRel.assetID));
+			else
+				var bal = parseBalance({});
+
 			orderboxType.balanceValDom.text(bal.whole + bal.dec);			
 		})
 	}
@@ -194,8 +201,10 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var method = $button.attr("data-method");
 		var exchange = orderboxType.exchange;
-		var base = orderbox.baseAsset;
-		var rel = orderbox.relAsset;
+		var base = orderbox.market.base;
+		var rel = orderbox.market.rel;
+		
+		
 
 		console.log(orderboxType);
 		if (!isButtonDisabled)
@@ -211,7 +220,7 @@ var IDEX = (function(IDEX, $, undefined)
 				params.method = method
 				params.exchange = exchange;
 				params.baseid = base.assetID;
-				params.relid = rel.assetID;
+				params.relid = rel.name == "NXT" ? "5527630" : rel.assetID;
 				params.price = formData.price;
 				params.volume = formData.volume;
 				

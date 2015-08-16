@@ -125,6 +125,47 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return retObj;
 	}
+	
+	
+	IDEX.searchListOfObjectsAll = function(arr, obj)
+	{
+		var ret = false;
+		var objKeys = Object.keys(obj).length;
+		
+		for (var i = 0; i < arr.length; i++)
+		{
+			var item = arr[i];
+			var checkedKeys = 0;
+			
+			var itemKeys = Object.keys(item).length;
+			
+			if (objKeys == itemKeys)
+			{
+				for (key in item)
+				{
+					if (key in obj)
+					{
+						if (obj[key] == item[key])
+						{
+							checkedKeys++;
+						}
+					}
+					else
+					{
+						break;
+					}
+				}
+				
+				if (checkedKeys == objKeys)
+				{
+					ret = true;
+					break;
+				}
+			}
+		}
+		
+		return ret;
+	}
 
 	IDEX.getObjectByElement = function($el, arr, key)
 	{
@@ -343,7 +384,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.formatNumberWidth = function(allNumbers, decimals)
 	{
-		var maxWidth = 8 + 1;
+		var maxWidth = 8 + 2;
 		var biggestWidth = -1;
 		var len = allNumbers.length;
 		

@@ -57,10 +57,11 @@ var IDEX = (function(IDEX, $, undefined)
 		//console.log(order);
 		//console.log(orderbook);
 		var market = orderbook.market;
-		var baseName = orderbook.baseName;
-		var relName = orderbook.relName;
+		var marketName = market.marketName;
+		var baseName = market.base.name;
+		var relName = market.rel.name;
 		
-		$tradesequencePopup.find(".tradesequencePopup-marketName span").text(market);
+		$tradesequencePopup.find(".tradesequencePopup-marketName span").text(marketName);
 		$tradesequencePopup.find(".tradesequencePopup-orderType span").text((order.askoffer ? "Buy" : "Sell") + " " + baseName);
 		$tradesequencePopup.find(".conf-amount").val(order.volume);
 		$tradesequencePopup.find(".conf-price").val(order.price);

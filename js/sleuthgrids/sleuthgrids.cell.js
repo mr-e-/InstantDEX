@@ -124,12 +124,12 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.linkIndex = linkIndex;
 			
 			
-			
-
 			//tileNavCell.getLinkedCells();
 			
 		},
 		
+		
+
 		
 		
 		
@@ -286,6 +286,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			var linkedCells = obj[linkIndex];
 			
+			return linkedCells;
+			
 		},
 		
 		
@@ -299,6 +301,32 @@ Sleuthgrids = (function(Sleuthgrids)
 			var grid = tile.grid;
 			
 			var linkIndex = cell.linkIndex;
+		},
+		
+		
+				
+		setLinkedCells: function(market)
+		{
+			var cell = this;
+			var tile = cell.tile;
+			var grid = tile.grid;			
+			var linkIndex = cell.linkIndex;
+			var cellIndex = cell.index;
+			
+			var isLinked = linkIndex != -1;
+			
+			
+			var linkedCells = cell.getLinkedCells();
+			
+			
+			
+			console.log(linkedCells);
+			
+			for (var i = 0; i < linkedCells.length; i++)
+			{
+				var linkedCell = linkedCells[i];
+				linkedCell.changeCellMarket(market);
+			}
 		},
 		
 		
@@ -320,6 +348,29 @@ Sleuthgrids = (function(Sleuthgrids)
 				if (handler && "loadCustom" in handler)
 				{
 					handler.loadCustom(cell, settings);
+				}
+			}
+		},
+		
+		
+		
+		changeCellMarket: function(market)
+		{
+			var cell = this;
+			var tile = cell.tile;
+			var grid = tile.grid;
+			var $cell = cell.cellDOM;
+			var cellType = cell.cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = cellHandlers[cellType];
+			
+			
+			if (handler)
+			{
+				if (handler && "changeMarket" in handler)
+				{
+					handler.changeMarket(cell, market);
 				}
 			}
 		},

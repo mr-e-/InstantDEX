@@ -115,36 +115,39 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.updateMarketDom = function()
 	{
 		var orderbook = this;
-		var base = orderbook.baseAsset;
-		var rel = orderbook.relAsset;
+		var base = orderbook.market.base.name;
+		var rel = orderbook.market.rel.name;
 		
-		orderbook.searchInputDom.val(base.name + "_" + rel.name);
+		orderbook.searchInputDom.val(base + "_" + rel);
 		
-		orderbook.orderbookDom.find(".refcur-base").text(base.name);
-		orderbook.orderbookDom.find(".refcur-rel").text(rel.name);
+		orderbook.orderbookDom.find(".refcur-base").text(base);
+		orderbook.orderbookDom.find(".refcur-rel").text(rel);
 	}
 	
 	
 	
-	IDEX.Orderbook.prototype.changeMarket = function(base, rel)
+	IDEX.Orderbook.prototype.changeMarket = function(market, temp)
 	{
 		var orderbook = this;
 		
-		orderbook.baseAsset = base;
-		orderbook.relAsset = rel;
-		orderbook.baseName = base.name;
-		orderbook.relName = rel.name;
-		orderbook.market = orderbook.baseName + "/" + orderbook.relName;
+		if (temp)
+		{
+			
+		}
+		orderbook.market = market;
+		orderbook.marketName = orderbook.market.base.name + "/" + orderbook.market.rel.name;
 
 		orderbook.emptyOrderbook("Loading...");
 		orderbook.updateMarketDom();
 		
-		orderbook.orderbox.changeMarket(base, rel);
+		orderbook.orderbox.changeMarket(market);
 		
 		if (!orderbook.isStoppingOrderbook)
 		{
 			orderbook.stopPollingOrderbook(function()
 			{
+				orderbook.currentOrderbook = new IDEX.OrderbookVar();
+
 				orderbook.orderbookDom.find(".empty-orderbook").hide();
 				orderbook.orderbookHandler(1);
 			});

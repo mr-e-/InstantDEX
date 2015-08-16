@@ -4,8 +4,10 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	
 	var autoSearchName = [];
+	var autoSearchMarket = [];
 	var autoSearchSkynet = [];
-
+	IDEX.autoSearchSkynet = autoSearchSkynet;
+	
 	
 	
 	IDEX.initAutocomplete = function()
@@ -15,17 +17,33 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function initAssetAutocomplete()
 	{
-		var assets = IDEX.nxtae.assets.allAssets;
-		var len = assets.length;
+		var allCoins = IDEX.allCoins;
+		var len = allCoins.length;
 
 		for (var i = 0; i < len; i++)
 		{
-			var asset = assets[i];
-			var vals = {}
-			vals.name = asset.name;
-			vals.assetID = asset.assetID
+			var coin = allCoins[i];
 			
-			autoSearchName.push({"label":asset.name+" <span>("+asset.assetID+")</span>", "value":asset.name, "vals":vals});
+			if (coin.isAsset)
+				var labelStr = coin.name + " - (Asset ID: " + coin.assetID + ")";
+			else
+				var labelStr = coin.name;
+			
+			autoSearchName.push({"label":labelStr, "value":coin.name, "vals":coin});
+		}
+		
+		for (marketName in IDEX.allMarkets)
+		{
+			var market = IDEX.allMarkets[marketName];
+			
+			var labelStr = market.marketName;
+			
+			if (market.isNxtAE)
+			{
+				var labelStr = market.marketName + " - (Asset ID: " + market.base.assetID + ")";
+			}
+			
+			autoSearchMarket.push({"label":labelStr, "value":market.marketName, "vals":market});
 		}
 	}
 	
@@ -35,7 +53,7 @@ var IDEX = (function(IDEX, $, undefined)
 		delay: 0,
 		html: true,
 		create: function(e, ui) { },
-		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"180px"})},
+		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"270px"})},
 		source: function(request,response) { assetMatcher(request, response, autoSearchName) },
 		change: function(e, ui) { assetSelection($(this), e, ui) },
 		select: function(e, ui) { assetSelection($(this), e, ui) }
@@ -48,11 +66,38 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var a = $.grep(auto, function( item )
 		{
-			var assetID = item.vals.assetID;
-			var assetName = item.vals.name;
+			var coin = item.vals;
+			var name = coin.name;
+			
+			var testName = matcher.test(name);
+			
+			var ret = testName;
+			
+			if (coin.isAsset)
+			{
+				var testAsset = matcher.test(coin.assetID);
+				
+				ret = testAsset || testName;
+				
+			}
 
-			return (matcher.test(assetID) || matcher.test(assetName));
+			return ret;
 		});
+		
+		var assetList = [];
+		var coinList = [];
+		
+		for (var i = 0; i < a.length; i++)
+		{
+			var coin = a[i];
+			if (coin.vals.isAsset)
+				assetList.push(coin)
+			else
+				coinList.push(coin)
+		}
+		
+		//coinList.sort(IDEX.compareProp('label'))
+		a = coinList.concat(assetList);
 
 		response(a);
 	}
@@ -65,9 +110,88 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var assetID = ui.item.vals.assetID;
+			var coin = ui.item.vals;
 			
-			$thisScope.attr('data-asset', assetID);
+			if (coin.isAsset)
+			{
+				var assetID = coin.name;
+			}
+			else
+			{
+				var assetID = coin.name.toUpperCase();;
+			}
+			
+			$thisScope.data('asset', coin);
+		}
+	}
+	
+	
+	
+
+	$('.market-search').autocomplete(
+	{
+		delay: 0,
+		html: true,
+		create: function(e, ui) { },
+		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"350px"})},
+		source: function(request,response) { marketMatcher(request, response, autoSearchMarket) },
+		change: function(e, ui) { marketSelection($(this), e, ui) },
+		select: function(e, ui) { marketSelection($(this), e, ui) }
+	});
+	
+	
+	function marketMatcher(request, response, auto)
+	{
+		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
+		
+		var a = $.grep(auto, function( item )
+		{
+			var market = item.vals;
+			var name = market.marketName;
+			
+			var ret = matcher.test(name);
+			
+			if (market.isNxtAE)
+			{
+				var idPair = market.base.assetID + "_" + market.rel.name;
+				ret = matcher.test(name) || matcher.test(idPair);
+			}
+
+			return ret;
+		});
+		
+		var assetList = [];
+		var coinList = [];
+		
+		for (var i = 0; i < a.length; i++)
+		{
+			var market = a[i];
+			if (market.vals.isNxtAE)
+				assetList.push(market)
+			else
+				coinList.push(market)
+		}
+		
+		a = coinList.concat(assetList);
+
+
+		response(a);
+	}
+	
+	
+	
+	function marketSelection($thisScope, e, ui)
+	{
+		if (!ui.item)
+		{
+			$thisScope.attr('data-asset', "-1");
+		}
+		else
+		{
+			var market = ui.item.vals;
+			
+			
+			$thisScope.data('market', market);
 		}
 	}
 	

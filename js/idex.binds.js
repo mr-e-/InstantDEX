@@ -5,6 +5,20 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	
 	
+	$contentWrap.on("click", ".tab-nav-cell span", function()
+	{
+		var $fullWrap = $(this).closest(".tab-trig-wrap");
+		var $tabNav = $(this).parent();
+		var tab = $tabNav.attr("data-tab");
+		var $tabWrap = $fullWrap.find(".tab-wrap[data-tab='"+tab+"']");
+
+		$fullWrap.find(".tab-nav-cell").removeClass("active");
+		$fullWrap.find(".tab-wrap").removeClass("active");
+		
+		$tabNav.addClass("active");
+		$tabWrap.addClass("active");
+	})
+	
 	
 	$(".fullPopup-trig").on("click", function()
 	{

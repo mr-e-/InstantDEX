@@ -3,12 +3,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	
-	IDEX.snAssets = 
-	{
-		'nxt':{'name':"NXT",'assetID':"5527630", 'decimals':8}
-	};
-	
+
 	var GENESIS_TIMESTAMP = 1385294400000;
 
 	
@@ -36,7 +31,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	var NxtAE = IDEX.NxtAE = function()
+	var NxtAE = IDEX.exchangeClasses.nxtae = function()
 	{
 		this.init.apply(this, arguments)
 	}
@@ -45,21 +40,21 @@ var IDEX = (function(IDEX, $, undefined)
 	{	
 		init: function()
 		{
-			var nxtAE = this;
+			var exchange = this;
 			
-			nxtAE.nxtRS = "";
-			nxtAE.nxtID = "";
+			exchange.nxtRS = "";
+			exchange.nxtID = "";
 			
+			exchange.markets = [];
 			
-			nxtAE.assets = new IDEX.NxtAE.Assets(nxtAE);
+			exchange.assets = new IDEX.exchangeClasses.nxtae.Assets(exchange);
 			
-			nxtAE.balances = new IDEX.NxtAE.Balances(nxtAE);
+			exchange.balances = new IDEX.exchangeClasses.nxtae.Balances(exchange);
 
-			nxtAE.accountTrades = new IDEX.NxtAE.AccountTrades(nxtAE);
-			nxtAE.accountOpenOrders = new IDEX.NxtAE.AccountOpenOrders(nxtAE);
+			exchange.accountTrades = new IDEX.exchangeClasses.nxtae.AccountTrades(exchange);
+			exchange.accountOpenOrders = new IDEX.exchangeClasses.nxtae.AccountOpenOrders(exchange);
 			
-			nxtAE.marketOpenOrders = new IDEX.NxtAE.MarketOpenOrders(nxtAE);
-			nxtAE.marketTrades = new IDEX.NxtAE.MarketTrades(nxtAE);
+			exchange.marketTrades = new IDEX.exchangeClasses.nxtae.MarketTrades(exchange);
 
 		},
 		
@@ -148,7 +143,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var Updater = IDEX.NxtAE.Updater = function()
+	var Updater = IDEX.Updater = function()
 	{
 		this.init.apply(this, arguments)
 	}
@@ -168,7 +163,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var Assets = IDEX.NxtAE.Assets = function()
+	var Assets = NxtAE.Assets = function()
 	{
 		this.init.apply(this, arguments)
 	}
@@ -181,7 +176,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var assetsHandler = this;
 			assetsHandler.nxtAE = nxtAE;
 			
-			assetsHandler.updater = new IDEX.NxtAE.Updater();
+			assetsHandler.updater = new IDEX.Updater();
 			assetsHandler.allAssets = [];
 		},
 		
@@ -280,7 +275,7 @@ var IDEX = (function(IDEX, $, undefined)
 				parsed.push(obj);
 			}
 			
-			parsed.push(IDEX.snAssets['nxt']);
+			//parsed.push(IDEX.snAssets['nxt']);
 			
 			return parsed
 		},
@@ -326,7 +321,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var Balances = IDEX.NxtAE.Balances = function()
+	var Balances = NxtAE.Balances = function()
 	{
 		this.init.apply(this, arguments)
 	}
@@ -339,7 +334,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var balancesHandler = this;
 			balancesHandler.nxtAE = nxtAE;
 			
-			balancesHandler.updater = new IDEX.NxtAE.Updater();
+			balancesHandler.updater = new IDEX.Updater();
 			balancesHandler.balancesLastUpdated = new Date().getTime();
 			
 			balancesHandler.balances = {};
@@ -347,16 +342,20 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 		
-		getBalance: function(assetID)
+		getBalance: function(assetID, isNxt)
 		{
 			var balancesHandler = this;
 			var nxtAE = balancesHandler.nxtAE;
 			
 			var balance = {};
 			
+			if (isNxt)
+				assetID = "5527630";
+
 			if (assetID in balancesHandler.balances)
 				balance = balancesHandler.balances[assetID];
-				
+
+
 			return balance;
 		},
 		
@@ -436,7 +435,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var AccountOpenOrders = IDEX.NxtAE.AccountOpenOrders = function()
+	var AccountOpenOrders = NxtAE.AccountOpenOrders = function()
 	{
 		this.init.apply(this, arguments)
 	}
@@ -504,7 +503,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var AccountTrades = IDEX.NxtAE.AccountTrades = function()
+	var AccountTrades = NxtAE.AccountTrades = function()
 	{
 		this.init.apply(this, arguments)
 	}
@@ -524,27 +523,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var MarketOpenOrders = IDEX.NxtAE.MarketOpenOrders = function()
-	{
-		this.init.apply(this, arguments)
-	}
-	
-	MarketOpenOrders.prototype = 
-	{
-		
-		init: function(nxtAE)
-		{
-			var openOrdersHandler = this;
-			
-			openOrdersHandler.nxtAE = nxtAE;
-		},
-		
-		
-	}
-	
-	
-	
-	var MarketTrades = IDEX.NxtAE.MarketTrades = function()
+	var MarketTrades = NxtAE.MarketTrades = function()
 	{
 		this.init.apply(this, arguments)
 	}

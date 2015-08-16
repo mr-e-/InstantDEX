@@ -97,59 +97,81 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$contentWrap.on("click", ".orderbook-search-popup-trig", function()
 	{
-		var $orderbook = $(this).closest(".orderbook-wrap")
+		var $orderbook = $(this).closest(".orderbook-wrap");
+		var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
+
 		var $banner = $popup.find(".banner");
 		$banner.removeClass("active");
+		//clearAssetInput();
 
-		var isActive = $popup.hasClass("active");
-		
-		if (!isActive)
-		{
-			$popup.addClass("active")
-			$popup.data("orderbook", $orderbook);
-			//clearAssetInput();
-		}
-		else
-		{
-			$popup.removeClass("active")
-		}
+		$popup.data("orderbook", orderbook);
+
+		IDEX.togglePopup($popup, true, true);
 	})
 	
 	
 	$(".orderbookSearch-search-trig").on("click", function()
 	{
 		var $wrap = $(this).closest(".popup");
-		var $orderbook = $wrap.data("orderbook")
+		var orderbook = $wrap.data("orderbook")
 		
-		
-		var $form = $(".orderbookSearch-popup-form");
-		var $base = $form.find("input[name=baseid]");
-		var $rel = $form.find("input[name=relid]");
-		var baseid = $base.attr("data-asset");
-		var relid = $rel.attr("data-asset");
+		var $activeTab = $wrap.find(".tab-wrap.active");
+		var searchType = $activeTab.attr("data-searchtype");
+		var $form = $activeTab.find(".orderbookSearch-popup-form");
+
 		
 		var $banner = $wrap.find(".banner");
 		$banner.removeClass("error")
 		$banner.removeClass("success")
 		$banner.addClass("active");
 		
-
-		if (baseid != "-1" && relid != "-1")
+		if (searchType == "market")
 		{
-			var base = IDEX.nxtae.assets.getAsset("assetID", baseid);	
-			var rel = IDEX.nxtae.assets.getAsset("assetID", relid);
+			var $market = $form.find("input[name=market]");
+			var market = $market.data("market");
+			console.log(market);
+			$banner.removeClass("active");
 
-			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
-			orderbook.changeMarket(base, rel);
+			if (market != "-1")
+			{
+				orderbook.changeMarket(market);
 
-			clearAssetInput($wrap);
-			$popup.find(".popup-header-close").trigger("click");
+				clearAssetInput($wrap);
+				$popup.find(".popup-header-close").trigger("click");
+			}
+			else
+			{
+				$banner.addClass("error")
+				$banner.find("span").text("Error: You must choose a valid market")
+			}
 		}
-		else
+		else if (searchType == "coin")
 		{
-			$banner.addClass("error")
-			$banner.find("span").text("Error: You must choose two valid assets")
+			var $base = $form.find("input[name=baseid]");
+			var $rel = $form.find("input[name=relid]");
+			var baseid = $base.data("asset");
+			var relid = $rel.data("asset");
+			
+
+			if (baseid != "-1" && relid != "-1")
+			{
+				orderbook.changeMarket(baseid, relid);
+
+				clearAssetInput($wrap);
+				$popup.find(".popup-header-close").trigger("click");
+			}
+			else
+			{
+				$banner.addClass("error")
+				$banner.find("span").text("Error: You must choose two valid assets")
+			}
 		}
+		else if (searchType == "basket")
+		{
+			
+		}
+		
+
 	})
 	
 
@@ -158,7 +180,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$wrap.find("input").each(function()
 		{
 			$(this).val("")
-			$(this).attr("data-asset", "-1")
+			$(this).data("asset", "-1")
 		})
 	}
 	

@@ -61,11 +61,14 @@ var IDEX = (function(IDEX, $, undefined)
 
 			IDEX.initExchanges().done(function()
 			{
-				IDEX.initAutocomplete();
-				
-				IDEX.getSkynet().done(function(data)
+				IDEX.initAllMarkets().done(function()
 				{
-					initializedExchanges.resolve()
+					IDEX.initAutocomplete();
+					
+					IDEX.getSkynet().done(function(data)
+					{
+						initializedExchanges.resolve()
+					})
 				})
 			});
 			

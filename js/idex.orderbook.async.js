@@ -56,19 +56,54 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.orderbookPost = function()
 	{
 		var retDFD = new $.Deferred();
-		var thisScope = this;
+		var orderbook = this;
+		var base = orderbook.market.base;
+		var rel = orderbook.market.rel;
+		
 		var params = 
 		{
 			'plugin':"InstantDEX",
 			'method':"orderbook", 
-			'baseid':this.baseAsset.assetID, 
-			'relid':this.relAsset.assetID,
-			//'base':this.baseAsset.name, 
-			//'rel':this.relAsset.name,
+			//'baseid':this.baseAsset.assetID, 
+			//'relid':this.relAsset.assetID,
 			'allfields':1,
 			//'maxdepth':30,
-			//'exchange':'nxtae',
+			'exchange':'active',
+			'tradeable':0
 		};
+		
+		if (orderbook.market.isNxtAE)
+		{
+			params.baseid = base.assetID;
+			params.relid = "5527630";
+			params.exchange = "nxtae";
+		}
+		else
+		{
+			params.base = base.name;
+			params.rel = rel.name;
+		}
+		
+		/*var func = function(coin, isBase) 
+		{	
+			var key = isBase ? "base" : "rel";
+			var val = coin.name;
+			if (coin.isAsset)
+			{
+				key = isBase ? "base" : "rel";
+				val = coin.name;
+			}
+			
+			return {"key":key, "val":val};
+		};
+
+		var basePost = func(orderbook.base, true);
+		var relPost = func(orderbook.rel, false);
+		
+		params[basePost.key] = basePost.val;
+		params[relPost.key] = relPost.val;*/
+
+		
 		
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
@@ -78,7 +113,9 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.sendPost(params, false).done(function(orderbookData)
 		{
 			console.log(orderbookData);
-			thisScope.isWaitingForOrderbook = false;
+			//console.log(JSON.stringify(orderbookData.bids));
+
+			orderbook.isWaitingForOrderbook = false;
 			retDFD.resolve(orderbookData);
 		}).fail(function(data)
 		{

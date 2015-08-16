@@ -5,95 +5,216 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	var $popup = $("#marketSearch_popup");
 
+
+	IDEX.allWatchlists = [];
+
 	
 	IDEX.User.prototype.initFavorites = function()
 	{
+		var user = this;
 		var chartFavs = [];
 				
-		if (localStorage.marketFavorites)
+		if (localStorage.watchlist)
 		{
-			chartFavs = JSON.parse(localStorage.getItem('marketFavorites'));
+			chartFavs = JSON.parse(localStorage.getItem('watchlist'));
 		}
 		
 		for (var i = 0; i < chartFavs.length; i++)
 		{
 			var fav = chartFavs[i];
-			//addFavoriteRow(fav, $(".watchlist-table-wrap"))
 		}
 
-		this.favorites = chartFavs;
+		user.favorites = chartFavs;
 	}
 	
-	IDEX.initFavorites = function($wrap)
+	
+	
+	IDEX.Watchlist = function(obj) 
+	{	
+
+	};
+	
+	
+	
+	IDEX.newWatchlist = function($el)
 	{
+		var watchlist = IDEX.getObjectByElement($el, IDEX.allWatchlists, "watchlistDom");
+
+		if (!watchlist)
+		{
+			watchlist = new IDEX.Watchlist();
+			watchlist.watchlistDom = $el;
+			watchlist.watchlistAddDom = $el.find(".watchlist-add");
+			watchlist.watchlistTableDom = $el.find(".nTable");
+			watchlist.watchlistAddDom.on("click", function() { watchlist.toggleAddPopup(); } );
+			watchlist.watchlistTableDom.on("click", "tbody tr", function(e) { watchlist.onRowClick(e, $(this)); } );
+			//watchlist.watchlistTableDom.on("mouseover", "tbody tr", function(e) { watchlist.onRowMouseover(e, $(this)); } );
+
+			
+			IDEX.allWatchlists.push(watchlist)
+			
+			watchlist.initWatchlist();
+		}
+
+						
+		return watchlist;
+	};
+	
+	
+	
+	IDEX.Watchlist.prototype.toggleAddPopup = function()
+	{		
+		IDEX.togglePopup($popup, true, true);
+	}
+	
+	
+	
+	IDEX.Watchlist.prototype.initWatchlist = function($wrap)
+	{
+		var watchlist = this;
 		var chartFavs = IDEX.user.favorites;
 
 		for (var i = 0; i < chartFavs.length; i++)
 		{
 			var fav = chartFavs[i];
-			addFavoriteRow(fav, $wrap)
+			watchlist.addRow(fav)
 		}
 	}
 	
 	
-	$contentWrap.on("click", ".watchlist-add", function(e)
-	{		
-		var isActive = $popup.hasClass("active");
+
+	IDEX.Watchlist.prototype.addRow = function(fav)
+	{
+		var watchlist = this;
+		var $table = watchlist.watchlistTableDom;
+
+		var keys = ["market", "baseName", "relName"]
+		var obj = {}
+		obj.market = fav.base.name + "_" + fav.rel.name;
+		obj.baseName = fav.base.name;
+		obj.relName = fav.rel.name;
 		
-		if (!isActive)
+		row = IDEX.buildTableRows(IDEX.objToList([obj], keys), "table");
+		row = $(row).get()[0]
+
+		//$row.find("td:last").after("<td class='deleteMarketFavorite'>DELETE</td>");
+		//row = IDEX.addElDataAttr(row, [obj], ["baseID", "relID"]);
+
+		var $row = $(row);
+		$row.data("market", fav);
+		
+		$table.find("tbody").append($row)
+	}
+	
+	
+	
+	IDEX.updateWatchlistTable = function()
+	{
+		var allWatchlists = IDEX.allWatchlists;
+		
+		for (var i = 0; i < allWatchlists.length; i++)
 		{
-			$popup.addClass("active")
-			//clearAssetInput();
+			var watchlist = allWatchlists[i];
+			watchlist.watchlistTableDom.find("tbody").empty();
+			watchlist.initWatchlist();
+		}
+	}
+	
+	
+	
+	IDEX.Watchlist.prototype.onRowClick = function(e, $row)
+	{
+		var watchlist = this;
+		var market = $row.data("market");
+
+		var $grid = watchlist.watchlistDom.closest(".grid");
+		var grid = $grid.sleuthgrids();		
+		var $cell = watchlist.watchlistDom.closest(".cell");
+		var cell = grid.getCell($cell);
+		
+		console.log(cell);
+		
+		cell.setLinkedCells(market);
+	}
+	
+	
+	
+	IDEX.Watchlist.prototype.onRowMouseover = function(e, $row)
+	{
+		var watchlist = this;
+		var $target = $(e.target)
+		var has = $target.hasClass("deleteMarketFavorite")
+
+ 		if (!has)
+		{
+			$row.addClass("allFavs-hover")
+			//e.stopPropagation()
 		}
 		else
 		{
-			$popup.removeClass("active")
-		}	
-	})
+			$row.removeClass("allFavs-hover")
+		}
+	}
+	
+	
+	
+	IDEX.Watchlist.prototype.onRowMouseleave = function(e, $row)
+	{
+		$row.removeClass("allFavs-hover")
+	}
+
+	
+	
 	
 	
 	$(".marketSearch-add-trig").on("click", function()
 	{
 		var $wrap = $(this).closest(".popup");
 		
+		var $activeTab = $wrap.find(".tab-wrap.active");
+		var searchType = $activeTab.attr("data-searchtype");
+		
 		var $form = $(".marketSearch-popup-form");
-		var $base = $form.find("input[name=baseid]");
-		var $rel = $form.find("input[name=relid]");
-		var baseid = $base.attr("data-asset");
-		var relid = $rel.attr("data-asset");
+;
 		
 		var $banner = $wrap.find(".banner");
 		$banner.removeClass("error")
 		$banner.removeClass("success")
 		$banner.addClass("active");
 		
-		//console.log([baseid, relid])
 
-		if (baseid != "-1" && relid != "-1")
+		
+		if (searchType == "market")
 		{
-			var base = IDEX.nxtae.assets.getAsset("assetID", baseid);	
-			var rel = IDEX.nxtae.assets.getAsset("assetID", relid);
-			
-			var retbool = IDEX.user.addFavorite(baseid, relid);
+			var $market = $form.find("input[name=market]");
+			var market = $market.data("market");
+			console.log(market);
+			$banner.removeClass("active");
 
-			if (retbool)
+			if (market != "-1")
 			{
-				$banner.addClass("success")
-				$banner.find("span").text("Success: " + base.name + "_" + rel.name + " added to watchlist.")
-				clearAssetInput($wrap);
+				var retbool = IDEX.user.addFavorite(market);
+
+				if (retbool)
+				{
+					IDEX.updateWatchlistTable();
+					$banner.addClass("success")
+					$banner.find("span").text("Success: " + market.marketName + " added to watchlist.")
+					clearAssetInput($wrap);
+				}
+				else
+				{
+					$banner.addClass("error")
+					$banner.find("span").text("Error: This market is already in your watchlist.")
+				}
 			}
 			else
 			{
 				$banner.addClass("error")
-				$banner.find("span").text("Error: This market is already in your watchlist.")
+				$banner.find("span").text("Error: You must choose a valid market")
 			}
+		}
 
-		}
-		else
-		{
-			$banner.addClass("error")
-			$banner.find("span").text("Error: You must choose two valid assets")
-		}
 	})
 	
 	
@@ -103,38 +224,34 @@ var IDEX = (function(IDEX, $, undefined)
 		$wrap.find("input").each(function()
 		{
 			$(this).val("")
-			$(this).attr("data-asset", "-1")
+			$(this).data("market", "-1")
 		})
 	}
 	
 	
 	
-	IDEX.User.prototype.addFavorite = function(baseID, relID)
+	IDEX.User.prototype.addFavorite = function(market)
 	{
+		var user = this;
 		var retbool = false;
-		var base = IDEX.nxtae.assets.getAsset("assetID", baseID);	
-		var rel = IDEX.nxtae.assets.getAsset("assetID", relID);
+		var base = market.base;
+		var rel = market.rel;
+
+		var index = user.getFavoriteIndex(base, rel);
 		
-		if (!($.isEmptyObject(base)) && !($.isEmptyObject(rel)))
+		if (index == -1)
 		{
-			var index = this.getFavoriteIndex(baseID, relID)
-			
-			if (index == -1)
-			{
-				var fav = {"baseID":baseID, "relID":relID, "baseName":base.name, "relName":rel.name}
-				this.favorites.push(fav)
-				addFavoriteRow(fav, $(".watchlist-table-wrap"))
-				localStorage.setItem('marketFavorites', JSON.stringify(this.favorites));
-				retbool = true;
-			}
-		}	
+			user.favorites.push(market);
+			localStorage.setItem('watchlist', JSON.stringify(user.favorites));
+			retbool = true;
+		}
 
 		return retbool
 	}
 	
 	
 	
-	IDEX.User.prototype.getFavoriteIndex = function(baseID, relID)
+	IDEX.User.prototype.getFavoriteIndex = function(base, rel)
 	{
 		var index = -1;
 
@@ -142,7 +259,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var fav = this.favorites[i];
 			
-			if (fav.baseID == baseID && fav.relID == relID)
+			if (fav.base.name == base.name && fav.rel.name == rel.name)
 			{
 				index = i;
 				break;
@@ -152,46 +269,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return index;
 	}
 	
-	
-	
-	function addFavoriteRow(fav, $wrap)
-	{
-		var $table = $wrap.find(".nTable");
 
-		var keys = ["market", "baseID", "relID"]
-		var obj = {}
-		obj.market = fav.baseName + "_" + fav.relName;
-		obj.baseID = fav.baseID;
-		obj.relID = fav.relID;
-		
-		row = IDEX.buildTableRows(IDEX.objToList([obj], keys), "table");
-		var $row = $(row)
-		//$row.find("td:last").after("<td class='deleteMarketFavorite'>DELETE</td>");
-		row = $row.get()[0]
-
-		row = IDEX.addElDataAttr(row, [obj], ["baseID", "relID"]);
-
-		$table.find("tbody").append($(row))
-	}
-	
-	
-	
-	$(".cm-favs-popup-nav-row").on("mouseup", function()
-	{
-		if (!($(this).hasClass("active")))
-		{
-			$(this).parent().find(".cm-favs-popup-nav-row").removeClass("active");
-			$(this).addClass("active");
-
-			var tab = $(this).attr('data-tab');
-			var $parent = $(".cm-favs-popup-body")
-			var $banner = $parent.find(".cm-favs-popup-banner");
-			$banner.removeClass("active");
-
-			$parent.find(".cm-favs-popup-tabWrap").removeClass("active");
-			$parent.find(".cm-favs-popup-tabWrap[data-tab='"+tab+"']").addClass("active");
-		}
-	})
 	
 	
 	
@@ -207,50 +285,8 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
-	$("#marketFavorites").on("mouseover", "tbody tr", function(e)
-	{
-		var $target = $(e.target)
-		var has = $target.hasClass("deleteMarketFavorite")
 
-		if (!has)
-		{
-			$(this).addClass("allFavs-hover")
-			//e.stopPropagation()
-		}
-		else
-		{
-			$(this).removeClass("allFavs-hover")
-		}
-	})
 	
-	
-	$("#marketFavorites").on("mouseleave", "tbody tr", function(e)
-	{
-		$(this).removeClass("allFavs-hover")
-	})
-	
-	
-	$("#marketFavorites").on("click", "tbody tr", function(e)
-	{
-		var $target = $(e.target)
-		var has = $target.hasClass("deleteMarketFavorite")
-		
-		var baseID = $(this).attr("data-baseID")
-		var relID = $(this).attr("data-relID")
-
-			
-		if (!has)
-		{
-			IDEX.changeMarket(baseID, relID);
-			$("#cm_favs_trig img").trigger("click");
-		}
-		else
-		{
-			IDEX.user.removeFavorite(baseID, relID);
-			$(this).remove();
-		}
-	})
 	
 	
 	

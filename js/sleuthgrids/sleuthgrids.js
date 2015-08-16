@@ -67,6 +67,35 @@ Sleuthgrids = (function(Sleuthgrids)
 	};
 	
 	
+	
+	$.fn.sleuthgrids = function() 
+	{
+		var args = arguments;
+		var ret = false;
+		var allGrids = Sleuthgrids.allGrids;
+		var len = allGrids.length;
+		var $grid = $(this);
+		
+		if (this[0]) 
+		{
+			for (var i = 0; i < len; i++)
+			{
+				var grid = allGrids[i];
+				
+				if (grid.gridDOM.is($grid))
+				{
+					ret = grid;
+					break;
+				}
+			}
+		}
+		
+		return ret;
+	};
+	
+	
+	
+	
 	Sleuthgrids.toggleTileAdd = function(show)
 	{
 		if (show)
@@ -338,6 +367,37 @@ Sleuthgrids = (function(Sleuthgrids)
 				grid.mouseup($(this));
 			})
 			
+		},
+		
+		
+		
+		getCell: function($cell)
+		{
+			var grid = this;
+			var tiles = this.tiles;
+			var ret = false;
+			
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				var cells = tile.cells;
+				
+				for (var j = 0; j < cells.length; j++)
+				{
+					var cell = cells[j];
+			
+					if (cell.cellDOM.is($cell))
+					{
+						ret = cell;
+						break;
+					}
+				}
+				
+				if (ret)
+					break;
+			}
+			
+			return ret;
 		},
 		
 		

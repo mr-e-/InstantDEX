@@ -172,6 +172,34 @@ input:focused {
     transition: all .4s ease;
 }
 
+/* ------------------------- TABS ------------------------- */
+
+.tab-wrap {
+	display:none !important;
+}
+
+.tab-wrap.active {
+	display:block !important;
+}
+
+.tab-nav {
+	height:18px;
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.tab-nav-cell {
+	height:100%;
+	width:100px;
+	position:relative;
+	float:left;
+	padding-top:4px;
+}
+
+.tab-nav-cell span:hover{
+	cursor:pointer;
+}
 
 /* ------------------------- BUTTONS ------------------------- */
 
@@ -466,14 +494,6 @@ input:focused {
 .tab-content-wrap {
 	height:100%;
 	position:relative;
-}
-
-.tab-wrap {
-	display:none !important;
-}
-
-.tab-wrap.active {
-	display:block !important;
 }
 
 
@@ -2350,6 +2370,12 @@ table.dataTable thead th:last-child {
 	position:relative;
 	display:block;
 	background:black;
+}
+
+.watchlist-table-wrap table tbody tr:hover {
+	cursor:pointer;
+	color:black;
+	background-color: #329ddc;
 }
 
 .watchlist-table-wrap tr:nth-child(even) {
