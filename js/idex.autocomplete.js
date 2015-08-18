@@ -6,6 +6,7 @@ var IDEX = (function(IDEX, $, undefined)
 	var autoSearchName = [];
 	var autoSearchMarket = [];
 	var autoSearchSkynet = [];
+	var autoSearchExchanges = [];
 	IDEX.autoSearchSkynet = autoSearchSkynet;
 	
 	
@@ -17,6 +18,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function initAssetAutocomplete()
 	{
+		var allExchanges = IDEX.exchangeList.slice();
+		allExchanges.push("InstantDEX");
+		
 		var allCoins = IDEX.allCoins;
 		var len = allCoins.length;
 
@@ -44,6 +48,15 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 			autoSearchMarket.push({"label":labelStr, "value":market.marketName, "vals":market});
+		}
+		
+		for (var i = 0; i < allExchanges.length; i++)
+		{
+			var exchange = allExchanges[i];
+			
+			var labelStr = exchange;
+			
+			autoSearchExchanges.push({"label":labelStr, "value":exchange, "vals":exchange});
 		}
 	}
 	
@@ -194,6 +207,68 @@ var IDEX = (function(IDEX, $, undefined)
 			$thisScope.data('market', market);
 		}
 	}
+	
+	
+	
+
+	$('.exchange-search').autocomplete(
+	{
+		delay: 0,
+		minLength: 0,
+		html: true,
+		create: function(e, ui) { },
+		open: function(e, ui) { $(this).autocomplete('widget').css({'width':"170px"})},
+		source: function(request,response) { exchangeMatcher(request, response, autoSearchExchanges) },
+		change: function(e, ui) { exchangeSelection($(this), e, ui) },
+		select: function(e, ui) { exchangeSelection($(this), e, ui) },
+		//focus: function(e, ui) { exchangeFocus($(this), e, ui) },
+
+	});
+	
+	$(".exchange-search").on("focus", function()
+	{
+		var val = $(this).val();		
+		$(this).autocomplete( "search", val);
+	})
+	
+	
+	function exchangeMatcher(request, response, auto)
+	{
+		var matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( request.term ), 'i' );
+		
+		var a = $.grep(auto, function( item )
+		{
+			var exchange = item.vals;
+			
+			var ret = matcher.test(exchange);
+
+			return ret;
+		});
+		
+
+		a.sort();
+		response(a);
+	}
+	
+	
+	
+	function exchangeSelection($thisScope, e, ui)
+	{
+		
+		if (!ui.item)
+		{
+			//$thisScope.autocomplete( "search", "" );
+			//$thisScope.attr('data-asset', "-1");
+		}
+		else
+		{
+			var exchange = ui.item.vals;
+			
+			
+			$thisScope.val(exchange);
+		}
+	}
+	
 	
 	
 	

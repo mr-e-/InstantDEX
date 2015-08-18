@@ -133,7 +133,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.changeChartMarket = function(obj)
 	{
-		var $node = obj.node.closest(".cell").find(".chart-wrap svg");
+		var $cell = obj.node.closest(".cell");
+		var $node = $cell.find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
 		var marketHandler = chart.marketHandler;
 		
@@ -145,7 +146,28 @@ var IDEX = (function(IDEX, $, undefined)
 		newMarket.exchange = obj.exchange;
 		
 		marketHandler.changeMarket(newMarket);
+		IDEX.changeChartMarketDOM(marketHandler.marketSettings, $cell);
 		chart.updateChart();
+	}
+	
+	IDEX.changeChartMarketDOM = function(marketSettings, $cell)
+	{
+		var $header = $cell.find(".chart-header");
+		var barType = marketSettings.barType;
+		var barLen = marketSettings.barWidth;
+		
+		$header.find(".chart-time-dropdown-wrap ul").removeClass("active");
+		var $activeList = $header.find(".chart-time-dropdown-wrap ul[data-inttype='"+barType+"']");
+		$activeList.addClass("active");
+		
+		$activeList.find("li").removeClass("active");
+		var $activeListCell = $activeList.find("li[data-val='"+barLen+"']");
+		$activeListCell.addClass("active");
+		
+		var title = $activeListCell.text();
+		$header.find(".chart-time-wrap .chart-time-button-title span").text(title);
+		
+		$header.find(".chart-search-input input").val(marketSettings.pairName);
 	}
 	
 

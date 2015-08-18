@@ -1652,6 +1652,7 @@ table.dataTable thead th:last-child {
 	position:relative;
 	display:block;
 	background-color:black;
+	overflow:hidden;
 }
 
 .chart-marketInfo {

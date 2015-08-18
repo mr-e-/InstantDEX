@@ -66,6 +66,9 @@ var IDEX = (function(IDEX, $, undefined)
 		$tradesequencePopup.find(".conf-amount").val(order.volume);
 		$tradesequencePopup.find(".conf-price").val(order.price);
 		$tradesequencePopup.find(".conf-total").val(order.total);
+		$tradesequencePopup.find(".refcur-rel").text(relName);
+		$tradesequencePopup.find(".refcur-base").text(baseName);
+
 		
 		$tradesequenceTable.find("tbody").empty();
 		buildTradesequenceTable(order);

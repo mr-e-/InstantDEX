@@ -337,14 +337,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellIndex = cell.index;
 			
 			var isLinked = linkIndex != -1;
-			
-			
 			var linkedCells = cell.getLinkedCells();
 			
-			
-			
-			console.log(linkedCells);
-			
+						
 			for (var i = 0; i < linkedCells.length; i++)
 			{
 				var linkedCell = linkedCells[i];

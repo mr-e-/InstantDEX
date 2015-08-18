@@ -374,13 +374,17 @@ var IDEX = (function(IDEX, $, undefined)
 			{				
 				var label = visMap[i]
 
-				if (order.exchange == label.exchange)
+				for (var j = 0; j < order.trades.length; j++)
 				{
-					$(this).addClass("label-" + label.name)
-				}
-				else if ("NXT" in order && label.nxtrs == IDEX.toRS(order.NXT))
-				{
-					$(this).addClass("label-" + label.name)
+					var trade = order.trades[j];
+					if (trade.exchange == label.exchange)
+					{
+						$(this).addClass("label-" + label.name)
+					}
+					/*else if ("NXT" in order && label.nxtrs == IDEX.toRS(order.NXT))
+					{
+						$(this).addClass("label-" + label.name)
+					}*/
 				}
 			}
 		})

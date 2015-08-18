@@ -132,7 +132,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var $cell = watchlist.watchlistDom.closest(".cell");
 		var cell = grid.getCell($cell);
 		
-		console.log(cell);
+		//console.log(cell);
 		
 		cell.setLinkedCells(market);
 	}
