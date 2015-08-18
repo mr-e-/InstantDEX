@@ -129,6 +129,29 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
+		changeCellLinkDOM: function()
+		{
+			var tileNavCell = this;
+			var cellIndex = tileNavCell.index;
+			var linkIndex = tileNavCell.linkIndex;
+			var tile = tileNavCell.tile;
+			var cell = tile.cells[cellIndex];
+			var grid = tile.grid;
+
+			
+			var $navLinkWrap = tileNavCell.navLinkDOM;
+			var $title = $navLinkWrap.find(".tile-header-link-title span");
+			var $activeLink = $navLinkWrap.find("li[data-val='"+String(linkIndex)+"']");
+			var title = $activeLink.text();
+			
+			$navLinkWrap.find("li").removeClass("active");
+			$activeLink.addClass("active");
+			$title.text(title);
+			
+		},
+		
+		
 
 		
 		

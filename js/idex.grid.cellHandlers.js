@@ -74,7 +74,27 @@ var IDEX = (function(IDEX, $, undefined)
 		chartSettings.node = $svgEl;
 		$.extend(chartSettings, settings);
 		
-		IDEX.makeChart(chartSettings)
+		IDEX.makeChart(chartSettings);
+		
+		//console.log(settings);
+		var $header = $cell.find(".chart-header");
+		var barType = settings.marketSettings.barType;
+		var barLen = settings.marketSettings.barWidth;
+		
+		$header.find(".chart-time-dropdown-wrap ul").removeClass("active");
+		var $activeList = $header.find(".chart-time-dropdown-wrap ul[data-inttype='"+barType+"']");
+		$activeList.addClass("active");
+		
+		$activeList.find("li").removeClass("active");
+		var $activeListCell = $activeList.find("li[data-val='"+barLen+"']");
+		$activeListCell.addClass("active");
+		
+		var title = $activeListCell.text();
+		$header.find(".chart-time-wrap .chart-time-button-title span").text(title);
+		
+		$header.find(".chart-search-input input").val(settings.marketSettings.pairName);
+		
+		
 	}
 	
 	

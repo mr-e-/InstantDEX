@@ -83,6 +83,7 @@ var IDEX = (function(IDEX, $, undefined)
 			getExternalExchangeMarkets().done(function(parsedMarkets)
 			{				
 				var marketsByExchange = parsedMarkets.exchanges;
+				console.log(marketsByExchange);
 				var nxtaeMarkets = getNxtAEMarkets();
 				marketsByExchange.nxtae = nxtaeMarkets;
 				
@@ -207,7 +208,6 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise();
 
 	}
-
 
 	
 	

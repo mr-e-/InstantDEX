@@ -1091,7 +1091,7 @@ table.dataTable thead th:last-child {
 	margin-right:30px;
 }
 
-.tile-header-tab.active {
+.tile-header .tile-header-tab.active {
 	z-index:4;
 }
 
@@ -1220,7 +1220,7 @@ table.dataTable thead th:last-child {
 	background-color: rgba(50, 157, 220, 0.8);
 	border:1px solid black;
 	display:none;
-	z-index:1;
+	z-index:104;
 }
 
 .preview-tile.active {

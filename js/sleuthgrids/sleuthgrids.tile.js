@@ -200,7 +200,10 @@ Sleuthgrids = (function(Sleuthgrids)
 					tile.toggleHeaderTabbed(true);
 				}
 
+				tileNavCell.linkIndex = cellSave.linkIndex;
+				cell.linkIndex = cellSave.linkIndex;
 				
+				tileNavCell.changeCellLinkDOM();
 				tileNavCell.changeCellTabs();
 
 				cell.loadCellFromSettings(cellSave.cellTypeSettings);

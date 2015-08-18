@@ -916,11 +916,11 @@ Sleuthgrids = (function(Sleuthgrids)
 				if (withPreview)
 				{
 					var previewDirection = Sleuthgrids.invertDirection(direction);
-					var isDirection = tilePositions[direction] == previewTilePositions[previewDirection];
+					var isDirection = Math.abs(tilePositions[direction] - previewTilePositions[previewDirection]) <= 1;
 				}
 				else
 				{
-					var isDirection = tilePositions[direction] == gridPos;
+					var isDirection = Math.abs(tilePositions[direction] - gridPos) <= 1;
 				}
 
 				if (isDirection)
