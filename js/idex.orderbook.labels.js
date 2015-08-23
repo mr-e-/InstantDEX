@@ -161,8 +161,10 @@ var IDEX = (function(IDEX, $, undefined)
 			var newRow = IDEX.buildLabelRow(name)
 						
 			$table.append($(newRow))
+			var listVisDOM = "<div class='orderbook-label-dropdown-vis'><img src='img/eye.png'></div>";
+			var listTextDOM = "<div class='orderbook-label-dropdown-name'><span class=''>" + name + "</span></div>";
+			var li = "<li class='label-"+name+"' data-val='"+name+"'>" + listTextDOM + listVisDOM +"</li>";
 			
-			var li = "<li class='" + "label-" + name + "' data-val='"+name+"'>"+name+"</li>"
 			$contentWrap.find(".orderbook-label-dropdown ul").append($(li))
 			
 			var newLabel = new IDEX.OrderbookLabel({"name":name});
@@ -282,14 +284,14 @@ var IDEX = (function(IDEX, $, undefined)
 	
 		
 	
-	$contentWrap.on("click", ".orderbook-label-dropdown li", function()
+	$contentWrap.on("click", ".orderbook-label-dropdown li .orderbook-label-dropdown-vis img", function()
 	{
-		IDEX.flipClass($(this), "active");
+		IDEX.flipClass($(this).parent(), "active");
 
 		var $orderbook = $(this).closest(".orderbook-wrap");
 		var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
 		
-		var name = $(this).attr("data-val");
+		var name = $(this).closest("li").attr("data-val");
 				
 		if (orderbook)
 		{

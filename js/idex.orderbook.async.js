@@ -64,11 +64,8 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			'plugin':"InstantDEX",
 			'method':"orderbook", 
-			//'baseid':this.baseAsset.assetID, 
-			//'relid':this.relAsset.assetID,
 			'allfields':1,
-			//'maxdepth':30,
-			'exchange':'active',
+			'exchange':orderbook.exchange,
 			'tradeable':0
 		};
 		
@@ -76,13 +73,35 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			params.baseid = base.assetID;
 			params.relid = "5527630";
-			params.exchange = "nxtae";
+			//params.exchange = "nxtae";
+			//params.base = base.name;
+			//params.rel = rel.name;
 		}
 		else
 		{
-			params.base = base.name;
-			params.rel = rel.name;
+			var fiat = ["USD", "CAD", "GBP", "CNY", "RUR", "EUR"]
+			var isRelFiat = false;
+			for (var i = 0; i < fiat.length; i++)
+			{
+				if (rel.name == fiat[i])
+				{
+					isRelFiat = true
+					break;
+				}
+			}
+			if (base.name == "BTC" && !isRelFiat)
+			{
+				params.base = rel.name;
+				params.rel = base.name;
+			}
+			else
+			{
+				params.base = base.name;
+				params.rel = rel.name;
+			}
 		}
+		
+
 		
 		/*var func = function(coin, isBase) 
 		{	

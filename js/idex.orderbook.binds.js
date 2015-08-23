@@ -186,6 +186,69 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
+	IDEX.Orderbook.prototype.updateExchangesDom = function()
+	{
+		var orderbook = this;
+		var market = orderbook.market;		
+		var marketExchanges = market.exchanges;
+		
+		var $exchangeDropdownDOM = orderbook.orderbookDom.find(".orderbook-exchange-dropdown");
+		var $exchangeDropdownListDOM = $exchangeDropdownDOM.find("ul");
+		var $exchangeDropdownTitleDOM = $exchangeDropdownDOM.find(".orderbook-exchange-dropdown-title");
+		$exchangeDropdownListDOM.empty();
+		
+		var listItems = [];
+		
+
+		listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>")
+			
+		for (var i = 0; i < marketExchanges.length; i++)
+		{
+			var exchangeName = marketExchanges[i];
+			
+			var li = "<li data-val='"+exchangeName+"'>"+exchangeName+"</li>"
+			listItems.push(li);
+		}
+		
+		for (var i = 0; i < listItems.length; i++)
+		{
+			var $li = $(listItems[i]);
+			$exchangeDropdownListDOM.append($li)
+		}
+		
+		$exchangeDropdownTitleDOM.text("All Exchanges");
+		orderbook.exchange = "active";
+	}
+
+	
+	
+	$contentWrap.on("click", ".orderbook-exchange-dropdown li", function()
+	{
+		var $orderbook = $(this).closest(".orderbook-wrap");
+		var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
+		
+		var exchangeName = $(this).attr("data-val");
+
+				
+		if (orderbook)
+		{
+			orderbook.emptyOrderbook("Loading...");
+			if (!orderbook.isStoppingOrderbook)
+			{
+				orderbook.stopPollingOrderbook(function()
+				{
+					orderbook.exchange = exchangeName;
+
+					orderbook.currentOrderbook = new IDEX.OrderbookVar();
+
+					orderbook.orderbookDom.find(".empty-orderbook").hide();
+					orderbook.orderbookHandler(1);
+				});
+			}
+		}
+	
+	})
+	
 	
 	
 	return IDEX;

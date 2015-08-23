@@ -52,6 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 		this.groupedAsks = {};
 		
 		this.labels = [];
+		this.exchange = "active";
 		
 		this.orderbox;
 
@@ -107,10 +108,14 @@ var IDEX = (function(IDEX, $, undefined)
 			var label = IDEX.user.labels[i];
 			var name = label.name;
 			
-			var li = "<li class='" + "label-" + name + "' data-val='"+name+"'>"+name+"</li>"
-			orderbook.orderbookDom.find(".orderbook-label-dropdown ul").append($(li))
+			var listVisDOM = "<div class='orderbook-label-dropdown-vis'><img src='img/eye.png'></div>";
+			var listTextDOM = "<div class='orderbook-label-dropdown-name'><span class=''>" + name + "</span></div>";
+
+			var li = "<li class='label-"+name+"' data-val='"+name+"'>" + listTextDOM + listVisDOM +"</li>";
+			orderbook.orderbookDom.find(".orderbook-label-dropdown ul").append($(li));
 		}
 	}
+
 	
 	IDEX.Orderbook.prototype.updateMarketDom = function()
 	{
@@ -126,19 +131,16 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.Orderbook.prototype.changeMarket = function(market, temp)
+	IDEX.Orderbook.prototype.changeMarket = function(market)
 	{
 		var orderbook = this;
-		
-		if (temp)
-		{
-			
-		}
+
 		orderbook.market = market;
 		orderbook.marketName = orderbook.market.base.name + "/" + orderbook.market.rel.name;
 
 		orderbook.emptyOrderbook("Loading...");
 		orderbook.updateMarketDom();
+		orderbook.updateExchangesDom();
 		
 		orderbook.orderbox.changeMarket(market);
 		

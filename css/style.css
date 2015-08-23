@@ -301,7 +301,7 @@ input:focused {
 	color:#EDB379;
 }
 
-.dropdown-list  li:hover {
+.dropdown-list:not(.no-hover)  li:hover {
 	cursor:pointer;
 	color:black;
 	background-color: #329ddc;
@@ -1880,6 +1880,49 @@ table.dataTable thead th:last-child {
 	float:left;
 	margin-left:10px;
 }
+
+.orderbook-label-dropdown  li:hover {
+
+}
+
+.orderbook-label-dropdown .dropdown-list li {
+	padding:0px;
+	height:20px;
+}
+
+.orderbook-label-dropdown-name {
+	padding-top:4px;
+	padding-left:5px;
+	float:left;
+	position:relative;
+}
+
+.orderbook-label-dropdown-vis {
+	height:16px;
+	width:30px;
+	float:right;
+	position:relative;
+	opacity:0.5;
+	z-index:10;
+	text-align:center;
+	padding-right:5px;
+}
+
+.orderbook-label-dropdown-vis:hover {
+	cursor:pointer;
+	opacity:1;
+}
+
+.orderbook-label-dropdown-vis.active {
+	opacity:1;
+}
+
+.orderbook-label-dropdown-vis  img {
+	float:right;
+	height:18px;
+	width:18px;
+}
+
 
 .orderbook-exchange-dropdown {
 	float:left;

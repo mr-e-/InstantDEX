@@ -355,15 +355,19 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 		var exchange = $(this).closest(".allExchanges-exchange").attr("data-exchange");
+		var tabType = $(this).find("span").text();
 		
-		updateExchangeTab(exchange, $tabWrap);
+		updateExchangeTab(exchange, tabType);
 	})
 	
 	
 	
-	function updateExchangeTab(exchange)
+	function updateExchangeTab(exchange, tabType)
 	{
 		console.log(exchange);
+		console.log(tabType);
+		
+		var params = {}
 	}
 	
 	

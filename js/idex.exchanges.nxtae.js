@@ -338,6 +338,9 @@ var IDEX = (function(IDEX, $, undefined)
 			balancesHandler.balancesLastUpdated = new Date().getTime();
 			
 			balancesHandler.balances = {};
+			balancesHandler.oneTime = false;
+			
+			balancesHandler.asyncDFD = false;
 		},
 		
 		
@@ -396,9 +399,13 @@ var IDEX = (function(IDEX, $, undefined)
 
 			var balances = [];
 			var time = new Date().getTime()
+			
+			//console.log(time - this.balancesLastUpdated);
 
-			if (!forceUpdate && time - this.balancesLastUpdated < 1000 && !($.isEmptyObject(balancesHandler.balances)))
+			if ( (!forceUpdate && time - this.balancesLastUpdated < 1000) || this.oneTime)
 			{
+				this.oneTime = true;
+				//console.log('pass');
 				dfd.resolve()
 			}
 			else

@@ -26,7 +26,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var $targetPopup = $("#"+popupID);
 		
-		//IDEX.togglePopup($targetPopup, true, true);
+		IDEX.togglePopup($targetPopup, true, true);
 	})
 	
 	

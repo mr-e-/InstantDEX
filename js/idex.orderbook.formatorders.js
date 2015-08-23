@@ -177,14 +177,11 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var label = vis[i]
 			
-			if (order.exchange == label.exchange)
+			if (order.trades[0].exchange == label.exchange)
 			{
 				labelClass = "label-" + label.name
 			}
-			else if ("NXT" in order && label.nxtrs == IDEX.toRS(order.NXT))
-			{
-				labelClass = "label-" + label.name
-			}
+
 		}
 		
 		return labelClass

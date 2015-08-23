@@ -64,8 +64,7 @@ var IDEX = (function(IDEX, $, undefined)
 			orderbox.orderboxDom = $el
 			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom, orderbox)
 			orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom, orderbox)
-
-
+			
 
 			IDEX.allOrderboxes.push(orderbox)
 		}
@@ -73,6 +72,51 @@ var IDEX = (function(IDEX, $, undefined)
 		return orderbox;
 	};
 	
+	
+	IDEX.Orderbox.prototype.updateExchangesDom = function()
+	{
+		var orderbox = this;
+		var market = orderbox.market;
+		var marketExchanges = market.exchanges;
+		
+		var $exchangeDropdownDOM = orderbox.orderboxDom.find(".orderbox-exchange-dropdown");
+		var $exchangeDropdownListDOM = $exchangeDropdownDOM.find("ul");
+		var $exchangeDropdownTitleDOM = $exchangeDropdownDOM.find(".orderbox-exchange-title");
+		$exchangeDropdownListDOM.empty();
+		
+		var listItems = [];
+		
+		for (var i = 0; i < marketExchanges.length; i++)
+		{
+			var exchangeName = marketExchanges[i];
+			
+			var $li = $("<li data-val='"+exchangeName+"'>"+exchangeName+"</li>");
+			if (i == 0)
+				$li.addClass("active");
+			listItems.push($li);
+		}
+		
+		var $li = $("<li data-val='InstantDEX'>InstantDEX</li>");
+		listItems.push($li);
+		
+		for (var i = 0; i < listItems.length; i++)
+		{
+			var $li = listItems[i];
+
+			$exchangeDropdownListDOM.append($li)
+		}
+		
+		if (marketExchanges.length)
+		{
+			var title = marketExchanges[0];
+			$exchangeDropdownTitleDOM.text(title);
+			orderbox.buyBox.changeExchange(listItems[0])
+			orderbox.sellBox.changeExchange(listItems[0])
+		}
+			
+
+	}
+
 	
 	
 	IDEX.OrderboxType.prototype.changeExchange = function($li)
@@ -99,7 +143,7 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbox.market = market;
 
 		orderbox.hasMarket = true;
-		
+		orderbox.updateExchangesDom();
 		//orderbox.buyBox.balanceTitleDom.text(orderbox.relAsset.name + ": ");
 		//orderbox.sellBox.balanceTitleDom.text(orderbox.baseAsset.name + ": ");
 
@@ -146,28 +190,42 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbox = orderboxType.orderbox;
 		
 		var exchange = orderboxType.exchange;
-		var baseOrRel = isBuyBox ? orderbox.market.base : orderbox.market.rel;
-		
-		var exchangeHandler = IDEX.allExchanges[exchange];
-		exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-		var balancesHandler = exchangeHandler.balances;
-
+		var baseOrRel = isBuyBox ? orderbox.market.rel : orderbox.market.base;
 		
 		orderboxType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 
-		balancesHandler.updateBalances().done(function()
+		if (exchange == "InstantDEX" || exchange == "nxtae")
 		{
-			var isNxt = baseOrRel.isAsset == false && baseOrRel.name == "NXT";
-			if (isNxt)
-				var bal = parseBalance(balancesHandler.getBalance(false, isNxt));
-			else if ("assetID" in baseOrRel)
-				var bal = parseBalance(balancesHandler.getBalance(baseOrRel.assetID));
-			else
+			var exchangeHandler = IDEX.allExchanges[exchange];
+			exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+
+			var balancesHandler = exchangeHandler.balances;
+
+			balancesHandler.updateBalances().done(function()
+			{
+				var isNxt = baseOrRel.isAsset == false && baseOrRel.name == "NXT";
+				if (isNxt)
+					var bal = parseBalance(balancesHandler.getBalance(false, isNxt));
+				else if ("assetID" in baseOrRel)
+					var bal = parseBalance(balancesHandler.getBalance(baseOrRel.assetID));
+				else
+					var bal = parseBalance({});
+
+				orderboxType.balanceValDom.text(bal.whole + bal.dec);			
+			})
+		}
+		else
+		{
+			var exchangeHandler = IDEX.allExchanges[exchange];
+			var balancesHandler = exchangeHandler.balances;
+			
+			balancesHandler.updateBalances().done(function()
+			{
 				var bal = parseBalance({});
 
-			orderboxType.balanceValDom.text(bal.whole + bal.dec);			
-		})
+				orderboxType.balanceValDom.text(bal.whole + bal.dec);			
+			})
+		}
 	}
 	
 	function parseBalance(balance)
