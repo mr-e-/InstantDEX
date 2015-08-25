@@ -80,18 +80,17 @@
 							<img class="vert-align mainHeader-grid-ico-orderbook" src="img/clipboard.png"></img>
 						</div>
 					</div>
-					<!--<div class="mainHeader-grid-ico-section">
+					<div class="mainHeader-grid-ico-section">
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-orders" data-grid="orders">
 							<img class="vert-align mainHeader-grid-ico-orders" src="img/orders.png"></img>
 						</div>
-					</div>-->
-						<!--<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-marketHistory" data-grid="trades">
+						<<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-marketHistory" data-grid="trades">
 							<img class="vert-align mainHeader-grid-ico-marketHistory" src="img/history.png"></img>
 						</div>
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-balances" data-grid="balances">
 							<img class="vert-align mainHeader-grid-ico-balances" src="img/wallet.png"></img>
 						</div>
-					</div>-->
+					</div>
 					<div class="mainHeader-grid-ico-section">
 						<div class="mainHeader-grid-ico-wrap popup-trig grid-trig-labels" data-grid="labels">
 							<img class="vert-align mainHeader-grid-ico-labels" src="img/paint2.png"></img>
@@ -1466,27 +1465,38 @@
 			
 			<div id="orders_template" class="template grid-trig-template" data-grid="orders">
 			
-				<div class="cm-open-orders-wrap">
-					<!--<div class="cm-open-orders-header">
-						<div class="cm-open-orders-header-title vert-align">
-							<span>OPEN ORDERS</span>
+				<div class="cm-openorders-wrap">
+				
+					<div class="cm-openorders-header">
+						<div class="nSearch-wrap cm-openorders-search-wrap">
+							<div class="nSearch-input vert-align">
+								<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
+								<div class="nSearch-input-img">
+									<div class="nSearch-input-img-inner cm-openorders-search-popup-trig">
+										<img src="img/search.png" class="vert-align-horiz-align"></img>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>-->
-					<div class="cm-open-orders-table-wrap">
-						<table id="marketOpenOrdersTable" class="sortable">
-							<thead>
-								<tr>
-									<th>TYPE</th>
-									<th>PRICE</th>
-									<th>AMOUNT</th>
-									<th>TOTAL</th>
-									<th>EXCHANGE</th>
-									<th>STATUS</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
+					</div>
+					
+					<div class="cm-openorders-content">
+						<div class="cm-openorders-table-wrap">
+							<table id="cm-openorders-table" class="sortable">
+								<thead>
+									<tr>
+										<th>TYPE</th>
+										<th>PRICE</th>
+										<th>AMOUNT</th>
+										<th>TOTAL</th>
+										<th>EXCHANGE</th>
+										<th>STATUS</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
 					</div>
 
 				</div>
@@ -1552,26 +1562,71 @@
 			<div id="balances_template" class="template grid-trig-template" data-grid="balances">
 			
 				<div class="cm-balances-wrap">
-					<!--<div class="cm-open-orders-header">
-						<div class="cm-open-orders-header-title vert-align">
-							<span>OPEN ORDERS</span>
+					<div class="cm-balances-header">
+						<div class="nSearch-wrap cm-balances-search-wrap">
+							<div class="nSearch-input vert-align">
+								<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
+								<div class="nSearch-input-img">
+									<div class="nSearch-input-img-inner cm-balances-search-popup-trig">
+										<img src="img/search.png" class="vert-align-horiz-align"></img>
+									</div>
+								</div>
+							</div>
 						</div>
-					</div>-->
-					<div class="cm-balances-table-wrap">
-						<!--<table id="currentMakretBalances" class="sortable">
-							<thead>
-								<tr>
-									<th>TYPE</th>
-									<th>PRICE</th>
-									<th>AMOUNT</th>
-									<th>TOTAL</th>
-									<th>EXCHANGE</th>
-									<th>STATUS</th>
-								</tr>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>-->
+					</div>
+					
+					<div class="cm-balances-content">
+					
+						<div class="cm-balances-base cm-balances-sing">
+						
+							<div class="cm-balances-sing-header">
+								<div class="cm-balances-sing-title">
+									<span>Base</span>
+								</div>
+							</div>
+							
+							<div class="cm-balances-sing-table-wrap">
+								<table class="cm-balances-sing-table" class="sortable">
+									<thead>
+										<tr>
+											<th>EXCHANGE</th>
+											<th>UNAVAIL.</th>
+											<th>AVAIL.</th>
+											<th>TOTAL</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+						
+						<div class="cm-balances-rel cm-balances-sing">
+						
+							<div class="cm-balances-sing-header">
+								<div class="cm-balances-sing-title">
+									<span>Quote</span>
+								</div>
+							</div>
+							
+							<div class="cm-balances-sing-table-wrap">
+								<table class="cm-balances-sing-table" class="sortable">
+									<thead>
+										<tr>
+											<th>EXCHANGE</th>
+											<th>UNAVAIL.</th>
+											<th>AVAIL.</th>
+											<th>TOTAL</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+					
 					</div>
 
 				</div>
@@ -1653,6 +1708,9 @@
 	<script src="js/idex.exchanges.js" type="text/javascript"></script>
 	<script src="js/idex.exchanges.nxtae.js" type="text/javascript"></script>
 	<script src="js/idex.exchanges.external.js" type="text/javascript"></script>
+
+	<script src="js/idex.cbalances.js" type="text/javascript"></script>
+	<script src="js/idex.copenorders.js" type="text/javascript"></script>
 
 	
 	<script src="js/idex.orderbox.js" type="text/javascript"></script>

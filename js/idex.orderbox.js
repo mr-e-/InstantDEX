@@ -43,8 +43,7 @@ var IDEX = (function(IDEX, $, undefined)
 			that.exchangeDom = that.dom.find(".orderbox-exchange-title");
 			that.formDom = that.dom.find("form");
 			that.buttonDom = that.dom.find(".orderbox-order-button");
-			
-			that.dom.find(".orderbox-exchange-dropdown .dropdown-list li").on("click", function() { that.changeExchange($(this)) } );
+			that.dom.find(".orderbox-exchange-dropdown .dropdown-list").on("click", "li", function() { that.changeExchange($(this)) } );
 			that.dom.find(".orderbox-order-button").on("click", function() { that.placeOrderButtonClick($(this)) });
 
 		}(this, type, $orderboxWrap)
@@ -126,7 +125,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var isBuyBox = orderboxType.type == "buy";
 		var exchange = $li.attr("data-val");
 				
-				
+		console.log(exchange);
 		orderboxType.exchange = exchange;
 
 		if (orderbox.hasMarket)
@@ -190,7 +189,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbox = orderboxType.orderbox;
 		
 		var exchange = orderboxType.exchange;
-		var baseOrRel = isBuyBox ? orderbox.market.rel : orderbox.market.base;
+		var baseOrRel = isBuyBox ? orderbox.market.base : orderbox.market.rel;
 		
 		orderboxType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 

@@ -33,9 +33,29 @@ var IDEX = (function(IDEX, $, undefined)
 			new: newWatchlist,
 			loadCustom: loadCustomWatchlist,
 			save: saveWatchlist,
+		},
+		
+		balances:
+		{
+			new: newBalance,
+			loadCustom: loadCustomBalance,
+			changeMarket: changeBalanceMarket,
+			remove: removeBalance,
+			save: saveBalance,
+		},
+		
+		orders:
+		{
+			new: newOpenOrder,
+			loadCustom: loadCustomOpenOrder,
+			changeMarket: changeOpenOrderMarket,
+			remove: removeOpenOrder,
+			save: saveOpenOrder,
 		}
 	};
 	
+	
+	/********************	CHART	*********************/
 	
 	
 	function newChart(cell)
@@ -211,6 +231,8 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	/********************	ORDERBOOK	*********************/
+
 	
 	function newOrderbook(cell)
 	{
@@ -251,6 +273,10 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.removeOrderbook($orderbook)
 	}
 	
+	
+	
+	/********************	WATCHLIST	*********************/
+
 
 	
 	function newWatchlist(cell)
@@ -277,6 +303,97 @@ var IDEX = (function(IDEX, $, undefined)
 		
 	}
 	
+	
+	/********************	BALANCE	*********************/
+
+	
+	
+	function newBalance(cell)
+	{
+		var $cell = cell.cellDOM;
+		console.log(cell);
+		
+		var $cBalance = $cell.find(".cm-balances-wrap");
+		IDEX.newCBalance($cBalance);
+	}
+	
+	
+	function loadCustomBalance(cell, settings)
+	{
+		console.log(settings);
+		var $cell = cell.cellDOM;
+		console.log(cell);
+
+		var $cBalance = $cell.find(".cm-balances-wrap");
+		IDEX.newCBalance($cBalance);
+	}
+	
+	function changeBalanceMarket(cell, market)
+	{
+		var $cell = cell.cellDOM;
+		var $cBalance = $cell.find(".cm-balances-wrap");
+		var cBalance = IDEX.getObjectByElement($cBalance, IDEX.allCBalances, "cBalanceDom");
+
+		//orderbook.changeMarket(market);
+	}
+	
+	function saveBalance(cell)
+	{
+		
+	}
+	
+	function removeBalance(cell)
+	{
+		
+	}
+	
+
+	
+	/********************	ORDERS	*********************/
+
+	
+	
+	function newOpenOrder(cell)
+	{
+		var $cell = cell.cellDOM;
+		
+		var $cOpenOrder = $cell.find(".cm-openorders-wrap");
+		IDEX.newCOpenOrder($cOpenOrder);
+	}
+	
+	
+	function loadCustomOpenOrder(cell, settings)
+	{
+		var $cell = cell.cellDOM;
+
+		var $cOpenOrder = $cell.find(".cm-openorders-wrap");
+		IDEX.newCOpenOrder($cOpenOrder);
+	}
+	
+	function changeOpenOrderMarket(cell, market)
+	{
+		var $cell = cell.cellDOM;
+		var $cOpenOrder = $cell.find(".cm-openorders-wrap");
+		var cOpenOrder = IDEX.getObjectByElement($cOpenOrder, IDEX.allCOpenOrders, "cOpenOrderDom");
+
+		console.log(cOpenOrder);
+		//orderbook.changeMarket(market);
+	}
+	
+	function saveOpenOrder(cell)
+	{
+		
+	}
+	
+	function removeOpenOrder(cell)
+	{
+		
+	}
+		
+	
+	
+
+
 	
 	
 	IDEX.initGrids = function()

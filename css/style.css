@@ -2455,7 +2455,7 @@ table.dataTable thead th:last-child {
 /* -------------------------  OPEN ORDERS ------------------------- */
 
 
-.cm-open-orders-wrap {
+.cm-openorders-wrap {
 	height:100%;
 	width:100%;
 	position:relative;
@@ -2463,44 +2463,61 @@ table.dataTable thead th:last-child {
 	padding-top:5px;
 }
 
-.cm-open-orders-header {
-	height:30px;
+.cm-openorders-header {
+	height:25px;
 	width:100%;
 	position:relative;
 	display:block;
 }
 
-.cm-open-orders-header-title {
-	font-size:12px;
-	display:inline-block;
+.cm-openorders-search-wrap .nSearch-input input:focus {
+	outline:none;
+	border:1px solid black !important;
+	background-color:#222222;
 }
 
-.cm-open-orders-table-wrap {
-	height:calc(100%);
+.cm-openorders-search-wrap .nSearch-input input:hover {
+	background-color:#222222;
+}
+
+.cm-openorders-search-wrap .nSearch-input-img-inner:hover {
+	border-top:1px solid #555555;
+	background-color:#444444;
+	cursor:pointer;
+}
+
+.cm-openorders-content {
+	height:calc(100% - 25px);
 	width:100%;
 	position:relative;
 	display:block;
-	background:black;
+	background-color:black;
 }
 
-.cm-open-orders-table-wrap table {
+.cm-openorders-table-wrap {
 	width:100%;
-	border-collapse: collapse;
+	position:relative;
+	display:block;
 }
 
-.cm-open-orders-table-wrap table th {
+.cm-openorders-table-wrap table {
+	width:100%;
+	position:relative;
+}
+
+.cm-openorders-table-wrap table th {
 	text-align:left;
 	font-size:11px;
 	height:20px;
 	text-align:center;
 }
 
-.cm-open-orders-table-wrap table td {
+.cm-openorders-table-wrap table td {
 	text-align:left;
 	font-size:11px;
 }
 
-.cm-open-orders-table-wrap table thead {
+.cm-openorders-table-wrap table thead {
 	background:#111111;
 }
 
@@ -2555,24 +2572,70 @@ table.dataTable thead th:last-child {
 }
 
 .cm-balances-header {
-	height:30px;
+	height:25px;
+	width:100%;
+	position:relative;
+	display:block;
+	/*overflow:hidden;*/
+}
+
+.cm-balances-search-wrap .nSearch-input input:focus {
+	outline:none;
+	border:1px solid black !important;
+	background-color:#222222;
+}
+
+.cm-balances-search-wrap .nSearch-input input:hover {
+	background-color:#222222;
+}
+
+.cm-balances-search-wrap .nSearch-input-img-inner:hover {
+	border-top:1px solid #555555;
+	background-color:#444444;
+	cursor:pointer;
+}
+
+.cm-balances-content {
+	height:calc(100% - 25px);
+	width:100%;
+	position:relative;
+	display:block;
+	background-color:black;
+	
+}
+
+.cm-balances-sing {
 	width:100%;
 	position:relative;
 	display:block;
 }
 
-.cm-balances-header-title {
+.cm-balances-sing-header {
+	height:20px;
+	width:100%;
+	position:relative;
+	display:block;
+	background-color:#222222;
+}
+
+.cm-balances-sing-title {
+	height:100%;
+	float:left;
+	position:relative;
 	font-size:12px;
-	display:inline-block;
 }
 
-.cm-balances-table-wrap {
-	height:calc(100%);
+.cm-balances-sing-table-wrap {
 	width:100%;
 	position:relative;
 	display:block;
-	background:black;
 }
+
+.cm-balances-sing-table-wrap table {
+	width:100%;
+	position:relative;
+}
+
 
 
 
