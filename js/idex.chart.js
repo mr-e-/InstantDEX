@@ -422,7 +422,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	$contentWrap.on("click", ".chart-tools-crosshair img", function()
+	/*$contentWrap.on("click", ".chart-tools-crosshair img", function()
 	{
 		var $popup = $(".shareChartPopup");
 		IDEX.togglePopup($popup, true, true);
@@ -441,7 +441,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.sleuthPost(dataPost);
 		$.growl.notice({'message':"Chart opened in Cryptosleuth", 'location':"tl"});
 
-	})
+	})*/
 	
 	
 	

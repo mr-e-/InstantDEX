@@ -2,13 +2,13 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var nxtURL = "http://127.0.0.1:7876/nxt";
+	var nxtURL = "http://127.0.0.1:7777/nxt";
 	var snURL = "http://127.0.0.1:7777/InstantDEX";
-	var strURL = "http://127.0.0.1:7777/stringified"
+	var strURL = "http://127.0.0.1:7777/stringified";
 	var sleuthURL = "http://127.0.0.1:9728";
 	
-	var lastTime = new Date().getTime()
-	var q = []
+	var lastTime = new Date().getTime();
+	var q = [];
 
 	
 	IDEX.sleuthPost = function(params)
