@@ -36,13 +36,16 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.newWatchlist = function($el)
+	IDEX.newWatchlist = function($el, cellHandler)
 	{
 		var watchlist = IDEX.getObjectByElement($el, IDEX.allWatchlists, "watchlistDom");
 
 		if (!watchlist)
 		{
 			watchlist = new IDEX.Watchlist();
+			watchlist.cellHandler = cellHandler;
+
+			
 			watchlist.watchlistDom = $el;
 			watchlist.watchlistAddDom = $el.find(".watchlist-add");
 			watchlist.watchlistTableDom = $el.find(".nTable");
@@ -79,6 +82,82 @@ var IDEX = (function(IDEX, $, undefined)
 			var fav = chartFavs[i];
 			watchlist.addRow(fav)
 		}
+		
+		watchlist.updateTicker();
+	}
+	
+	IDEX.Watchlist.prototype.orderbookLoop = function(fav, index)
+	{
+		var watchlist = this;
+		
+		var params = 
+		{
+			'plugin':"InstantDEX",
+			'method':"orderbook", 
+			'allfields':1,
+			'exchange':"nxtae",
+			'tradeable':0,
+			'baseid':fav.base.assetID,
+			'relid':"5527630"
+		};
+		
+		IDEX.sendPost(params, false).done(function(data)
+		{
+			//console.log(data);
+			
+			var $row = watchlist.watchlistTableDom.find("tbody tr").eq(index);
+			$row.find("td").eq(1).text(String(data.lastbid));
+			$row.find("td").eq(2).text(String(data.lastask));
+
+		})
+	}
+	
+	
+	IDEX.Watchlist.prototype.updateTicker = function()
+	{
+		var watchlist = this;
+		var favs = IDEX.user.favorites;
+
+		for (var i = 0; i < favs.length; i++)
+		{
+			var fav = favs[i];
+			
+			if (fav.isNxtAE)
+			{
+				watchlist.orderbookLoop(fav, i);
+
+			}
+		}
+		
+
+		return;
+		
+		var params = {}
+		params.key = "beta_test";
+
+		var format = {};
+		format.rnum = 100;
+
+		var query = {};
+		query.section = "dat";
+		query.segment = "qts";
+		query.target = "qts_lst";
+		query.params = {};
+		query.params.exchange = "nxtae";
+		query.params.source = "crypto";
+		query.params.symbol = "15344649963748848799_NXT";
+
+
+		params.format = format;
+		params.query = query;
+		
+
+		
+		IDEX.sendSkynetPost(params).done(function(data)
+		{
+			
+		})
+
 	}
 	
 	
@@ -94,7 +173,7 @@ var IDEX = (function(IDEX, $, undefined)
 		obj.baseName = fav.base.name;
 		obj.relName = fav.rel.name;
 		
-		row = IDEX.buildTableRows(IDEX.objToList([obj], keys), "table");
+		var row = IDEX.buildTableRows(IDEX.objToList([obj], keys), "table");
 		row = $(row).get()[0]
 
 		//$row.find("td:last").after("<td class='deleteMarketFavorite'>DELETE</td>");
@@ -102,6 +181,9 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var $row = $(row);
 		$row.data("market", fav);
+		$row.find("td").eq(1).addClass("watchlist-lastBid");
+		$row.find("td").eq(2).addClass("watchlist-lastAsk");
+
 		
 		$table.find("tbody").append($row)
 	}
@@ -126,15 +208,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var watchlist = this;
 		var market = $row.data("market");
-
-		var $grid = watchlist.watchlistDom.closest(".grid");
-		var grid = $grid.sleuthgrids();		
-		var $cell = watchlist.watchlistDom.closest(".cell");
-		var cell = grid.getCell($cell);
+		var cellHandler = watchlist.cellHandler;
 		
-		//console.log(cell);
 		
-		cell.setLinkedCells(market);
+		cellHandler.emit("changeMarket", market);
 	}
 	
 	

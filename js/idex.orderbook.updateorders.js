@@ -7,8 +7,19 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var orderbook = this;
 		var isAsk = $book.parent().attr("data-book") == "buyBook";
-
-		if ($.isEmptyObject(orderData))
+		var isEmpty = true;
+		
+		for (key in orderData)
+		{
+			var check = orderData[key];
+			if (check.length)
+			{
+				isEmpty = false;
+				break;
+			}
+		}
+		
+		if (isEmpty)
 			$book.parent().find(".empty-orderbook").show()
 		else
 			$book.parent().find(".empty-orderbook").hide()

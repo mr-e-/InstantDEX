@@ -269,6 +269,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (!isXAxis)
 			{
+				//if (prevHeight <= 0)
+					//return
 				var xAxis = chart.xAxis[0];
 				axis.fullHeight = axis.fullHeight + ((axis.fullHeight / (prevHeight - xAxis.fullHeight)) * diffHeight);
 				//axis.fullHeight
@@ -276,6 +278,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			}
 			else
 			{
+				//console.log(diffWidth);
 				//axis.fullWidth = axis.fullWidth + ((axis.fullWidth / prevWidth) * diffWidth);
 				axis.fullWidth = axis.fullWidth + diffWidth;
 				axis.width = axis.fullWidth - (axis.padding.left + axis.padding.right);

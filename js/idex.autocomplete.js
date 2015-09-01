@@ -21,6 +21,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var allExchanges = IDEX.exchangeList.slice();
 		allExchanges.push("InstantDEX");
 		
+		var allMarkets = IDEX.allMarkets;
 		var allCoins = IDEX.allCoins;
 		var len = allCoins.length;
 
@@ -58,6 +59,43 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			autoSearchExchanges.push({"label":labelStr, "value":exchange, "vals":exchange});
 		}
+		
+		for (key in allMarkets)
+		{
+			var market = allMarkets[key];
+			
+			for (var i = 0; i < market.exchanges.length; i++)
+			{
+				var obj = {};
+				obj.exchange = market.exchanges[i];
+				obj.pair = market.marketName;
+				obj.pairID = market.pairID;
+				row = buildSkynetSearchRow(obj)
+				
+				var vals = {"market":market, "exchangeMarket":obj};
+				
+				autoSearchSkynet.push({"label":row, "value":obj.pair, "vals":vals});
+			}
+					
+		}
+	}
+	
+	
+	
+	function buildSkynetSearchRow(obj)
+	{
+		var exchangeSpan = "<span>" + obj.exchange + "</span>"
+		var pairSpan = "<span>" + obj.pair + " </span>"
+		var idPairSpan = "<span>" + obj.pairID + " </span>"
+		
+		var row = "<div class='sky-auto-wrap'>";
+		row += "<div class='sky-auto-cell sky-auto-pair'>" + pairSpan + "</div>";
+		row += "<div class='sky-auto-cell sky-auto-idPair'>" + idPairSpan + "</div>";
+		row += "<div class='sky-auto-cell sky-auto-exchange'>" + exchangeSpan + "</div>";
+		row += "</div>";
+		
+		return row
+		
 	}
 	
 
@@ -299,10 +337,11 @@ var IDEX = (function(IDEX, $, undefined)
 		var a = $.grep(auto, function( item )
 		{
 			var vals = item.vals
+			var exchangeMarket = vals.exchangeMarket;
 
-			var pair = vals.pair
-			var idPair = vals.idPair
-			var exchange = vals.exchange
+			var pair = exchangeMarket.pair
+			var idPair = exchangeMarket.pairID
+			var exchange = exchangeMarket.exchange
 			
 			var pairBoth = pair.split("_")
 			
@@ -325,24 +364,14 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 		{
 			var vals = ui.item.vals;
-			var searchPair = vals.pair;
-			
-			if (vals.idPair.split("_").length == 2 && vals.exchange == "nxtae")
-				searchPair = vals.idPair
-
-			$input.attr('data-pair', searchPair);
-			$input.attr('data-exchange', vals.exchange);
+			var market = vals.market;
+			var exchangeMarket = vals.exchangeMarket;
 			
 			var obj = {};			
 			var $wrap = $input.closest(".chart-header")	
 			obj.node = $wrap;
-			
-			var both = searchPair.split("_")
-
-			obj.baseID = both[0];
-			obj.relID = both[1];
-			
-			obj.exchange = vals.exchange;
+			obj.market = market;
+			obj.exchange = exchangeMarket.exchange;
 
 			IDEX.changeChartMarket(obj);
 		}
@@ -350,153 +379,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
-	
-	IDEX.getSkynet = function(options, len)
-	{
-		var dfd = new $.Deferred();
 
-		loadSkynetData().done(function(parsed)
-		{
-			var len = parsed.length;
-						
-			for (var i = 0; i < len; i++)
-			{
-				var obj = {}
-				obj.baseName = "";
-				obj.relName = "";
-				obj.baseID = ""
-				obj.relID = ""
-				obj.pair = "";
-				obj.idPair = "";
-				obj.exchange = parsed[i].exchange
-
-				var pair = parsed[i].pair;
-				var both = pair.split("_")
-				
-				var func = function(obj, defaultName, typeAsset) 
-				{	
-					var assetObj = IDEX.nxtae.assets.getAsset("assetID", defaultName)
-					obj[typeAsset + "Name"] = defaultName;
-					
-					if ("name" in assetObj)
-					{
-						obj[typeAsset + "ID"] = assetObj.assetID;
-						obj[typeAsset + "Name"] = assetObj.name;
-					}
-				};
-				
-				func(obj, both[0], "base")
-				func(obj, both[1], "rel")
-				
-				obj.pair = obj.baseName + "_" + obj.relName
-				
-				if (obj.exchange == "nxtae")
-				{
-					var baseRef = obj.baseID.length ? obj.baseID : obj.baseName;
-					var relRef = obj.relID.length ? obj.relID : obj.relName;
-					
-					obj.idPair = baseRef + "_" + relRef;
-				}
-				
-											
-				var row = buildSkynetSearchRow(obj)
-				
-				autoSearchSkynet.push({"label":row, "value":obj.pair, "vals":obj});
-			}
-			
-			dfd.resolve(parsed)	
-		})
-		
-		return dfd.promise()
-	}
-	
-	
-	function buildSkynetSearchRow(obj)
-	{
-		var exchangeSpan = "<span>" + obj.exchange + "</span>"
-		var pairSpan = "<span>" + obj.pair + " </span>"
-		var idPairSpan = "<span>" + obj.idPair + " </span>"
-		
-		var row = "<div class='sky-auto-wrap'>";
-		row += "<div class='sky-auto-cell sky-auto-pair'>" + pairSpan + "</div>";
-		row += "<div class='sky-auto-cell sky-auto-idPair'>" + idPairSpan + "</div>";
-		row += "<div class='sky-auto-cell sky-auto-exchange'>" + exchangeSpan + "</div>";
-		row += "</div>";
-		
-		return row
-		
-	}
-	
-	function loadSkynetData()
-	{
-		var dfd = new $.Deferred();
-		
-		if (localStorage.skynetMarkets)
-		{
-			var markets = JSON.parse(localStorage.getItem('skynetMarkets'));
-			dfd.resolve(markets);
-		}
-		else
-		{
-			var obj = {}
-			obj.section = "crypto";
-			obj.run = "search";
-			obj.field = "pair";
-			obj.term = "";
-			obj.key = "beta_test";
-			obj.filter = "";
-
-			var url = IDEX.makeSkynetURL(obj)
-
-			$.getJSON(url, function(data)
-			{
-				var parsed = parseSkynetSearch(data.results)
-				localStorage.setItem('skynetMarkets', JSON.stringify(parsed));
-				dfd.resolve(parsed);
-			})
-		}
-		
-		
-		return dfd.promise();
-	}
-	
-	
-	function parseSkynetSearch(data)
-	{
-		var exchanges = {}
-		var parsed = []
-		
-		for (pair in data)
-		{
-			var pairExchanges = data[pair].split('|');
-			
-			for (var i = 0; i < pairExchanges.length; i++)
-			{
-				var exchange = pairExchanges[i];
-				parsed.push({"pair":pair,"exchange":exchange})
-			}
-		}
-
-		return parsed;
-	}
-	
-
-    IDEX.makeSkynetURL = function(obj)
-    {
-		var baseurl = "http://api.finhive.com/v1.0/run.cgi?"
-        var arr = []
-		
-        for (key in obj)
-        {
-			arr.push(key+"="+obj[key])
-        }
-        var s = arr.join("&")
-
-        return baseurl+s
-    }
 
 	
-	
+
 	
 	return IDEX;
 	

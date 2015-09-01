@@ -35,7 +35,6 @@ var IDEX = (function(IDEX, $, undefined)
 			})
 		})
 		
-
 		var initializedExchanges = new $.Deferred();
 		var timeoutFinished = new $.Deferred();
 
@@ -56,7 +55,7 @@ var IDEX = (function(IDEX, $, undefined)
 			IDEX.initTimer().done(function()
 			{
 				timeoutFinished.resolve();
-			})
+			});
 			
 
 			IDEX.initExchanges().done(function()
@@ -64,12 +63,8 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.initAllMarkets().done(function()
 				{
 					IDEX.initAutocomplete();
-					
-					IDEX.getSkynet().done(function(data)
-					{
-						initializedExchanges.resolve()
-					})
-				})
+					initializedExchanges.resolve()
+				});
 			});
 			
 			

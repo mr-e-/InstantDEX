@@ -52,13 +52,15 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.newOrderbox = function($el)
+	IDEX.newOrderbox = function($el, cell)
 	{
 		var orderbox = IDEX.getObjectByElement($el, IDEX.allOrderboxes, "orderboxDom");
 				
 		if (!orderbox)
 		{
 			orderbox = new IDEX.Orderbox();
+			
+			orderbox.cell = cell;
 
 			orderbox.orderboxDom = $el
 			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom, orderbox)
@@ -125,7 +127,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var isBuyBox = orderboxType.type == "buy";
 		var exchange = $li.attr("data-val");
 				
-		console.log(exchange);
 		orderboxType.exchange = exchange;
 
 		if (orderbox.hasMarket)
@@ -189,7 +190,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbox = orderboxType.orderbox;
 		
 		var exchange = orderboxType.exchange;
-		var baseOrRel = isBuyBox ? orderbox.market.base : orderbox.market.rel;
+		var baseOrRel = isBuyBox ? orderbox.market.rel : orderbox.market.base;
 		
 		orderboxType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 

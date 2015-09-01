@@ -79,28 +79,12 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var fiat = ["USD", "CAD", "GBP", "CNY", "RUR", "EUR"]
-			var isRelFiat = false;
-			for (var i = 0; i < fiat.length; i++)
-			{
-				if (rel.name == fiat[i])
-				{
-					isRelFiat = true
-					break;
-				}
-			}
-			if (base.name == "BTC" && !isRelFiat)
-			{
-				params.base = rel.name;
-				params.rel = base.name;
-			}
-			else
-			{
-				params.base = base.name;
-				params.rel = rel.name;
-			}
+			params.base = base.name;
+			params.rel = rel.name;
 		}
 		
+		//params.exchange="basket"
+		//params.basket=[{"exchange":"nxtae"},{"exchange":"unconf"}];
 
 		
 		/*var func = function(coin, isBase) 
@@ -121,24 +105,105 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		params[basePost.key] = basePost.val;
 		params[relPost.key] = relPost.val;*/
-
-		
-		
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
-
-		console.log(JSON.stringify(params));
 		
-		IDEX.sendPost(params, false).done(function(orderbookData)
+		var tdfd = new $.Deferred();
+		
+		if (orderbook.market.isNxtAE)
 		{
-			console.log(orderbookData);
-			//console.log(JSON.stringify(orderbookData.bids));
 
-			orderbook.isWaitingForOrderbook = false;
-			retDFD.resolve(orderbookData);
-		}).fail(function(data)
+			
+			paramsn = {}
+			paramsn.requestType = "getUnconfirmedTransactions";
+			
+			IDEX.sendPost(paramsn, true).done(function(a)
+			{
+				tdfd.resolve(a);
+			}).fail(function(data)
+			{
+				tdfd.resolve({})
+			})
+
+		}
+		else
 		{
-			retDFD.resolve("fail")
+			tdfd.resolve({})
+		}
+		
+			//tdfd.resolve({});
+
+		tdfd.done(function(tdata)
+		{
+			//console.log(JSON.stringify(params));
+			
+			IDEX.sendPost(params, false).done(function(orderbookData)
+			{
+				var addBids = [];
+				var addAsks = [];
+				if (orderbook.market.isNxtAE)
+				{
+					console.log(tdata);
+					var unconfirmedTransactions = tdata.unconfirmedTransactions;
+					
+					for (var j = 0; j < unconfirmedTransactions.length; j++)
+					{
+						var trans = unconfirmedTransactions[j];
+						
+						if ("attachment" in trans)
+						{
+							var attach = trans.attachment;
+							if ("version.BidOrderPlacement" in attach || "version.AskOrderPlacement" in attach)
+							{
+								if (attach.asset == orderbook.market.base.assetID)
+								{
+									var isAsk = "version.AskOrderPlacement" in attach;
+									var assetInfo = IDEX.nxtae.assets.getAsset("assetID", attach.asset);
+									
+
+									var decimals = assetInfo.decimals;
+									var price = attach.priceNQT / Math.pow(10, 8);
+									var amount = attach.quantityQNT / Math.pow(10, decimals);	
+									
+									var addOrder = {}
+									addOrder.price = price;
+									addOrder.volume = amount;
+									addOrder.trades = [];
+									addOrder.trades[0] = {}
+									addOrder.trades[0].orderid = trans.transaction;
+									addOrder.trades[0].exchange = "unconf";
+									
+									if (isAsk)
+									{
+										orderbookData.asks.push(addOrder);
+										addAsks.push(addOrder);
+									}
+									else
+									{
+										orderbookData.bids.push(addOrder);
+										addBids.push(addOrder);
+									}
+									
+									//console.log(addOrder);
+								}
+							}
+							else
+							{
+								
+							}
+						}
+					}
+					
+				}
+				//console.log(orderbookData);
+				//console.log(JSON.stringify(orderbookData.bids));
+
+				orderbook.isWaitingForOrderbook = false;
+				retDFD.resolve(orderbookData);
+			}).fail(function(data)
+			{
+				retDFD.resolve("fail")
+			})
 		})
 		
 		return retDFD.promise();

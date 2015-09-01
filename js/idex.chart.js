@@ -4,7 +4,7 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 
 	
-	IDEX.makeChart = function(obj)
+	IDEX.makeChart = function(obj, cellHandler)
 	{
 		var node = obj.node		
 		
@@ -123,11 +123,28 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 
 		obj.node.sleuthcharts(chartOptions);
+		var chart = obj.node.sleuthcharts();
+		chart.cell = cellHandler;
+
 		//var chart = new Sleuthcharts.Chart(chartOptions);
 
 		
 		//var chart = Sleuthcharts.getChart(node);
 		//chart.changeMarket(obj);
+		
+		return chart;
+	}
+	
+	
+	IDEX.formatChartMarket = function(chart, market)
+	{
+		var $cell = chart.node.closest(".cell");
+		var marketHandler = chart.marketHandler;
+		var exchange = market.exchanges[0];
+		
+		marketHandler.changeMarket(market, exchange);
+		IDEX.changeChartMarketDOM(marketHandler, $cell);
+		chart.updateChart();
 	}
 	
 	
@@ -137,21 +154,21 @@ var IDEX = (function(IDEX, $, undefined)
 		var $node = $cell.find(".chart-wrap svg");
 		var chart = Sleuthcharts.getChart($node);
 		var marketHandler = chart.marketHandler;
+		var market = obj.market;
+		var exchange = obj.exchange;
 		
-		var newMarket = {};
-		newMarket.baseID = obj.baseID;
-		newMarket.relID = obj.relID;
-		newMarket.baseName = getName(newMarket.baseID);
-		newMarket.relName = getName(newMarket.relID);
-		newMarket.exchange = obj.exchange;
 		
-		marketHandler.changeMarket(newMarket);
-		IDEX.changeChartMarketDOM(marketHandler.marketSettings, $cell);
+		marketHandler.changeMarket(market, exchange);
+		IDEX.changeChartMarketDOM(marketHandler, $cell);
 		chart.updateChart();
+		chart.market = market;
 	}
 	
-	IDEX.changeChartMarketDOM = function(marketSettings, $cell)
+	IDEX.changeChartMarketDOM = function(marketHandler, $cell)
 	{
+		var market = marketHandler.market;
+		var marketSettings = marketHandler.marketSettings;
+		
 		var $header = $cell.find(".chart-header");
 		var barType = marketSettings.barType;
 		var barLen = marketSettings.barWidth;
@@ -166,28 +183,9 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var title = $activeListCell.text();
 		$header.find(".chart-time-wrap .chart-time-button-title span").text(title);
-		
-		$header.find(".chart-search-input input").val(marketSettings.pairName);
+		$header.find(".chart-search-input input").val(market.marketName);
 	}
 	
-
-	function getName(assetID)
-	{
-		//var nxtAssetID = "5527630"
-		var asset = IDEX.nxtae.assets.getAsset("assetID", assetID)
-		
-		if (!($.isEmptyObject(asset)))
-		{
-			var name = asset.name
-		}
-		else
-		{
-			var name = assetID
-		}
-
-		
-		return name;
-	}
 
 
 
@@ -422,6 +420,28 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return row
 	}
+	
+	
+	$contentWrap.on("click", ".chart-tools-crosshair img", function()
+	{
+		var $popup = $(".shareChartPopup");
+		IDEX.togglePopup($popup, true, true);
+		var chart = $(this).closest(".cell").find(".chart-wrap svg").sleuthcharts()
+		console.log(chart);
+		$popup.data("chart", chart);
+	})
+	
+	$(".shareChartPopup-trig").on("click", function()
+	{
+		var $popup = $(this).closest(".popup");
+		IDEX.togglePopup($popup, false, true);
+		var chart = $popup.data("chart")
+		var marketSettings = chart.marketHandler.marketSettings;
+		var dataPost = {"params":{"params":{"marketSettings":marketSettings}}, "method":"shareChart", "id":1};
+		IDEX.sleuthPost(dataPost);
+		$.growl.notice({'message':"Chart opened in Cryptosleuth", 'location':"tl"});
+
+	})
 	
 	
 	

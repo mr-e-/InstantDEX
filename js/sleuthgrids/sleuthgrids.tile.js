@@ -184,9 +184,9 @@ Sleuthgrids = (function(Sleuthgrids)
 				
 				//tile.addCell(cellType, arrowDirections, true);
 
-				var cell = new Sleuthgrids.Cell(tile, tile.cells.length);
+				var cell = new Sleuthgrids.Cell(tile, tile.cells.length, cellType);
 				tile.cells.push(cell);
-				cell.makeCellDOM(cellType);
+				cell.makeCellDOM();
 				tile.tileCellsWrapDOM.append(cell.cellDOM);
 				
 				
@@ -261,9 +261,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			var $tile = tile.tileDOM;
 			
 			
-			var cell = new Sleuthgrids.Cell(tile, tile.cells.length);
+			var cell = new Sleuthgrids.Cell(tile, tile.cells.length, cellType);
 			tile.cells.push(cell);
-			cell.makeCellDOM(cellType);
+			cell.makeCellDOM();
 			tile.tileCellsWrapDOM.append(cell.cellDOM);
 			
 			
@@ -447,6 +447,15 @@ Sleuthgrids = (function(Sleuthgrids)
 				$loopTile.css(absKey, abs);
 				$loopTile.css(sizeKey, size);
 				loopTile.updateInternalTilePositions();
+				
+				if ("cells" in loopTile)
+				{
+					for (var j = 0; j < loopTile.cells.length; j++)
+					{
+						var loopCell = loopTile.cells[j];
+						loopCell.resizeCell();
+					}
+				}
 			}
 		},
 		

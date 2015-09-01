@@ -79,12 +79,15 @@
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-orderbook" data-grid="orderbook">
 							<img class="vert-align mainHeader-grid-ico-orderbook" src="img/clipboard.png"></img>
 						</div>
+						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-marketHistory" data-grid="marketHistory">
+							<img class="vert-align mainHeader-grid-ico-marketHistory" src="img/notebook.png"></img>
+						</div>
 					</div>
 					<div class="mainHeader-grid-ico-section">
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-orders" data-grid="orders">
 							<img class="vert-align mainHeader-grid-ico-orders" src="img/orders.png"></img>
 						</div>
-						<<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-marketHistory" data-grid="trades">
+						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-marketHistory" data-grid="trades">
 							<img class="vert-align mainHeader-grid-ico-marketHistory" src="img/history.png"></img>
 						</div>
 						<div class="mainHeader-grid-ico-wrap grid-trig grid-trig-balances" data-grid="balances">
@@ -471,7 +474,51 @@
 				</div>
 				
 				
+			
+				<div id="shareChart_popup" class="popup shareChartPopup">
 				
+					<div class="popup-wrap">
+					
+						<div class="popup-header">
+							<div class="popup-header-title">
+								<span class="vert-align">Share Chart</span>
+							</div>
+							<div class="popup-header-icons">
+								<div class="popup-header-ico">
+									<img class="popup-header-close vert-align" src="img/close.png"></img>
+								</div>
+							</div>
+						</div>
+						
+
+						
+						<div class="popup-content orderbookSearch-popup-content tab-trig-wrap">
+						
+							<div class="shartChartPopup-text">
+								<span>View chart in Cryptosleuth?</span>
+							</div>
+							
+							<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
+								<div class="nbutton-text-wrap">
+									<div class="nbutton-text-outer">
+										<div class="nbutton-text shareChartPopup-trig">
+											<div class="nbutton-text-inner">
+												<div class="nbutton-text-title">
+													<span class="vert-align">View</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						
+						</div>
+					</div>
+				
+				</div>
+		
+		
+		
 				
 				<div id="chartIndicator_popup" class="popup chartIndicatorPopup">
 				
@@ -1213,6 +1260,10 @@
 					
 					<div class="orderbook-body">
 					
+						<div class="orderbook-statusText">
+							<span>Loading...</span>
+						</div>
+								
 						<div class="orderbook buybook">
 							
 							<div class="orderbook-bookLabels">
@@ -1463,6 +1514,165 @@
 			<!------------------------- END ORDERBOOK WRAP----------------------------->
 
 			
+			
+			<!------------------------- START ORDERBOOK VERTICAL----------------------------->
+
+			
+			<div id="orderbook_templatee" class="template grid-trig-template" data-grid="orderbookk">
+			
+				<div class="orderbook-wrap">
+				
+					<div class="orderbook-header">
+						<div class="cell-header-wrap">
+						
+							
+							<div class="nSearch-wrap orderbook-search-wrap">
+								<div class="nSearch-input vert-align">
+									<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
+									<div class="nSearch-input-img">
+										<div class="nSearch-input-img-inner orderbook-search-popup-trig">
+											<img src="img/search.png" class="vert-align-horiz-align"></img>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							
+							<div class="dropdown-list-wrap orderbook-exchange-dropdown">
+								<div class="dropdown-outer vert-align">
+									<div class="dropdown">
+										<div class="dropdown-inner">
+											<div class="dropdown-title">
+												<span class="vert-align orderbook-exchange-dropdown-title">All exchanges</span>
+											</div>
+											<div class="dropdown-img">
+												<img src="img/tridownwhite.png" class="vert-align"></img>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="dropdown-list">
+									<ul class="active">
+										<li class="active" data-val="active">All exchanges</li>
+									</ul>
+								</div>
+							</div>
+							
+						
+							<div class="dropdown-list-wrap dropdown-list-mult-wrap orderbook-label-dropdown">
+								<div class="dropdown-outer vert-align">
+									<div class="dropdown">
+										<div class="dropdown-inner">
+											<div class="dropdown-title">
+												<span class="vert-align orderbook-exchange-dropdown-title">Labels</span>
+											</div>
+											<div class="dropdown-img">
+												<img src="img/tridownwhite.png" class="vert-align"></img>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="dropdown-list no-hover">
+									<ul class="active">
+									</ul>
+								</div>
+							</div>
+							
+							
+							
+							<div class="orderbook-header-status">
+								<span class="vert-align"><span>Last updated: </span><span class="orderbook-lastUpdated">0s</span></span>
+							</div>
+						
+						</div>
+					</div>
+					
+					
+
+					
+					<div class="orderbook-vertical-body">
+					
+						<div class="orderbook-vertical-bookLabels">
+							<div class="orderbook-vertical-bookLabels-row">
+								<span class="orderbook-vertical-bookLabels-col refcur-rel">Total</span>
+								<span class="orderbook-vertical-bookLabels-col refcur-base">Volume</span>
+								<span class="orderbook-vertical-bookLabels-col">Price</span>
+								<span class="orderbook-vertical-bookLabels-col orderbook-bookLabels-col-extra">Sum</span>
+							</div>
+						</div>
+				
+						<div class="orderbook-vertical buybook">
+							
+							<div class="bookname bookname-buybook" data-book="buyBook">
+								<div class="empty-orderbook">
+									<span>No bids</span>
+								</div>
+								<div class="twrap"></div>
+							</div>
+							
+						</div>
+						
+						
+						<div class="orderbook-vertical sellbook">
+									
+							<div class="bookname bookname-sellbook" data-book="sellBook">
+								<div class="empty-orderbook">
+									<span>No asks</span>
+								</div>
+								<div class="twrap"></div>
+							</div>
+							
+								
+						</div>
+						
+					</div>
+					
+					
+				</div>
+				
+			</div>
+			
+			
+			
+			<div id="marketHistory_template" class="template grid-trig-template" data-grid="marketHistory">
+			
+				<div class="cm-marketHistory-wrap">
+				
+					<div class="cm-marketHistory-header">
+						<div class="nSearch-wrap cm-marketHistory-search-wrap">
+							<div class="nSearch-input vert-align">
+								<input readonly type="text" value="No market loaded" name="pair" class="skynet-search"></input>
+								<div class="nSearch-input-img">
+									<div class="nSearch-input-img-inner cm-marketHistory-search-popup-trig">
+										<img src="img/search.png" class="vert-align-horiz-align"></img>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="cm-marketHistory-content">
+						<div class="cm-marketHistory-table-wrap">
+							<table class="cm-marketHistory-table">
+								<thead>
+									<tr>
+										<th>DATE</th>
+										<th>PRICE</th>
+										<th>AMOUNT</th>
+										<th>EXCHANGE</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+				</div>
+			
+			</div>
+			
+			
 			<div id="orders_template" class="template grid-trig-template" data-grid="orders">
 			
 				<div class="cm-openorders-wrap">
@@ -1470,7 +1680,7 @@
 					<div class="cm-openorders-header">
 						<div class="nSearch-wrap cm-openorders-search-wrap">
 							<div class="nSearch-input vert-align">
-								<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
+								<input readonly type="text" value="No market loaded" name="pair" class="skynet-search"></input>
 								<div class="nSearch-input-img">
 									<div class="nSearch-input-img-inner cm-openorders-search-popup-trig">
 										<img src="img/search.png" class="vert-align-horiz-align"></img>
@@ -1482,7 +1692,7 @@
 					
 					<div class="cm-openorders-content">
 						<div class="cm-openorders-table-wrap">
-							<table id="cm-openorders-table" class="sortable">
+							<table class="cm-openorders-table sortable">
 								<thead>
 									<tr>
 										<th>TYPE</th>
@@ -1508,9 +1718,37 @@
 			<div id="trades_template" class="template grid-trig-template" data-grid="trades">
 			
 				<div class="cm-trades-wrap">
-
-					<div class="cm-trades-table-wrap">
-
+				
+					<div class="cm-trades-header">
+						<div class="nSearch-wrap cm-trades-search-wrap">
+							<div class="nSearch-input vert-align">
+								<input readonly type="text" value="No market loaded" name="pair" class="skynet-search"></input>
+								<div class="nSearch-input-img">
+									<div class="nSearch-input-img-inner cm-trades-search-popup-trig">
+										<img src="img/search.png" class="vert-align-horiz-align"></img>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="cm-trades-content">
+						<div class="cm-trades-table-wrap">
+							<table class="cm-trades-table sortable">
+								<thead>
+									<tr>
+										<th>TIME</th>
+										<th>TYPE</th>
+										<th>PRICE</th>
+										<th>AMOUNT</th>
+										<th>TOTAL</th>
+										<th>EXCHANGE</th>
+									</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+						</div>
 					</div>
 
 				</div>
@@ -1565,7 +1803,7 @@
 					<div class="cm-balances-header">
 						<div class="nSearch-wrap cm-balances-search-wrap">
 							<div class="nSearch-input vert-align">
-								<input readonly type="text" value="No market loaded" "name="pair" class="skynet-search"></input>
+								<input readonly type="text" value="No market loaded" name="pair" class="skynet-search"></input>
 								<div class="nSearch-input-img">
 									<div class="nSearch-input-img-inner cm-balances-search-popup-trig">
 										<img src="img/search.png" class="vert-align-horiz-align"></img>
@@ -1583,10 +1821,13 @@
 								<div class="cm-balances-sing-title">
 									<span>Base</span>
 								</div>
+								<div class="cm-balances-sing-balanceVal">
+									<span>0.00</span>
+								</div>
 							</div>
 							
 							<div class="cm-balances-sing-table-wrap">
-								<table class="cm-balances-sing-table" class="sortable">
+								<table class="cm-balances-sing-table">
 									<thead>
 										<tr>
 											<th>EXCHANGE</th>
@@ -1608,10 +1849,13 @@
 								<div class="cm-balances-sing-title">
 									<span>Quote</span>
 								</div>
+								<div class="cm-balances-sing-balanceVal">
+									<span>0.00</span>
+								</div>
 							</div>
 							
 							<div class="cm-balances-sing-table-wrap">
-								<table class="cm-balances-sing-table" class="sortable">
+								<table class="cm-balances-sing-table">
 									<thead>
 										<tr>
 											<th>EXCHANGE</th>
@@ -1711,6 +1955,8 @@
 
 	<script src="js/idex.cbalances.js" type="text/javascript"></script>
 	<script src="js/idex.copenorders.js" type="text/javascript"></script>
+	<script src="js/idex.ctrades.js" type="text/javascript"></script>
+	<script src="js/idex.cmarkethistory.js" type="text/javascript"></script>
 
 	
 	<script src="js/idex.orderbox.js" type="text/javascript"></script>

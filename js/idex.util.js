@@ -15,7 +15,7 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	IDEX.SATOSHI = 100000000;
-	//var GENESIS_TIMESTAMP = 1385294400;
+	var GENESIS_TIMESTAMP = 1385294400;
 
 	
 	IDEX.sortNumber = function(a, b)

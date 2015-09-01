@@ -106,6 +106,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellIndex = tileNavCell.index;
 			var tile = tileNavCell.tile;
 			var cell = tile.cells[cellIndex];
+			var handler = cell.handler;
 			var grid = tile.grid;
 			
 			var $wrap = $li.closest(".dropdown-list-wrap");
@@ -123,9 +124,24 @@ Sleuthgrids = (function(Sleuthgrids)
 			tileNavCell.linkIndex = linkIndex;
 			cell.linkIndex = linkIndex;
 			
-			
-			//tileNavCell.getLinkedCells();
-			
+			var linkedCells = cell.getLinkedCells(false);
+						
+			if (linkedCells.length)
+			{
+				for (var i = 0; i < linkedCells.length; i++)
+				{
+					var linkedCell = linkedCells[i];
+
+					var market = linkedCell.handler.getMarket();
+
+					if (market)
+					{
+						handler.call("changeMarket", market);
+						break;
+					}
+				}
+			}
+					
 		},
 		
 		
@@ -150,9 +166,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			$title.text(title);
 			
 		},
-		
-		
-
 		
 		
 		
@@ -216,7 +229,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	Cell.prototype = 
 	{	
 	
-		init: function(tile, index)
+		init: function(tile, index, cellType)
 		{
 			
 			var cell = this;
@@ -227,17 +240,21 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.index = index;
 			cell.linkIndex = -1;
 			cell.isActive = false;
-			cell.cellType = "";
+			cell.cellType = cellType;
+
+			var cellHandlers = Sleuthgrids.cellHandlers;
+			var handler = new Sleuthgrids.cellHandlerClass(cell);
+			cell.handler = handler;
 			
 			cell.cellDOM;
 		},
 		
 		
 		
-		makeCellDOM: function(cellType)
+		makeCellDOM: function()
 		{
 			var cell = this;
-			cell.cellType = cellType;
+			var cellType = cell.cellType;
 			
 			var $cellTypeTemplate = $(".grid-trig-template[data-grid='"+cellType+"']").html();
 			var $cell = $($("#cell_template").html());
@@ -250,32 +267,10 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		loadCell: function()
+		getLinkedCells: function(includeSelf)
 		{
-			var cell = this;
-			var tile = cell.tile;
-			var grid = tile.grid;
-			var $cell = cell.cellDOM;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
+			includeSelf = typeof includeSelf === "undefined" ? true : includeSelf;
 			
-
-			
-			if (handler)
-			{
-				if (handler && "new" in handler)
-				{
-					handler.new(cell);
-				}
-			}
-		},
-		
-		
-		
-		getLinkedCells: function()
-		{
 			var cell = this
 			var tile = cell.tile;
 			var grid = cell.grid;
@@ -298,6 +293,12 @@ Sleuthgrids = (function(Sleuthgrids)
 					var loopCell = allLoopTileCells[j];
 					var loopCellLinkIndex = loopCell.linkIndex;
 					
+					if (!includeSelf && loopCell == cell)
+					{
+						//console.log(['includeSelf', includeSelf])
+						continue;
+					}
+					
 					if (!(String(loopCellLinkIndex) in obj))
 					{
 						obj[String(loopCellLinkIndex)] = [];
@@ -308,6 +309,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			
 			var linkedCells = obj[linkIndex];
+			linkedCells = typeof linkedCells == "undefined" ? [] : linkedCells;
 			
 			return linkedCells;
 			
@@ -337,132 +339,15 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellIndex = cell.index;
 			
 			var isLinked = linkIndex != -1;
-			var linkedCells = cell.getLinkedCells();
+			var linkedCells = cell.getLinkedCells(false);
 			
-						
+			//console.log(linkedCells);
+			
 			for (var i = 0; i < linkedCells.length; i++)
 			{
 				var linkedCell = linkedCells[i];
 				linkedCell.changeCellMarket(market);
 			}
-		},
-		
-		
-		
-		loadCellFromSettings: function(settings)
-		{
-			var cell = this;
-			var tile = cell.tile;
-			var grid = tile.grid;
-			var $cell = cell.cellDOM;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
-			
-			
-			if (handler)
-			{
-				if (handler && "loadCustom" in handler)
-				{
-					handler.loadCustom(cell, settings);
-				}
-			}
-		},
-		
-		
-		
-		changeCellMarket: function(market)
-		{
-			var cell = this;
-			var tile = cell.tile;
-			var grid = tile.grid;
-			var $cell = cell.cellDOM;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
-			
-			
-			if (handler)
-			{
-				if (handler && "changeMarket" in handler)
-				{
-					handler.changeMarket(cell, market);
-				}
-			}
-		},
-		
-		
-		
-		triggerVisible: function()
-		{
-			var cell = this;
-			var tile = cell.tile;
-			var grid = tile.grid;
-			var $cell = cell.cellDOM;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
-			
-
-			
-			if (handler)
-			{
-				if (handler && "update" in handler)
-				{
-					handler.update(cell);
-				}
-			}
-		},
-		
-		
-		
-		resizeCell: function()
-		{
-			var cell = this;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
-			
-			if (handler)
-			{
-				if ("resize" in handler)
-				{
-					handler.resize(cell);
-				}
-			}
-			
-		},
-		
-		
-		
-		saveCell: function()
-		{
-			var cell = this;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
-			
-			var cellTypeSettings = {};
-			
-			if (handler)
-			{
-				if ("save" in handler)
-				{
-					cellTypeSettings = handler.save(cell);
-				}
-			}
-			
-			saveObj = {};
-			saveObj.isActive = cell.isActive;
-			saveObj.linkIndex = cell.linkIndex;
-			saveObj.cellType = cell.cellType;
-			saveObj.cellTypeSettings = cellTypeSettings;
-			cell.saveObj = saveObj;
 		},
 		
 		
@@ -492,22 +377,96 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
+		loadCell: function()
+		{
+			var cell = this;
+			var handler = cell.handler;
+			
+			handler.call("new");
+			
+			var linkedCells = cell.getLinkedCells(false);
+			
+			if (linkedCells.length)
+			{
+				var tempLinkedCell = linkedCells[0];
+				var market = tempLinkedCell.handler.getMarket();
+				//console.log(market);
+				if (market)
+				{
+					handler.call("changeMarket", market);
+				}
+			}
+						
+		},
+		
+		
+		
+		loadCellFromSettings: function(settings)
+		{
+			var cell = this;
+			var handler = cell.handler;
+			//console.log(settings);
+			handler.call("loadCustom", settings);
+		},
+		
+		
+		
+		changeCellMarket: function(market)
+		{
+			var cell = this;
+			var handler = cell.handler;
+			
+			handler.call("changeMarket", market);
+		},
+		
+		
+		
+		triggerVisible: function()
+		{
+			var cell = this;
+			var handler = cell.handler;
+			
+			handler.call("update");
+		},
+		
+		
+		
+		resizeCell: function()
+		{
+			var cell = this;
+			var handler = cell.handler;
+			
+			handler.call("resize");
+		},
+		
+		
+		
+		saveCell: function()
+		{
+			var cell = this;
+			var handler = cell.handler;
+			
+			var cellTypeSettings = handler.call("save");			
+			
+			var saveObj = {};
+			saveObj.isActive = cell.isActive;
+			saveObj.linkIndex = cell.linkIndex;
+			saveObj.cellType = cell.cellType;
+			saveObj.cellTypeSettings = cellTypeSettings;
+			cell.saveObj = saveObj;
+			
+			return saveObj;
+		},
+		
+		
+		
 		removeCell: function()
 		{
 			var cell = this;
 			var $cell = cell.cellDOM;
-			var cellType = cell.cellType;
-
-			var cellHandlers = Sleuthgrids.cellHandlers;
-			var handler = cellHandlers[cellType];
+			var handler = cell.handler;
 			
-			if (handler)
-			{
-				if ("remove" in handler)
-				{
-					handler.remove(cell);
-				}
-			}
+			handler.call("remove");
 			
 			$cell.remove();
 		},

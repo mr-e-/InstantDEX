@@ -54,6 +54,8 @@ var IDEX = (function(IDEX, $, undefined)
 		this.labels = [];
 		this.exchange = "active";
 		
+		this.market;
+		this.cellHandler;
 		this.orderbox;
 
 		IDEX.constructFromObject(this, obj);
@@ -61,7 +63,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.newOrderbook = function($el)
+	IDEX.newOrderbook = function($el, cellHandler)
 	{
 		var orderbook = IDEX.getObjectByElement($el, IDEX.allOrderbooks, "orderbookDom");
 		var orderbox = IDEX.getObjectByElement($el, IDEX.allOrderboxes, "orderboxDom");
@@ -69,6 +71,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!orderbook)
 		{
 			orderbook = new IDEX.Orderbook();
+			orderbook.cellHandler = cellHandler;
 
 			orderbook.orderbookDom = $el;
 			orderbook.buyBookDom = $el.find(".bookname-buybook");
@@ -87,7 +90,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!orderbox)
 		{
 			var $orderbox = $el.find(".orderbox-all")
-			var orderbox = IDEX.newOrderbox($orderbox)
+			var orderbox = IDEX.newOrderbox($orderbox, cellHandler)
 			orderbook.orderbox = orderbox;
 		}
 		
@@ -134,11 +137,12 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.changeMarket = function(market)
 	{
 		var orderbook = this;
-
+		
 		orderbook.market = market;
 		orderbook.marketName = orderbook.market.base.name + "/" + orderbook.market.rel.name;
 
 		orderbook.emptyOrderbook("Loading...");
+		
 		orderbook.updateMarketDom();
 		orderbook.updateExchangesDom();
 		
@@ -148,6 +152,8 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			orderbook.stopPollingOrderbook(function()
 			{
+				orderbook.toggleStatusText(true, "loading");
+
 				orderbook.currentOrderbook = new IDEX.OrderbookVar();
 
 				orderbook.orderbookDom.find(".empty-orderbook").hide();
@@ -239,7 +245,9 @@ var IDEX = (function(IDEX, $, undefined)
 		this.getOrderbookData(timeout).done(function(orderbookData, errorLevel)
 		{
 			timeout = 5000;
-			
+			orderbook.toggleStatusText(false);
+
+			console.log(orderbookData);
 			if (errorLevel == IDEX.TIMEOUT_CLEARED)
 			{
 				return;
@@ -264,6 +272,7 @@ var IDEX = (function(IDEX, $, undefined)
 				//orderbookData = new IDEX.OrderbookVar(orderbookData);
 				if ($.isEmptyObject(orderbookData))
 				{
+					console.log('empty');
 					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
 					orderbook.emptyOrderbook();
 					orderbook.orderbookDom.find(".empty-orderbook").show();

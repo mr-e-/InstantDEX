@@ -358,6 +358,11 @@ var IDEX = (function(IDEX, $, undefined)
 			if (assetID in balancesHandler.balances)
 				balance = balancesHandler.balances[assetID];
 
+			else
+			{
+				balance.availableBalance = 0;
+				balance.unconfirmedBalance = 0;
+			}
 
 			return balance;
 		},
@@ -402,7 +407,7 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			//console.log(time - this.balancesLastUpdated);
 
-			if ( (!forceUpdate && time - this.balancesLastUpdated < 1000) || this.oneTime)
+			if ( (!forceUpdate && time - this.balancesLastUpdated < 1000) && this.oneTime)
 			{
 				this.oneTime = true;
 				//console.log('pass');
@@ -420,11 +425,14 @@ var IDEX = (function(IDEX, $, undefined)
 						
 					IDEX.sendPost({'requestType':"getBalance", 'account':nxtAE.nxtID}, 1).then(function(nxtBal)
 					{
+						//console.log(nxtBal);
 						if (!("errorCode" in nxtBal))
 						{
 							nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
 							balances.push(nxtBal);
 						}
+						
+						//console.log(balances);
 						
 						balances = addAssetID(balances);
 						balancesHandler.balances = {};
@@ -454,7 +462,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var openOrdersHandler = this;
 			
-			openOrdersHandler.openOrders = [];
+			openOrdersHandler.openOrders = {};
 			openOrdersHandler.openOrdersLastUpdated = new Date().getTime();
 			
 			
@@ -463,40 +471,80 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		
 		
-		updateOpenOrders: function(forceUpdate)
+		updateOpenOrders: function(market, forceUpdate)
 		{
 			var openOrdersHandler = this;
 			var dfd = new $.Deferred();
-			var params = {"method":"openorders", "allorders":1};
 			var time = new Date().getTime()
 					
 			if (!forceUpdate && time - this.openOrdersLastUpdated < 1000)
 			{
-				dfd.resolve()
+				dfd.resolve([])
 			}
 			else
 			{
-				IDEX.sendPost(params, false).then(function(data)
+				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", market.base.assetID);
+				var decimals = assetInfo.decimals;
+				var params = {}
+				params.requestType = "getAccountCurrentBidOrders";
+				params.account = openOrdersHandler.nxtAE.nxtRS;
+				params.asset = market.base.assetID;
+				
+				IDEX.sendPost(params, true).then(function(bidOrders)
 				{
-					var temp = [];
-
-					console.log(data);
-					if ("openorders" in data)
-					{
-						data = data.openorders;
-						
-						//for (var i = 0; i < data.length; i++)
-						//	if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
-						//		temp.push(data[i]);
-					}
-					else
-					{
-						data = [];
-					}
+					bidOrders = bidOrders.bidOrders;
 					
-					openOrdersHandler.openOrders = data;
-					openOrdersHandler.marketOpenOrders = temp;
-					dfd.resolve();
+					params = {}
+					params.requestType = "getAccountCurrentAskOrders";
+					params.account = openOrdersHandler.nxtAE.nxtRS;
+					params.asset = market.base.assetID;
+
+				
+					IDEX.sendPost(params, true).done(function(askOrders)
+					{
+						askOrders = askOrders.askOrders;
+						
+						var allOpenOrders = bidOrders.concat(askOrders);
+						var temp = [];
+						var formattedOpenOrders = [];
+						
+						for (var i = 0; i < allOpenOrders.length; i++)
+						{
+							var openOrder = allOpenOrders[i];
+							
+							var formattedOpenOrder = {};
+							
+							//var timestamp = IDEX.convertNXTTime(openOrder.timestamp);
+							var price = openOrder.priceNQT / Math.pow(10, 8);
+							var amount = openOrder.quantityQNT / Math.pow(10, decimals);
+							var exchange = "nxtae";
+							
+							//formattedOpenOrder.timestamp = timestamp;
+							formattedOpenOrder.price = price;
+							formattedOpenOrder.amount = amount;
+							formattedOpenOrder.exchange = exchange;
+							formattedOpenOrder.tradeType = openOrder.type;
+							formattedOpenOrder.total = IDEX.toSatoshi(Number(price) * Number(amount));
+							formattedOpenOrder.status = "Open";
+							formattedOpenOrders.push(formattedOpenOrder);
+							
+						}
+
+						/*if ("openorders" in data)
+						{
+							data = data.openorders;
+							
+							for (var i = 0; i < data.length; i++)
+								if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
+									temp.push(data[i]);
+						}
+						else
+						{
+							data = [];
+						}*/
+						openOrdersHandler.openOrders[market.marketName] = formattedOpenOrders;
+						dfd.resolve(formattedOpenOrders);
+					})
 				})
 			}
 			
@@ -522,10 +570,71 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var tradesHandler = this;
 			
+			tradesHandler.tradeHistoryLastUpdated = new Date().getTime();
+
 			tradesHandler.nxtAE = nxtAE;
+			tradesHandler.trades = {};
 		},
 		
-		
+		updateTrades: function(market, forceUpdate)
+		{
+			var tradesHandler = this;
+			var dfd = new $.Deferred();
+			var time = new Date().getTime()
+
+			var params = {}
+			params.requestType = "getTrades";
+			params.account = tradesHandler.nxtAE.nxtRS;
+
+			if (market)
+				params.asset = market.base.assetID;
+
+			params.lastIndex = 50;
+			console.log(params);
+			
+			if (!forceUpdate && time - this.tradeHistoryLastUpdated < 1000)
+			{
+				dfd.resolve()
+			}
+			else
+			{
+				IDEX.sendPost(params, true).then(function(data)
+				{
+					var trades = data.trades;
+					
+					var formattedTrades = [];
+					
+					for (var i = 0; i < trades.length; i++)
+					{
+						var trade = trades[i];
+						var formattedTrade = {};
+						
+						var timestamp = IDEX.convertNXTTime(trade.timestamp);
+						var price = trade.priceNQT / Math.pow(10, 8);
+						var amount = trade.quantityQNT / Math.pow(10, trade.decimals);
+						var exchange = "nxtae";
+						
+						formattedTrade.timestamp = timestamp;
+						formattedTrade.price = price;
+						formattedTrade.amount = amount;
+						formattedTrade.exchange = exchange;
+						formattedTrade.tradeType = trade.tradeType;
+						formattedTrade.total = IDEX.toSatoshi(Number(price) * Number(amount));
+
+						formattedTrades.push(formattedTrade);
+					}
+					
+					tradesHandler.trades[market.marketName] = formattedTrades;
+					
+					dfd.resolve(formattedTrades);
+				})
+			}
+			
+			
+			tradesHandler.tradeHistoryLastUpdated = time;
+			
+			return dfd.promise();
+		},
 	}
 	
 	
@@ -544,6 +653,70 @@ var IDEX = (function(IDEX, $, undefined)
 			var tradesHandler = this;
 			
 			tradesHandler.nxtAE = nxtAE;
+			tradesHandler.trades = {};
+			tradesHandler.marketHistoryLastUpdated = new Date().getTime();
+
+		},
+		
+
+		
+		getMarketTrades: function(market, forceUpdate)
+		{
+			var tradesHandler = this;
+			var dfd = new $.Deferred();
+			var time = new Date().getTime()
+
+			var params = {}
+			params.requestType = "getTrades";
+			params.asset = market.base.assetID;
+			var assetInfo = IDEX.nxtae.assets.getAsset("assetID", market.base.assetID);
+			var totalNumTrades = assetInfo.numberOfTrades;
+			
+			var firstIndex = totalNumTrades - 50 || 0
+			params.lastIndex = 50;
+			console.log(params);
+			
+			if (!forceUpdate && time - this.marketHistoryLastUpdated < 1000)
+			{
+				dfd.resolve()
+			}
+			else
+			{
+				IDEX.sendPost(params, true).then(function(data)
+				{
+					var trades = data.trades;
+					
+					var formattedTrades = [];
+					
+					for (var i = 0; i < trades.length; i++)
+					{
+						var trade = trades[i];
+						var formattedTrade = {};
+						
+						var timestamp = IDEX.convertNXTTime(trade.timestamp);
+						var price = trade.priceNQT / Math.pow(10, 8);
+						var amount = trade.quantityQNT / Math.pow(10, trade.decimals);
+						var exchange = "nxtae";
+						
+						formattedTrade.timestamp = timestamp;
+						formattedTrade.price = price;
+						formattedTrade.amount = amount;
+						formattedTrade.exchange = exchange;
+						formattedTrade.tradeType = trade.tradeType;
+						
+						formattedTrades.push(formattedTrade);
+					}
+					
+					tradesHandler.trades[market.marketName] = formattedTrades;
+					
+					dfd.resolve(formattedTrades);
+				})
+			}
+			
+			
+			tradesHandler.marketHistoryLastUpdated = time;
+			
+			return dfd.promise();
 		},
 		
 		

@@ -1633,7 +1633,7 @@ table.dataTable thead th:last-child {
 	float:left;
 	vertical-align:middle;
 	cursor:default;
-	background-color: rgba(0,0,0,0.6);
+	background-color: rgba(0,0,0,1);
 }
 
 .chart-loading span {
@@ -2124,6 +2124,205 @@ table.dataTable thead th:last-child {
 	position:relative;
 }
 
+.orderbook-statusText {
+	height: calc(100% - 20px);
+	width:100%;
+	position:absolute;
+	display:none;
+	top:20px;
+	z-index:2;
+	vertical-align:middle;
+	cursor:default;
+	background-color:black;
+}
+
+.orderbook-statusText.active {
+	display:block;
+}
+
+.orderbook-statusText span {
+	text-align:center;
+	display:block;
+	font-size:20px;
+	top:50%;
+	position:relative;
+}
+
+
+/* ------------------------- VERTICAL ORDERBOOK  ------------------------- */
+
+
+.orderbook-vertical-body {
+	height:calc(100% - 30px - 130px);
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.orderbook-vertical {
+	height: calc(50% - 10px);
+	width: 100%;
+	position:relative;
+	float:left;
+}
+
+
+.orderbook-vertical-bookLabels {
+	height:20px;
+	position:relative;
+	width:100%;
+	padding-right:10px;
+	padding-left:10px;
+	text-align:center;
+	border-bottom: solid 1px #363636;
+	background:#111111;
+	font-size:11px;
+}
+
+.bookname {
+	height:calc(100% - 20px);
+	width:100%;
+	display:block;
+	position:relative;
+	background:black;
+	overflow:hidden;
+}
+
+.bookname-buybook {
+	border-right:1px solid #333333;
+}
+
+.bookname-sellbook {
+	border-left:1px solid #111111;
+}
+
+.bookname-sellbook > .twrap, .bookname-buybook  > .twrap {
+	position:absolute;
+	width:100%;
+	padding-right:10px;
+	padding-left:10px;
+	padding-top:7px;
+	padding-bottom:7px;
+}
+
+.orderbook-bookLabels-row {
+	position:relative;
+	display: block;
+	width:100%;
+	height:100%;
+	padding-top:5px;
+	text-align:center;
+}
+
+.orderbook-bookLabels-col  {
+	width:32%;
+	display:inline-block;
+	/*color:#329ddc;*/
+}
+
+.order-row {
+	width:calc(100%);
+	position:relative;
+	display: block;
+	margin-top:4px;
+	margin-bottom:4px;
+	-webkit-transition: all 800ms ease-out;
+    -moz-transition: all 800ms ease-out;
+    -o-transition: all 800ms ease-out;
+    -ms-transition: all 800ms ease-out;
+    transition: all 800ms ease-out;	
+	color:#D4D4D4;
+	font-weight:bold;
+}
+
+.order-row-inspect-trig {
+	height:15px;
+	position:absolute;
+	left:-8px;
+	top:2px;
+	opacity:0;
+	z-index:10;
+}
+
+.order-row-inspect-trig.active {
+	opacity:0.7;
+}
+
+.order-row-inspect-trig.inspectOrderHover {
+	cursor:pointer;
+	opacity:1;
+}
+
+.order-row-inspect-trig img {
+	float:right;
+	height:20px;
+	width:20px;
+}
+
+
+.order-col {
+	height:13px;
+	width: 32%;
+	display: inline-block;
+	margin-top:4px;
+	margin-bottom:4px;
+	vertical-align:middle;
+	text-align:right;
+	line-height:13px;
+	font-size: 13px;
+
+	color:inherit !important;
+}
+
+/*.order-col:first-child , .labels-col:first-child {
+	margin-right:8px;
+}*/
+
+.bookname-sellbook  > .twrap  > .order-row:hover > .order-col, .bookname-buybook  > .twrap  > .order-row:hover > .order-col {
+	cursor:pointer;
+	color:#EDB379 !important;
+}
+
+.bookname-sellbook > .twrap > .order-row.newrow, .bookname-buybook  > .twrap > .order-row.newrow {
+
+}
+
+.bookname-sellbook > .twrap > .order-row.newrow > .order-col {
+	/*background-color:#333;*/
+	color: rgb(255,0,0) !important;
+}
+
+.bookname-buybook  > .twrap > .order-row.newrow > .order-col {
+	/*background-color:#333;*/
+	color:rgb(0,210,0) !important;
+}
+
+.bookname-sellbook > .twrap > .order-row.own-order, .bookname-buybook  > .twrap > .order-row.own-order {
+	background-color:rgba(255, 255, 255, 0.1);
+}
+
+/*.bookname-sellbook > .twrap  > .order-row.closed, .bookname-buybook  > .twrap  > .order-row.closed {
+	background-color:blue;
+}*/
+
+.empty-orderbook {
+	height: calc(100% - 50px);
+	width:100%;
+	position:absolute;
+	display:none;
+	z-index:1;
+	float:left;
+	vertical-align:middle;
+	cursor:default;
+}
+
+.empty-orderbook span {
+	text-align:center;
+	display:block;
+	font-size:1rem;
+	top:50%;
+	position:relative;
+}
 
 /* ------------------------- CURRENT MARKET ORDERBOX  ------------------------- */
 
@@ -2452,6 +2651,107 @@ table.dataTable thead th:last-child {
 	background: rgba(50, 157, 220, 0.4);
 	cursor:pointer;
 }
+
+.watchlist-lastBid {
+	color: rgba(27, 211, 87, 0.8);
+	color: rgb(0,210,0);
+}
+
+.watchlist-lastAsk {
+	color:rgba(218, 59, 38, 0.9);
+	color: rgb(255,0,0);
+}
+
+
+/* -------------------------  MARKET HISTORY ------------------------- */
+
+.cm-marketHistory-wrap {
+	height:100%;
+	width:100%;
+	position:relative;
+	display:block;
+	padding-top:5px;
+}
+
+.cm-marketHistory-header {
+	height:25px;
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.cm-marketHistory-search-wrap .nSearch-input input:focus {
+	outline:none;
+	border:1px solid black !important;
+	background-color:#222222;
+}
+
+.cm-marketHistory-search-wrap .nSearch-input input:hover {
+	background-color:#222222;
+}
+
+.cm-marketHistory-search-wrap .nSearch-input-img-inner:hover {
+	border-top:1px solid #555555;
+	background-color:#444444;
+	cursor:pointer;
+}
+
+.cm-marketHistory-content {
+	height:calc(100% - 25px);
+	width:100%;
+	position:relative;
+	display:block;
+	background-color:black;
+}
+
+.cm-marketHistory-table-wrap {
+	height:100%;
+	width:100%;
+	position:relative;
+	display:block;
+}
+
+.cm-marketHistory-table {
+	width:100%;
+	position:relative;
+}
+
+.cm-marketHistory-table th {
+	text-align:left;
+	font-size:11px;
+	height:20px;
+	text-align:center;
+}
+
+.cm-marketHistory-table td {
+	text-align:left;
+	font-size:11px;
+}
+
+.cm-marketHistory-table tbody tr:hover {
+	background-color: #329ddc;
+	color:black !important;
+}
+
+.cm-marketHistory-table thead {
+	background:#111111;
+}
+
+.cm-marketHistory-table tbody td:last-child {
+	text-align:left;
+}
+
+.cm-orderType-buy {
+	color: rgba(27, 211, 87, 0.8);
+	color: rgb(0,210,0);
+}
+
+.cm-orderType-sell {
+	color:rgba(218, 59, 38, 0.9);
+	color: rgb(255,0,0);
+}
+
+
 /* -------------------------  OPEN ORDERS ------------------------- */
 
 
@@ -2495,6 +2795,7 @@ table.dataTable thead th:last-child {
 }
 
 .cm-openorders-table-wrap {
+	height:100%;
 	width:100%;
 	position:relative;
 	display:block;
@@ -2517,8 +2818,17 @@ table.dataTable thead th:last-child {
 	font-size:11px;
 }
 
+.cm-openorders-table tbody tr:hover {
+	background-color: #329ddc;
+	color:black !important;
+}
+
 .cm-openorders-table-wrap table thead {
 	background:#111111;
+}
+
+.cm-openorders-table-wrap tr:nth-child(even) {
+	background-color:#111111;
 }
 
 .cancel-hover {
@@ -2539,26 +2849,73 @@ table.dataTable thead th:last-child {
 }
 
 .cm-trades-header {
-	height:30px;
+	height:25px;
 	width:100%;
 	position:relative;
 	display:block;
 }
 
-.cm-trades-header-title {
-	font-size:12px;
-	display:inline-block;
+.cm-trades-search-wrap .nSearch-input input:focus {
+	outline:none;
+	border:1px solid black !important;
+	background-color:#222222;
+}
+
+.cm-trades-search-wrap .nSearch-input input:hover {
+	background-color:#222222;
+}
+
+.cm-trades-search-wrap .nSearch-input-img-inner:hover {
+	border-top:1px solid #555555;
+	background-color:#444444;
+	cursor:pointer;
+}
+
+.cm-trades-content {
+	height:calc(100% - 25px);
+	width:100%;
+	position:relative;
+	display:block;
+	background-color:black;
 }
 
 .cm-trades-table-wrap {
-	height:calc(100%);
+	height:100%;
 	width:100%;
 	position:relative;
 	display:block;
-	background:black;
+}
+
+.cm-trades-table-wrap table {
+	width:100%;
+	position:relative;
+}
+
+.cm-trades-table-wrap table th {
+	text-align:left;
+	font-size:11px;
+	height:20px;
+	text-align:center;
+}
+
+.cm-trades-table-wrap table td {
+	text-align:left;
+	font-size:11px;
+}
+
+.cm-trades-table tbody tr:hover {
+	background-color: #329ddc;	
+	color:black !important;
 }
 
 
+.cm-trades-table-wrap table thead {
+	background:#111111;
+}
+
+.cm-trades-table-wrap tr:nth-child(even) {
+	background-color:#111111;
+}
 
 /* ------------------------- BALANCES ------------------------- */
 
@@ -2576,7 +2933,7 @@ table.dataTable thead th:last-child {
 	width:100%;
 	position:relative;
 	display:block;
-	/*overflow:hidden;*/
+	border-bottom:1px solid black;
 }
 
 .cm-balances-search-wrap .nSearch-input input:focus {
@@ -2605,6 +2962,7 @@ table.dataTable thead th:last-child {
 }
 
 .cm-balances-sing {
+	height:50%;
 	width:100%;
 	position:relative;
 	display:block;
@@ -2623,9 +2981,20 @@ table.dataTable thead th:last-child {
 	float:left;
 	position:relative;
 	font-size:12px;
+	padding-top:2px;
+	padding-left:5px;
+}
+
+.cm-balances-sing-balanceVal {
+	height:100%;
+	position:absolute;
+	right:5px;
+	font-size:12px;
+	padding-top:2px;
 }
 
 .cm-balances-sing-table-wrap {
+	height:calc(100% - 20px);
 	width:100%;
 	position:relative;
 	display:block;
@@ -2634,6 +3003,26 @@ table.dataTable thead th:last-child {
 .cm-balances-sing-table-wrap table {
 	width:100%;
 	position:relative;
+}
+
+.cm-balances-sing-table th {
+	text-align:left;
+	font-size:11px;
+	height:17px;
+	text-align:center;
+}
+
+.cm-balances-sing-table td:first-child {
+	text-align:left;
+	font-size:11px;
+}
+
+.cm-balances-sing-table td:not(:first-child) {
+	text-align:right;
+}
+
+.cm-balances-sing-table thead {
+	background:#111111;
 }
 
 
@@ -3059,6 +3448,21 @@ table.dataTable thead th:last-child {
 	padding-left:22px;
 	padding-right:22px;
 	padding-bottom:5px;
+}
+
+
+#shareChart_popup {
+	width:375px;
+}
+
+.shartChartPopup-text {
+	position:relative;
+	display:block;
+	padding-top:10px;
+	padding-left:22px;
+	padding-right:22px;
+	padding-bottom:5px;
+	font-size:14px;
 }
 
 

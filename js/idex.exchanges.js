@@ -12,7 +12,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.exchangeClasses = {};
 	IDEX.exchangeList = ["nxtae", "bitfinex", "btc38", "bitstamp", "btce", "poloniex", "bittrex", "huobi", "coinbase", "okcoin", "bityes", "lakebtc", "exmo"];
-
+	
 	
 	IDEX.allCoins = [];
 	IDEX.allExchanges = {};
@@ -62,12 +62,37 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	function normalizeMarkets(parsedMarkets)
+	{
+		var enabledMarkets = {};
+		var fiat = ["USD", "CAD", "GBP", "CNY", "RUR", "EUR"]
+		var isRelFiat = false;
+		for (var i = 0; i < fiat.length; i++)
+		{
+			if (rel.name == fiat[i])
+			{
+				isRelFiat = true
+				break;
+			}
+		}
+		if (base.name == "BTC" && !isRelFiat)
+		{
+			params.base = rel.name;
+			params.rel = base.name;
+		}
+		else
+		{
+			params.base = base.name;
+			params.rel = rel.name;
+		}
+	}
+	
 	
 	IDEX.initAllMarkets = function()
 	{
 		var dfd = new $.Deferred();
 		
-		if (localStorage.allCoins && localStorage.allMarkets)
+		if (false && localStorage.allCoins && localStorage.allMarkets)
 		{
 			var allCoins = JSON.parse(localStorage.getItem('allCoins'));
 			var allMarkets = JSON.parse(localStorage.getItem('allMarkets'));
@@ -77,17 +102,15 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			dfd.resolve();
 		}
-		
 		else
 		{
 			getExternalExchangeMarkets().done(function(parsedMarkets)
-			{				
+			{
+				console.log(parsedMarkets);
 				var marketsByExchange = parsedMarkets.exchanges;
-				console.log(marketsByExchange);
 				var nxtaeMarkets = getNxtAEMarkets();
 				marketsByExchange.nxtae = nxtaeMarkets;
-				
-				
+								
 				for (exchangeName in IDEX.allExchanges)
 				{
 					var exchange = IDEX.allExchanges[exchangeName];
@@ -115,6 +138,13 @@ var IDEX = (function(IDEX, $, undefined)
 						var baseRel = market.split("_");
 						var base = baseRel[0];
 						var rel = baseRel[1];
+						var skynetFlipped = false;
+						
+						if (exchangeName == "poloniex")
+						{
+							base = [rel, rel = base][0];
+							skynetFlipped = true;
+						}
 						
 						
 						var func = function(name, isAsset) 
@@ -165,7 +195,13 @@ var IDEX = (function(IDEX, $, undefined)
 							marketObj.marketName = baseObj.name + "_" + relObj.name;
 							marketObj.base = baseObj;
 							marketObj.rel = relObj;
+							marketObj.pairID = baseObj.name + "_" + relObj.name;
 							marketObj.exchanges = [];
+						}
+						
+						if (isNxtAE)
+						{
+							marketObj.pairID = marketObj.base.assetID + "_" + marketObj.rel.name;
 						}
 						
 						marketObj.exchanges.push(exchangeName);
@@ -201,7 +237,7 @@ var IDEX = (function(IDEX, $, undefined)
 				localStorage.setItem('allMarkets', JSON.stringify(allMarkets));
 
 				dfd.resolve();
-				
+
 			})
 		}
 		
@@ -265,7 +301,6 @@ var IDEX = (function(IDEX, $, undefined)
 		for (pair in data)
 		{
 			var pairExchanges = data[pair].split('|');
-			var isNxtAE = false;
 			var marketObj = {};
 			
 			marketObj.marketName = pair;
@@ -275,20 +310,14 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var exchange = pairExchanges[i];
 				
-				if (exchange == "nxtae")
-					isNxtAE = true;
-				
 				if (!(exchange in exchanges))
 					exchanges[exchange] = [];
 				
 				exchanges[exchange].push(pair);
 				marketObj.exchanges.push(exchange);
-				//markets.push({"pair":pair,"exchange":exchange})
 			}
 			
 			markets[pair] = marketObj;
-			//if (!isNxtAE)
-			//	markets.push(pair);
 		}
 
 		return {"exchanges":exchanges, "markets":markets};
@@ -310,13 +339,7 @@ var IDEX = (function(IDEX, $, undefined)
         return baseurl+s
     }
 	
-	
-	
-	IDEX.updateExchangeBalances = function()
-	{
-		
-	}
-	
+
 	
 	
 	$(".allExchanges-nav-cell").on("click", function()

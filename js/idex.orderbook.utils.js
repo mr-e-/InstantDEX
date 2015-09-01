@@ -31,6 +31,22 @@ var IDEX = (function(IDEX, $, undefined)
 		//$("#currLast .order-text").empty().text(price);
 	}
 	
+	
+	IDEX.Orderbook.prototype.toggleStatusText = function(toggleState, status)
+	{
+		var orderbook = this;
+		var $statusText = orderbook.orderbookDom.find(".orderbook-statusText");
+		var toggleClass = toggleState
+		var func = toggleState ? "addClass" : "removeClass";
+
+		if (typeof status !== "undefined")
+		{
+			var text = status == "loading" ? "Loading..." : "Error loading orderbook";
+			$statusText.find("span").text(text);
+		}
+		$statusText[func]("active");
+	}
+	
 
 	
 	IDEX.Orderbook.prototype.updateLastPrice = function(orderbookData)

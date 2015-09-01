@@ -2,13 +2,47 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	var nxtURL = "http://127.0.0.1:7777/nxt";
+	var nxtURL = "http://127.0.0.1:7876/nxt";
 	var snURL = "http://127.0.0.1:7777/InstantDEX";
 	var strURL = "http://127.0.0.1:7777/stringified"
+	var sleuthURL = "http://127.0.0.1:9728";
 	
 	var lastTime = new Date().getTime()
 	var q = []
 
+	
+	IDEX.sleuthPost = function(params)
+	{
+		var dfd = new $.Deferred();
+
+		var ajaxSettings = 
+		{
+			type: "POST",
+			url: sleuthURL,
+			data: JSON.stringify(params),
+			contentType: 'application/json-rpc'
+		};
+		
+		var xhr = $.ajax(ajaxSettings);
+
+		xhr.done(function(data)
+		{
+			console.log(data);
+
+			dfd.resolve(data);
+
+		})
+		
+		xhr.fail(function(data)
+		{
+			console.log(data);
+
+			dfd.reject(data);
+			
+		})
+		
+		return dfd.promise()
+	}
 	
 	
 	IDEX.sendPost = function(params, isNXT, callback) 
@@ -60,7 +94,8 @@ var IDEX = (function(IDEX, $, undefined)
 		obj.params = params;
 		q.push(obj)
 
-		
+		if (isNXT)
+			waitTime =0;
 		setTimeout(function()
 		{
 			var xhr = $.ajax(ajaxSettings);
@@ -102,6 +137,43 @@ var IDEX = (function(IDEX, $, undefined)
 			
 		}, waitTime)
 		
+		return dfd.promise()
+	}
+
+	
+	
+	IDEX.sendSkynetPost = function(params) 
+	{
+		var dfd = new $.Deferred();
+		var url = "http://api.finhive.com/v1.0/run.cgi";
+
+
+		var ajaxSettings = 
+		{
+			type: "POST",
+			url: url,
+			data: JSON.stringify(params),
+			contentType: 'application/json'
+		};
+		
+
+		var xhr = $.ajax(ajaxSettings);
+		
+		xhr.done(function(data)
+		{
+			console.log(data);
+			dfd.resolve(data);
+
+		})
+		
+		xhr.fail(function(data)
+		{
+			console.log(data);
+
+			dfd.reject(data);
+
+		})
+
 		return dfd.promise()
 	}
 
