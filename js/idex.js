@@ -2,8 +2,8 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	
-	IDEX.defaultMarket = {"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true};
+
+	IDEX.defaultMarket = {"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"exchanges":["nxtae","btc38","poloniex","bittrex"]},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true}
 	IDEX.isWindows = false;
 	IDEX.user;
 
@@ -65,8 +65,8 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					IDEX.initAllMarkets().done(function()
 					{
-						//var defaultMarket = IDEX.allMarkets['15344649963748848799_nxt'];
-						//console.log(JSON.stringify(defaultMarket));
+						var defaultMarket = IDEX.allMarkets['15344649963748848799_nxt'];
+						console.log(JSON.stringify(defaultMarket));
 						IDEX.initAutocomplete();
 						initializedExchanges.resolve()
 					});
