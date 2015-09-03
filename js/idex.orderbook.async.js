@@ -74,8 +74,6 @@ var IDEX = (function(IDEX, $, undefined)
 			params.baseid = base.assetID;
 			params.relid = "5527630";
 			//params.exchange = "nxtae";
-			//params.base = base.name;
-			//params.rel = rel.name;
 		}
 		else
 		{
@@ -86,31 +84,12 @@ var IDEX = (function(IDEX, $, undefined)
 		//params.exchange="basket"
 		//params.basket=[{"exchange":"nxtae"},{"exchange":"unconf"}];
 
-		
-		/*var func = function(coin, isBase) 
-		{	
-			var key = isBase ? "base" : "rel";
-			var val = coin.name;
-			if (coin.isAsset)
-			{
-				key = isBase ? "base" : "rel";
-				val = coin.name;
-			}
-			
-			return {"key":key, "val":val};
-		};
-
-		var basePost = func(orderbook.base, true);
-		var relPost = func(orderbook.rel, false);
-		
-		params[basePost.key] = basePost.val;
-		params[relPost.key] = relPost.val;*/
 		this.isWaitingForOrderbook = true;
 		var time = Date.now()
 		
 		var tdfd = new $.Deferred();
 		
-		if (orderbook.market.isNxtAE)
+		if (false && orderbook.market.isNxtAE)
 		{
 
 			
@@ -141,7 +120,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var addBids = [];
 				var addAsks = [];
-				if (orderbook.market.isNxtAE)
+				/*if (orderbook.market.isNxtAE)
 				{
 					console.log(tdata);
 					var unconfirmedTransactions = tdata.unconfirmedTransactions;
@@ -194,8 +173,8 @@ var IDEX = (function(IDEX, $, undefined)
 						}
 					}
 					
-				}
-				//console.log(orderbookData);
+				}*/
+				console.log(orderbookData);
 				//console.log(JSON.stringify(orderbookData.bids));
 
 				orderbook.isWaitingForOrderbook = false;

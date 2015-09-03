@@ -53,7 +53,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				seriesTab.seriesTabDOM.addClass("main-series-tab");
 			}
 			
-			chart.node.parent().append(seriesTab.seriesTabDOM);
+			chart.node.append(seriesTab.seriesTabDOM);
 		},
 		
 		
@@ -473,6 +473,9 @@ Sleuthcharts = (function(Sleuthcharts)
 				{
 					//console.log('main');
 					dfd.resolve();
+				}).fail(function()
+				{
+					dfd.reject();
 				})
 			}
 			else

@@ -81,7 +81,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.chartOptions = userOptions.chart;
 			
 			chart.node = chart.userOptions.chart.node;
-			chart.pointInfoDOM = chart.node.parent().find(".chart-marketInfo");
+			chart.pointInfoDOM = chart.node.find(".chart-marketInfo");
 			
 			chart.initCanvas();
 			
@@ -119,7 +119,6 @@ Sleuthcharts = (function(Sleuthcharts)
 			Sleuthcharts.allCharts.push(chart);
 			
 			var load = "marketSettings" in chart.userOptions;
-
 			
 			if (load)
 			{
@@ -138,9 +137,12 @@ Sleuthcharts = (function(Sleuthcharts)
 			var allSeries = chart.series;
 			var len = allSeries.length;
 			
-			chart.getAllSeriesDataLoop(0, function()
+			chart.getAllSeriesDataLoop(0, function(ret)
 			{
-				dfd.resolve();
+				if (ret)
+					dfd.resolve();
+				else
+					dfd.reject();
 			})
 			
 			return dfd.promise();
@@ -158,13 +160,16 @@ Sleuthcharts = (function(Sleuthcharts)
 			{
 				if (index == len - 1)
 				{
-					callback();
+					callback(true);
 				}
 				else
 				{
 					chart.getAllSeriesDataLoop(index + 1, callback)
 				}
-			});
+			}).fail(function()
+			{
+				callback(false);
+			})
 			
 		},
 		
@@ -175,14 +180,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chart = this;
 			
 			var canvas = document.createElement('canvas');
-			canvas.width = chart.node.parent().width();
-			canvas.height = chart.node.parent().height();
+			canvas.width = chart.node.width();
+			canvas.height = chart.node.height();
 			canvas.style.position = "absolute";
 			canvas.style.top = 0;
 			canvas.style.left = 0;
 			//canvas.style.zIndex = 2;
 			
-			chart.node.parent().append(canvas);
+			chart.node.append(canvas);
 
 			chart.canvas = canvas;
 			chart.canvasJQ = $(canvas);
@@ -191,14 +196,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			
 			var infoCanvas = document.createElement('canvas');
-			infoCanvas.width = chart.node.parent().width();
-			infoCanvas.height = chart.node.parent().height();
+			infoCanvas.width = chart.node.width();
+			infoCanvas.height = chart.node.height();
 			infoCanvas.style.position = "absolute";
 			infoCanvas.style.top = 0;
 			infoCanvas.style.left = 0;
 			
 			
-			chart.node.parent().append(infoCanvas);
+			chart.node.append(infoCanvas);
 
 			chart.infoCanvas = infoCanvas;
 			chart.infoCTX = infoCanvas.getContext("2d");
@@ -206,14 +211,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			
 			var crosshairCanvas = document.createElement('canvas');
-			crosshairCanvas.width = chart.node.parent().width();
-			crosshairCanvas.height = chart.node.parent().height();
+			crosshairCanvas.width = chart.node.width();
+			crosshairCanvas.height = chart.node.height();
 			crosshairCanvas.style.position = "absolute";
 			crosshairCanvas.style.top = 0;
 			crosshairCanvas.style.left = 0;
 			
 			
-			chart.node.parent().append(crosshairCanvas);
+			chart.node.append(crosshairCanvas);
 
 			chart.crosshairCanvas = crosshairCanvas;
 			chart.crosshairCTX = crosshairCanvas.getContext("2d");
@@ -225,11 +230,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		initMarketHandler: function()
 		{
 			var chart = this;
-			
-			var marketSettings = chart.userOptions.marketSettings || {};
-			
-			//console.log(marketSettings);
-			
+			var marketSettings = chart.userOptions.marketSettings || {};			
 			var marketHandler = new Sleuthcharts.MarketHandler(chart, marketSettings);
 			chart.marketHandler = marketHandler;
 		},
@@ -240,7 +241,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var chart = this;
 			var seriesOptions = chart.userOptions.series;
-			
 			
 			for (var i = 0; i < seriesOptions.length; i++)
 			{
@@ -340,8 +340,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.plotWidth = chart.plotRight - chart.plotLeft;
 			
 
-			var height = chart.node.parent().height();
-			var width = chart.node.parent().width();
+			var height = chart.node.height();
+			var width = chart.node.width();
 			chart.canvas.height = height;
 			chart.canvas.width = width;
 			chart.infoCanvas.height = height;
@@ -476,7 +476,7 @@ Sleuthcharts = (function(Sleuthcharts)
 				
 			}).fail(function()
 			{
-				chart.editLoading("Error loading market " + marketHandler.marketSettings.pairName);
+				chart.editLoading("Error loading market " + marketHandler.marketSettings.market.marketName);
 			})
 			
 			
@@ -799,8 +799,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var chart = this;
 			var $node  = chart.node;
-			var $parent = $node.parent();
-			var $loading = $parent.find(".chart-loading");
+			var $loading = $node.find(".chart-loading");
 			
 			if (isLoading)
 			{
@@ -818,8 +817,7 @@ Sleuthcharts = (function(Sleuthcharts)
 		{
 			var chart = this;
 			var $node  = chart.node;
-			var $parent = $node.parent();
-			var $loading = $parent.find(".chart-loading");
+			var $loading = $node.find(".chart-loading");
 			
 			text = typeof text === "undefined" ? "Loading..." : text;
 			$loading.find("span").text(text);
@@ -833,10 +831,10 @@ Sleuthcharts = (function(Sleuthcharts)
 			var marketHandler = chart.marketHandler;
 			var marketSettings = marketHandler.marketSettings;
 			
-			var pair = marketSettings.pairName;
+			var pair = marketSettings.market.marketName;
 			var exchange = marketSettings.exchange;
 			
-			var $el = chart.node.parent().find(".chart-marketName span");
+			var $el = chart.node.find(".chart-marketName span");
 			
 			$el.text(pair.toUpperCase() + " - " + exchange.toUpperCase());
 		},

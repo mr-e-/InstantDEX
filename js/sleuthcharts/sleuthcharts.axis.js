@@ -212,7 +212,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chartPadding = chart.padding;
 			var isXAxis = axis.isXAxis;
 			
-			var bbox = chart.node[0].getBoundingClientRect();
+			//var bbox = chart.node[0].getBoundingClientRect();
 			var wrapWidth = chart.plotWidth;
 			var wrapHeight = chart.plotHeight;
 			
@@ -253,7 +253,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chartPadding = chart.padding;
 			var isXAxis = axis.isXAxis;
 			
-			var bbox = chart.node[0].getBoundingClientRect();
+			//var bbox = chart.node[0].getBoundingClientRect();
 			var wrapWidth = chart.plotWidth;
 			var wrapHeight = chart.plotHeight;
 			

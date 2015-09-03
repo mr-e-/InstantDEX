@@ -6,18 +6,17 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.makeChart = function(obj, cellHandler)
 	{
-		var node = obj.node		
-		
+		var node = obj.node				
 		var volAxisHeight = "25%"
 		var priceAxisHeight = "75%"
 		var priceAxisTopPadding = 35;
+		
 		var yLabelStyle =
 		{
 			"textPadding":5,
 			"fontSize":"11.5px",
 			"fontColor":"#8C8C8C",
 		};
-		
 		
 		var chartOptions = 
 		{
@@ -32,7 +31,6 @@ var IDEX = (function(IDEX, $, undefined)
 					bottom:0,
 				},
 			},
-			
 			
 			xAxis: [
 				{	
@@ -59,7 +57,6 @@ var IDEX = (function(IDEX, $, undefined)
 					},
 				}
 			],
-			
 			
 			yAxis: [
 				{
@@ -108,12 +105,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					seriesType: "column",
 				}
-			],
-			
-			marketSettings:
-			{
-				
-			},
+			]
 			
 		}
 		
@@ -121,58 +113,34 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			chartOptions.marketSettings = obj.marketSettings;
 		}
-
-		obj.node.sleuthcharts(chartOptions);
-		var chart = obj.node.sleuthcharts();
-		chart.cell = cellHandler;
-
-		//var chart = new Sleuthcharts.Chart(chartOptions);
-
 		
-		//var chart = Sleuthcharts.getChart(node);
-		//chart.changeMarket(obj);
+		var chart = obj.node.sleuthcharts(chartOptions);
+		chart.cell = cellHandler;
 		
 		return chart;
 	}
 	
 	
-	IDEX.formatChartMarket = function(chart, market)
+	IDEX.changeChartMarket = function(chart, market, exchange)
+	{	
+		var marketHandler = chart.marketHandler;
+		marketHandler.changeMarket(market, exchange);
+		IDEX.changeChartMarketDOM(chart);
+		chart.updateChart();
+	}
+	
+	
+	IDEX.changeChartMarketDOM = function(chart)
 	{
 		var $cell = chart.node.closest(".cell");
 		var marketHandler = chart.marketHandler;
-		var exchange = market.exchanges[0];
-		
-		marketHandler.changeMarket(market, exchange);
-		IDEX.changeChartMarketDOM(marketHandler, $cell);
-		chart.updateChart();
-	}
-	
-	
-	IDEX.changeChartMarket = function(obj)
-	{
-		var $cell = obj.node.closest(".cell");
-		var $node = $cell.find(".chart-wrap svg");
-		var chart = Sleuthcharts.getChart($node);
-		var marketHandler = chart.marketHandler;
-		var market = obj.market;
-		var exchange = obj.exchange;
-		
-		
-		marketHandler.changeMarket(market, exchange);
-		IDEX.changeChartMarketDOM(marketHandler, $cell);
-		chart.updateChart();
-		chart.market = market;
-	}
-	
-	IDEX.changeChartMarketDOM = function(marketHandler, $cell)
-	{
-		var market = marketHandler.market;
 		var marketSettings = marketHandler.marketSettings;
-		
-		var $header = $cell.find(".chart-header");
+		var market = marketSettings.market;
 		var barType = marketSettings.barType;
 		var barLen = marketSettings.barWidth;
 		
+		var $header = $cell.find(".chart-header");
+
 		$header.find(".chart-time-dropdown-wrap ul").removeClass("active");
 		var $activeList = $header.find(".chart-time-dropdown-wrap ul[data-inttype='"+barType+"']");
 		$activeList.addClass("active");
@@ -222,21 +190,16 @@ var IDEX = (function(IDEX, $, undefined)
 
 		
 		
-		var $node = $(this).closest(".cell").find(".chart-wrap svg");
-		var chart = Sleuthcharts.getChart($node);
+		var $node = $(this).closest(".cell").find(".chart-wrap");
+		var chart = $node.sleuthcharts();
 		var marketHandler = chart.marketHandler;
-
-		//console.log(chart);
 		
 		var newSettings = {};
-
 		newSettings.configType = "time";
 		newSettings.configVal = timeType;
 		newSettings.val = timeVal;
 		
-
 		marketHandler.changeSettings(newSettings);
-
 	})
 	
 	
@@ -246,8 +209,8 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).addClass("active");
 		
 				
-		var $node = $(this).closest(".cell").find(".chart-wrap svg");
-		var chart = Sleuthcharts.getChart($node);
+		var $node = $(this).closest(".cell").find(".chart-wrap");
+		var chart = $node.sleuthcharts();
 		var marketHandler = chart.marketHandler;
 		
 		var confType = $(this).parent().attr("data-config")
@@ -370,7 +333,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$contentWrap.on("click", ".chart-indicator-popup-trig", function(e)
 	{
-		var $node = $(this).closest(".cell").find(".chart-wrap svg");
+		var $node = $(this).closest(".cell").find(".chart-wrap");
 		var chart = Sleuthcharts.getChart($node);
 	
 		IDEX.indChart = chart;

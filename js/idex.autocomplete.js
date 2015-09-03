@@ -368,12 +368,10 @@ var IDEX = (function(IDEX, $, undefined)
 			var exchangeMarket = vals.exchangeMarket;
 			
 			var obj = {};			
-			var $wrap = $input.closest(".chart-header")	
-			obj.node = $wrap;
-			obj.market = market;
-			obj.exchange = exchangeMarket.exchange;
+			var $wrap = $input.closest(".cell");
+			var chart = $wrap.find(".chart-wrap").sleuthcharts();
 
-			IDEX.changeChartMarket(obj);
+			IDEX.changeChartMarket(chart, market, exchangeMarket.exchange);
 		}
 	}
 	

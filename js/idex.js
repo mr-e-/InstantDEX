@@ -3,7 +3,8 @@
 var IDEX = (function(IDEX, $, undefined)
 {
 	
-    IDEX.isWindows = false;
+	IDEX.defaultMarket = {"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true};
+	IDEX.isWindows = false;
 	IDEX.user;
 
 	
@@ -49,37 +50,45 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.initChartIndicators();
 
 	
-		IDEX.pingSupernet().done(function()
+		IDEX.pingNxt().done(function()
 		{
-			
-			IDEX.initTimer().done(function()
+			IDEX.pingSupernet().done(function()
 			{
-				timeoutFinished.resolve();
-			});
-			
-
-			IDEX.initExchanges().done(function()
-			{
-				IDEX.initAllMarkets().done(function()
+				
+				IDEX.initTimer().done(function()
 				{
-					IDEX.initAutocomplete();
-					initializedExchanges.resolve()
+					timeoutFinished.resolve();
 				});
-			});
+				
+
+				IDEX.initExchanges().done(function()
+				{
+					IDEX.initAllMarkets().done(function()
+					{
+						//var defaultMarket = IDEX.allMarkets['15344649963748848799_nxt'];
+						//console.log(JSON.stringify(defaultMarket));
+						IDEX.initAutocomplete();
+						initializedExchanges.resolve()
+					});
+				});
+				
+				
+				$.when(timeoutFinished, initializedExchanges).done(function()
+				{
+					IDEX.initGrids();
+					IDEX.hideLoading();
+				})
 			
-			
-			$.when(timeoutFinished, initializedExchanges).done(function()
+			}).fail(function()
 			{
-				IDEX.initGrids();
-				IDEX.hideLoading();
+				$(".temp-exit").addClass("active");
+				IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
 			})
-			
-					
 			
 		}).fail(function()
 		{
 			$(".temp-exit").addClass("active");
-			IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
+			IDEX.editLoading("Could not connect to NXT. Start NXT and reload.")
 		})
 	}
 	
@@ -98,8 +107,28 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
 	IDEX.pingSupernet = function()
+	{
+		var dfd = new $.Deferred();
+		var params = {"method":"openorders","allorders":1};
+		//params = {"method":"balance","exchange":"poloniex"}
+		//params = {"method":"allexchanges"}
+		IDEX.sendPost(params, false).done(function(data)
+		{
+			console.log(data)
+			dfd.resolve()
+			
+		}).fail(function()
+		{
+			dfd.reject()
+		})
+		
+		return dfd.promise()
+	}
+	
+	
+	
+	IDEX.pingNxt = function()
 	{
 		var dfd = new $.Deferred();
 		var params = {"requestType":"getState"};

@@ -11,8 +11,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	IDEX.exchangeClasses = {};
-	IDEX.exchangeList = ["nxtae", "bitfinex", "btc38", "bitstamp", "btce", "poloniex", "bittrex", "huobi", "coinbase", "okcoin", "bityes", "lakebtc", "exmo"];
-	
+	IDEX.exchangeList = ["nxtae", "bitfinex", "btc38", "bitstamp", "btce", "poloniex", "bittrex", "huobi", "coinbase", "okcoin"]; //bityes-broken&flipped lakebtc-no markets?  //exmo bter unconf InstantDEX
+	IDEX.activeExchanges = [];
 	
 	IDEX.allCoins = [];
 	IDEX.allExchanges = {};
@@ -26,8 +26,24 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.initExchangesLoop(0, function()
 		{
 			IDEX.nxtae = IDEX.allExchanges.nxtae;
-
-			dfd.resolve();
+			var params = {'method':"allexchanges"};
+			IDEX.sendPost(params, false).done(function(activeExchanges)
+			{
+				for (var i = 0; i < activeExchanges.length; i++)
+				{
+					var activeExchange = activeExchanges[i];
+					var activeExchangeName = activeExchange.name;
+					var tradeable =  "trade" in activeExchange && activeExchange.trade.length;
+					var isInArray = IDEX.exchangeList.indexOf(activeExchangeName) >= 0;
+					
+					if ((isInArray && tradeable) || activeExchangeName == "nxtae")
+					{
+						IDEX.activeExchanges.push(activeExchangeName);
+					}
+				}
+				
+				dfd.resolve();
+			})
 		})
 		
 		return dfd.promise();
@@ -45,7 +61,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var exchangeToInit = new IDEX.Exchange();
+			var exchangeToInit = new IDEX.Exchange(exchangeName);
 		}
 		
 		IDEX.allExchanges[exchangeName] = exchangeToInit;
@@ -92,7 +108,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var dfd = new $.Deferred();
 		
-		if (false && localStorage.allCoins && localStorage.allMarkets)
+		if (localStorage.allCoins && localStorage.allMarkets)
 		{
 			var allCoins = JSON.parse(localStorage.getItem('allCoins'));
 			var allMarkets = JSON.parse(localStorage.getItem('allMarkets'));
@@ -146,6 +162,14 @@ var IDEX = (function(IDEX, $, undefined)
 							skynetFlipped = true;
 						}
 						
+						if (exchangeName == "bittrex")
+						{
+							base = [rel, rel = base][0];
+							skynetFlipped = true;
+						}
+						
+						market = base + "_" + rel;
+						
 						
 						var func = function(name, isAsset) 
 						{
@@ -181,7 +205,39 @@ var IDEX = (function(IDEX, $, undefined)
 						var isNxtAE = exchangeName == "nxtae";
 						var baseObj = func(base, isNxtAE);
 						var relObj = func(rel, isNxtAE);
+						baseObj.exchanges = [];
+						relObj.exchanges = [];
 
+						var baseRet = IDEX.searchListOfObjectsAll(allCoins, baseObj, "exchanges");
+						if (baseRet.ret)
+						{
+							baseObj = allCoins[baseRet.index];
+							if (baseObj.exchanges.indexOf(exchangeName) == -1)
+							{
+								baseObj.exchanges.push(exchangeName);
+							}
+						}
+						else
+						{
+							baseObj.exchanges.push(exchangeName);
+							allCoins.push(baseObj)
+						}
+						
+						var relRet = IDEX.searchListOfObjectsAll(allCoins, relObj, "exchanges");
+						if (relRet.ret)
+						{
+							relObj = allCoins[relRet.index];
+							if (relObj.exchanges.indexOf(exchangeName) == -1)
+							{
+								relObj.exchanges.push(exchangeName);
+							}
+						}
+						else
+						{
+							relObj.exchanges.push(exchangeName);
+							allCoins.push(relObj)
+						}
+						
 						
 						
 						if (market in allMarkets)
@@ -197,6 +253,7 @@ var IDEX = (function(IDEX, $, undefined)
 							marketObj.rel = relObj;
 							marketObj.pairID = baseObj.name + "_" + relObj.name;
 							marketObj.exchanges = [];
+							marketObj.exchangeSettings = {};
 						}
 						
 						if (isNxtAE)
@@ -204,17 +261,13 @@ var IDEX = (function(IDEX, $, undefined)
 							marketObj.pairID = marketObj.base.assetID + "_" + marketObj.rel.name;
 						}
 						
-						marketObj.exchanges.push(exchangeName);
-
-						if (!IDEX.searchListOfObjectsAll(allCoins, baseObj))
-						{
-							allCoins.push(baseObj)
-						}
+						var exchangeFormat = {}
+						exchangeFormat.skynetFlipped = skynetFlipped;
 						
-						if (!IDEX.searchListOfObjectsAll(allCoins, relObj))
-						{
-							allCoins.push(relObj)
-						}
+						marketObj.exchanges.push(exchangeName);
+						marketObj.exchangeSettings[exchangeName] = exchangeFormat;
+						
+
 					}
 				}
 				

@@ -108,6 +108,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (cBalance.hasMarket)
 		{
+			
 			cBalance.baseSec.updateBalance();
 			cBalance.relSec.updateBalance();
 		}
@@ -132,58 +133,63 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		//cBalanceType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 
-		var marketExchanges = market.exchanges;
+		var marketExchanges = baseOrRel.exchanges;
 		cBalanceType.tableDom.find("tbody").empty();
 		
 		for (var i = 0; i < marketExchanges.length; i++)
 		{
 			var exchange = marketExchanges[i];
-			
-			if (exchange == "InstantDEX" || exchange == "nxtae")
+			(function(exchange)
 			{
-				var exchangeHandler = IDEX.allExchanges[exchange];
-				exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-				var balancesHandler = exchangeHandler.balances;
-
-				balancesHandler.updateBalances().done(function()
+				if (exchange == "InstantDEX" || exchange == "nxtae")
 				{
-					var isNxt = baseOrRel.isAsset == false && baseOrRel.name == "NXT";
-					var bal = {};
-					var parsedBal = {};
-					
-					if (isNxt)
+					var exchangeHandler = IDEX.allExchanges[exchange];
+					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+
+					var balancesHandler = exchangeHandler.balances;
+
+					balancesHandler.updateBalances().done(function()
 					{
-						bal = balancesHandler.getBalance(false, isNxt)
-					}
-					else if ("assetID" in baseOrRel)
-					{
-						bal = balancesHandler.getBalance(baseOrRel.assetID);
-					}
-					else
-					{
+						var isNxt = baseOrRel.isAsset == false && baseOrRel.name == "NXT";
+						var bal = {};
+						var parsedBal = {};
 						
-					}
-					
-					parsedBal = parseBalance(bal);
+						if (isNxt)
+						{
+							bal = balancesHandler.getBalance(false, isNxt)
+						}
+						else if ("assetID" in baseOrRel)
+						{
+							bal = balancesHandler.getBalance(baseOrRel.assetID);
+						}
+						else
+						{
+							
+						}
+						
+						parsedBal = parseBalance(bal);
 
-					//console.log(bal);
-					cBalanceType.addTableRow(bal, exchange);
-					//orderboxType.balanceValDom.text(bal.whole + bal.dec);			
-				})
-			}
-			else
-			{
-				var exchangeHandler = IDEX.allExchanges[exchange];
-				var balancesHandler = exchangeHandler.balances;
-				
-				balancesHandler.updateBalances().done(function()
+						//console.log(bal);
+						cBalanceType.addTableRow(bal, exchange);
+						//orderboxType.balanceValDom.text(bal.whole + bal.dec);			
+					})
+				}
+				else
 				{
-					var bal = parseBalance({});
-					cBalanceType.addTableRow(bal, exchange);
-					//orderboxType.balanceValDom.text(bal.whole + bal.dec);			
-				})
-			}
+					if (IDEX.activeExchanges.indexOf(exchange) == -1)
+						return;
+					var exchangeHandler = IDEX.allExchanges[exchange];
+					var balancesHandler = exchangeHandler.balances;
+					balancesHandler.updateBalances().done(function()
+					{
+
+						var bal = balancesHandler.getBalance(baseOrRel.name);
+						//console.log(balancesHandler);
+						cBalanceType.addTableRow(bal, exchange);
+						//orderboxType.balanceValDom.text(bal.whole + bal.dec);			
+					})
+				}
+			})(exchange)
 		}
 	}
 	
@@ -192,12 +198,23 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.CBalanceType.prototype.addTableRow = function(balance, exchange)
 	{
 		var cBalanceType = this;
-		var total = balance.availableBalance;
-		var available = balance.unconfirmedBalance;
-		var unavailable = IDEX.toSatoshi(Number(total) - Number(available));
 		
-		var tr = "<tr><td>"+exchange+"</td><td>"+String(unavailable)+"</td><td>"+String(available)+"</td><td>"+String(total)+"</td></tr>";
-		
+		if (exchange == "nxtae")
+		{
+			var total = balance.availableBalance;
+			var available = balance.unconfirmedBalance;
+			var unavailable = IDEX.toSatoshi(Number(total) - Number(available));
+			
+			var tr = "<tr><td>"+exchange+"</td><td>"+String(unavailable)+"</td><td>"+String(available)+"</td><td>"+String(total)+"</td></tr>";
+		}
+		else
+		{
+			var total = balance.total;
+			var available = balance.available;
+			var unavailable = balance.unavailable;
+			
+			var tr = "<tr><td>"+exchange+"</td><td>"+String(unavailable)+"</td><td>"+String(available)+"</td><td>"+String(total)+"</td></tr>";
+		}
 		cBalanceType.tableDom.find("tbody").append($(tr));
 
 	}

@@ -89,18 +89,31 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Watchlist.prototype.orderbookLoop = function(fav, index)
 	{
 		var watchlist = this;
-		
+		var isNxtAE = fav.isNxtAE;
 		var params = 
 		{
 			'plugin':"InstantDEX",
 			'method':"orderbook", 
 			'allfields':1,
-			'exchange':"nxtae",
+			'exchange':fav.exchanges[0],
 			'tradeable':0,
-			'baseid':fav.base.assetID,
-			'relid':"5527630"
+			//'baseid':fav.base.assetID,
+			//'relid':"5527630",
+			'maxdepth':1
 		};
 		
+		if (isNxtAE)
+		{
+			params.baseid = fav.base.assetID;
+			params.relid = "5527630";
+			//params.exchange = "nxtae";
+		}
+		else
+		{
+			params.base = fav.base.name;
+			params.rel = fav.rel.name;
+		}
+
 		IDEX.sendPost(params, false).done(function(data)
 		{
 			//console.log(data);
@@ -110,6 +123,35 @@ var IDEX = (function(IDEX, $, undefined)
 			$row.find("td").eq(2).text(String(data.lastask));
 
 		})
+		
+		/*var params = {}
+		params.key = "beta_test";
+
+		var format = {};
+		format.rnum = 100;
+
+		var query = {};
+		query.section = "dat";
+		query.segment = "qts";
+		query.target = "qts_lst";
+		query.params = {};
+		query.params.exchange = fav.exchanges[0];
+		query.params.source = "crypto";
+		query.params.symbol = fav.pairID;
+
+
+		params.format = format;
+		params.query = query;
+		
+
+		
+		IDEX.sendSkynetPost(params).done(function(data)
+		{
+			console.log(data)
+			$row.find("td").eq(1).text(String(data.lastbid));
+			$row.find("td").eq(2).text(String(data.lastask));
+		})*/
+		
 	}
 	
 	
@@ -122,7 +164,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var fav = favs[i];
 			
-			if (fav.isNxtAE)
+			if (true)
 			{
 				watchlist.orderbookLoop(fav, i);
 
@@ -155,7 +197,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		IDEX.sendSkynetPost(params).done(function(data)
 		{
-			
+			console.log(data)
 		})
 
 	}

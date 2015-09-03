@@ -86,41 +86,50 @@ var IDEX = (function(IDEX, $, undefined)
 			var marketExchanges = market.exchanges;
 			
 			cMarketHistory.tableDom.find("tbody").empty();
-			
+
 			for (var i = 0; i < marketExchanges.length; i++)
 			{
 				var exchange = marketExchanges[i];
 				
-				if (exchange == "InstantDEX" || exchange == "nxtae")
+				(function(exchange)
 				{
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-					var marketHistoryHandler = exchangeHandler.marketTrades;
-
-					marketHistoryHandler.getMarketTrades(market).done(function(trades)
-					{						
-						console.log(trades);
-						
-						for (var j = 0; j < trades.length; j++)
-						{
-							var trade = trades[j];
-							cMarketHistory.addTableRow(trade, exchange);
-						}
-					})
-				}
-				else
-				{
-					continue;
-					
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					var tradeHistoryHandler = exchangeHandler.accountTrades;
-					
-					tradeHistoryHandler.updateTrades().done(function()
+					if ( false && exchange == "InstantDEX" || exchange == "nxtae")
 					{
-			
-					})
-				}
+						var exchangeHandler = IDEX.allExchanges[exchange];
+						exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+
+						var marketHistoryHandler = exchangeHandler.marketTrades;
+
+						marketHistoryHandler.getMarketTrades(market).done(function(trades)
+						{						
+							
+							for (var j = 0; j < trades.length; j++)
+							{
+								var trade = trades[j];
+								cMarketHistory.addTableRow(trade, exchange);
+							}
+						})
+					}
+					else
+					{
+						if (exchange == "poloniex")
+						{
+							//continue;
+							
+							var exchangeHandler = IDEX.allExchanges[exchange];
+							var marketHistoryHandler = exchangeHandler.marketTrades;
+							
+							marketHistoryHandler.getMarketTrades(market).done(function(trades)
+							{
+								for (var j = 0; j < trades.length; j++)
+								{
+									var trade = trades[j];
+									cMarketHistory.addTableRow(trade, exchange);
+								}
+							})
+						}
+					}
+				})(exchange)
 			}
 		}
 	}
@@ -140,7 +149,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var tradeClass = "cm-orderType-" + tradeType;
 		
-		var tr = "<tr><td>"+time+"</td><td>"+String(price)+"</td><td>"+String(amount)+"</td><td>"+String(exchange)+"</td></tr>";
+		var tr = "<tr><td>"+String(time)+"</td><td>"+String(price)+"</td><td>"+String(amount)+"</td><td>"+String(exchange)+"</td></tr>";
 		
 		var $tr = $(tr);
 		$tr.find("td").eq(1).addClass(tradeClass);

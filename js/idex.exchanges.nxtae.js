@@ -203,7 +203,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 					assets = assetsHandler.parseAllAssets(assets);
 					localStorage.setItem('allAssets', JSON.stringify(assets));
-					//console.log(assets.length)
 					dfd.resolve(assets);
 				})
 			}
@@ -410,7 +409,6 @@ var IDEX = (function(IDEX, $, undefined)
 			if ( (!forceUpdate && time - this.balancesLastUpdated < 1000) && this.oneTime)
 			{
 				this.oneTime = true;
-				//console.log('pass');
 				dfd.resolve()
 			}
 			else
@@ -425,15 +423,12 @@ var IDEX = (function(IDEX, $, undefined)
 						
 					IDEX.sendPost({'requestType':"getBalance", 'account':nxtAE.nxtID}, 1).then(function(nxtBal)
 					{
-						//console.log(nxtBal);
 						if (!("errorCode" in nxtBal))
 						{
 							nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
 							balances.push(nxtBal);
 						}
-						
-						//console.log(balances);
-						
+												
 						balances = addAssetID(balances);
 						balancesHandler.balances = {};
 						balancesHandler.setBalances(balances);
@@ -590,7 +585,6 @@ var IDEX = (function(IDEX, $, undefined)
 				params.asset = market.base.assetID;
 
 			params.lastIndex = 50;
-			console.log(params);
 			
 			if (!forceUpdate && time - this.tradeHistoryLastUpdated < 1000)
 			{
@@ -674,7 +668,6 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			var firstIndex = totalNumTrades - 50 || 0
 			params.lastIndex = 50;
-			console.log(params);
 			
 			if (!forceUpdate && time - this.marketHistoryLastUpdated < 1000)
 			{
@@ -773,8 +766,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					list.push(assetsWithVol[assetID])
 				}
-				//console.log(data);
-				console.log(list);
+
 				dfd.resolve(list);
 			
 			})

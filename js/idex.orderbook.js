@@ -247,7 +247,7 @@ var IDEX = (function(IDEX, $, undefined)
 			timeout = 5000;
 			orderbook.toggleStatusText(false);
 
-			console.log(orderbookData);
+			//console.log(orderbookData);
 			if (errorLevel == IDEX.TIMEOUT_CLEARED)
 			{
 				return;
@@ -272,7 +272,7 @@ var IDEX = (function(IDEX, $, undefined)
 				//orderbookData = new IDEX.OrderbookVar(orderbookData);
 				if ($.isEmptyObject(orderbookData))
 				{
-					console.log('empty');
+					//console.log('empty');
 					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
 					orderbook.emptyOrderbook();
 					orderbook.orderbookDom.find(".empty-orderbook").show();

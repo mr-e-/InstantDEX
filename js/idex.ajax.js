@@ -161,17 +161,15 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		xhr.done(function(data)
 		{
-			console.log(data);
+			//console.log(data);
 			dfd.resolve(data);
 
 		})
 		
 		xhr.fail(function(data)
 		{
-			console.log(data);
-
+			//console.log(data);
 			dfd.reject(data);
-
 		})
 
 		return dfd.promise()

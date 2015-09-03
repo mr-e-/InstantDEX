@@ -11,6 +11,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var order = IDEX.getRowData($(this), $(this).index());
 		console.log(order);
+		
 	})
 	
 	
@@ -85,6 +86,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var order = IDEX.getRowData($orderRow, rowIndex);
 		
 		console.log(order)
+		console.log(JSON.stringify(order))
 	})
 	
 	
@@ -220,7 +222,7 @@ var IDEX = (function(IDEX, $, undefined)
 			$exchangeDropdownListDOM.append($li)
 		}
 		
-		if (market.isNxtAE)
+		if (false && market.isNxtAE)
 		{
 			$exchangeDropdownTitleDOM.text("nxtae");
 			orderbook.exchange = "nxtae";

@@ -79,6 +79,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbox = this;
 		var market = orderbox.market;
 		var marketExchanges = market.exchanges;
+		var activeMarketExchanges = IDEX.parseActiveExchanges(marketExchanges);
 		
 		var $exchangeDropdownDOM = orderbox.orderboxDom.find(".orderbox-exchange-dropdown");
 		var $exchangeDropdownListDOM = $exchangeDropdownDOM.find("ul");
@@ -87,9 +88,18 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var listItems = [];
 		
-		for (var i = 0; i < marketExchanges.length; i++)
+		if (true || activeMarketExchanges.length)
 		{
-			var exchangeName = marketExchanges[i];
+			activeMarketExchanges.push("InstantDEX");
+		}
+		else
+		{
+			//activeMarketExchanges.push("inactive");
+		}
+		
+		for (var i = 0; i < activeMarketExchanges.length; i++)
+		{
+			var exchangeName = activeMarketExchanges[i];
 			
 			var $li = $("<li data-val='"+exchangeName+"'>"+exchangeName+"</li>");
 			if (i == 0)
@@ -97,8 +107,6 @@ var IDEX = (function(IDEX, $, undefined)
 			listItems.push($li);
 		}
 		
-		var $li = $("<li data-val='InstantDEX'>InstantDEX</li>");
-		listItems.push($li);
 		
 		for (var i = 0; i < listItems.length; i++)
 		{
@@ -107,15 +115,10 @@ var IDEX = (function(IDEX, $, undefined)
 			$exchangeDropdownListDOM.append($li)
 		}
 		
-		if (marketExchanges.length)
-		{
-			var title = marketExchanges[0];
-			$exchangeDropdownTitleDOM.text(title);
-			orderbox.buyBox.changeExchange(listItems[0])
-			orderbox.sellBox.changeExchange(listItems[0])
-		}
-			
-
+		var title = activeMarketExchanges[0];
+		$exchangeDropdownTitleDOM.text(title);
+		orderbox.buyBox.changeExchange(listItems[0])
+		orderbox.sellBox.changeExchange(listItems[0])
 	}
 
 	
@@ -221,9 +224,8 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			balancesHandler.updateBalances().done(function()
 			{
-				var bal = parseBalance({});
-
-				orderboxType.balanceValDom.text(bal.whole + bal.dec);			
+				var balance = balancesHandler.getBalance(baseOrRel.name);
+				orderboxType.balanceValDom.text(String(balance.available));			
 			})
 		}
 	}
@@ -259,12 +261,11 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var method = $button.attr("data-method");
 		var exchange = orderboxType.exchange;
+		var market = orderbox.market;
 		var base = orderbox.market.base;
 		var rel = orderbox.market.rel;
 		
 		
-
-		console.log(orderboxType);
 		if (!isButtonDisabled)
 		{
 			var $form = orderboxType.formDom;
@@ -277,10 +278,19 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				params.method = method
 				params.exchange = exchange;
-				params.baseid = base.assetID;
-				params.relid = rel.name == "NXT" ? "5527630" : rel.assetID;
+				if (market.isNxtAE)
+				{
+					params.baseid = base.assetID;
+					params.relid = rel.name == "NXT" ? "5527630" : rel.assetID;
+				}
+				else
+				{
+					params.base = base.name;
+					params.rel = rel.name;
+				}
 				params.price = formData.price;
 				params.volume = formData.volume;
+				params.gui = "sleuth";
 				
 				if (exchange == "InstantDEX")
 				{

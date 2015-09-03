@@ -18,6 +18,43 @@ var IDEX = (function(IDEX, $, undefined)
 	var GENESIS_TIMESTAMP = 1385294400;
 
 	
+	
+	IDEX.flipCheckMarket = function(market, exchange)
+	{
+		var isFlipped = market.exchangeSettings[exchange].skynetFlipped;
+		var pairID = "";
+		
+		if (isFlipped)
+		{
+			var both = market.pairID.split("_");
+			pairID = both[1] + "_" + both[0];
+		}
+		else
+		{
+			pairID = market.pairID;
+		}
+		
+		return pairID;
+	}
+	
+	
+	IDEX.parseActiveExchanges = function(exchanges)
+	{
+		var marketActiveExchanges = [];
+		var allActiveExchanges = IDEX.activeExchanges;
+
+		for (var i = 0; i < exchanges.length; i++)
+		{
+			var exchange = exchanges[i];
+			if (exchange == "nxtae" || allActiveExchanges.indexOf(exchange) != -1)
+			{
+				marketActiveExchanges.push(exchange);
+			}
+		}
+		
+		return marketActiveExchanges;
+	}
+	
 	IDEX.sortNumber = function(a, b)
 	{
 		return a - b;
@@ -127,8 +164,9 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.searchListOfObjectsAll = function(arr, obj)
+	IDEX.searchListOfObjectsAll = function(arr, obj, ignoreKey)
 	{
+		var retObj = {};
 		var ret = false;
 		var objKeys = Object.keys(obj).length;
 		
@@ -145,7 +183,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					if (key in obj)
 					{
-						if (obj[key] == item[key])
+						if (obj[key] == item[key] || key == ignoreKey) 
 						{
 							checkedKeys++;
 						}
@@ -164,7 +202,10 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 		}
 		
-		return ret;
+		retObj.ret = ret;
+		retObj.index = i;
+		
+		return retObj;
 	}
 
 	IDEX.getObjectByElement = function($el, arr, key)

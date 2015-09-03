@@ -6,10 +6,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 	$(".mainHeader-menu-ico-settings").on("click", function()
 	{
-		var exchangeHandler = IDEX.allExchanges.nxtae;
-		var openOrdersHandler = exchangeHandler.accountOpenOrders;
-		
-		openOrdersHandler.updateOpenOrders();
+		var params = {"method":"openorders"};
+		IDEX.sendPost(params, false).done(function(data)
+		{
+			console.log(data)
+		})
 	})
 
 	

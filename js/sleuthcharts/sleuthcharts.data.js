@@ -76,12 +76,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			var marketHandler = this;
 			marketHandler.marketSettings =
 			{
-				baseID: "6932037131189568014_NXT",
-				relID: "5527630",
-				baseName: "jl777hodl",
-				relName: "NXT",
 				pair: "6932037131189568014_NXT",
-				pairName: "jl777hodl_NXT",
 
 				barType: "tick",
 				barWidth: "25",
@@ -90,6 +85,7 @@ Sleuthcharts = (function(Sleuthcharts)
 
 				isVirtual: false,
 				isFlipped: false,
+				market: {}
 			};
 			
 			marketHandler.market = {};
@@ -114,18 +110,22 @@ Sleuthcharts = (function(Sleuthcharts)
 			var pair = newMarket.pairID;
 			var pairName = newMarket.marketName;
 
-
+			var isFlipped = newMarket.exchangeSettings[exchange].skynetFlipped;
+			
+			if (isFlipped)
+			{
+				var both = pair.split("_");
+				pair = both[1] + "_" + both[0];
+			}
+			
 			marketHandler.market = newMarket;
 			settings.pair = pair;
 			settings.pairName = pairName;
-			//settings.baseID = newMarket.baseID;
-			//settings.relID = newMarket.relID;
-			settings.baseName = newMarket.base.name;
-			settings.relName = newMarket.rel.name;
 			settings.exchange = exchange;
+			settings.skynetFlipped = newMarket.skynetFlipped;
 			
 			marketHandler.marketSettings = Sleuthcharts.extend(marketHandler.marketSettings, settings);
-
+			marketHandler.marketSettings.market = newMarket;
 			//marketHandler.marketSettings = settings;
 		},
 		
@@ -181,17 +181,26 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			marketHandler.getSkynetMarketData().done(function(data)
 			{
-				data = data.results;
-				
-				if (!data.length)
+				if ("results" in data)
 				{
-					dfd.reject();
+					data = data.results;
+					
+					if (!data.length)
+					{
+						dfd.reject();
+					}
+					else
+					{
+						marketHandler.formatMarketData(data, isTime);
+						//var formattedData = marketHandler.marketData;
+
+						dfd.resolve();
+					}
 				}
 				else
 				{
-					marketHandler.formatMarketData(data, isTime);
-					//var formattedData = marketHandler.marketData;
-
+					console.log(data);
+					marketHandler.formatMarketData([], isTime);
 					dfd.resolve();
 				}
 			

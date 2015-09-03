@@ -4,8 +4,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	//var defaultSave = {"windowHeight":663,"windowWidth":1855,"gridSaves":[{"tileSaves":[{"positions":{"height":663,"width":892,"top":0,"bottom":663,"left":0,"right":892},"winPositions":{"height":663,"width":892,"top":38,"bottom":701,"left":0,"right":892},"index":0,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"chart","cellTypeSettings":{"marketSettings":{"baseID":"6932037131189568014_NXT","relID":"5527630","baseName":"jl777hodl","relName":"NXT","pair":"6932037131189568014_NXT","pairName":"jl777hodl_NXT","barType":"tick","barWidth":"25","exchange":"nxtae","isVirtual":false,"isFlipped":false}}}]},{"positions":{"height":663,"width":573,"top":0,"bottom":663,"left":892,"right":1465},"winPositions":{"height":663,"width":573,"top":38,"bottom":701,"left":892,"right":1465},"index":1,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"orderbook","cellTypeSettings":{}}]},{"positions":{"height":663,"width":390,"top":0,"bottom":663,"left":1465,"right":1855},"winPositions":{"height":663,"width":390,"top":38,"bottom":701,"left":1465,"right":1855},"index":2,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"watchlist"}]}],"index":0,"isActive":true}]}
-	var defaultSave = {"windowHeight":663,"windowWidth":1855,"gridSaves":[{"tileSaves":[{"positions":{"height":427,"width":869.96875,"top":0,"bottom":427,"left":0,"right":869.96875},"winPositions":{"height":427,"width":869.96875,"top":38,"bottom":465,"left":0,"right":869.96875},"index":0,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"chart","cellTypeSettings":{"marketSettings":{"baseID":"6932037131189568014_NXT","relID":"5527630","baseName":"InstantDEX","relName":"NXT","pair":"15344649963748848799_NXT","pairName":"InstantDEX_NXT","barType":"tick","barWidth":"25","exchange":"nxtae","isVirtual":false,"isFlipped":false}}}]},{"positions":{"height":663,"width":389.984375,"top":0,"bottom":663,"left":1464.984375,"right":1854.96875},"winPositions":{"height":663,"width":389.984375,"top":38,"bottom":701,"left":1464.984375,"right":1854.96875},"index":1,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"watchlist"}]},{"positions":{"height":663,"width":594.96875,"top":0,"bottom":663,"left":869.96875,"right":1464.9375},"winPositions":{"height":663,"width":594.96875,"top":38,"bottom":701,"left":869.96875,"right":1464.9375},"index":2,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"orderbook","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"isNxtAE":true}}}]},{"positions":{"height":236,"width":869.96875,"top":427,"bottom":663,"left":0,"right":869.96875},"winPositions":{"height":236,"width":869.96875,"top":465,"bottom":701,"left":0,"right":869.96875},"index":3,"isTileHeaderTabbed":true,"cellSaves":[{"isActive":false,"linkIndex":-1,"cellType":"orders","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"isNxtAE":true}}},{"isActive":true,"linkIndex":-1,"cellType":"balances"}]}],"index":0,"isActive":true}]}
+	var defaultSave = {"windowHeight":663,"windowWidth":1855,"gridSaves":[{"tileSaves":[{"positions":{"height":395,"width":773,"top":0,"bottom":395,"left":0,"right":773},"winPositions":{"height":395,"width":773,"top":38,"bottom":433,"left":0,"right":773},"index":0,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"chart","cellTypeSettings":{"marketSettings":{"baseID":"6932037131189568014_NXT","relID":"5527630","baseName":"InstantDEX","relName":"NXT","pair":"15344649963748848799_NXT","pairName":"InstantDEX_NXT","barType":"tick","barWidth":"25","exchange":"nxtae","isVirtual":false,"isFlipped":false,"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"isNxtAE":true}}}}]},{"positions":{"height":663,"width":618.25,"top":0,"bottom":663,"left":773,"right":1391.25},"winPositions":{"height":663,"width":618.25,"top":38,"bottom":701,"left":773,"right":1391.25},"index":1,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"orderbook","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"isNxtAE":true}}}]},{"positions":{"height":331.5,"width":463.75,"top":331.5,"bottom":663,"left":1391.25,"right":1855},"winPositions":{"height":331.5,"width":463.75,"top":369.5,"bottom":701,"left":1391.25,"right":1855},"index":2,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"watchlist"}]},{"positions":{"height":331.5,"width":463.75,"top":0,"bottom":331.5,"left":1391.25,"right":1855},"winPositions":{"height":331.5,"width":463.75,"top":38,"bottom":369.5,"left":1391.25,"right":1855},"index":3,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"marketHistory","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799"},"rel":{"name":"NXT","isAsset":false},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"isNxtAE":true}}}]},{"positions":{"height":268,"width":773,"top":395,"bottom":663,"left":0,"right":773},"winPositions":{"height":268,"width":773,"top":433,"bottom":701,"left":0,"right":773},"index":4,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"balances"}]}],"index":0,"isActive":true}]}
 	
 	
 	var cellHandlers = 
@@ -15,7 +14,7 @@ var IDEX = (function(IDEX, $, undefined)
 			new: newChart,
 			loadCustom: loadCustomChart,
 			changeMarket: changeChartMarket,
-			update: updateChart,
+			update: resizeChart,
 			resize: resizeChart,
 			remove: removeChart,
 			save: saveChart,
@@ -156,23 +155,23 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var cellHandler = this;
 		var cell = cellHandler.cell;
-		
 		var $cell = cell.cellDOM;
-		var svg = IDEX.makeSVG()
-		var $svgEl = $(svg.node())
-
-		$cell.find(".chart-wrap").append($svgEl)
+		var $chartNode = $cell.find(".chart-wrap");
+		var market = IDEX.defaultMarket;
 		
 		var $dropdownTable = $($("#chartTableTemplate").html())
 		$cell.find(".dropdown-wrap").append($dropdownTable)
 
 		var $search = $cell.find('.skynet-search');
 		IDEX.initSkyNETAuto($search);
-				
-		var market = IDEX.allMarkets['15344649963748848799_nxt'];
-		var chart = IDEX.makeChart({"node":$svgEl}, cellHandler);
+		
+		var chartSettings = {};
+		chartSettings.node = $chartNode;
+		chartSettings.market = market;
 
+		var chart = IDEX.makeChart(chartSettings, cellHandler);
 		cellHandler.cellApp = chart;
+		IDEX.changeChartMarket(chart, market, market.exchanges[0]);
 	}
 	
 	
@@ -180,13 +179,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var cellHandler = this;
 		var cell = cellHandler.cell;
-		
 		var $cell = cell.cellDOM;
-		var svg = IDEX.makeSVG()
-		var $svgEl = $(svg.node())
-		
-
-		$cell.find(".chart-wrap").append($svgEl)
+		var $chartNode = $cell.find(".chart-wrap");
 		
 		var $dropdownTable = $($("#chartTableTemplate").html())
 		$cell.find(".dropdown-wrap").append($dropdownTable)
@@ -195,13 +189,10 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.initSkyNETAuto($search)
 		
 		var chartSettings = {};
-		chartSettings.node = $svgEl;
+		chartSettings.node = $chartNode;
 		$.extend(chartSettings, settings);
-		
 		var chart = IDEX.makeChart(chartSettings, cellHandler);
-		
-		IDEX.changeChartMarketDOM(chart.marketHandler, $cell);
-		
+		IDEX.changeChartMarketDOM(chart);
 		cellHandler.cellApp = chart;
 	}
 	
@@ -210,42 +201,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var cellHandler = this;
 		var cell = cellHandler.cell;
+		var chart = cellHandler.cellApp;
+		var exchange = market.exchanges[0];	
 		
-		var $cell = cell.cellDOM;
-		var $svgEl = $cell.find(".chart-wrap svg");
-		var chart = $svgEl.sleuthcharts();
-		
-		if (!chart)
-			return
-		
-		IDEX.formatChartMarket(chart, market);
-
-	}
-	
-	
-	function updateChart()
-	{
-		var cellHandler = this;
-		var cell = cellHandler.cell;
-		
-		var $svgEl = cell.cellDOM.find(".chart-wrap svg");
-		var chart = $svgEl.sleuthcharts();
-		
-		if (!chart)
-			return;
-		
-		var $chartNode = chart.node;
-		var isVisible = $chartNode.is(":visible")
-		chart.setContainerSize();
-
-		if (!isVisible)
-		{
-			//chart.needsResize = true;
-		}
-		else
-		{
-			chart.redraw();
-		}
+		IDEX.changeChartMarket(chart, market, exchange);
 	}
 	
 	
@@ -253,15 +212,13 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var cellHandler = this;
 		var cell = cellHandler.cell;
-		
-		var $svgEl = cell.cellDOM.find(".chart-wrap svg");
-		var chart = $svgEl.sleuthcharts();
+		var chart = cellHandler.cellApp;
 		
 		if (!chart)
-			return;
+			return
 		
 		var $chartNode = chart.node;
-		var isVisible = $chartNode.is(":visible")
+		var isVisible = $chartNode.is(":visible");
 		chart.setContainerSize();
 
 		if (!isVisible)
@@ -280,8 +237,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var cellHandler = this;
 		var cell = cellHandler.cell;
 		
-		//var $svgEl = $grid.find(".chart-wrap svg");
-		//var chart = $svgEl.sleuthcharts();
 	}
 	
 	
@@ -289,14 +244,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var cellHandler = this;
 		var cell = cellHandler.cell;
-		
-		var $svgEl = cell.cellDOM.find(".chart-wrap svg");
-		var chart = $svgEl.sleuthcharts();
-		
+		var chart = cellHandler.cellApp;
+
 		var obj = {};
 		obj.marketSettings = chart.marketHandler.marketSettings;
-		
-		//console.log(marketSettings);
 		
 		return obj;
 	}
@@ -670,8 +621,8 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		Sleuthgrids.cellHandlers = cellHandlers;
 		Sleuthgrids.cellHandlerClass = IDEX.CellHandler;
-
-		//defaultSave = {};
+		
+		//var defaultSave = {};
 		if (!localStorage.grids)
 		{
 			var saveObj = defaultSave;
