@@ -391,7 +391,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
-	
 	IDEX.User.prototype.removeFavorite = function(baseID, relID)
 	{
 		var index = this.getFavoriteIndex(baseID, relID)

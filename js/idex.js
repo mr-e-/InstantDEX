@@ -40,7 +40,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var timeoutFinished = new $.Deferred();
 
 		IDEX.user = new IDEX.User();
-		//IDEX.account = new IDEX.Account();
 		
 		IDEX.initScrollbar();
 		//IDEX.initDataTable();

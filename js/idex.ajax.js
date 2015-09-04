@@ -96,6 +96,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		if (isNXT)
 			waitTime =0;
+
 		setTimeout(function()
 		{
 			var xhr = $.ajax(ajaxSettings);

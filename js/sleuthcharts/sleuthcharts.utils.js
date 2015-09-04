@@ -182,7 +182,6 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		var width = bbox.width
 		var height = bbox.height
-		
 		positions.height = height;
 		positions.width = width;
 		positions.top = offset.top;

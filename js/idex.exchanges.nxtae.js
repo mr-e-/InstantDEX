@@ -374,7 +374,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 			for (var i = 0; i < balances.length; i++)
 			{
-				var balance = new IDEX.Balance(balances[i]);
+				var balance = new IDEX.NxtBalance(balances[i]);
 				balancesHandler.balances[balance.assetID] = balance;
 			}
 		},
@@ -789,6 +789,30 @@ var IDEX = (function(IDEX, $, undefined)
 		return assets;
 	}
 	
+	
+	
+	IDEX.NxtBalance = function(constructorObj) 
+	{
+		this.availableBalance = 0;
+		this.unconfirmedBalance = 0;
+		
+		var __construct = function(that, constructorObj)
+		{
+			var asset = IDEX.nxtae.assets.getAsset("assetID", constructorObj['assetID']);
+			if (constructorObj['assetID'] == "5527630")
+				asset = IDEX.snAssets.nxt;
+			if (asset)
+			{
+				IDEX.constructFromObject(that, asset);
+				var avail = that.name == "NXT" ? constructorObj['balanceNQT'] : constructorObj['quantityQNT'];
+				var unconf = that.name == "NXT" ? constructorObj['unconfirmedBalanceNQT'] : constructorObj['unconfirmedQuantityQNT'];
+				
+				that.availableBalance = avail / Math.pow(10, asset.decimals);
+				that.unconfirmedBalance = unconf / Math.pow(10, asset.decimals);				
+			}
+			
+		}(this, constructorObj)
+	};
 	
 	
 	

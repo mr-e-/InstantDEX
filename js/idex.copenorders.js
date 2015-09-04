@@ -58,6 +58,7 @@ var IDEX = (function(IDEX, $, undefined)
 			cOpenOrder.cOpenOrderDom = $el;
 			cOpenOrder.searchInputDom = $el.find(".cm-openorders-search-wrap input");
 			cOpenOrder.tableDom = cOpenOrder.cOpenOrderDom.find(".cm-openorders-table");
+			cOpenOrder.refreshDom = $el.find(".refresh-wrap img");
 
 			cOpenOrder.tableDom.parent().perfectScrollbar();
 			

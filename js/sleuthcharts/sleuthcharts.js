@@ -311,12 +311,14 @@ Sleuthcharts = (function(Sleuthcharts)
 			var chartPadding = chart.padding;
 			var $chartNode = chart.node;
 			
+			var temp = "plotHeight" in chart;
 			
 			if ("plotHeight" in chart)
 			{
 				chart.prevHeight = chart.plotHeight;
 				chart.prevWidth = chart.plotWidth;
 			}
+			
 			
 			//console.log(chart.canvas.getBoundingClientRect());
 
@@ -342,12 +344,22 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			var height = chart.node.height();
 			var width = chart.node.width();
+
+			
 			chart.canvas.height = height;
 			chart.canvas.width = width;
 			chart.infoCanvas.height = height;
 			chart.infoCanvas.width = width;
 			chart.crosshairCanvas.height = height;
 			chart.crosshairCanvas.width = width;
+			
+			/*if (chart.prevHeight <= 0)
+				chart.prevHeight = chart.plotHeight
+			
+			if (chart.prevWidth <= 0)
+				chart.prevWidth = chart.plotWidth;*/
+			
+
 			//chart.canvas.height = DOMPosition.height;
 			//chart.canvas.width = DOMPosition.width;
 		},

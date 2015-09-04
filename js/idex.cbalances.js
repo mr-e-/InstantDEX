@@ -61,9 +61,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 			cBalance.cBalanceDom = $el;
 			cBalance.searchInputDom = $el.find(".cm-balances-search-wrap input");
+			cBalance.refreshDom = $el.find(".refresh-wrap img");
 
 			cBalance.baseSec = new IDEX.CBalanceType("base", cBalance.cBalanceDom, cBalance);
 			cBalance.relSec = new IDEX.CBalanceType("rel", cBalance.cBalanceDom, cBalance);
+			cBalance.refreshDom.on("click", function(){ cBalance.refreshClick() });
 			
 			
 			//orderbook.buyBookDom.perfectScrollbar();
@@ -114,13 +116,14 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	}
 	
-	$contentWrap.on("click", ".cm-balances-sing-title", function()
+	
+	IDEX.CBalance.prototype.refreshClick = function()
 	{
-		var $el = $(this).closest(".cm-balances-wrap");
-		var cBalance = IDEX.getObjectByElement($el, IDEX.allCBalances, "cBalanceDom");
+		var cBalance = this;
+		
+		console.log(cBalance);
 
-		cBalance.updateBalances();
-	})
+	}
 	
 	IDEX.CBalanceType.prototype.updateBalance = function()
 	{

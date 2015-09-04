@@ -169,6 +169,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var tile = this;
 			var grid = tile.grid;
+			var activeCell = null;
 			
 			var isActiveGrid = grid.isActive;
 			//if (!isActiveGrid)
@@ -178,6 +179,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			for (var i = 0; i < cellSaves.length; i++)
 			{			
 				var cellSave = cellSaves[i];
+				
 				var cellType = cellSave.cellType;
 				var arrowDirections = {};
 				arrowDirections.isMiddle = i == 0 ? false : true;
@@ -189,9 +191,10 @@ Sleuthgrids = (function(Sleuthgrids)
 				cell.makeCellDOM();
 				tile.tileCellsWrapDOM.append(cell.cellDOM);
 				
-				
 				var tileNavCell = new Sleuthgrids.TileNavCell(tile, tile.navCells.length);
 				tile.navCells.push(tileNavCell);
+				if (cellSave.isActive)
+					activeCell = tileNavCell;
 				tileNavCell.initDOM();
 				tile.tileHeaderDOM.append(tileNavCell.tileNavCellDOM);
 							
@@ -210,6 +213,9 @@ Sleuthgrids = (function(Sleuthgrids)
 				cell.resizeCell();
 
 			}
+			
+			if (activeCell);
+				activeCell.changeCellTabs();
 			if (!isActiveGrid)
 			{
 				grid.hideGrid();
@@ -806,6 +812,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			previewTile.showPreviewTile();
 			previewTile.updateInternalTilePositions();
+			tile.resizeCells();
 		},
 		
 		
@@ -836,6 +843,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				tile.updateInternalTilePositions();
 				
 				previewTile.hidePreviewTile();
+				tile.resizeCells();
 			}
 		},
 		
