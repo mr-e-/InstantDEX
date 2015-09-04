@@ -46,7 +46,8 @@ Sleuthcharts = (function(Sleuthcharts)
 			seriesTab.seriesTabCloseDOM = seriesTab.seriesTabDOM.find(".series-tab-close");
 			seriesTab.seriesTabSettingsDOM = seriesTab.seriesTabDOM.find(".series-tab-settings");
 			
-			seriesTab.seriesTabTitleDOM.text(series.seriesType);
+			var seriesTypeTitle = series.seriesType == "column" ? "Volume" : series.seriesType;
+			seriesTab.seriesTabTitleDOM.text(seriesTypeTitle);
 			
 			if (series.isMainSeries)
 			{
@@ -84,7 +85,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (!isClose)
 			{
-				console.log('open settings');
+				//console.log('open settings');
 			}
 		},
 		

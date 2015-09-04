@@ -7,33 +7,205 @@ var IDEX = (function(IDEX, $, undefined)
 
 
 	IDEX.allWatchlists = [];
-
 	
-	IDEX.User.prototype.initFavorites = function()
+	
+	
+	IDEX.WatchlistOverlord = function(obj) 
+	{	
+		
+		var overlord = this;
+		overlord.watchlists = [];
+		overlord.watchlistMarkets = [];
+	};
+	
+
+	IDEX.WatchlistOverlord.prototype.initLocalStorage = function()
 	{
-		var user = this;
-		var chartFavs = [];
+		var overlord = this;
+		var markets = [];
 				
 		if (localStorage.watchlist)
 		{
-			chartFavs = JSON.parse(localStorage.getItem('watchlist'));
+			markets = JSON.parse(localStorage.getItem('watchlist'));
 		}
 		
-		for (var i = 0; i < chartFavs.length; i++)
+		for (var i = 0; i < markets.length; i++)
 		{
-			var fav = chartFavs[i];
+			var market = markets[i];
+			var watchlistMarket = new IDEX.WatchlistMarket(market);
+			overlord.watchlistMarkets.push(watchlistMarket);
+		}
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.setLocalStorage = function()
+	{
+		var overlord = this;
+		var watchlistMarkets = overlord.watchlistMarkets;
+		var markets = [];
+		
+		for (var i = 0; i < watchlistMarkets.length; i++)
+		{
+			var watchlistMarket = watchlistMarkets[i];
+			var market = watchlistMarket.market;
+			markets.push(market);
+		}
+		
+		localStorage.setItem('watchlist', JSON.stringify(markets));
+
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.addMarket = function(market)
+	{
+		var overlord = this;
+		var retbool = false;
+
+		var index = overlord.searchForMarket(market);
+		
+		if (index == -1)
+		{
+			var watchlistMarket = new IDEX.WatchlistMarket(market);
+			overlord.watchlistMarkets.push(watchlistMarket);
+			overlord.setLocalStorage();
+			retbool = true;
 		}
 
-		user.favorites = chartFavs;
+		return retbool
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.searchForMarket = function(market)
+	{
+		var overlord = this;
+		var watchlistMarkets = overlord.watchlistMarkets;
+		var index = -1;
+
+		for (var i = 0; i < watchlistMarkets.length; i++)
+		{
+			var watchlistMarket = watchlistMarkets[i];
+			var marketCheck = watchlistMarket.market;
+			
+			if (market.base.name == marketCheck.base.name && market.rel.name == marketCheck.rel.name)
+			{
+				index = i;
+				break;
+			}
+		}
+		
+		return index;
+	}
+	
+
+	IDEX.WatchlistOverlord.prototype.removeMarket = function(market)
+	{
+		var overlord = this;
+		var index = overlord.searchForMarket(market);
+		
+		if (index != -1)
+		{
+			overlord.watchlistMarkets.splice(index, 1);
+			overlord.setLocalStorage();
+		}
 	}
 	
 	
 	
+	IDEX.WatchlistMarket = function(market) 
+	{	
+		var watchlistMarket = this;
+		watchlistMarket.market = market;
+		
+		watchlistMarket.lastUpdated = -1;
+		watchlistMarket.isUpdating = false;
+		watchlistMarket.xhr = false;
+		watchlistMarket.postDFD = false;
+		
+		watchlistMarket.marketInfo = 
+		{
+			lastBid: -1,
+			lastAsk: -1
+		};
+	};
+	
+	
+	IDEX.WatchlistMarket.prototype.update = function(forceUpdate)
+	{
+		var watchlistMarket = this;
+		watchlistMarket.postDFD = new $.Deferred();
+		var market = watchlistMarket.market;
+		var time = new Date().getTime()
+		var lastUpdatedTime = watchlistMarket.lastUpdated;
+
+		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+		
+		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
+		{
+			watchlistMarket.postDFD.resolve();
+		}
+		else
+		{
+			var isNxtAE = market.isNxtAE;
+			var base = market.base;
+			var rel = market.rel;
+			
+			var params = 
+			{
+				'plugin':"InstantDEX",
+				'method':"orderbook", 
+				'allfields':1,
+				'exchange':market.exchanges[0],
+				'tradeable':0,
+				//'baseid':fav.base.assetID,
+				//'relid':"5527630",
+				'maxdepth':1
+			};
+			
+			if (isNxtAE)
+			{
+				params.baseid = base.assetID;
+				params.relid = "5527630";
+				//params.exchange = "nxtae";
+			}
+			else
+			{
+				params.base = base.name;
+				params.rel = rel.name;
+			}
+			
+			watchlistMarket.isUpdating = true;
+			IDEX.sendPost(params, false).done(function(data)
+			{
+				var lastBid = data.lastbid;
+				var lastAsk = data.lastask;
+				
+				watchlistMarket.marketInfo.lastBid = lastBid;
+				watchlistMarket.marketInfo.lastAsk = lastAsk;
+				
+				watchlistMarket.isUpdating = false;
+				watchlistMarket.postDFD.resolve();
+			})
+		}
+		
+		watchlistMarket.lastUpdated = time;
+		
+		return watchlistMarket.postDFD.promise();
+	}
+	
+
+	
+	
 	IDEX.Watchlist = function(obj) 
 	{	
+		
 
 	};
 	
+	
+	IDEX.Watchlist.prototype.staticVar = (function()
+	{
+		IDEX.Watchlist.allMarkets = [];
+	})();
 	
 	
 	IDEX.newWatchlist = function($el, cellHandler)
@@ -44,13 +216,18 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			watchlist = new IDEX.Watchlist();
 			watchlist.cellHandler = cellHandler;
+			watchlist.timeoutDFD = false;
 
-			
 			watchlist.watchlistDom = $el;
 			watchlist.watchlistAddDom = $el.find(".watchlist-add");
 			watchlist.watchlistTableDom = $el.find(".nTable");
+			watchlist.refreshDom = $el.find(".refresh-wrap img");
+			watchlist.loadingDom = $el.find(".watchlist-loading");
+
 			watchlist.watchlistAddDom.on("click", function() { watchlist.toggleAddPopup(); } );
 			watchlist.watchlistTableDom.on("click", "tbody tr", function(e) { watchlist.onRowClick(e, $(this)); } );
+			watchlist.refreshDom.on("click", function(){ watchlist.refreshClick() });
+
 			//watchlist.watchlistTableDom.on("mouseover", "tbody tr", function(e) { watchlist.onRowMouseover(e, $(this)); } );
 
 			
@@ -63,7 +240,7 @@ var IDEX = (function(IDEX, $, undefined)
 		return watchlist;
 	};
 	
-	
+		
 	
 	IDEX.Watchlist.prototype.toggleAddPopup = function()
 	{		
@@ -72,58 +249,322 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.Watchlist.prototype.initWatchlist = function($wrap)
+	IDEX.Watchlist.prototype.onRowClick = function(e, $row)
 	{
 		var watchlist = this;
-		var chartFavs = IDEX.user.favorites;
-
-		for (var i = 0; i < chartFavs.length; i++)
-		{
-			var fav = chartFavs[i];
-			watchlist.addRow(fav)
-		}
+		var cellHandler = watchlist.cellHandler;
+		var watchlistMarket = $row.data("market");
+		var market = watchlistMarket.market;
 		
-		watchlist.updateTicker();
+		cellHandler.emit("changeMarket", market);
 	}
 	
-	IDEX.Watchlist.prototype.orderbookLoop = function(fav, index)
+	
+	
+	IDEX.Watchlist.prototype.addRow = function(watchlistMarket)
 	{
 		var watchlist = this;
-		var isNxtAE = fav.isNxtAE;
-		var params = 
-		{
-			'plugin':"InstantDEX",
-			'method':"orderbook", 
-			'allfields':1,
-			'exchange':fav.exchanges[0],
-			'tradeable':0,
-			//'baseid':fav.base.assetID,
-			//'relid':"5527630",
-			'maxdepth':1
-		};
+		var $table = watchlist.watchlistTableDom;
+		var market = watchlistMarket.market;
+
+		var keys = ["market", "lastBid", "lastAsk"]
+		var obj = {}
+		obj.market = market.marketName;
+		obj.lastBid = "loading";
+		obj.lastAsk = "loading";
 		
-		if (isNxtAE)
+		var row = IDEX.buildTableRows(IDEX.objToList([obj], keys), "table");
+		row = $(row).get()[0]
+
+		//$row.find("td:last").after("<td class='deleteMarketFavorite'>DELETE</td>");
+		//row = IDEX.addElDataAttr(row, [obj], ["baseID", "relID"]);
+
+		var $row = $(row);
+		$row.data("market", watchlistMarket);
+		$row.find("td").eq(1).addClass("watchlist-lastBid");
+		$row.find("td").eq(2).addClass("watchlist-lastAsk");
+
+		$table.find("tbody").append($row)
+	}
+	
+	
+	
+	
+	IDEX.Watchlist.prototype.initWatchlist = function()
+	{
+		var watchlist = this;
+		var $watchlistLoading = watchlist.loadingDom;
+		var watchlistMarkets = IDEX.watchlistOverlord.watchlistMarkets;
+	
+		//IDEX.toggleShow($watchlistLoading, true);
+		
+		for (var i = 0; i < watchlistMarkets.length; i++)
 		{
-			params.baseid = fav.base.assetID;
-			params.relid = "5527630";
-			//params.exchange = "nxtae";
+			var watchlistMarket = watchlistMarkets[i];
+			watchlist.addRow(watchlistMarket);
+		}
+		
+		watchlist.watchlistMarkets = watchlistMarkets;
+		watchlist.pollHandler(0);
+	}
+	
+	
+	IDEX.updateWatchlistTable = function(market)
+	{
+		var overlord = IDEX.watchlistOverlord;
+		var allWatchlists = IDEX.allWatchlists;
+		var index = overlord.searchForMarket(market);
+		var watchlistMarket = overlord.watchlistMarkets[index];
+		
+		for (var i = 0; i < allWatchlists.length; i++)
+		{
+			var watchlist = allWatchlists[i];
+			watchlist.addRow(watchlistMarket);
+			//watchlist.watchlistTableDom.find("tbody").empty();
+			//watchlist.initWatchlist();
+		}
+	}
+	
+	
+	
+	
+	IDEX.Watchlist.prototype.pollHandler = function(timeout)
+	{
+		var watchlist = this;
+		
+		watchlist.getWatchlistData(timeout).done(function(data, errorLevel)
+		{
+			timeout = 10000;
+
+			//console.log([data, errorLevel]);
+			
+			if (errorLevel == IDEX.TIMEOUT_CLEARED)
+			{
+				return;
+			}
+			else if (errorLevel == IDEX.AJAX_ABORT)
+			{
+				return;
+			}
+			else if (errorLevel == IDEX.AJAX_ERROR)
+			{
+
+			}
+			else
+			{
+				watchlistMarkets = watchlist.watchlistMarkets;
+				
+				for (var i = 0; i < watchlistMarkets.length; i++)
+				{
+					var watchlistMarket = watchlistMarkets[i];
+					var lastBid = watchlistMarket.marketInfo.lastBid;
+					var lastAsk = watchlistMarket.marketInfo.lastAsk;
+
+					var $row = watchlist.watchlistTableDom.find("tbody tr").eq(i);
+					$row.find("td").eq(1).text(String(lastBid));
+					$row.find("td").eq(2).text(String(lastAsk));
+				}
+				
+				if (!(watchlist.isStoppingPolling))
+					watchlist.pollHandler(timeout);
+			}
+			
+		})
+	}
+	
+	IDEX.Watchlist.prototype.getWatchlistData = function(timeout)
+	{
+		var watchlist = this;
+		var retDFD = new $.Deferred();
+
+		watchlist.setTimeout(timeout).done(function(wasCleared)
+		{
+			if (wasCleared)
+			{
+				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
+			}
+			else
+			{
+				var dfds = watchlist.temp();
+
+				$.when.apply($, dfds).done(function(data)
+				{				
+					if (data == "fail")
+					{
+						retDFD.resolve({}, IDEX.AJAX_ERROR);
+					}
+					else if (watchlist.isStoppingOrderbook)
+					{
+						retDFD.resolve({}, IDEX.AJAX_ABORT);
+					}
+					else
+					{
+						
+						retDFD.resolve(data, IDEX.OK);
+					}
+				});
+				
+			}
+		})
+
+		return retDFD.promise();
+	}
+	
+	
+	
+	IDEX.Watchlist.prototype.temp = function()
+	{
+		var watchlist = this;
+		var watchlistMarkets = watchlist.watchlistMarkets;
+
+		var dfds = [];
+		
+		for (var i = 0; i < watchlistMarkets.length; i++)
+		{
+			var watchlistMarket = watchlistMarkets[i];
+			var isUpdating = watchlistMarket.isUpdating
+			
+			if (isUpdating)
+			{
+				dfds.push(watchlistMarket.postDFD);
+			}
+			else
+			{
+				dfds.push(watchlistMarket.update());
+			}
+
+		}
+		
+		if (!dfds.length)
+		{
+			dfds.push(new $.Deferred());
+			dfds[0].resolve();
+		}
+		
+		return dfds;
+	}
+
+	
+	
+	IDEX.Watchlist.prototype.setTimeout = function(timeout)
+	{
+		var watchlist = this;
+		watchlist.timeoutDFD = new $.Deferred();
+		
+		//console.log("starting setTimeout " + String(timeout));
+		watchlist.watchlistTimeout = setTimeout(function() 
+		{
+			//console.log("finished setTimeout " + String(timeout));
+			watchlist.timeoutDFD.resolve(false);
+			//watchlist.timeoutDFD = false;
+			
+		}, timeout);
+		
+		return watchlist.timeoutDFD.promise();
+	}
+	
+	
+	IDEX.Watchlist.prototype.clearTimeout = function()
+	{
+		var watchlist = this;
+
+		if (watchlist.timeoutDFD)
+		{
+			clearTimeout(watchlist.watchlistTimeout);
+			clearTimeout.timeoutDFD.resolve(true);
+			clearTimeout.timeoutDFD = false;
+		}
+	}
+	
+
+	
+	
+	
+	$(".marketSearch-add-trig").on("click", function()
+	{
+		var $wrap = $(this).closest(".popup");
+		var $activeTab = $wrap.find(".tab-wrap.active");
+		var searchType = $activeTab.attr("data-searchtype");
+		var $form = $(".marketSearch-popup-form");
+		
+		var $banner = $wrap.find(".banner");
+		$banner.removeClass("error")
+		$banner.removeClass("success")
+		$banner.addClass("active");
+		
+		if (searchType == "market")
+		{
+			var $market = $form.find("input[name=market]");
+			var market = $market.data("market");
+			$banner.removeClass("active");
+
+			if (market != "-1")
+			{
+				var retbool = IDEX.watchlistOverlord.addMarket(market);
+
+				if (retbool)
+				{
+					//watchlist.addRow(market);
+					IDEX.updateWatchlistTable(market);
+					$banner.addClass("success")
+					$banner.find("span").text("Success: " + market.marketName + " added to watchlist.")
+					clearAssetInput($wrap);
+				}
+				else
+				{
+					$banner.addClass("error")
+					$banner.find("span").text("Error: This market is already in your watchlist.")
+				}
+			}
+			else
+			{
+				$banner.addClass("error")
+				$banner.find("span").text("Error: You must choose a valid market")
+			}
+		}
+
+	})
+	
+
+	
+	function clearAssetInput($wrap)
+	{		
+		$wrap.find("input").each(function()
+		{
+			$(this).val("")
+			$(this).data("market", "-1")
+		})
+	}
+	
+	
+
+
+	/*
+	IDEX.Watchlist.prototype.onRowMouseover = function(e, $row)
+	{
+		var watchlist = this;
+		var $target = $(e.target)
+		var has = $target.hasClass("deleteMarketFavorite")
+
+ 		if (!has)
+		{
+			$row.addClass("allFavs-hover")
+			//e.stopPropagation()
 		}
 		else
 		{
-			params.base = fav.base.name;
-			params.rel = fav.rel.name;
+			$row.removeClass("allFavs-hover")
 		}
-
-		IDEX.sendPost(params, false).done(function(data)
-		{
-			//console.log(data);
-			
-			var $row = watchlist.watchlistTableDom.find("tbody tr").eq(index);
-			$row.find("td").eq(1).text(String(data.lastbid));
-			$row.find("td").eq(2).text(String(data.lastask));
-
-		})
-		
+	}
+	
+	
+	
+	IDEX.Watchlist.prototype.onRowMouseleave = function(e, $row)
+	{
+		$row.removeClass("allFavs-hover")
+	}*/
+	
+	
 		/*var params = {}
 		params.key = "beta_test";
 
@@ -151,261 +592,6 @@ var IDEX = (function(IDEX, $, undefined)
 			$row.find("td").eq(1).text(String(data.lastbid));
 			$row.find("td").eq(2).text(String(data.lastask));
 		})*/
-		
-	}
-	
-	
-	IDEX.Watchlist.prototype.updateTicker = function()
-	{
-		var watchlist = this;
-		var favs = IDEX.user.favorites;
-
-		for (var i = 0; i < favs.length; i++)
-		{
-			var fav = favs[i];
-			
-			if (true)
-			{
-				watchlist.orderbookLoop(fav, i);
-
-			}
-		}
-		
-
-		return;
-		
-		var params = {}
-		params.key = "beta_test";
-
-		var format = {};
-		format.rnum = 100;
-
-		var query = {};
-		query.section = "dat";
-		query.segment = "qts";
-		query.target = "qts_lst";
-		query.params = {};
-		query.params.exchange = "nxtae";
-		query.params.source = "crypto";
-		query.params.symbol = "15344649963748848799_NXT";
-
-
-		params.format = format;
-		params.query = query;
-		
-
-		
-		IDEX.sendSkynetPost(params).done(function(data)
-		{
-			console.log(data)
-		})
-
-	}
-	
-	
-
-	IDEX.Watchlist.prototype.addRow = function(fav)
-	{
-		var watchlist = this;
-		var $table = watchlist.watchlistTableDom;
-
-		var keys = ["market", "baseName", "relName"]
-		var obj = {}
-		obj.market = fav.base.name + "_" + fav.rel.name;
-		obj.baseName = fav.base.name;
-		obj.relName = fav.rel.name;
-		
-		var row = IDEX.buildTableRows(IDEX.objToList([obj], keys), "table");
-		row = $(row).get()[0]
-
-		//$row.find("td:last").after("<td class='deleteMarketFavorite'>DELETE</td>");
-		//row = IDEX.addElDataAttr(row, [obj], ["baseID", "relID"]);
-
-		var $row = $(row);
-		$row.data("market", fav);
-		$row.find("td").eq(1).addClass("watchlist-lastBid");
-		$row.find("td").eq(2).addClass("watchlist-lastAsk");
-
-		
-		$table.find("tbody").append($row)
-	}
-	
-	
-	
-	IDEX.updateWatchlistTable = function()
-	{
-		var allWatchlists = IDEX.allWatchlists;
-		
-		for (var i = 0; i < allWatchlists.length; i++)
-		{
-			var watchlist = allWatchlists[i];
-			watchlist.watchlistTableDom.find("tbody").empty();
-			watchlist.initWatchlist();
-		}
-	}
-	
-	
-	
-	IDEX.Watchlist.prototype.onRowClick = function(e, $row)
-	{
-		var watchlist = this;
-		var market = $row.data("market");
-		var cellHandler = watchlist.cellHandler;
-		
-		
-		cellHandler.emit("changeMarket", market);
-	}
-	
-	
-	
-	IDEX.Watchlist.prototype.onRowMouseover = function(e, $row)
-	{
-		var watchlist = this;
-		var $target = $(e.target)
-		var has = $target.hasClass("deleteMarketFavorite")
-
- 		if (!has)
-		{
-			$row.addClass("allFavs-hover")
-			//e.stopPropagation()
-		}
-		else
-		{
-			$row.removeClass("allFavs-hover")
-		}
-	}
-	
-	
-	
-	IDEX.Watchlist.prototype.onRowMouseleave = function(e, $row)
-	{
-		$row.removeClass("allFavs-hover")
-	}
-
-	
-	
-	
-	
-	$(".marketSearch-add-trig").on("click", function()
-	{
-		var $wrap = $(this).closest(".popup");
-		
-		var $activeTab = $wrap.find(".tab-wrap.active");
-		var searchType = $activeTab.attr("data-searchtype");
-		
-		var $form = $(".marketSearch-popup-form");
-;
-		
-		var $banner = $wrap.find(".banner");
-		$banner.removeClass("error")
-		$banner.removeClass("success")
-		$banner.addClass("active");
-		
-
-		
-		if (searchType == "market")
-		{
-			var $market = $form.find("input[name=market]");
-			var market = $market.data("market");
-			console.log(market);
-			$banner.removeClass("active");
-
-			if (market != "-1")
-			{
-				var retbool = IDEX.user.addFavorite(market);
-
-				if (retbool)
-				{
-					IDEX.updateWatchlistTable();
-					$banner.addClass("success")
-					$banner.find("span").text("Success: " + market.marketName + " added to watchlist.")
-					clearAssetInput($wrap);
-				}
-				else
-				{
-					$banner.addClass("error")
-					$banner.find("span").text("Error: This market is already in your watchlist.")
-				}
-			}
-			else
-			{
-				$banner.addClass("error")
-				$banner.find("span").text("Error: You must choose a valid market")
-			}
-		}
-
-	})
-	
-	
-	
-	function clearAssetInput($wrap)
-	{		
-		$wrap.find("input").each(function()
-		{
-			$(this).val("")
-			$(this).data("market", "-1")
-		})
-	}
-	
-	
-	
-	IDEX.User.prototype.addFavorite = function(market)
-	{
-		var user = this;
-		var retbool = false;
-		var base = market.base;
-		var rel = market.rel;
-
-		var index = user.getFavoriteIndex(base, rel);
-		
-		if (index == -1)
-		{
-			user.favorites.push(market);
-			localStorage.setItem('watchlist', JSON.stringify(user.favorites));
-			retbool = true;
-		}
-
-		return retbool
-	}
-	
-	
-	
-	IDEX.User.prototype.getFavoriteIndex = function(base, rel)
-	{
-		var index = -1;
-
-		for (var i = 0; i < this.favorites.length; i++)
-		{
-			var fav = this.favorites[i];
-			
-			if (fav.base.name == base.name && fav.rel.name == rel.name)
-			{
-				index = i;
-				break;
-			}
-		}
-		
-		return index;
-	}
-	
-
-	
-	
-	IDEX.User.prototype.removeFavorite = function(baseID, relID)
-	{
-		var index = this.getFavoriteIndex(baseID, relID)
-		
-		if (index != -1)
-		{
-			this.favorites.splice(index, 1)
-			localStorage.setItem('marketFavorites', JSON.stringify(this.favorites));
-		}
-	}
-	
-	
-
-	
-	
 	
 	
 	

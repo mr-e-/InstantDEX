@@ -141,6 +141,13 @@ var IDEX = (function(IDEX, $, undefined)
 			$el.addClass(cssClass);
 	}
 	
+
+	IDEX.toggleShow = function($el, show)
+	{
+		var func = show ? "addClass" : "removeClass";
+		$el[func]("active");
+	}
+	
 	
 	IDEX.searchListOfObjects = function(arr, key, val)
 	{

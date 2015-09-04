@@ -24,8 +24,17 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	$(".util-grid-newTab").on("click", function()
 	{
-		var grid = new Sleuthgrids.Grid();
-		grid.gridTab.gridTabDOM.trigger("click");
+		var numGrids = Sleuthgrids.allGrids.length;
+		
+		if (numGrids >= 5)
+		{
+			$.growl.warning({'message':"Limit of 5 grids reached", 'location':"tl"});
+		}
+		else
+		{
+			var grid = new Sleuthgrids.Grid();
+			grid.gridTab.gridTabDOM.trigger("click");
+		}
 	})
 	
 	

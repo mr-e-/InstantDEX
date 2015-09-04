@@ -1537,13 +1537,15 @@ table.dataTable thead th:last-child {
 }
 
 .dropdown-wrap {
-	width:330px;
+	width:350px;
 	position:fixed;
 	display:none;
 	z-index:101;
 	font-size: 13px;
 	background:black;
 	border:1px solid #3b3b3b;
+	border:1px solid #329ddc;
+
 }
 
 .dropdown-wrap-main {
@@ -1559,11 +1561,16 @@ table.dataTable thead th:last-child {
 	color:#EDB379;
 }
 
+.chart-table-wrap {
+	height:100%;
+	width:100%;
+	position:relative;
+	display:block;
+	background-color:#111111;
+	padding:5px 10px;
+}
+
 .chart-table {
-	margin-bottom:5px;
-	margin-top:5px;
-	margin-left:10px;
-	margin-right:10px;
 	border-collapse:collapse;
 }
 
@@ -2485,6 +2492,29 @@ table.dataTable thead th:last-child {
 .watchlist-lastAsk {
 	color:rgba(218, 59, 38, 0.9);
 	color: rgb(255,0,0);
+}
+
+.generic-loading {
+	height:calc(100% - 25px);
+	width:100%;
+	position:absolute;
+	display:none;
+	top:0;
+	z-index:100;
+	background-color: black;
+}
+
+.generic-loading.active {
+	display:block;
+}
+
+.generic-loading span {
+	text-align:center;
+	display:block;
+	font-size:16px;
+	position:relative;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 

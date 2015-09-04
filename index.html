@@ -308,17 +308,11 @@
 						
 						<div class="popup-content orderbookSearch-popup-content tab-trig-wrap">
 						
-							<div class="tab-nav">
+							<!--<div class="tab-nav">
 								<div class="tab-nav-cell" data-tab="1">
 									<span>Markets</span>
 								</div>
-								<div class="tab-nav-cell" data-tab="2">
-									<span>Baskets</span>
-								</div>
-								<!--<div class="tab-nav-cell" data-tab="3">
-									<span>Coins</span>
-								</div>-->
-							</div>
+							</div>-->
 						
 							<div class="tab-wrap active" data-tab="1" data-searchtype="market">
 								<div class="orderbookSearch-popup-inputArea">
@@ -373,8 +367,6 @@
 							
 
 							
-
-							
 							<div class="popup-buttonArea orderbookSearch-popup-buttonArea">
 								<div class="nbutton-text-wrap">
 									<div class="nbutton-text-outer">
@@ -416,14 +408,14 @@
 					
 					<div class="popup-content marketSearch-popup-content tab-trig-wrap">
 						
-						<div class="tab-nav">
+						<!--<div class="tab-nav">
 							<div class="tab-nav-cell" data-tab="1">
 								<span>Markets</span>
 							</div>
 							<div class="tab-nav-cell" data-tab="2">
 								<span>Baskets</span>
 							</div>
-						</div>
+						</div>-->
 					
 						<div class="tab-wrap active" data-tab="1" data-searchtype="market">
 							<div class="marketSearch-popup-inputArea">
@@ -638,14 +630,7 @@
 							</div>
 							
 							<div class="orderbook-label-popup-table">
-								<!--<div class="orderbook-label-popup-all-row">
-									<div class="orderbook-label-popup-all-row-cell label-popup-all-name">
-										<span>Label 1</span>
-									</div>
-									<div class="orderbook-label-popup-all-row-cell label-popup-all-vis">
-										<img src="img/eye.png"></img>
-									</div>
-								</div>-->
+
 							</div>
 						</div>
 						
@@ -781,9 +766,7 @@
 					
 				
 				</div>
-		
-			
-
+	
 			</div>
 			
 			
@@ -973,7 +956,6 @@
 							</div>
 						</div>
 						
-						<!-- mm-chart-config mm-chart-bartype -->
 						<div class="chart-time-wrap">
 							<div class="chart-time-button-outer vert-align">
 								<div class="chart-time-button">
@@ -1110,9 +1092,6 @@
 						</div>
 					</div>
 					
-					
-					
-
 				</div>
 				
 			</div>
@@ -1123,53 +1102,55 @@
 			
 			<div id="chartTableTemplate" class="template">										
 
-				<table class="chart-table">
-					<tbody>
-						<tr>
-							<td>Chart Type</td>
-							<td>
-								<ul class="mm-chart-config mm-chart-charttype" data-config="charttype">
-									<li class="active" data-val="candlestick">Candlestick</li>
-									<li data-val="ohlc">OHLC</li>
-									<li data-val="line">Line</li>
-									<li data-val="area">Area</li>
-								</ul>
-							</td>
-						</tr>
-						<tr>
-							<td>Indicator</td>
-							<td>
-								<ul class="mm-chart-config mm-chart-indicator" data-config="indicator">
-									<li class="active" data-val="ema">EMA</li>
-									<li data-val="sma">SMA</li>
-									<li data-val="bollin">BBands</li>
-									<li data-val="none">None</li>
-								</ul>
-							</td>
-						</tr>
-						<tr>
-							<td>Time Scale</td>
-							<td>
-								<ul class="mm-chart-config mm-chart-timescale" data-config="timescale">
-									<li class="active" data-val="linear">Linear</li>
-									<li data-val="logarithmic">Logarithmic</li>
-								</ul>
-							</td>
-						</tr>
-						<tr>
-							<td>Depth</td>
-							<td>
-								<ul class="mm-chart-config mm-chart-depth" data-config="depth">
-									<li data-val="0.00">0%</li>
-									<li data-val="0.01">1%</li>
-									<li data-val="0.02">2%</li>
-									<li class="active" data-val="0.05">5%</li>
-									<li data-val="0.10">10%</li>
-								</ul>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="chart-table-wrap">
+					<table class="chart-table">
+						<tbody>
+							<tr>
+								<td>Chart Type</td>
+								<td>
+									<ul class="mm-chart-config mm-chart-charttype" data-config="charttype">
+										<li class="active" data-val="candlestick">Candlestick</li>
+										<li data-val="ohlc">OHLC</li>
+										<li data-val="line">Line</li>
+										<li data-val="area">Area</li>
+									</ul>
+								</td>
+							</tr>
+							<tr>
+								<td>Main Indicator</td>
+								<td>
+									<ul class="mm-chart-config mm-chart-indicator" data-config="indicator">
+										<li class="active" data-val="ema">EMA</li>
+										<li data-val="sma">SMA</li>
+										<li data-val="bollin">BBands</li>
+										<li data-val="none">None</li>
+									</ul>
+								</td>
+							</tr>
+							<!--<tr>
+								<td>Time Scale</td>
+								<td>
+									<ul class="mm-chart-config mm-chart-timescale" data-config="timescale">
+										<li class="active" data-val="linear">Linear</li>
+										<li data-val="logarithmic">Logarithmic</li>
+									</ul>
+								</td>
+							</tr>-->
+							<tr>
+								<td>Depth</td>
+								<td>
+									<ul class="mm-chart-config mm-chart-depth" data-config="depth">
+										<li data-val="0.00">0%</li>
+										<li data-val="0.01">1%</li>
+										<li data-val="0.02">2%</li>
+										<li class="active" data-val="0.05">5%</li>
+										<li data-val="0.10">10%</li>
+									</ul>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 				
 
@@ -1641,6 +1622,9 @@
 								</div>
 							</div>
 						</div>
+						<div class="refresh-wrap cm-orders-refresh-wrap">
+							<img src="img/refresh.png"></img>
+						</div>
 					</div>
 					
 					<div class="cm-marketHistory-content">
@@ -1790,6 +1774,10 @@
 							</tbody>
 						</table>
 					
+					</div>
+					
+					<div class="generic-loading watchlist-loading">
+						<span>Loading...</span>
 					</div>
 					
 				</div>

@@ -6,7 +6,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.defaultMarket = {"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"exchanges":["nxtae","btc38","poloniex","bittrex"]},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true}
 	IDEX.isWindows = false;
 	IDEX.user;
-
+	IDEX.watchlistOverlord;
 	
 
 	IDEX.init = function()
@@ -40,11 +40,10 @@ var IDEX = (function(IDEX, $, undefined)
 		var timeoutFinished = new $.Deferred();
 
 		IDEX.user = new IDEX.User();
+		IDEX.watchlistOverlord = new IDEX.WatchlistOverlord();
 		
-		IDEX.initScrollbar();
-		//IDEX.initDataTable();
-		
-		IDEX.user.initFavorites();
+		IDEX.initScrollbar();		
+		IDEX.watchlistOverlord.initLocalStorage();
 		IDEX.user.initLabels();
 		IDEX.initChartIndicators();
 
