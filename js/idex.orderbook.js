@@ -16,8 +16,6 @@ var IDEX = (function(IDEX, $, undefined)
 		this.nxtRS = "";
 		this.pair = "";
 		this.orderbookID = "";
-		this.baseAsset = "";
-		this.relAsset = "";
 		
 		this.asks = [];
 		this.bids = [];
@@ -139,7 +137,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbook = this;
 		
 		orderbook.market = market;
-		orderbook.marketName = orderbook.market.base.name + "/" + orderbook.market.rel.name;
 
 		orderbook.emptyOrderbook("Loading...");
 		

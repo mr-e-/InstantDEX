@@ -165,11 +165,11 @@ input:focused {
 }
 
 .fadeSlowIndy {
-	-webkit-transition: all .4s ease;
-    -moz-transition: all .4s ease;
-    -o-transition: all .4s ease;
-    -ms-transition: all .4s ease;
-    transition: all .4s ease;
+	-webkit-transition: all .5s ease;
+    -moz-transition: all .5s ease;
+    -o-transition: all .5s ease;
+    -ms-transition: all .5s ease;
+    transition: all .5s ease;
 }
 
 /* ------------------------- TABS ------------------------- */
@@ -2779,12 +2779,12 @@ table.dataTable thead th:last-child {
 	position:relative;
 	float:right;
 	padding-right:3px;
-	padding-top:2px;
+	padding-top:4px;
 }
 
 .refresh-wrap img {
-	height:13px;
-	width:15px;
+	height:12px;
+	width:14px;
 }
 
 .refresh-wrap img:hover{

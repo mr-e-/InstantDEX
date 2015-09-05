@@ -19,6 +19,210 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allMarkets = [];
 	
 	
+	
+	IDEX.MarketOverlord = function()
+	{
+		var overlord = this;
+		overlord.allMarkets = [];
+	}
+	
+	
+	IDEX.MarketOverlord.prototype.loadLocalStorage = function()
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var allMarketsRaw = JSON.parse(localStorage.getItem('allMarkets'));
+		var allCoins = IDEX.allCoins;
+		
+		for (var i = 0; i < allMarketsRaw.length; i++)
+		{
+			var marketRaw = allMarketsRaw[i];
+			var market = new IDEX.Market(marketRaw);
+			var baseRet = tempSearch(allCoins, market.base, ["name", "isAsset", "assetID"]);
+			market.base = baseRet.item;
+			var relRet = tempSearch(allCoins, market.rel, ["name", "isAsset", "assetID"]);
+			market.rel = relRet.item;
+			
+			allMarkets.push(market);
+		}
+		
+	
+		return allMarkets;
+	}
+	
+	
+	IDEX.MarketOverlord.prototype.setLocalStorage = function()
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var minMarkets = [];
+
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			var minMarket = market.minimizeSelf();
+			minMarkets.push(minMarket);
+		}
+		
+		localStorage.setItem('allMarkets', JSON.stringify(minMarkets));
+		
+		return minMarkets;
+	}
+
+	
+	
+	IDEX.MarketOverlord.prototype.expandMarket = function(minMarket)
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var keys = ["marketName", "pairID", "isNxtAE"];
+		var retMarket = null;
+		
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			var ret = IDEX.compObjs(market, minMarket, keys);
+
+			if (ret)
+			{
+				retMarket = market;
+				break;
+			}
+		}
+
+		return retMarket;
+	}
+	
+	
+	IDEX.MarketOverlord.prototype.getMarket = function(marketKey)
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var retMarket = null;
+		
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			if (market.marketKey == marketKey)
+			{
+				retMarket = market;
+				break;
+			}
+		}
+
+		return retMarket;
+	}
+	
+	
+	
+	
+	IDEX.Market = function(obj)
+	{
+		var market = this;
+		market.marketName;
+		market.pairID;
+		market.base;
+		market.rel;
+		market.exchanges;
+		market.exchangeSettings;
+		market.isNxtAE;
+		market.marketKey;
+		
+		IDEX.constructFromObject(this, obj);
+	}
+	
+	
+	IDEX.Market.prototype.minimizeSelf = function()
+	{
+		var market = this;
+		var keys = ["marketName", "pairID", "isNxtAE", "exchangeSettings", "exchanges", "marketKey"];
+
+		var minMarket = IDEX.minObject(market, keys);
+		var minBase = market.base.minimizeSelf();
+		var minRel = market.rel.minimizeSelf();
+
+		minMarket.base = minBase;
+		minMarket.rel = minRel;
+
+		return minMarket;
+	}
+	
+	
+	
+	IDEX.CoinOverlord = function()
+	{
+		var overlord = this;
+		overlord.allCoins = [];
+	}
+	
+	
+	IDEX.CoinOverlord.prototype.loadLocalStorage = function()
+	{
+		var overlord = this;
+		var allCoins = overlord.allCoins;
+		var allCoinsRaw = JSON.parse(localStorage.getItem('allCoins'));
+
+		for (var i = 0; i < allCoinsRaw.length; i++)
+		{
+			var coinRaw = allCoinsRaw[i];
+			var coin = new IDEX.Coin(coinRaw);
+			coin.balanceHandler = new IDEX.BalanceCoin(coin);
+			
+			allCoins.push(coin);
+		}
+		
+
+		return allCoins;
+	}
+	
+	
+	IDEX.CoinOverlord.prototype.setLocalStorage = function()
+	{
+		var overlord = this;
+		var keys = ["name", "isAsset", "assetID", "exchanges"];
+		var minCoins = [];
+		var allCoins = overlord.allCoins;
+	
+		for (var i = 0; i < allCoins.length; i++)
+		{
+			var coin = allCoins[i];
+			var minCoin = coin.minimizeSelf();
+			minCoins.push(minCoin);
+			
+		}
+		
+		localStorage.setItem('allCoins', JSON.stringify(minCoins));
+
+		return minCoins;
+	}
+	
+	
+	
+	IDEX.Coin = function(coinObj)
+	{
+		var coin = this;
+		coin.isAsset = coinObj.isAsset;
+		coin.name = coinObj.name;
+		coin.assetID = coinObj.assetID;
+		coin.exchanges = coinObj.exchanges;
+		
+		coin.balanceHandler;
+		
+	}
+	
+
+	IDEX.Coin.prototype.minimizeSelf = function()
+	{
+		var coin = this;
+		var coinKeys = ["name", "isAsset", "assetID", "exchanges"];
+
+		var minCoin = IDEX.minObject(coin, coinKeys);
+
+		return minCoin;
+	}
+	
+	
+	
 	IDEX.initExchanges = function()
 	{
 		var dfd = new $.Deferred();
@@ -78,29 +282,180 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	function normalizeMarkets(parsedMarkets)
+	function makeCoinObject(name, exchangeName, allCoins)
 	{
-		var enabledMarkets = {};
-		var fiat = ["USD", "CAD", "GBP", "CNY", "RUR", "EUR"]
-		var isRelFiat = false;
-		for (var i = 0; i < fiat.length; i++)
+		var isNxtAE = exchangeName == "nxtae";
+
+		var coinObj = {};
+		coinObj.exchanges = [];
+		
+		var assetObj = IDEX.nxtae.assets.getAsset("assetID", name);
+
+		if (isNxtAE && !($.isEmptyObject(assetObj)))
 		{
-			if (rel.name == fiat[i])
-			{
-				isRelFiat = true
-				break;
-			}
-		}
-		if (base.name == "BTC" && !isRelFiat)
-		{
-			params.base = rel.name;
-			params.rel = base.name;
+			coinObj.name = assetObj.name;
+			coinObj.isAsset = true;
+			coinObj.assetID = assetObj.assetID;
+
 		}
 		else
 		{
-			params.base = base.name;
-			params.rel = rel.name;
+			coinObj.name = name.toUpperCase();
+			coinObj.isAsset = false;
+			coinObj.assetID = "";
 		}
+		
+								
+		var searchRet = tempSearch(allCoins, coinObj, ["name", "isAsset", "assetID"]);
+		if (searchRet.ret)
+		{
+			coinObj = allCoins[searchRet.index];
+			if (coinObj.exchanges.indexOf(exchangeName) == -1)
+			{
+				coinObj.exchanges.push(exchangeName);
+			}
+		}
+		else
+		{
+			coinObj = new IDEX.Coin(coinObj);
+			coinObj.balanceHandler = new IDEX.BalanceCoin(coinObj);
+			coinObj.exchanges.push(exchangeName);
+			allCoins.push(coinObj);
+		}
+		
+		return coinObj;
+	}
+	
+	
+	
+	function tempSearch(arr, obj, keys)
+	{
+		var retObj = {};
+		var ret = false;
+		
+		for (var i = 0; i < arr.length; i++)
+		{
+			var item = arr[i];
+			
+			var ret = IDEX.compObjs(item, obj, keys);
+			
+			if (ret)
+				break;
+		}
+		
+		retObj.ret = ret;
+		retObj.index = i;
+		retObj.item = item;
+		
+		return retObj;
+	}
+	
+	function initCoins(marketsByExchange)
+	{
+		var allCoins = [];
+		var coinedMarketsByExchange = {};
+		
+		for (exchangeName in marketsByExchange)
+		{
+			var isSupportedExchange = IDEX.exchangeList.indexOf(exchangeName) != -1;
+			if (!isSupportedExchange)
+				continue;
+
+			var exchangeMarkets = marketsByExchange[exchangeName];
+			var coinedMarkets;
+			coinedMarketsByExchange[exchangeName] = coinedMarkets = [];
+			//coinedMarketsByExchange.markets = [];
+
+			for (var i = 0; i < exchangeMarkets.length; i++)
+			{
+				var marketName = exchangeMarkets[i];
+				var baseRel = marketName.split("_");
+				var base = baseRel[0];
+				var rel = baseRel[1];
+				var baseObj = makeCoinObject(base, exchangeName, allCoins);
+				var relObj = makeCoinObject(rel, exchangeName, allCoins);
+				
+				var marketObj = {};
+				marketObj.marketName = marketName;
+				marketObj.base = baseObj;
+				marketObj.baseRaw = base;
+				marketObj.rel = relObj;
+				marketObj.relRaw = rel;
+			
+				coinedMarkets.push(marketObj);
+			}
+		}
+		
+		return {'allCoins':allCoins, 'coinedMarketsByExchange':coinedMarketsByExchange};
+	}
+	
+	
+	function initMarkets(marketsByExchange)
+	{
+		var allMarkets = [];
+		
+		for (exchangeName in marketsByExchange)
+		{
+			var exchangeMarkets = marketsByExchange[exchangeName];
+			
+			for (var i = 0; i < exchangeMarkets.length; i++)
+			{
+				var market = exchangeMarkets[i];
+				var marketKey = market.marketName;
+				var baseObj = market.base;
+				var baseRaw = market.baseRaw;
+				var relObj = market.rel;
+				var relRaw = market.relRaw;
+				
+				var skynetFlipped = false;
+				var isNxtAE = exchangeName == "nxtae";
+
+				if (exchangeName == "poloniex" || exchangeName == "bittrex")
+				{
+					baseObj = [relObj, relObj = baseObj][0];
+					baseRaw = [relRaw, relRaw = baseRaw][0];
+
+					skynetFlipped = true;
+					marketKey = baseRaw + "_" + relRaw;
+				}
+				
+				var searchMarket = IDEX.searchListOfObjects(allMarkets, "marketKey", marketKey)
+				
+				if (searchMarket)
+				{
+					var marketObj = searchMarket.obj;
+				}
+				else
+				{
+					var marketObj = new IDEX.Market({});
+					allMarkets.push(marketObj);
+					marketObj.marketName = baseObj.name + "_" + relObj.name;
+					marketObj.base = baseObj;
+					marketObj.rel = relObj;
+					marketObj.pairID = baseObj.name + "_" + relObj.name;
+					marketObj.exchanges = [];
+					marketObj.exchangeSettings = {};
+					marketObj.marketKey = marketKey;
+				}
+				
+				if (isNxtAE)
+				{
+					marketObj.pairID = marketObj.base.assetID + "_" + marketObj.rel.name;
+				}
+				
+				var exchangeFormat = {};
+				exchangeFormat.skynetFlipped = skynetFlipped;
+				
+				marketObj.exchanges.push(exchangeName);
+				marketObj.exchangeSettings[exchangeName] = exchangeFormat;
+				
+				var marketNxtAE = marketObj.exchanges.length == 1 && marketObj.exchanges[0] == "nxtae";
+				marketObj.isNxtAE = marketNxtAE;
+			}
+		}
+		
+		
+		return allMarkets
 	}
 	
 	
@@ -108,12 +463,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var dfd = new $.Deferred();
 		
-		if (localStorage.allCoins && localStorage.allMarkets)
+		if ((localStorage.allCoins && localStorage.allMarkets))
 		{
-			var allCoins = JSON.parse(localStorage.getItem('allCoins'));
-			var allMarkets = JSON.parse(localStorage.getItem('allMarkets'));
-
+			var allCoins = IDEX.coinOverlord.loadLocalStorage();
 			IDEX.allCoins = allCoins;
+
+			var allMarkets = IDEX.marketOverlord.loadLocalStorage();			
 			IDEX.allMarkets = allMarkets;
 			
 			dfd.resolve();
@@ -122,184 +477,51 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			getExternalExchangeMarkets().done(function(parsedMarkets)
 			{
-				console.log(parsedMarkets);
 				var marketsByExchange = parsedMarkets.exchanges;
 				var nxtaeMarkets = getNxtAEMarkets();
 				marketsByExchange.nxtae = nxtaeMarkets;
-								
-				for (exchangeName in IDEX.allExchanges)
-				{
-					var exchange = IDEX.allExchanges[exchangeName];
-					
-					if (exchangeName in marketsByExchange)
-					{
-						exchange.markets = marketsByExchange[exchangeName];
-					}
-				}
 				
+				var allCoinsRet = initCoins(marketsByExchange);
+				var allCoins = allCoinsRet.allCoins;
+				var coinedMarketsByExchange = allCoinsRet.coinedMarketsByExchange;
+				var allMarkets = initMarkets(coinedMarketsByExchange);
 				
-				var allCoins = [];
-				var allMarkets = {};
-				
-				for (exchangeName in IDEX.allExchanges)
-				{
-					var exchange = IDEX.allExchanges[exchangeName];
-					
-					var exchangeMarkets = exchange.markets;
-					
-					for (var i = 0; i < exchangeMarkets.length; i++)
-					{
-						var market = exchangeMarkets[i];
-						
-						var baseRel = market.split("_");
-						var base = baseRel[0];
-						var rel = baseRel[1];
-						var skynetFlipped = false;
-						
-						if (exchangeName == "poloniex")
-						{
-							base = [rel, rel = base][0];
-							skynetFlipped = true;
-						}
-						
-						if (exchangeName == "bittrex")
-						{
-							base = [rel, rel = base][0];
-							skynetFlipped = true;
-						}
-						
-						market = base + "_" + rel;
-						
-						
-						var func = function(name, isAsset) 
-						{
-							var coinObj = {};
-							
-							if (isAsset)
-							{
-								var assetObj = IDEX.nxtae.assets.getAsset("assetID", name);
-								
-								if (!($.isEmptyObject(assetObj)))
-								{
-									coinObj.name = assetObj.name;
-									coinObj.isAsset = true;
-									coinObj.assetID = assetObj.assetID;
-								}
-								else
-								{
-									coinObj.name = name.toUpperCase();
-									coinObj.isAsset = false;
-								}
-
-							}
-							else
-							{
-								coinObj.name = name.toUpperCase();
-								coinObj.isAsset = false;
-							}
-							
-							
-							return coinObj
-						};
-						
-						var isNxtAE = exchangeName == "nxtae";
-						var baseObj = func(base, isNxtAE);
-						var relObj = func(rel, isNxtAE);
-						baseObj.exchanges = [];
-						relObj.exchanges = [];
-
-						var baseRet = IDEX.searchListOfObjectsAll(allCoins, baseObj, "exchanges");
-						if (baseRet.ret)
-						{
-							baseObj = allCoins[baseRet.index];
-							if (baseObj.exchanges.indexOf(exchangeName) == -1)
-							{
-								baseObj.exchanges.push(exchangeName);
-							}
-						}
-						else
-						{
-							baseObj.exchanges.push(exchangeName);
-							allCoins.push(baseObj)
-						}
-						
-						var relRet = IDEX.searchListOfObjectsAll(allCoins, relObj, "exchanges");
-						if (relRet.ret)
-						{
-							relObj = allCoins[relRet.index];
-							if (relObj.exchanges.indexOf(exchangeName) == -1)
-							{
-								relObj.exchanges.push(exchangeName);
-							}
-						}
-						else
-						{
-							relObj.exchanges.push(exchangeName);
-							allCoins.push(relObj)
-						}
-						
-						
-						
-						if (market in allMarkets)
-						{
-							var marketObj = allMarkets[market];
-						}
-						else
-						{
-							var marketObj = allMarkets[market] = {};
-
-							marketObj.marketName = baseObj.name + "_" + relObj.name;
-							marketObj.base = baseObj;
-							marketObj.rel = relObj;
-							marketObj.pairID = baseObj.name + "_" + relObj.name;
-							marketObj.exchanges = [];
-							marketObj.exchangeSettings = {};
-						}
-						
-						if (isNxtAE)
-						{
-							marketObj.pairID = marketObj.base.assetID + "_" + marketObj.rel.name;
-						}
-						
-						var exchangeFormat = {}
-						exchangeFormat.skynetFlipped = skynetFlipped;
-						
-						marketObj.exchanges.push(exchangeName);
-						marketObj.exchangeSettings[exchangeName] = exchangeFormat;
-						
-
-					}
-				}
-				
-				for (key in allMarkets)
-				{
-					var market = allMarkets[key];
-					if (market.exchanges.length == 1 && market.exchanges[0] == "nxtae")
-					{
-						market.isNxtAE = true;
-					}
-					else
-					{
-						market.isNxtAE = false;
-					}
-				}
+				IDEX.coinOverlord.allCoins = allCoins;
+				IDEX.marketOverlord.allMarkets = allMarkets;
 				
 				IDEX.allCoins = allCoins;
 				IDEX.allMarkets = allMarkets;
-				localStorage.setItem('allCoins', JSON.stringify(allCoins));
-				localStorage.setItem('allMarkets', JSON.stringify(allMarkets));
+				
+				IDEX.coinOverlord.setLocalStorage();
+				IDEX.marketOverlord.setLocalStorage();
 
+				for (var i = 0; i < allMarkets.length; i++)
+				{
+					var market = allMarkets[i];
+					
+					for (exchangeName in market.exchanges)
+					{
+						var isSupportedExchange = IDEX.exchangeList.indexOf(exchangeName) != -1; 
+						
+						if (isSupportedExchange)
+						{
+							var exchange = IDEX.allExchange[exchangeName]
+							exchange.markets.push(market);
+						}
+					}
+				}
+				
+				
 				dfd.resolve();
-
 			})
 		}
 		
 		return dfd.promise();
 
 	}
+	
+	
 
-	
-	
 	function getNxtAEMarkets()
 	{
 		var nxtae = IDEX.allExchanges.nxtae;
@@ -491,7 +713,33 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-
+	function normalizeMarkets(parsedMarkets)
+	{
+		var enabledMarkets = {};
+		var fiat = ["USD", "CAD", "GBP", "CNY", "RUR", "EUR"]
+		var isRelFiat = false;
+		for (var i = 0; i < fiat.length; i++)
+		{
+			if (rel.name == fiat[i])
+			{
+				isRelFiat = true
+				break;
+			}
+		}
+		if (base.name == "BTC" && !isRelFiat)
+		{
+			params.base = rel.name;
+			params.rel = base.name;
+		}
+		else
+		{
+			params.base = base.name;
+			params.rel = rel.name;
+		}
+	}
+	
+	
+	
 	
 
 	return IDEX;

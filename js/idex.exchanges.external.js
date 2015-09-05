@@ -161,7 +161,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 		
-			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 20000) && (tradesHandlerMarket.lastUpdated != -1)))
+			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 30000) && (tradesHandlerMarket.lastUpdated != -1)))
 			{
 				dfd.resolve();
 			}
@@ -238,11 +238,10 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				balance.available = rawBalance.available;
 				balance.unavailable = rawBalance.onOrders;
+				balance.total = IDEX.toSatoshi(Number(balance.available) + Number(balance.unavailable));
 				balances.name = key;
-				
-				//balance.total = balance.available + balance.unavailable;
+				balance.exchange = exchangeName;
 
-				//balances.push(balance)
 				balances[key] = balance;
 			}
 		}
@@ -256,7 +255,9 @@ var IDEX = (function(IDEX, $, undefined)
 				var balance = {};
 				balance.available = rawBalance.Available;
 				balance.total = rawBalance.Balance
-				balance.unavailable = balance.total - balance.available;
+				balance.unavailable = IDEX.toSatoshi(balance.total - balance.available);
+				balances.name = rawBalance.Currency;
+				balance.exchange = exchangeName;
 				
 				balances[rawBalance.Currency] = balance;
 			}

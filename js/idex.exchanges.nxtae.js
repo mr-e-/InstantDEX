@@ -471,6 +471,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var openOrdersHandler = this;
 			var dfd = new $.Deferred();
 			var time = new Date().getTime()
+			var base = market.base;
 					
 			if (!forceUpdate && time - this.openOrdersLastUpdated < 1000)
 			{
@@ -478,12 +479,12 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
-				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", market.base.assetID);
+				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", base.assetID);
 				var decimals = assetInfo.decimals;
 				var params = {}
 				params.requestType = "getAccountCurrentBidOrders";
 				params.account = openOrdersHandler.nxtAE.nxtRS;
-				params.asset = market.base.assetID;
+				params.asset = base.assetID;
 				
 				IDEX.sendPost(params, true).then(function(bidOrders)
 				{
@@ -492,7 +493,7 @@ var IDEX = (function(IDEX, $, undefined)
 					params = {}
 					params.requestType = "getAccountCurrentAskOrders";
 					params.account = openOrdersHandler.nxtAE.nxtRS;
-					params.asset = market.base.assetID;
+					params.asset = base.assetID;
 
 				
 					IDEX.sendPost(params, true).done(function(askOrders)
@@ -575,14 +576,15 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var tradesHandler = this;
 			var dfd = new $.Deferred();
-			var time = new Date().getTime()
+			var time = new Date().getTime();
+			var base = market.base;
 
 			var params = {}
 			params.requestType = "getTrades";
 			params.account = tradesHandler.nxtAE.nxtRS;
 
 			if (market)
-				params.asset = market.base.assetID;
+				params.asset = base.assetID;
 
 			params.lastIndex = 50;
 			
@@ -658,7 +660,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var tradesHandler = this;
 			var dfd = new $.Deferred();
 			var time = new Date().getTime();
-			
+			var base = market.base;
 			
 			if (!(market.pairID in tradesHandler.markets))
 			{
@@ -672,7 +674,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 			
-			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 20000) && (tradesHandlerMarket.lastUpdated != -1)))
+			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 30000) && (tradesHandlerMarket.lastUpdated != -1)))
 			{
 				dfd.resolve();
 			}
@@ -680,8 +682,8 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var params = {}
 				params.requestType = "getTrades";
-				params.asset = market.base.assetID;
-				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", market.base.assetID);
+				params.asset = base.assetID;
+				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", base.assetID);
 				var totalNumTrades = assetInfo.numberOfTrades;
 				
 				var firstIndex = totalNumTrades - 50 || 0

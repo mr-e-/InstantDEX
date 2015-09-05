@@ -9,8 +9,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbox = function(obj) 
 	{	
-		this.baseAsset;
-		this.relAsset;
 		this.hasMarket = false;
 		
 		this.orderboxDom;

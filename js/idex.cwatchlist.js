@@ -32,7 +32,8 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < markets.length; i++)
 		{
 			var market = markets[i];
-			var watchlistMarket = new IDEX.WatchlistMarket(market);
+			var loadedMarket = IDEX.marketOverlord.expandMarket(market);
+			var watchlistMarket = new IDEX.WatchlistMarket(loadedMarket);
 			overlord.watchlistMarkets.push(watchlistMarket);
 		}
 	}
@@ -47,7 +48,7 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < watchlistMarkets.length; i++)
 		{
 			var watchlistMarket = watchlistMarkets[i];
-			var market = watchlistMarket.market;
+			var market = watchlistMarket.market.minimizeSelf();;
 			markets.push(market);
 		}
 		

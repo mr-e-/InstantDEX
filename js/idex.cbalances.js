@@ -8,10 +8,120 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allCBalances = [];
 	
 	
+	
+	
+	IDEX.BalanceCoin = function(coin) 
+	{	
+		var balanceCoin = this;
+		balanceCoin.coin = coin;
+		
+		balanceCoin.lastUpdated = -1;
+		balanceCoin.isUpdating = false;
+		balanceCoin.xhr = false;
+		balanceCoin.postDFD = false;
+		
+		balanceCoin.balance = [];
+	};
+	
+	
+	IDEX.BalanceCoin.prototype.update = function(forceUpdate)
+	{
+		var balanceCoin = this;
+		balanceCoin.postDFD = new $.Deferred();
+		var coin = balanceCoin.coin;
+		var time = new Date().getTime();
+		var lastUpdatedTime = balanceCoin.lastUpdated;
+		var dfds = [];
+
+		
+		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+		
+		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
+		{
+			//balanceCoin.postDFD.resolve();
+		}
+		else
+		{
+			var coinExchanges = coin.exchanges;
+			balanceCoin.isUpdating = true;
+
+			for (var i = 0; i < coinExchanges.length; i++)
+			{
+				var exchange = coinExchanges[i];
+				var dfd = new $.Deferred();
+				dfds.push(dfd);
+				
+				(function(exchange, dfd)
+				{
+					var isActiveExchange = !(IDEX.activeExchanges.indexOf(exchange) == -1);
+
+					var exchangeHandler = IDEX.allExchanges[exchange];
+					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+					var balancesHandler = exchangeHandler.balances;
+						
+					balancesHandler.updateBalances().done(function()
+					{
+						dfd.resolve();
+					});
+					
+				})(exchange, dfd)
+			}
+		}
+		
+		
+		if (!dfds.length)
+		{
+			dfds.push(new $.Deferred());
+			dfds[0].resolve();
+		}
+		
+		$.when.apply($, dfds).done(function(data)
+		{
+			balanceCoin.balance = [];
+
+			for (var i = 0; i < coinExchanges.length; i++)
+			{
+				var exchange = coinExchanges[i];
+				var exchangeHandler = IDEX.allExchanges[exchange];
+				exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+				var balancesHandler = exchangeHandler.balances;
+				
+				var isNxt = coin.isAsset == false && coin.name == "NXT";
+				var bal = {};
+				
+				if (isNxt)
+				{
+					bal = balancesHandler.getBalance(false, isNxt)
+				}
+				else if ("assetID" in coin)
+				{
+					bal = balancesHandler.getBalance(coin.assetID);
+				}
+				else
+				{
+					bal = balancesHandler.getBalance(coin.name);
+				}
+				
+				balanceCoin.balance.push(bal);
+
+			}
+			
+			balanceCoin.isUpdating = false;
+			balanceCoin.postDFD.resolve();
+		})
+		
+		
+		balanceCoin.lastUpdated = time;
+		
+		return balanceCoin.postDFD.promise();
+	}
+	
+	
+	
+	
+	
 	IDEX.CBalance = function(obj) 
 	{	
-		this.baseAsset;
-		this.relAsset;
 		this.hasMarket = false;
 		
 		this.cBalanceDom;
@@ -134,6 +244,10 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var baseOrRel = isBase ? market.base : market.rel;
 		
+		/*baseOrRel.balanceHandler.update().done(function()
+		{
+			console.log(baseOrRel);
+		})*/
 		//cBalanceType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 
 		var marketExchanges = baseOrRel.exchanges;

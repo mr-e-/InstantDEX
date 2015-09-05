@@ -128,7 +128,7 @@ var IDEX = (function(IDEX, $, undefined)
 					openOrdersHandler.updateOpenOrders(market).done(function(openOrders)
 					{
 						//var openOrders = openOrdersHandler.openOrders;
-						console.log(openOrders);
+
 						for (var j = 0; j < openOrders.length; j++)
 						{
 							var openOrder = openOrders[j];

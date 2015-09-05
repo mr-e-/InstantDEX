@@ -101,9 +101,7 @@ var IDEX = (function(IDEX, $, undefined)
 					var tradeHistoryHandler = exchangeHandler.accountTrades;
 
 					tradeHistoryHandler.updateTrades(market).done(function(trades)
-					{
-						console.log(trades);
-						
+					{						
 						for (var j = 0; j < trades.length; j++)
 						{
 							var trade = trades[j];

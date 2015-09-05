@@ -19,6 +19,22 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
+	IDEX.minObject = function(obj, keys)
+	{
+		var minObj = {};
+		
+		for (var i = 0; i < keys.length; i++)
+		{
+			var key = keys[i];
+			minObj[key] = obj[key];
+			
+		}
+		
+		return minObj;
+	}
+
+	
+	
 	IDEX.flipCheckMarket = function(market, exchange)
 	{
 		var isFlipped = market.exchangeSettings[exchange].skynetFlipped;
@@ -171,7 +187,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.searchListOfObjectsAll = function(arr, obj, ignoreKey)
+	IDEX.searchListOfObjectsAll = function(arr, obj, keys)
 	{
 		var retObj = {};
 		var ret = false;

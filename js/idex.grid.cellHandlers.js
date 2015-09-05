@@ -4,7 +4,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	var defaultSave = {"windowHeight":663,"windowWidth":1855,"gridSaves":[{"tileSaves":[{"positions":{"height":395,"width":773,"top":0,"bottom":395,"left":0,"right":773},"winPositions":{"height":395,"width":773,"top":38,"bottom":433,"left":0,"right":773},"index":0,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"chart","cellTypeSettings":{"marketSettings":{"pair":"15344649963748848799_NXT","barType":"tick","barWidth":"25","exchange":"nxtae","isVirtual":false,"isFlipped":false,"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"exchanges":["nxtae","btc38","poloniex","bittrex"]},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true},"baseID":"6932037131189568014_NXT","relID":"5527630","baseName":"InstantDEX","relName":"NXT","pairName":"InstantDEX_NXT"}}}]},{"positions":{"height":663,"width":618.25,"top":0,"bottom":663,"left":773,"right":1391.25},"winPositions":{"height":663,"width":618.25,"top":38,"bottom":701,"left":773,"right":1391.25},"index":1,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"orderbook","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"exchanges":["nxtae","btc38","poloniex","bittrex"]},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true}}}]},{"positions":{"height":331.5,"width":463.75,"top":331.5,"bottom":663,"left":1391.25,"right":1855},"winPositions":{"height":331.5,"width":463.75,"top":369.5,"bottom":701,"left":1391.25,"right":1855},"index":2,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"watchlist"}]},{"positions":{"height":331.5,"width":463.75,"top":0,"bottom":331.5,"left":1391.25,"right":1855},"winPositions":{"height":331.5,"width":463.75,"top":38,"bottom":369.5,"left":1391.25,"right":1855},"index":3,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"marketHistory","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"exchanges":["nxtae","btc38","poloniex","bittrex"]},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true}}}]},{"positions":{"height":268,"width":773,"top":395,"bottom":663,"left":0,"right":773},"winPositions":{"height":268,"width":773,"top":433,"bottom":701,"left":0,"right":773},"index":4,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"balances"}]}],"index":0,"isActive":true}]}	
+	var defaultSave = {"windowHeight":628,"windowWidth":1855,"gridSaves":[{"tileSaves":[{"positions":{"height":405,"width":850,"top":0,"bottom":405,"left":0,"right":850},"winPositions":{"height":405,"width":850,"top":38,"bottom":443,"left":0,"right":850},"index":0,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"chart","cellTypeSettings":{"marketSettings":{"pair":"15344649963748848799_NXT","barType":"tick","barWidth":"25","exchange":"nxtae","isVirtual":false,"isFlipped":false,"market":{"marketName":"InstantDEX_NXT","pairID":"15344649963748848799_NXT","isNxtAE":true,"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"exchanges":["nxtae"],"base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"assetID":"","exchanges":["bittrex","nxtae","poloniex","btc38"]}},"pairName":"InstantDEX_NXT"}}}]},{"positions":{"height":628,"width":593,"top":0,"bottom":628,"left":850,"right":1443},"winPositions":{"height":628,"width":593,"top":38,"bottom":666,"left":850,"right":1443},"index":1,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"orderbook","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","pairID":"15344649963748848799_NXT","isNxtAE":true,"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"exchanges":["nxtae"],"base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"assetID":"","exchanges":["bittrex","nxtae","poloniex","btc38"]}}}}]},{"positions":{"height":314,"width":412,"top":314,"bottom":628,"left":1443,"right":1855},"winPositions":{"height":314,"width":412,"top":352,"bottom":666,"left":1443,"right":1855},"index":2,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"watchlist"}]},{"positions":{"height":314,"width":412,"top":0,"bottom":314,"left":1443,"right":1855},"winPositions":{"height":314,"width":412,"top":38,"bottom":352,"left":1443,"right":1855},"index":3,"isTileHeaderTabbed":false,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"marketHistory","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","pairID":"15344649963748848799_NXT","isNxtAE":true,"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"exchanges":["nxtae"],"base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"assetID":"","exchanges":["bittrex","nxtae","poloniex","btc38"]}}}}]},{"positions":{"height":223,"width":850,"top":405,"bottom":628,"left":0,"right":850},"winPositions":{"height":223,"width":850,"top":443,"bottom":666,"left":0,"right":850},"index":4,"isTileHeaderTabbed":true,"cellSaves":[{"isActive":true,"linkIndex":-1,"cellType":"balances"},{"isActive":false,"linkIndex":-1,"cellType":"trades","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","pairID":"15344649963748848799_NXT","isNxtAE":true,"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"exchanges":["nxtae"],"base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"assetID":"","exchanges":["bittrex","nxtae","poloniex","btc38"]}}}},{"isActive":false,"linkIndex":-1,"cellType":"orders","cellTypeSettings":{"market":{"marketName":"InstantDEX_NXT","pairID":"15344649963748848799_NXT","isNxtAE":true,"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"exchanges":["nxtae"],"base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"assetID":"","exchanges":["bittrex","nxtae","poloniex","btc38"]}}}}]}],"index":0,"isActive":true}]}
 	
 	var cellHandlers = 
 	{
@@ -190,8 +190,23 @@ var IDEX = (function(IDEX, $, undefined)
 		var chartSettings = {};
 		chartSettings.node = $chartNode;
 		$.extend(chartSettings, settings);
+		
+		if ("marketSettings" in chartSettings)
+		{
+			var market = chartSettings.marketSettings.market;
+			if (market && !($.isEmptyObject(market)))
+			{
+				delete chartSettings.marketSettings.market;
+				market = IDEX.marketOverlord.expandMarket(market);
+			}
+			else
+			{
+				market = IDEX.defaultMarket;
+			}
+		}
+		
 		var chart = IDEX.makeChart(chartSettings, cellHandler);
-		IDEX.changeChartMarketDOM(chart);
+		IDEX.changeChartMarket(chart, market, market.exchanges[0]);
 		cellHandler.cellApp = chart;
 	}
 	
@@ -248,6 +263,16 @@ var IDEX = (function(IDEX, $, undefined)
 		var obj = {};
 		obj.marketSettings = chart.marketHandler.marketSettings;
 		
+		if ("market" in obj.marketSettings)
+		{
+			var market = obj.marketSettings.market;
+			if (market && !($.isEmptyObject(market)))
+			{
+				market = market.minimizeSelf();
+				obj.marketSettings.market = market;
+			}
+		}	
+		
 		return obj;
 	}
 	
@@ -283,7 +308,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (settings && ("market" in settings))
 		{
-			orderbook.changeMarket(settings.market);
+			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+			orderbook.changeMarket(loadedMarket);
 		}
 	}
 	
@@ -303,8 +329,12 @@ var IDEX = (function(IDEX, $, undefined)
 		var orderbook = cellHandler.cellApp;
 		
 		var obj = {};
-		obj.market = orderbook.market;
-		
+		var market = orderbook.market;
+		if (market)
+		{
+			var saveMarket = market.minimizeSelf();
+			obj.market = saveMarket;
+		}
 		
 		return obj;
 		
@@ -393,7 +423,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (settings && "market" in settings)
 		{
-			cBalance.changeMarket(settings.market);
+			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+			cBalance.changeMarket(loadedMarket);
 		}
 
 	}
@@ -451,7 +482,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (settings && "market" in settings)
 		{
-			cOpenOrder.changeMarket(settings.market);
+			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+			cOpenOrder.changeMarket(loadedMarket);
 		}
 	}
 	
@@ -471,8 +503,11 @@ var IDEX = (function(IDEX, $, undefined)
 		var cOpenOrder = cellHandler.cellApp;
 		
 		var saveObj = {};
-		saveObj.market = cOpenOrder.market;
-				
+		var market = cOpenOrder.market;
+		if (market)
+		{
+			saveObj.market = market.minimizeSelf();
+		}
 		return saveObj;
 	}
 	
@@ -515,7 +550,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (settings && "market" in settings)
 		{
-			cTrade.changeMarket(settings.market);
+			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+			cTrade.changeMarket(loadedMarket);
 		}
 	}
 	
@@ -535,7 +571,11 @@ var IDEX = (function(IDEX, $, undefined)
 		var cTrade = cellHandler.cellApp;
 		
 		var saveObj = {};
-		saveObj.market = cTrade.market;
+		var market = cTrade.market;
+		if (market)
+		{
+			saveObj.market = market.minimizeSelf();
+		}
 				
 		return saveObj;
 		
@@ -579,7 +619,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (settings && "market" in settings)
 		{
-			cMarketHistory.changeMarket(settings.market);
+			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+			cMarketHistory.changeMarket(loadedMarket);
 		}
 	}
 	
@@ -599,8 +640,11 @@ var IDEX = (function(IDEX, $, undefined)
 		var cMarketHistory = cellHandler.cellApp;
 		
 		var saveObj = {};
-		saveObj.market = cMarketHistory.market;
-				
+		var market = cMarketHistory.market;
+		if (market)
+		{
+			saveObj.market = market.minimizeSelf();
+		}
 		return saveObj;
 		
 	}
@@ -638,6 +682,8 @@ var IDEX = (function(IDEX, $, undefined)
 		var prevWidth = saveObj.windowWidth;
 		var gridSaves = saveObj.gridSaves;
 		
+		if (!gridSaves)
+			gridSaves = [];
 		
 		for (var i = 0; i < gridSaves.length; i++)
 		{

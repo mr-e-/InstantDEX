@@ -41,9 +41,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 		IDEX.user = new IDEX.User();
 		IDEX.watchlistOverlord = new IDEX.WatchlistOverlord();
+		IDEX.coinOverlord = new IDEX.CoinOverlord();
+		IDEX.marketOverlord = new IDEX.MarketOverlord();
 		
 		IDEX.initScrollbar();		
-		IDEX.watchlistOverlord.initLocalStorage();
 		IDEX.user.initLabels();
 		IDEX.initChartIndicators();
 
@@ -63,9 +64,13 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					IDEX.initAllMarkets().done(function()
 					{
-						var defaultMarket = IDEX.allMarkets['15344649963748848799_nxt'];
-						console.log(JSON.stringify(defaultMarket));
+						var defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
+						IDEX.defaultMarket = defaultMarket;
+						console.log(defaultMarket);
+						//console.log(JSON.stringify(defaultMarket));
 						IDEX.initAutocomplete();
+						IDEX.watchlistOverlord.initLocalStorage();
+
 						initializedExchanges.resolve()
 					});
 				});

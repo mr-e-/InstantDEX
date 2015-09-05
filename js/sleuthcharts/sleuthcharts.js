@@ -122,7 +122,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			if (load)
 			{
-				chart.updateChart();
+				//chart.updateChart();
 			}
 			
 			return chart;
