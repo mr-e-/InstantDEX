@@ -64,6 +64,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var balancesHandler = this;
 			var balances = balancesHandler.balances;
+			var exchange = balancesHandler.exchange;
 			var balance = {};
 			
 			if (coinName in balances)
@@ -72,6 +73,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
+				balance.exchange = exchange.exchangeName;
 				balance.available = 0;
 				balance.unavailable = 0;
 				balance.total = 0;

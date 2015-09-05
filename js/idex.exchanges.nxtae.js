@@ -359,8 +359,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 			else
 			{
-				balance.availableBalance = 0;
-				balance.unconfirmedBalance = 0;
+				balance.exchange = "nxtae";
+				balance.available = 0;
+				balance.total = 0;
+				balance.unavailable = 0;
 			}
 
 			return balance;
@@ -371,11 +373,34 @@ var IDEX = (function(IDEX, $, undefined)
 		setBalances: function(balances)
 		{
 			var balancesHandler = this;
+			var nxtAE = balancesHandler.nxtAE;
 
 			for (var i = 0; i < balances.length; i++)
 			{
-				var balance = new IDEX.NxtBalance(balances[i]);
-				balancesHandler.balances[balance.assetID] = balance;
+				var balance = balances[i];
+				var formattedBalance = {};
+				
+				var assetID = balance.assetID;
+				var asset = IDEX.nxtae.assets.getAsset("assetID", assetID);
+
+				if (assetID == "5527630")
+					asset = IDEX.snAssets.nxt;
+				
+				if (asset)
+				{
+					var name = asset.name;
+					var avail = name == "NXT" ? balance.balanceNQT : balance.quantityQNT;
+					var unconf = name == "NXT" ? balance.unconfirmedBalanceNQT : balance.unconfirmedQuantityQNT;
+					
+					formattedBalance.total = avail / Math.pow(10, asset.decimals);
+					formattedBalance.available = unconf / Math.pow(10, asset.decimals);	
+					formattedBalance.unavailable = IDEX.toSatoshi(Number(formattedBalance.total) - Number(formattedBalance.available));
+					formattedBalance.exchange = "nxtae";
+					
+					balancesHandler.balances[assetID] = formattedBalance;
+
+				}
+
 			}
 		},
 		
@@ -419,7 +444,9 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.sendPost(postObj, 1).then(function(data)
 				{
 					if (!("errorCode" in data) && ("accountAssets" in data))
+					{
 						balances = data['accountAssets'];
+					}
 						
 					IDEX.sendPost({'requestType':"getBalance", 'account':nxtAE.nxtID}, 1).then(function(nxtBal)
 					{
@@ -804,29 +831,6 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
-	IDEX.NxtBalance = function(constructorObj) 
-	{
-		this.availableBalance = 0;
-		this.unconfirmedBalance = 0;
-		
-		var __construct = function(that, constructorObj)
-		{
-			var asset = IDEX.nxtae.assets.getAsset("assetID", constructorObj['assetID']);
-			if (constructorObj['assetID'] == "5527630")
-				asset = IDEX.snAssets.nxt;
-			if (asset)
-			{
-				IDEX.constructFromObject(that, asset);
-				var avail = that.name == "NXT" ? constructorObj['balanceNQT'] : constructorObj['quantityQNT'];
-				var unconf = that.name == "NXT" ? constructorObj['unconfirmedBalanceNQT'] : constructorObj['unconfirmedQuantityQNT'];
-				
-				that.availableBalance = avail / Math.pow(10, asset.decimals);
-				that.unconfirmedBalance = unconf / Math.pow(10, asset.decimals);				
-			}
-			
-		}(this, constructorObj)
-	};
 	
 	
 	
