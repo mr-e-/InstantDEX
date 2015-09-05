@@ -224,9 +224,7 @@ var IDEX = (function(IDEX, $, undefined)
 				break;
 			}
 		}
-		
-		//console.log(orderbook);
-		
+				
 		if (orderbook)
 		{
 			orderbook.stopPollingOrderbook();
@@ -285,12 +283,6 @@ var IDEX = (function(IDEX, $, undefined)
 					orderbook.updateLastPrice(orderbookData);
 					orderbook.animateOrderbook();
 					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
-					
-					/*var market = orderbook.currentOrderbook.contract;
-					var baseRel = market.split("/");
-					var baseName = baseRel[0];
-					var relName = baseRel[1];*/
-		
 				}
 				
 				if (!(orderbook.isStoppingOrderbook))

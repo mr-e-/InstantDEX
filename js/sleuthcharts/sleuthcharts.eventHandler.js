@@ -472,10 +472,6 @@ Sleuthcharts = (function(Sleuthcharts)
 
 
 
-	
-
-
-
 
 function highLowPrice(chart)
 {

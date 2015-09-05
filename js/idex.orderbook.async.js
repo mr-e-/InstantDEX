@@ -120,62 +120,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var addBids = [];
 				var addAsks = [];
-				/*if (orderbook.market.isNxtAE)
-				{
-					console.log(tdata);
-					var unconfirmedTransactions = tdata.unconfirmedTransactions;
-					
-					for (var j = 0; j < unconfirmedTransactions.length; j++)
-					{
-						var trans = unconfirmedTransactions[j];
-						
-						if ("attachment" in trans)
-						{
-							var attach = trans.attachment;
-							if ("version.BidOrderPlacement" in attach || "version.AskOrderPlacement" in attach)
-							{
-								if (attach.asset == orderbook.market.base.assetID)
-								{
-									var isAsk = "version.AskOrderPlacement" in attach;
-									var assetInfo = IDEX.nxtae.assets.getAsset("assetID", attach.asset);
-									
 
-									var decimals = assetInfo.decimals;
-									var price = attach.priceNQT / Math.pow(10, 8);
-									var amount = attach.quantityQNT / Math.pow(10, decimals);	
-									
-									var addOrder = {}
-									addOrder.price = price;
-									addOrder.volume = amount;
-									addOrder.trades = [];
-									addOrder.trades[0] = {}
-									addOrder.trades[0].orderid = trans.transaction;
-									addOrder.trades[0].exchange = "unconf";
-									
-									if (isAsk)
-									{
-										orderbookData.asks.push(addOrder);
-										addAsks.push(addOrder);
-									}
-									else
-									{
-										orderbookData.bids.push(addOrder);
-										addBids.push(addOrder);
-									}
-									
-									//console.log(addOrder);
-								}
-							}
-							else
-							{
-								
-							}
-						}
-					}
-					
-				}*/
-				//console.log(orderbookData);
-				//console.log(JSON.stringify(orderbookData.bids));
 
 				orderbook.isWaitingForOrderbook = false;
 				retDFD.resolve(orderbookData);

@@ -546,21 +546,8 @@ var IDEX = (function(IDEX, $, undefined)
 							formattedOpenOrder.total = IDEX.toSatoshi(Number(price) * Number(amount));
 							formattedOpenOrder.status = "Open";
 							formattedOpenOrders.push(formattedOpenOrder);
-							
 						}
 
-						/*if ("openorders" in data)
-						{
-							data = data.openorders;
-							
-							for (var i = 0; i < data.length; i++)
-								if (data[i].baseid == IDEX.user.curBase.assetID && data[i].relid == IDEX.user.curRel.assetID)
-									temp.push(data[i]);
-						}
-						else
-						{
-							data = [];
-						}*/
 						openOrdersHandler.openOrders[market.marketName] = formattedOpenOrders;
 						dfd.resolve(formattedOpenOrders);
 					})
@@ -761,8 +748,6 @@ var IDEX = (function(IDEX, $, undefined)
 			var nxtCurrentTime = convertToNxtTime(currentTime);
 			var pastTime = nxtCurrentTime - oneWeek;
 			
-			//console.log(currentTime) currentTime - GENESIS_TIMESTAMP
-
 			var params = {}
 			params.requestType = "getAllTrades";
 			params.timestamp = pastTime;
@@ -826,49 +811,6 @@ var IDEX = (function(IDEX, $, undefined)
 		return assets;
 	}
 	
-	
-	
-	
-	
-	/*
-	IDEX.Account.prototype.stopPollingOpenOrders = function()
-	{
-		
-	}
-	
-	
-	IDEX.Account.prototype.refreshOpenOrdersPoll = function()
-	{
-		
-	}
-	
-	
-	IDEX.Account.prototype.setTimeout = function(timeout)
-	{
-		this.timeoutDFD = new $.Deferred();
-		var account = this;
-
-		this.openOrdersTimeout = setTimeout(function() 
-		{
-			account.timeoutDFD.resolve(false);
-			account.timeoutDFD = false;
-			
-		}, timeout)
-		
-		return this.timeoutDFD.promise();
-	}
-	
-	
-	IDEX.Account.prototype.clearTimeout = function()
-	{
-		if (this.timeoutDFD)
-		{
-			clearTimeout(this.openOrdersTimeout);
-			this.timeoutDFD.resolve(true);
-			this.timeoutDFD = false;
-		}
-	}
-	*/
 	
 
 	

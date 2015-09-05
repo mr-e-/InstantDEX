@@ -23,28 +23,6 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
-	/*IDEX.CBalanceType = function(type, $cBalanceDom, cBalance) 
-	{	
-		this.cBalance = cBalance;
-		this.dom;
-		this.type = type;
-		this.balanceTitleDom;
-		//this.balanceValDom
-		this.tableDom;
-
-
-		var __construct = function(that, type, $cBalanceDom)
-		{
-			that.dom = $cBalanceDom.find(".cm-balances-" + type);
-			that.balanceTitleDom = that.dom.find(".cm-balances-sing-title span");
-			//that.balanceValDom = that.dom.find(".orderbox-balance-val span");
-			that.tableDom = that.dom.find(".cm-balances-sing-table");
-
-		}(this, type, $cBalanceDom)
-	};*/
-		
-		
-	
 	
 	IDEX.newCOpenOrder = function($el, cellHandler)
 	{

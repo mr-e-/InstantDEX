@@ -626,6 +626,11 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		onTileHeaderMouseLeave: function(e)
+		{
+			
+		},
+		
 		
 		toggleTileOverlay: function(isVisible)
 		{
@@ -702,7 +707,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var has = $(e.target).hasClass("tile-header-tab");
 			
 			if (has)
-			{				
+			{			
 				var $tile = tile.tileDOM;
 				var mouseY = e.clientY
 				var mouseX = e.clientX

@@ -31,8 +31,7 @@ var IDEX = (function(IDEX, $, undefined)
 				arrow:false,
 				offsetY:-15,
 				delay:130,
-				speed:200,
-				//autoClose:false
+				speed:200
 			})
 		})
 		
@@ -66,7 +65,6 @@ var IDEX = (function(IDEX, $, undefined)
 					{
 						var defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
 						IDEX.defaultMarket = defaultMarket;
-						console.log(defaultMarket);
 						//console.log(JSON.stringify(defaultMarket));
 						IDEX.initAutocomplete();
 						IDEX.watchlistOverlord.initLocalStorage();

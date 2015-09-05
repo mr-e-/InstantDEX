@@ -198,6 +198,8 @@ var IDEX = (function(IDEX, $, undefined)
 		exchange = exchange == "InstantDEX" ? "nxtae" : exchange; 
 		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
 
+		orderboxType.balanceValDom.text("Loading...");
+
 		
 		baseOrRel.balanceHandler.update(forceUpdate, [exchange]).done(function()
 		{

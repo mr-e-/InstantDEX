@@ -1,32 +1,28 @@
 
-var skynetKeys = {
-	"startTime":0,
-	"endTime":1,
-	"open":3,
-	"high":4,
-	"low":5,
-	"close":6,
-	"vol":7
-}
-
-var skynetKeysTime = {
-	"startTime":0,
-	"endTime":1,
-	"open":2,
-	"high":3,
-	"low":4,
-	"close":5,
-	"vol":6
-}
-
-
-
-
 
 
 Sleuthcharts = (function(Sleuthcharts) 
 {
-	
+	var skynetKeys = {
+		"startTime":0,
+		"endTime":1,
+		"open":3,
+		"high":4,
+		"low":5,
+		"close":6,
+		"vol":7
+	}
+
+	var skynetKeysTime = {
+		"startTime":0,
+		"endTime":1,
+		"open":2,
+		"high":3,
+		"low":4,
+		"close":5,
+		"vol":6
+	}
+
 	
 	Sleuthcharts.SkyNETParams = function(obj) 
 	{
@@ -199,14 +195,12 @@ Sleuthcharts = (function(Sleuthcharts)
 				}
 				else
 				{
-					console.log(data);
 					marketHandler.formatMarketData([], isTime);
 					dfd.resolve();
 				}
 			
 			}).fail(function(data)
 			{
-				console.log(data);
 				dfd.reject(data);
 			})
 		
@@ -260,50 +254,7 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			var params = new Sleuthcharts.SkyNETParams(obj)
 			var url = params.makeURL()
-			//console.log(url)
-			/*obj.key = "beta_test";
-			
-			var a =
-			{
-				"format": { "cols": "dohlcv", "rnum": "100", "sort": "asc" }, 
-				"key": "9cf373ead4858e19bf93ae5ea238c4c796819cc883c877513f528b95721a1085", 
-				"query": 
-				{ 
-					"params":
-					{
-						"btype": "tick", 
-						"exchange": "coinbase", 
-						"frame": 1000, 
-						"source": "crypto", 
-						"symbol": "btc_usd"
-					},
-					"section": "dat", 
-					"segment": "qts", 
-					"target": "qts_bar" 
-					
-				}
-			}
-			
-			console.log(a);
-            var ajaxSettings = 
-            {
-                type: "POST",
-                url: "https://api.finhive.com/v1.0/run.cgi",
-                data: a,
 
-            };
-			
-			
-			var xhr = $.ajax(ajaxSettings);
-			
-			xhr.done(function(data)
-			{
-				console.log(data);
-			}).fail(function(data)
-			{
-				console.log(data);
-			})*/
-			
 			$.getJSON(url, function(data)
 			{
 				dfd.resolve(data)	

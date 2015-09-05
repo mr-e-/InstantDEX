@@ -67,8 +67,29 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			tileNavCell.tileNavCellDOM.on("mousedown", function(e)
 			{
+				tileNavCell.isMoving = true;
+			})
+			
+			tileNavCell.tileNavCellDOM.on("mouseup", function(e)
+			{
+				tileNavCell.isMoving = false;
+			})
+			
+			tileNavCell.tileNavCellDOM.on("mouseout", function(e)
+			{
+				if (tileNavCell.isMoving)
+				{
+					tile.moveTile(e, tileNavCell);
+					tileNavCell.isMoving = false;
+					
+				}
+			})
+			
+			
+			tileNavCell.tileNavCellDOM.on("mousedown", function(e)
+			{
 				//console.log(tile.index);
-				tile.moveTile(e, tileNavCell);
+				//tile.moveTile(e, tileNavCell);
 			})
 			
 			tileNavCell.tileNavCellDOM.on("mousedown", function(e)

@@ -103,12 +103,17 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			xhr.done(function(data)
 			{
-				//console.log(data);
                 if (typeof data == "string")
-                    data = $.parseJSON(data);
-				
-				//console.log(data);
-				
+				{
+					try
+					{
+						data = $.parseJSON(data);
+					}
+					catch(e)
+					{
+						data = {};
+					}
+				}				
 
 				dfd.resolve(data);
 				

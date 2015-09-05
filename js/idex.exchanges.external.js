@@ -105,7 +105,7 @@ var IDEX = (function(IDEX, $, undefined)
 			else
 			{				
 				IDEX.sendPost(params, false).done(function(data)
-				{					
+				{	
 					var balances = normalizeBalances(data, exchangeName);
 					balancesHandler.balances = balances; 
 					dfd.resolve();
@@ -212,6 +212,10 @@ var IDEX = (function(IDEX, $, undefined)
 					tradesHandlerMarket.trades = formattedTrades;
 					
 					dfd.resolve(formattedTrades);
+				}).fail(function()
+				{
+					tradesHandlerMarket.trades = [];
+					dfd.resolve([])
 				})
 			}
 			
@@ -245,19 +249,22 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else if (exchangeName == "bittrex")
 		{
-			var result = rawBalances.result;
-
-			for (var i = 0; i < result.length; i++)
+			if (result in rawBalances)
 			{
-				var rawBalance = result[i];
-				var balance = {};
-				balance.available = rawBalance.Available;
-				balance.total = rawBalance.Balance
-				balance.unavailable = IDEX.toSatoshi(balance.total - balance.available);
-				balances.name = rawBalance.Currency;
-				balance.exchange = exchangeName;
-				
-				balances[rawBalance.Currency] = balance;
+				var result = rawBalances.result;
+
+				for (var i = 0; i < result.length; i++)
+				{
+					var rawBalance = result[i];
+					var balance = {};
+					balance.available = rawBalance.Available;
+					balance.total = rawBalance.Balance
+					balance.unavailable = IDEX.toSatoshi(balance.total - balance.available);
+					balances.name = rawBalance.Currency;
+					balance.exchange = exchangeName;
+					
+					balances[rawBalance.Currency] = balance;
+				}
 			}
 		}
 		
