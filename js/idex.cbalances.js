@@ -24,7 +24,7 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
-	IDEX.BalanceCoin.prototype.update = function(forceUpdate)
+	IDEX.BalanceCoin.prototype.update = function(forceUpdate, filterExchanges)
 	{
 		var balanceCoin = this;
 		balanceCoin.postDFD = new $.Deferred();
@@ -32,9 +32,11 @@ var IDEX = (function(IDEX, $, undefined)
 		var time = new Date().getTime();
 		var lastUpdatedTime = balanceCoin.lastUpdated;
 		var dfds = [];
+		var coinExchanges = coin.exchanges;
 
 		
 		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+		filterExchanges = typeof filterExchanges == "undefined" ? [] : filterExchanges;
 		
 		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
 		{
@@ -42,12 +44,14 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			var coinExchanges = coin.exchanges;
 			balanceCoin.isUpdating = true;
 
 			for (var i = 0; i < coinExchanges.length; i++)
 			{
 				var exchange = coinExchanges[i];
+				if (filterExchanges.length && (filterExchanges.indexOf(exchange) == -1))
+					continue;
+
 				var dfd = new $.Deferred();
 				dfds.push(dfd);
 				
@@ -93,7 +97,7 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					bal = balancesHandler.getBalance(false, isNxt)
 				}
-				else if ("assetID" in coin)
+				else if (("assetID" in coin) && (coin.assetID.length))
 				{
 					bal = balancesHandler.getBalance(coin.assetID);
 				}
@@ -246,15 +250,19 @@ var IDEX = (function(IDEX, $, undefined)
 
 		cBalanceType.tableDom.find("tbody").empty();
 		
-		baseOrRel.balanceHandler.update().done(function()
+		baseOrRel.balanceHandler.update(false, IDEX.activeExchanges).done(function()
 		{
-			console.log(baseOrRel.balanceHandler);
 			var balances = baseOrRel.balanceHandler.balance;
 			
 			for (var i = 0; i < balances.length; i++)
 			{
 				var balance = balances[i];
-				cBalanceType.addTableRow(balance);
+				var balanceExchange = balance.exchange;
+				var isActiveExchange = !(IDEX.activeExchanges.indexOf(balanceExchange) == -1);
+				if (isActiveExchange)
+				{
+					cBalanceType.addTableRow(balance);
+				}
 			}
 		})
 	}

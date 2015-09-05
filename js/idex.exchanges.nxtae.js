@@ -334,10 +334,9 @@ var IDEX = (function(IDEX, $, undefined)
 			balancesHandler.nxtAE = nxtAE;
 			
 			balancesHandler.updater = new IDEX.Updater();
-			balancesHandler.balancesLastUpdated = new Date().getTime();
+			balancesHandler.balancesLastUpdated = -1;
 			
 			balancesHandler.balances = {};
-			balancesHandler.oneTime = false;
 			
 			balancesHandler.asyncDFD = false;
 		},
@@ -423,18 +422,15 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var balancesHandler = this;
 			var nxtAE = balancesHandler.nxtAE;
-			
 			var dfd = new $.Deferred();
-
 			var balances = [];
-			var time = new Date().getTime()
+			var time = new Date().getTime();
+			var lastUpdated = balancesHandler.balancesLastUpdated;
 			
-			//console.log(time - this.balancesLastUpdated);
 
-			if ( (!forceUpdate && time - this.balancesLastUpdated < 1000) && this.oneTime)
+			if (!forceUpdate && ((time - lastUpdated < 5000) && (lastUpdated != -1)))
 			{
-				this.oneTime = true;
-				dfd.resolve()
+				dfd.resolve();
 			}
 			else
 			{

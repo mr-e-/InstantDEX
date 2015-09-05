@@ -52,7 +52,7 @@ var IDEX = (function(IDEX, $, undefined)
 			balancesHandler.exchange = exchange;
 			
 			//balancesHandler.updater = new IDEX.Updater();
-			balancesHandler.balancesLastUpdated = new Date().getTime();
+			balancesHandler.balancesLastUpdated = -1;
 			balancesHandler.balances = {};
 			balancesHandler.oneTime = false;
 			balancesHandler.asyncDFD = false;
@@ -93,25 +93,22 @@ var IDEX = (function(IDEX, $, undefined)
 
 			var exchange = balancesHandler.exchange;
 			var exchangeName = exchange.exchangeName;
-			
+			var lastUpdated = balancesHandler.balancesLastUpdated;
 			var params = {"method":"balance","exchange":exchangeName};			
 
 			
 					
-			if (!forceUpdate && time - this.balancesLastUpdated < 2000)
+			if (!forceUpdate && ((time - lastUpdated < 10000) && (lastUpdated != -1)))
 			{
 				dfd.resolve([]);
 			}
 			else
-			{
-				//console.log(params);
-				
+			{				
 				IDEX.sendPost(params, false).done(function(data)
 				{					
 					var balances = normalizeBalances(data, exchangeName);
 					balancesHandler.balances = balances; 
 					dfd.resolve();
-
 				})
 			}
 
@@ -161,7 +158,6 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				var tradesHandlerMarket = tradesHandler.markets[market.pairID];
 			}
-			
 		
 			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 30000) && (tradesHandlerMarket.lastUpdated != -1)))
 			{
@@ -250,7 +246,7 @@ var IDEX = (function(IDEX, $, undefined)
 		else if (exchangeName == "bittrex")
 		{
 			var result = rawBalances.result;
-			
+
 			for (var i = 0; i < result.length; i++)
 			{
 				var rawBalance = result[i];

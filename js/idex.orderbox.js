@@ -195,37 +195,21 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		orderboxType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 
-		if (exchange == "InstantDEX" || exchange == "nxtae")
+		exchange = exchange == "InstantDEX" ? "nxtae" : exchange; 
+		
+		baseOrRel.balanceHandler.update(false, [exchange]).done(function()
 		{
-			var exchangeHandler = IDEX.allExchanges[exchange];
-			exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-			var balancesHandler = exchangeHandler.balances;
-
-			balancesHandler.updateBalances().done(function()
-			{
-				var isNxt = baseOrRel.isAsset == false && baseOrRel.name == "NXT";
-				if (isNxt)
-					var bal = parseBalance(balancesHandler.getBalance(false, isNxt));
-				else if ("assetID" in baseOrRel)
-					var bal = parseBalance(balancesHandler.getBalance(baseOrRel.assetID));
-				else
-					var bal = parseBalance({});
-
-				orderboxType.balanceValDom.text(bal.whole + bal.dec);			
-			})
-		}
-		else
-		{
-			var exchangeHandler = IDEX.allExchanges[exchange];
-			var balancesHandler = exchangeHandler.balances;
+			var balances = baseOrRel.balanceHandler.balance;
 			
-			balancesHandler.updateBalances().done(function()
+			for (var i = 0; i < balances.length; i++)
 			{
-				var balance = balancesHandler.getBalance(baseOrRel.name);
-				orderboxType.balanceValDom.text(String(balance.available));			
-			})
-		}
+				var balance = balances[i];
+				if (balance.exchange == exchange)
+					orderboxType.balanceValDom.text(String(balance.available));
+			}
+		})
+		
+
 	}
 	
 	function parseBalance(balance)
