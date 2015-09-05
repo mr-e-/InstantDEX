@@ -112,7 +112,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			for (var i = 0; i < order.trades.length; i++)
 			{
-				if (!IDEX.compObjs(order.trades[i], currentOrder.trades[i], ['orderid', 'exchange']))
+				if (!IDEX.compObjs(order.trades[i], currentOrder.trades[i], ['orderprice', 'ordervolume', 'exchange']))
 				{
 					ret = false;
 					break;

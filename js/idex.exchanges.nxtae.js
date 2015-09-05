@@ -647,9 +647,8 @@ var IDEX = (function(IDEX, $, undefined)
 			var tradesHandler = this;
 			
 			tradesHandler.nxtAE = nxtAE;
-			tradesHandler.trades = {};
-			tradesHandler.marketHistoryLastUpdated = new Date().getTime();
-
+			tradesHandler.markets = {};
+			
 		},
 		
 
@@ -658,23 +657,36 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var tradesHandler = this;
 			var dfd = new $.Deferred();
-			var time = new Date().getTime()
-
-			var params = {}
-			params.requestType = "getTrades";
-			params.asset = market.base.assetID;
-			var assetInfo = IDEX.nxtae.assets.getAsset("assetID", market.base.assetID);
-			var totalNumTrades = assetInfo.numberOfTrades;
+			var time = new Date().getTime();
 			
-			var firstIndex = totalNumTrades - 50 || 0
-			params.lastIndex = 50;
 			
-			if (!forceUpdate && time - this.marketHistoryLastUpdated < 1000)
+			if (!(market.pairID in tradesHandler.markets))
 			{
-				dfd.resolve()
+				var tradesHandlerMarket = tradesHandler.markets[market.pairID] = {};
+				tradesHandlerMarket.lastUpdated = -1;
+				tradesHandlerMarket.trades = [];
 			}
 			else
 			{
+				var tradesHandlerMarket = tradesHandler.markets[market.pairID];
+			}
+			
+			
+			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 20000) && (tradesHandlerMarket.lastUpdated != -1)))
+			{
+				dfd.resolve();
+			}
+			else
+			{
+				var params = {}
+				params.requestType = "getTrades";
+				params.asset = market.base.assetID;
+				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", market.base.assetID);
+				var totalNumTrades = assetInfo.numberOfTrades;
+				
+				var firstIndex = totalNumTrades - 50 || 0
+				params.lastIndex = 50;
+				
 				IDEX.sendPost(params, true).then(function(data)
 				{
 					var trades = data.trades;
@@ -700,14 +712,14 @@ var IDEX = (function(IDEX, $, undefined)
 						formattedTrades.push(formattedTrade);
 					}
 					
-					tradesHandler.trades[market.marketName] = formattedTrades;
+					tradesHandlerMarket.trades = formattedTrades;
 					
 					dfd.resolve(formattedTrades);
 				})
 			}
 			
 			
-			tradesHandler.marketHistoryLastUpdated = time;
+			tradesHandlerMarket.lastUpdated = time;
 			
 			return dfd.promise();
 		},

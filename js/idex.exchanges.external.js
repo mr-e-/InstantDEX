@@ -133,9 +133,9 @@ var IDEX = (function(IDEX, $, undefined)
 			var tradesHandler = this;
 			
 			tradesHandler.exchange = exchange;
-			tradesHandler.trades = {};
-			tradesHandler.marketHistoryLastUpdated = new Date().getTime();
-
+			tradesHandler.markets = {};
+		
+			
 		},
 		
 	
@@ -146,32 +146,45 @@ var IDEX = (function(IDEX, $, undefined)
 			var exchangeName = exchange.exchangeName;
 			var dfd = new $.Deferred();
 			var time = new Date().getTime()
+			var lastUpdated = tradesHandler.marketHistoryLastUpdated;
 		
-
-			var params = {}
-			params.key = "beta_test";
-
-			var format = {};
-			format.rnum = 30;
-			format.sort = "des";
 			
-			var query = {};
-			query.section = "dat";
-			query.segment = "qts";
-			query.target = "qts_tck";
-			query.params = {};
-			query.params.exchange = exchangeName;
-			query.params.source = "crypto";
-			query.params.symbol = IDEX.flipCheckMarket(market, exchangeName);
-			params.format = format;
-			params.query = query;
-		
-			if (!forceUpdate && time - this.marketHistoryLastUpdated < 1000)
+			if (!(market.pairID in tradesHandler.markets))
 			{
-				dfd.resolve([])
+				var tradesHandlerMarket = tradesHandler.markets[market.pairID] = {};
+				tradesHandlerMarket.lastUpdated = -1;
+				tradesHandlerMarket.trades = [];
 			}
 			else
 			{
+				var tradesHandlerMarket = tradesHandler.markets[market.pairID];
+			}
+			
+		
+			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 20000) && (tradesHandlerMarket.lastUpdated != -1)))
+			{
+				dfd.resolve();
+			}
+			else
+			{
+				var params = {}
+				params.key = "beta_test";
+
+				var format = {};
+				format.rnum = 30;
+				format.sort = "des";
+				
+				var query = {};
+				query.section = "dat";
+				query.segment = "qts";
+				query.target = "qts_tck";
+				query.params = {};
+				query.params.exchange = exchangeName;
+				query.params.source = "crypto";
+				query.params.symbol = IDEX.flipCheckMarket(market, exchangeName);
+				params.format = format;
+				params.query = query;
+			
 				IDEX.sendSkynetPost(params).done(function(data)
 				{
 					var trades = data.results;
@@ -198,14 +211,14 @@ var IDEX = (function(IDEX, $, undefined)
 						formattedTrades.push(formattedTrade);
 					}
 					
-					tradesHandler.trades[market.marketName] = formattedTrades;
+					tradesHandlerMarket.trades = formattedTrades;
 					
 					dfd.resolve(formattedTrades);
 				})
 			}
 			
 			
-			tradesHandler.marketHistoryLastUpdated = time;
+			tradesHandlerMarket.lastUpdated = time;
 			
 			return dfd.promise();
 		},

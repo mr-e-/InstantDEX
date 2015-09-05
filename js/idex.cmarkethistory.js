@@ -7,6 +7,98 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allCMarketHistory = [];
 	
 	
+	
+	IDEX.MarketHistoryMarket = function(market) 
+	{	
+		var marketHistoryMarket = this;
+		marketHistoryMarket.market = market;
+		
+		marketHistoryMarket.lastUpdated = -1;
+		marketHistoryMarket.isUpdating = false;
+		marketHistoryMarket.xhr = false;
+		marketHistoryMarket.postDFD = false;
+		
+		marketHistoryMarket.marketHistory = [];
+	};
+	
+	
+	IDEX.MarketHistoryMarket.prototype.update = function(forceUpdate)
+	{
+		var marketHistoryMarket = this;
+		marketHistoryMarket.postDFD = new $.Deferred();
+		var market = marketHistoryMarket.market;
+		var time = new Date().getTime();
+		var lastUpdatedTime = marketHistoryMarket.lastUpdated;
+		var dfds = [];
+
+		
+		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+		
+		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
+		{
+			//marketHistoryMarket.postDFD.resolve();
+		}
+		else
+		{
+			var marketExchanges = market.exchanges;
+			marketHistoryMarket.isUpdating = true;
+
+			for (var i = 0; i < marketExchanges.length; i++)
+			{
+				var exchange = marketExchanges[i];
+				var dfd = new $.Deferred();
+				dfds.push(dfd);
+				
+				(function(exchange, dfd)
+				{
+					var exchangeHandler = IDEX.allExchanges[exchange];
+					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+
+					var marketHistoryHandler = exchangeHandler.marketTrades;
+
+					marketHistoryHandler.getMarketTrades(market).done(function(trades)
+					{					
+						dfd.resolve();
+					})
+				})(exchange, dfd)
+			}
+		}
+		
+		
+		if (!dfds.length)
+		{
+			dfds.push(new $.Deferred());
+			dfds[0].resolve();
+		}
+		
+		$.when.apply($, dfds).done(function(data)
+		{
+			marketHistoryMarket.marketHistory = [];
+
+			for (var i = 0; i < marketExchanges.length; i++)
+			{
+				var exchange = marketExchanges[i];
+				var exchangeHandler = IDEX.allExchanges[exchange];
+				exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
+				var marketHistoryHandler = exchangeHandler.marketTrades;
+				var exchangeMarketHistory = marketHistoryHandler.markets[market.pairID].trades.slice();
+				marketHistoryMarket.marketHistory = marketHistoryMarket.marketHistory.concat(exchangeMarketHistory);
+			}
+			
+			marketHistoryMarket.marketHistory.sort(IDEX.compareProp('timestamp')).reverse();
+	
+			marketHistoryMarket.isUpdating = false;
+			marketHistoryMarket.postDFD.resolve();
+		})
+		
+		
+		marketHistoryMarket.lastUpdated = time;
+		
+		return marketHistoryMarket.postDFD.promise();
+	}
+	
+
+	
 	IDEX.CMarketHistory = function(obj) 
 	{	
 		this.hasMarket = false;
@@ -86,64 +178,30 @@ var IDEX = (function(IDEX, $, undefined)
 			var marketExchanges = market.exchanges;
 			
 			cMarketHistory.tableDom.find("tbody").empty();
-
-			for (var i = 0; i < marketExchanges.length; i++)
+			var marketHistoryMarket = new IDEX.MarketHistoryMarket(market);
+			marketHistoryMarket.update().done(function()
 			{
-				var exchange = marketExchanges[i];
+				var trades = marketHistoryMarket.marketHistory;
 				
-				(function(exchange)
+				for (var j = 0; j < trades.length; j++)
 				{
-					if ( false && exchange == "InstantDEX" || exchange == "nxtae")
-					{
-						var exchangeHandler = IDEX.allExchanges[exchange];
-						exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-						var marketHistoryHandler = exchangeHandler.marketTrades;
-
-						marketHistoryHandler.getMarketTrades(market).done(function(trades)
-						{						
-							
-							for (var j = 0; j < trades.length; j++)
-							{
-								var trade = trades[j];
-								cMarketHistory.addTableRow(trade, exchange);
-							}
-						})
-					}
-					else
-					{
-						if (exchange == "poloniex")
-						{
-							//continue;
-							
-							var exchangeHandler = IDEX.allExchanges[exchange];
-							var marketHistoryHandler = exchangeHandler.marketTrades;
-							
-							marketHistoryHandler.getMarketTrades(market).done(function(trades)
-							{
-								for (var j = 0; j < trades.length; j++)
-								{
-									var trade = trades[j];
-									cMarketHistory.addTableRow(trade, exchange);
-								}
-							})
-						}
-					}
-				})(exchange)
-			}
+					var trade = trades[j];
+					cMarketHistory.addTableRow(trade);
+				}
+			})
 		}
 	}
 	
 	
 
 
-	IDEX.CMarketHistory.prototype.addTableRow = function(trade, exchange)
+	IDEX.CMarketHistory.prototype.addTableRow = function(trade)
 	{
 		var cMarketHistory = this;
 		var time = trade.timestamp;
 		var price = trade.price;
 		var amount = trade.amount;
-		var exchange = exchange;
+		var exchange = trade.exchange;;
 		var tradeType = trade.tradeType;
 		
 		
