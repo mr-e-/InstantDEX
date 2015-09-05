@@ -249,7 +249,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else if (exchangeName == "bittrex")
 		{
-			if (result in rawBalances)
+			if ("result" in rawBalances)
 			{
 				var result = rawBalances.result;
 
