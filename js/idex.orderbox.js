@@ -184,7 +184,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.OrderboxType.prototype.updateOrderBoxBalance = function()
+	IDEX.OrderboxType.prototype.updateOrderBoxBalance = function(forceUpdate)
 	{
 		var orderboxType = this;
 		var isBuyBox = orderboxType.type == "buy";
@@ -196,8 +196,10 @@ var IDEX = (function(IDEX, $, undefined)
 		orderboxType.balanceTitleDom.html(baseOrRel.name + ":&nbsp;");
 
 		exchange = exchange == "InstantDEX" ? "nxtae" : exchange; 
+		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+
 		
-		baseOrRel.balanceHandler.update(false, [exchange]).done(function()
+		baseOrRel.balanceHandler.update(forceUpdate, [exchange]).done(function()
 		{
 			var balances = baseOrRel.balanceHandler.balance;
 			
@@ -286,7 +288,8 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				IDEX.placeOrder(params).then(function()
 				{
-					$button.removeClass("disabled")
+					$button.removeClass("disabled");
+					orderboxType.updateOrderBoxBalance(true);
 				});
 			}
 			

@@ -115,7 +115,7 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		
-		balanceCoin.lastUpdated = time;
+		balanceCoin.lastUpdated = -1;
 		
 		return balanceCoin.postDFD.promise();
 	}

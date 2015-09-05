@@ -174,7 +174,7 @@ var IDEX = (function(IDEX, $, undefined)
 					}
 					
 				}*/
-				console.log(orderbookData);
+				//console.log(orderbookData);
 				//console.log(JSON.stringify(orderbookData.bids));
 
 				orderbook.isWaitingForOrderbook = false;
