@@ -7,121 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.allCBalances = [];
 	
-	
-	
-	
-	IDEX.BalanceCoin = function(coin) 
-	{	
-		var balanceCoin = this;
-		balanceCoin.coin = coin;
-		
-		balanceCoin.lastUpdated = -1;
-		balanceCoin.isUpdating = false;
-		balanceCoin.xhr = false;
-		balanceCoin.postDFD = false;
-		
-		balanceCoin.balance = [];
-	};
-	
-	
-	IDEX.BalanceCoin.prototype.update = function(forceUpdate, filterExchanges)
-	{
-		var balanceCoin = this;
-		balanceCoin.postDFD = new $.Deferred();
-		var coin = balanceCoin.coin;
-		var time = new Date().getTime();
-		var lastUpdatedTime = balanceCoin.lastUpdated;
-		var dfds = [];
-		var coinExchanges = coin.exchanges;
 
-		
-		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
-		filterExchanges = typeof filterExchanges == "undefined" ? [] : filterExchanges;
-		
-		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
-		{
-			//balanceCoin.postDFD.resolve();
-		}
-		else
-		{
-			balanceCoin.isUpdating = true;
-
-			for (var i = 0; i < coinExchanges.length; i++)
-			{
-				var exchange = coinExchanges[i];
-				if (filterExchanges.length && (filterExchanges.indexOf(exchange) == -1))
-					continue;
-
-				var dfd = new $.Deferred();
-				dfds.push(dfd);
-				
-				(function(exchange, dfd)
-				{
-					var isActiveExchange = !(IDEX.activeExchanges.indexOf(exchange) == -1);
-
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-					var balancesHandler = exchangeHandler.balances;
-						
-					balancesHandler.updateBalances().done(function()
-					{
-						dfd.resolve();
-					});
-					
-				})(exchange, dfd)
-			}
-		}
-		
-		
-		if (!dfds.length)
-		{
-			dfds.push(new $.Deferred());
-			dfds[0].resolve();
-		}
-		
-		$.when.apply($, dfds).done(function(data)
-		{
-			balanceCoin.balance = [];
-
-			for (var i = 0; i < coinExchanges.length; i++)
-			{
-				var exchange = coinExchanges[i];
-				var exchangeHandler = IDEX.allExchanges[exchange];
-				exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-				var balancesHandler = exchangeHandler.balances;
-				
-				var isNxt = exchange == "nxtae" && coin.isAsset == false && coin.name == "NXT";
-				var bal = {};
-				
-				if (isNxt)
-				{
-					bal = balancesHandler.getBalance(false, isNxt)
-				}
-				else if (("assetID" in coin) && (coin.assetID.length))
-				{
-					bal = balancesHandler.getBalance(coin.assetID);
-				}
-				else
-				{
-					bal = balancesHandler.getBalance(coin.name);
-				}
-				
-				balanceCoin.balance.push(bal);
-
-			}
-			
-			balanceCoin.isUpdating = false;
-			balanceCoin.postDFD.resolve();
-		})
-		
-		
-		balanceCoin.lastUpdated = -1;
-		
-		return balanceCoin.postDFD.promise();
-	}
-	
-	
-	
 	
 	
 	IDEX.CBalance = function(obj) 
@@ -136,7 +22,7 @@ var IDEX = (function(IDEX, $, undefined)
 		this.cellHandler;
 
 		IDEX.constructFromObject(this, obj);
-	};
+	}
 	
 	
 	IDEX.CBalanceType = function(type, $cBalanceDom, cBalance) 
@@ -159,7 +45,7 @@ var IDEX = (function(IDEX, $, undefined)
 			that.tableDom.parent().perfectScrollbar();
 
 		}(this, type, $cBalanceDom)
-	};
+	}
 		
 		
 	
@@ -182,17 +68,13 @@ var IDEX = (function(IDEX, $, undefined)
 			cBalance.refreshDom.on("click", function(){ cBalance.refreshClick() });
 			
 			
-			//orderbook.buyBookDom.perfectScrollbar();
-			//orderbook.sellBookDom.perfectScrollbar();
-			
 			IDEX.allCBalances.push(cBalance)
-
 		}
 		
-
 				
 		return cBalance;
-	};
+	}
+	
 	
 	
 	IDEX.CBalance.prototype.changeMarket = function(market)
@@ -204,8 +86,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		cBalance.updateMarketDOM();
 		cBalance.updateBalances();
-
 	}
+	
 	
 	
 	IDEX.CBalance.prototype.updateMarketDOM = function()
@@ -214,8 +96,8 @@ var IDEX = (function(IDEX, $, undefined)
 		cBalance.searchInputDom.val(cBalance.market.marketName);
 		cBalance.baseSec.balanceTitleDom.text(cBalance.market.base.name);
 		cBalance.relSec.balanceTitleDom.text(cBalance.market.rel.name);
-		
 	}
+	
 	
 	
 	IDEX.CBalance.prototype.updateBalances = function()
@@ -231,13 +113,15 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.CBalance.prototype.refreshClick = function()
 	{
 		var cBalance = this;
 		
 		console.log(cBalance);
-
 	}
+	
+	
 	
 	IDEX.CBalanceType.prototype.updateBalance = function()
 	{
@@ -284,6 +168,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 	}
 	
+	
+	
 	function parseBalance(balance)
 	{
 		var obj = {};
@@ -301,13 +187,6 @@ var IDEX = (function(IDEX, $, undefined)
 		}	
 		
 		return obj;
-	}
-	
-	
-	
-	IDEX.refreshAllBalances = function()
-	{
-		
 	}
 	
 	

@@ -6,97 +6,7 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	IDEX.allCMarketHistory = [];
 	
-	
-	
-	IDEX.MarketHistoryMarket = function(market) 
-	{	
-		var marketHistoryMarket = this;
-		marketHistoryMarket.market = market;
-		
-		marketHistoryMarket.lastUpdated = -1;
-		marketHistoryMarket.isUpdating = false;
-		marketHistoryMarket.xhr = false;
-		marketHistoryMarket.postDFD = false;
-		
-		marketHistoryMarket.marketHistory = [];
-	};
-	
-	
-	IDEX.MarketHistoryMarket.prototype.update = function(forceUpdate)
-	{
-		var marketHistoryMarket = this;
-		marketHistoryMarket.postDFD = new $.Deferred();
-		var market = marketHistoryMarket.market;
-		var time = new Date().getTime();
-		var lastUpdatedTime = marketHistoryMarket.lastUpdated;
-		var dfds = [];
 
-		
-		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
-		
-		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
-		{
-			//marketHistoryMarket.postDFD.resolve();
-		}
-		else
-		{
-			var marketExchanges = market.exchanges;
-			marketHistoryMarket.isUpdating = true;
-
-			for (var i = 0; i < marketExchanges.length; i++)
-			{
-				var exchange = marketExchanges[i];
-				var dfd = new $.Deferred();
-				dfds.push(dfd);
-				
-				(function(exchange, dfd)
-				{
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-					var marketHistoryHandler = exchangeHandler.marketTrades;
-
-					marketHistoryHandler.getMarketTrades(market).done(function(trades)
-					{					
-						dfd.resolve();
-					})
-				})(exchange, dfd)
-			}
-		}
-		
-		
-		if (!dfds.length)
-		{
-			dfds.push(new $.Deferred());
-			dfds[0].resolve();
-		}
-		
-		$.when.apply($, dfds).done(function(data)
-		{
-			marketHistoryMarket.marketHistory = [];
-
-			for (var i = 0; i < marketExchanges.length; i++)
-			{
-				var exchange = marketExchanges[i];
-				var exchangeHandler = IDEX.allExchanges[exchange];
-				exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-				var marketHistoryHandler = exchangeHandler.marketTrades;
-				var exchangeMarketHistory = marketHistoryHandler.markets[market.pairID].trades.slice();
-				marketHistoryMarket.marketHistory = marketHistoryMarket.marketHistory.concat(exchangeMarketHistory);
-			}
-			
-			marketHistoryMarket.marketHistory.sort(IDEX.compareProp('timestamp')).reverse();
-	
-			marketHistoryMarket.isUpdating = false;
-			marketHistoryMarket.postDFD.resolve();
-		})
-		
-		
-		marketHistoryMarket.lastUpdated = time;
-		
-		return marketHistoryMarket.postDFD.promise();
-	}
-	
 
 	
 	IDEX.CMarketHistory = function(obj) 
@@ -109,7 +19,7 @@ var IDEX = (function(IDEX, $, undefined)
 		this.cellHandler;
 
 		IDEX.constructFromObject(this, obj);
-	};
+	}
 	
 
 	
@@ -135,7 +45,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 				
 		return cMarketHistory;
-	};
+	}
 	
 	
 	
@@ -151,12 +61,14 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.CMarketHistory.prototype.updateMarketDOM = function()
 	{
 		var cMarketHistory = this;
 		cMarketHistory.searchInputDom.val(cMarketHistory.market.marketName);
-
 	}
+	
+	
 	
 	IDEX.CMarketHistory.prototype.refreshClick = function()
 	{
@@ -172,14 +84,15 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (cMarketHistory.hasMarket)
 		{
-			var market = cMarketHistory.market;
-			var marketExchanges = market.exchanges;
-			
 			cMarketHistory.tableDom.find("tbody").empty();
-			var marketHistoryMarket = new IDEX.MarketHistoryMarket(market);
-			marketHistoryMarket.update().done(function()
+
+			var market = cMarketHistory.market;
+			var marketHistoryHandler = market.marketHistoryHandler
+
+			return
+			marketHistoryHandler.update().done(function()
 			{
-				var trades = marketHistoryMarket.marketHistory;
+				var trades = marketHistoryHandler.marketHistory;
 				
 				for (var j = 0; j < trades.length; j++)
 				{
@@ -191,8 +104,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-
-
+	
 	IDEX.CMarketHistory.prototype.addTableRow = function(trade)
 	{
 		var cMarketHistory = this;

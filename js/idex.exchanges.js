@@ -14,8 +14,8 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.exchangeList = ["nxtae", "bitfinex", "btc38", "bitstamp", "btce", "poloniex", "bittrex", "huobi", "coinbase", "okcoin"]; //bityes-broken&flipped lakebtc-no markets?  //exmo bter unconf InstantDEX
 	IDEX.activeExchanges = [];
 	
-	IDEX.allCoins = [];
 	IDEX.allExchanges = {};
+	IDEX.allCoins = [];
 	IDEX.allMarkets = [];
 	
 	
@@ -127,10 +127,10 @@ var IDEX = (function(IDEX, $, undefined)
 		market.exchangeSettings;
 		market.isNxtAE;
 		market.marketKey;
-		
 		IDEX.constructFromObject(this, obj);
 
-		market.marketHistoryHandler = new IDEX.MarketHistoryMarket(market);
+		market.marketHistoryHandler = new IDEX.MMarketHistoryHandler(market);
+		market.tradeHistoryHandler = new IDEX.MTradeHistoryHandler(market);
 		market.watchlistHandler = new IDEX.WatchlistMarket(market);
 	}
 	
@@ -208,10 +208,10 @@ var IDEX = (function(IDEX, $, undefined)
 		coin.assetID = coinObj.assetID;
 		coin.exchanges = coinObj.exchanges;
 		
-		coin.balanceHandler = new IDEX.BalanceCoin(coin);
+		IDEX.constructFromObject(this, coin);
 
-		coin.balanceHandler;
 		
+		coin.balanceHandler = new IDEX.CBalanceHandler(coin);		
 	}
 	
 
@@ -462,6 +462,40 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	function tempAdd(allMarkets, allCoins)
+	{
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			
+			for (var j = 0; j < market.exchanges.length; j++)
+			{
+				var exchangeName = market.exchanges[j];
+				var exchange = IDEX.allExchanges[exchangeName];
+				exchange.markets.push(market);
+				
+				var isSupportedExchange = IDEX.exchangeList.indexOf(exchangeName) != -1; 
+				if (isSupportedExchange)
+				{
+
+				}
+			}
+		}
+		
+
+		for (var i = 0; i < allCoins.length; i++)
+		{
+			var coin = allCoins[i];
+			
+			for (var j = 0; j < coin.exchanges.length; j++)
+			{
+				var exchangeName = coin.exchanges[j];
+				var exchange = IDEX.allExchanges[exchangeName];
+				exchange.coins.push(coin);
+			}
+		}	
+	}
+	
 	IDEX.initAllMarkets = function()
 	{
 		var dfd = new $.Deferred();
@@ -473,6 +507,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 			var allMarkets = IDEX.marketOverlord.loadLocalStorage();			
 			IDEX.allMarkets = allMarkets;
+			
+			tempAdd(allMarkets, allCoins);
 			
 			dfd.resolve();
 		}
@@ -498,21 +534,7 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.coinOverlord.setLocalStorage();
 				IDEX.marketOverlord.setLocalStorage();
 
-				for (var i = 0; i < allMarkets.length; i++)
-				{
-					var market = allMarkets[i];
-					
-					for (exchangeName in market.exchanges)
-					{
-						var isSupportedExchange = IDEX.exchangeList.indexOf(exchangeName) != -1; 
-						
-						if (isSupportedExchange)
-						{
-							var exchange = IDEX.allExchange[exchangeName]
-							exchange.markets.push(market);
-						}
-					}
-				}
+				tempAdd(allMarkets, allCoins);
 				
 				
 				dfd.resolve();
@@ -618,128 +640,7 @@ var IDEX = (function(IDEX, $, undefined)
     }
 	
 
-	
-	
-	$(".allExchanges-nav-cell").on("click", function()
-	{
-		var $wrap = $(this).closest(".allExchangesFullPopup");
-		
-		var exchange = $(this).attr("data-exchange");
-		
-		var $trigExchange = $wrap.find(".allExchanges-exchange[data-exchange='"+exchange+"']");
-		
-		
-		$wrap.find(".allExchanges-nav-cell").removeClass("active");
-		$wrap.find(".allExchanges-exchange").removeClass("active");
-		
-		$trigExchange.addClass("active");
-		$(this).addClass("active");
-		
-	})
-	
-	
-	
-	$(".allExchanges-exchange-nav-cell").on("click", function()
-	{
-		var $wrap = $(this).closest(".allExchanges-exchange");
-		
-		var tab = $(this).attr("data-tab");
-		
-		var $trigTab = $wrap.find(".allExchanges-exchange-content[data-tab='"+tab+"']");
-		
-		
-		$wrap.find(".allExchanges-exchange-nav-cell").removeClass("active");
-		$wrap.find(".allExchanges-exchange-content").removeClass("active");
-		
-		$trigTab.addClass("active");
-		$(this).addClass("active");
-		
-		
-		var exchange = $(this).closest(".allExchanges-exchange").attr("data-exchange");
-		var tabType = $(this).find("span").text();
-		
-		updateExchangeTab(exchange, tabType);
-	})
-	
-	
-	
-	function updateExchangeTab(exchange, tabType)
-	{
-		console.log(exchange);
-		console.log(tabType);
-		
-		var params = {}
-	}
-	
-	
-	
-	function updateBalancesTable()
-	{
-		var $tbody = $(".allMarkets-table table tbody")
 
-	}
-	
-	
-
-	$(".allExchanges-nav-cell td").on("click", function()
-	{
-		IDEX.updateMarketTable();
-	})
-	
-	
-	
-	IDEX.updateMarketTable = function()
-	{
-		var $tbody = $(".allMarkets-table table tbody")
-
-		IDEX.getAssetTradeInfo().done(function(assetsWithVol)
-		{
-			assetsWithVol.sort(IDEX.compareProp('quantityNXT')).reverse();
-			var list = [];
-
-			for (var i = 0; i < assetsWithVol.length; i++)
-			{
-				var vols = assetsWithVol[i];
-				var assetID = vols.assetID;
-				var asset = IDEX.nxtae.assets.getAsset("assetID", assetID);
-				
-				var market = asset.name + "/NXT";
-				var volNXT = vols.quantityNXT / Math.pow(10, 8);
-				
-				var tr = "<tr><td>"+market+"</td><td>"+assetID+"</td><td>"+volNXT+"</td></tr>";
-				
-				$tbody.append($(tr));
-
-			}
-		});
-	}
-	
-	
-	
-	function normalizeMarkets(parsedMarkets)
-	{
-		var enabledMarkets = {};
-		var fiat = ["USD", "CAD", "GBP", "CNY", "RUR", "EUR"]
-		var isRelFiat = false;
-		for (var i = 0; i < fiat.length; i++)
-		{
-			if (rel.name == fiat[i])
-			{
-				isRelFiat = true
-				break;
-			}
-		}
-		if (base.name == "BTC" && !isRelFiat)
-		{
-			params.base = rel.name;
-			params.rel = base.name;
-		}
-		else
-		{
-			params.base = base.name;
-			params.rel = rel.name;
-		}
-	}
 	
 	
 	

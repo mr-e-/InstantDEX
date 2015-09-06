@@ -5,8 +5,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	var $contentWrap = $("#content_wrap");
 
-	
 	IDEX.allCOpenOrders = [];
+	
+	
 	
 	
 	IDEX.COpenOrder = function(obj) 
@@ -20,7 +21,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 
 		IDEX.constructFromObject(this, obj);
-	};
+	}
 	
 	
 	
@@ -43,10 +44,9 @@ var IDEX = (function(IDEX, $, undefined)
 			IDEX.allCOpenOrders.push(cOpenOrder);
 		}
 		
-
 				
 		return cOpenOrder;
-	};
+	}
 	
 	
 	
@@ -59,16 +59,16 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		cOpenOrder.updateMarketDOM();
 		cOpenOrder.updateOrders();
-
 	}
+	
 	
 	
 	IDEX.COpenOrder.prototype.updateMarketDOM = function()
 	{
 		var cOpenOrder = this;
 		cOpenOrder.searchInputDom.val(cOpenOrder.market.marketName);
-
 	}
+	
 	
 	
 	$contentWrap.on("click", ".cm-openorders-search-popup-trig", function()
@@ -84,55 +84,29 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.COpenOrder.prototype.updateOrders = function()
 	{
 		var cOpenOrder = this;
-		
+
 		if (cOpenOrder.hasMarket)
 		{
-			var market = cOpenOrder.market;
-			var marketExchanges = market.exchanges;
-			
+			return
 			cOpenOrder.tableDom.find("tbody").empty();
-			
-			for (var i = 0; i < marketExchanges.length; i++)
+			var market = cOpenOrder.market;
+			var openOrdersHandler = market.openOrdersHandler;
+			//accountOpenOrders
+			//updateOpenOrders
+			openOrdersHandler.update().done(function()
 			{
-				var exchange = marketExchanges[i];
+				var openOrders = marketHistoryMarket.marketHistory;
 				
-				if (exchange == "InstantDEX" || exchange == "nxtae")
+				for (var j = 0; j < openOrders.length; j++)
 				{
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-					var openOrdersHandler = exchangeHandler.accountOpenOrders;
-
-					openOrdersHandler.updateOpenOrders(market).done(function(openOrders)
-					{
-						//var openOrders = openOrdersHandler.openOrders;
-
-						for (var j = 0; j < openOrders.length; j++)
-						{
-							var openOrder = openOrders[j];
-							cOpenOrder.addTableRow(openOrder);
-						}						
-
-					})
+					var openOrder = openOrders[j];
+					cOpenOrder.addTableRow(openOrder);
 				}
-				else
-				{
-					continue;
-					
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					var openOrdersHandler = exchangeHandler.accountOpenOrders;
-					
-					openOrdersHandler.updateOpenOrders().done(function()
-					{
-			
-					})
-				}
-			}
+			})
 		}
 	}
 	
 	
-
 
 	IDEX.COpenOrder.prototype.addTableRow = function(openOrder)
 	{
@@ -154,7 +128,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$tr.find("td").eq(0).addClass(tradeClass);
 		
 		cOpenOrder.tableDom.find("tbody").append($tr);
-
 	}
 	
 	

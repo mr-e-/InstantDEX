@@ -40,71 +40,55 @@ var IDEX = (function(IDEX, $, undefined)
 	{	
 		init: function()
 		{
-			var exchange = this;
+			var exchangeHandler = this;
 			
-			exchange.nxtRS = "";
-			exchange.nxtID = "";
+			exchangeHandler.exchangeName = "nxtae";
+			exchangeHandler.nxtRS = "";
+			exchangeHandler.nxtID = "";
 			
-			exchange.markets = [];
+			exchangeHandler.markets = [];
+			exchangeHandler.coins = [];
 			
-			exchange.assets = new IDEX.exchangeClasses.nxtae.Assets(exchange);
-			
-			exchange.balances = new IDEX.exchangeClasses.nxtae.Balances(exchange);
-
-			exchange.accountTrades = new IDEX.exchangeClasses.nxtae.AccountTrades(exchange);
-			exchange.accountOpenOrders = new IDEX.exchangeClasses.nxtae.AccountOpenOrders(exchange);
-			
-			exchange.marketTrades = new IDEX.exchangeClasses.nxtae.MarketTrades(exchange);
+			exchangeHandler.assets = new IDEX.exchangeClasses.nxtae.Assets(exchangeHandler);
+			exchangeHandler.balances = new IDEX.exchangeClasses.nxtae.Balances(exchangeHandler);
+			exchangeHandler.accountTrades = new IDEX.exchangeClasses.nxtae.AccountTrades(exchangeHandler);
+			exchangeHandler.accountOpenOrders = new IDEX.exchangeClasses.nxtae.AccountOpenOrders(exchangeHandler);
+			exchangeHandler.marketTrades = new IDEX.exchangeClasses.nxtae.MarketTrades(exchangeHandler);
 
 		},
 		
 		
 		initState: function()
 		{
-			var nxtAE = this;
-			var dfd = new $.Deferred();
+			var exchangeHandler = this;
+			var retDFD = new $.Deferred();
+			var dfds = [];
 			
-			var initializedAssets = new $.Deferred();
-			var updatedNXT = new $.Deferred();
+			dfds.push(exchangeHandler.assets.initAllAssets());
+			dfds.push(exchangeHandler.updateNXTRS());
 			
-			
-			nxtAE.assets.initAllAssets().done(function()
+			$.when(dfds).done(function()
 			{
-				initializedAssets.resolve();
-			})
-			
-			nxtAE.updateNXTRS().done(function()
-			{
-				updatedNXT.resolve();
-			});
-			
-			$.when(initializedAssets, updatedNXT).done(function()
-			{
-				dfd.resolve();
+				retDFD.resolve();
 			})
 			
 			
-			
-			return dfd.promise();
+			return retDFD.promise();
 		},
 		
 		
 		
 		setNXTRS: function(nxtIDAndRS)
 		{
-			var nxtAE = this;
+			var exchangeHandler = this;
 
-			nxtAE.nxtID = "";
-			nxtAE.nxtRS = "";
+			exchangeHandler.nxtID = "";
+			exchangeHandler.nxtRS = "";
 			
-			if (nxtIDAndRS.length == 1)
+			if (nxtIDAndRS.length == 2)
 			{
-				
-			}
-			else if (nxtIDAndRS.length == 2)
-			{
-				nxtAE.nxtID = nxtIDAndRS[0];
-				nxtAE.nxtRS = nxtIDAndRS[1];
+				exchangeHandler.nxtID = nxtIDAndRS[0];
+				exchangeHandler.nxtRS = nxtIDAndRS[1];
 			}
 		},
 		
@@ -114,7 +98,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var dfd = new $.Deferred();
 			var nxtIDAndRS = [];
-			var account = this;
+			var exchangeHandler = this;
 			var params = {"method":"orderbook"};
 			params.baseid = "12071612744977229797";
 			params.relid = "5527630";
@@ -131,9 +115,9 @@ var IDEX = (function(IDEX, $, undefined)
 					nxtIDAndRS.push(rs);
 				}
 
-				account.setNXTRS(nxtIDAndRS);
+				exchangeHandler.setNXTRS(nxtIDAndRS);
 				
-				dfd.resolve([account.nxtID, account.nxtRS])
+				dfd.resolve([exchangeHandler.nxtID, exchangeHandler.nxtRS])
 			});
 			
 			
@@ -143,40 +127,19 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	var Updater = IDEX.Updater = function()
-	{
-		this.init.apply(this, arguments)
-	}
-	
-	Updater.prototype = 
-	{
-		
-		init: function(nxtAE)
-		{
-			var updater = this;
-			
-			this.nxtAE = nxtAE;
-			this.lastBlock = 0;
-		},
-
-	}
-	
-	
-	
 	var Assets = NxtAE.Assets = function()
 	{
-		this.init.apply(this, arguments)
+		this.init.apply(this, arguments);
 	}
 	
 	Assets.prototype = 
 	{
 		
-		init: function(nxtAE)
+		init: function(exchangeHandler)
 		{
 			var assetsHandler = this;
-			assetsHandler.nxtAE = nxtAE;
+			assetsHandler.exchangeHandler = exchangeHandler;
 			
-			assetsHandler.updater = new IDEX.Updater();
 			assetsHandler.allAssets = [];
 		},
 		
@@ -184,7 +147,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		initAllAssets: function()
 		{
-			var retdfd = new $.Deferred();
+			var retDFD = new $.Deferred();
 			var dfd = new $.Deferred();
 			var assetsHandler = this;
 			
@@ -212,10 +175,10 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				assets.sort(IDEX.compareProp('name'));
 				assetsHandler.allAssets = assets;
-				retdfd.resolve(assets);
+				retDFD.resolve(assets);
 			})
 			
-			return retdfd.promise();
+			return retDFD.promise();
 		},
 		
 		
@@ -223,28 +186,28 @@ var IDEX = (function(IDEX, $, undefined)
 		getAssetsLoop: function(assets, firstIndex, lastIndex, callback)
 		{
 			var assetsHandler = this;
-			var params = {}
-			params['requestType'] = "getAllAssets";
-			params['firstIndex'] = firstIndex;
-			params['lastIndex'] = lastIndex;
+			var params = {};
+			params.requestType = "getAllAssets";
+			params.firstIndex = firstIndex;
+			params.lastIndex = lastIndex;
 			
-			IDEX.sendPost(params, true).then(function(data)
+			IDEX.sendPost(params, true).done(function(data)
 			{
 				if ("assets" in data)
 				{
 					if (data.assets.length)
 					{
-						var addedAssets = assets.concat(data.assets)
-						assetsHandler.getAssetsLoop(addedAssets, firstIndex+100, lastIndex+100, callback)
+						var addedAssets = assets.concat(data.assets);
+						assetsHandler.getAssetsLoop(addedAssets, firstIndex+100, lastIndex+100, callback);
 					}
 					else
 					{
-						callback(assets)
+						callback(assets);
 					}
 				}
 				else
 				{
-					callback(assets)
+					callback(assets);
 				}
 			})
 		},
@@ -254,7 +217,7 @@ var IDEX = (function(IDEX, $, undefined)
 		parseAllAssets: function(assets)
 		{
 			var parsed = [];
-			var assetsLength = assets.length
+			var assetsLength = assets.length;
 			
 			for (var i = 0; i < assetsLength; i++)
 			{
@@ -328,25 +291,23 @@ var IDEX = (function(IDEX, $, undefined)
 	Balances.prototype = 
 	{
 		
-		init: function(nxtAE)
+		init: function(exchangeHandler)
 		{
 			var balancesHandler = this;
-			balancesHandler.nxtAE = nxtAE;
-			
-			balancesHandler.updater = new IDEX.Updater();
-			balancesHandler.balancesLastUpdated = -1;
-			
+			balancesHandler.exchangeHandler = exchangeHandler;
+			balancesHandler.lastUpdated = -1;			
 			balancesHandler.balances = {};
-			
 			balancesHandler.asyncDFD = false;
 		},
 		
 		
 		
-		getBalance: function(assetID, isNxt)
+		getBalance: function(coin)
 		{
 			var balancesHandler = this;
-			var nxtAE = balancesHandler.nxtAE;
+			var exchangeHandler = balancesHandler.exchangeHandler;
+			var assetID = coin.assetID;
+			var isNxt = coin.isAsset == false && coin.name == "NXT";
 			
 			var balance = {};
 			
@@ -371,8 +332,67 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		setBalances: function(balances)
 		{
+			var balancesHandler = this;		
+			var exchangeHandler = balancesHandler.exchangeHandler;
+			var exchangeName = exchangeHandler.exchangeName;
+			var exchangeCoins = exchangeHandler.coins;
+			
+			for (var i = 0; i < exchangeCoins.length; i++)
+			{
+				var exchangeCoin = exchangeCoins[i];
+				var exchangeCoinName = exchangeCoin.assetID;
+				if (exchangeCoin.name == "NXT" || exchangeCoin.name == "nxt")
+					exchangeCoinName = "5527630";
+				var exchangeCoinBalanceHandler = exchangeCoin.balanceHandler;
+				var byExchange = exchangeCoinBalanceHandler.byExchange;
+				var exchangeCoinBalance = {};
+
+				if (exchangeName in byExchange)
+				{
+					exchangeCoinBalance = byExchange[exchangeName];
+				}
+				else
+				{
+					byExchange[exchangeName] = {};
+				}
+				
+				var found = false;
+				var searchBalance = false;
+				
+				for (var key in balances)
+				{
+					var balance = balances[key];
+					if (key == exchangeCoinName)
+					{
+						searchBalance = balance;
+						found = true;
+						break;
+					}
+				}
+				
+				if (found)
+				{
+					byExchange[exchangeName] = searchBalance;
+				}
+				else
+				{
+					//exchangeCoinBalance = {};
+					byExchange[exchangeName].exchange = exchangeName;
+					byExchange[exchangeName].available = 0;
+					byExchange[exchangeName].unavailable = 0;
+					byExchange[exchangeName].total = 0;
+				}
+			}
+			
+			balancesHandler.balances = balances;
+		},
+		
+		
+		normalizeBalances: function(balances)
+		{
 			var balancesHandler = this;
-			var nxtAE = balancesHandler.nxtAE;
+			var exchangeHandler = balancesHandler.exchangeHandler;
+			var normalizedBalances = {};
 
 			for (var i = 0; i < balances.length; i++)
 			{
@@ -380,7 +400,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var formattedBalance = {};
 				
 				var assetID = balance.assetID;
-				var asset = IDEX.nxtae.assets.getAsset("assetID", assetID);
+				var asset = exchangeHandler.assets.getAsset("assetID", assetID);
 
 				if (assetID == "5527630")
 					asset = IDEX.snAssets.nxt;
@@ -396,11 +416,11 @@ var IDEX = (function(IDEX, $, undefined)
 					formattedBalance.unavailable = IDEX.toSatoshi(Number(formattedBalance.total) - Number(formattedBalance.available));
 					formattedBalance.exchange = "nxtae";
 					
-					balancesHandler.balances[assetID] = formattedBalance;
-
+					normalizedBalances[assetID] = formattedBalance;
 				}
-
 			}
+			
+			return normalizedBalances;
 		},
 		
 		
@@ -418,14 +438,14 @@ var IDEX = (function(IDEX, $, undefined)
 	
 		
 		
-		updateBalances: function(forceUpdate)
+		updateBalances: function(coin, forceUpdate)
 		{
 			var balancesHandler = this;
-			var nxtAE = balancesHandler.nxtAE;
+			var exchangeHandler = balancesHandler.exchangeHandler;
 			var dfd = new $.Deferred();
 			var balances = [];
 			var time = new Date().getTime();
-			var lastUpdated = balancesHandler.balancesLastUpdated;
+			var lastUpdated = balancesHandler.lastUpdated;
 			
 
 			if (!forceUpdate && ((time - lastUpdated < 5000) && (lastUpdated != -1)))
@@ -435,16 +455,16 @@ var IDEX = (function(IDEX, $, undefined)
 			else
 			{
 				//var postObj = {'requestType':"getAccount",'account':IDEX.account.nxtID, 'includeAssets':true};
-				var postObj = {'requestType':"getAccountAssets",'account':nxtAE.nxtID};
+				var postObj = {'requestType':"getAccountAssets",'account':exchangeHandler.nxtID};
 				
-				IDEX.sendPost(postObj, 1).then(function(data)
+				IDEX.sendPost(postObj, true).done(function(data)
 				{
 					if (!("errorCode" in data) && ("accountAssets" in data))
 					{
 						balances = data['accountAssets'];
 					}
 						
-					IDEX.sendPost({'requestType':"getBalance", 'account':nxtAE.nxtID}, 1).then(function(nxtBal)
+					IDEX.sendPost({'requestType':"getBalance", 'account':exchangeHandler.nxtID}, 1).done(function(nxtBal)
 					{
 						if (!("errorCode" in nxtBal))
 						{
@@ -453,14 +473,15 @@ var IDEX = (function(IDEX, $, undefined)
 						}
 												
 						balances = addAssetID(balances);
-						balancesHandler.balances = {};
+						balances = balancesHandler.normalizeBalances(balances);
 						balancesHandler.setBalances(balances);
 						dfd.resolve();
 					})
 				})
 			}
 			
-			balancesHandler.balancesLastUpdated = time;
+			balancesHandler.lastUpdated = time;
+			
 			return dfd.promise();
 		}
 			
@@ -476,7 +497,7 @@ var IDEX = (function(IDEX, $, undefined)
 	AccountOpenOrders.prototype = 
 	{
 		
-		init: function(nxtAE)
+		init: function(exchangeHandler)
 		{
 			var openOrdersHandler = this;
 			
@@ -484,7 +505,7 @@ var IDEX = (function(IDEX, $, undefined)
 			openOrdersHandler.openOrdersLastUpdated = new Date().getTime();
 			
 			
-			openOrdersHandler.nxtAE = nxtAE;
+			openOrdersHandler.exchangeHandler = exchangeHandler;
 		},
 		
 		
@@ -492,30 +513,31 @@ var IDEX = (function(IDEX, $, undefined)
 		updateOpenOrders: function(market, forceUpdate)
 		{
 			var openOrdersHandler = this;
+			var exchangeHandler = openOrdersHandler.exchangeHandler;
 			var dfd = new $.Deferred();
-			var time = new Date().getTime()
+			var time = new Date().getTime();
 			var base = market.base;
 					
 			if (!forceUpdate && time - this.openOrdersLastUpdated < 1000)
 			{
-				dfd.resolve([])
+				dfd.resolve([]);
 			}
 			else
 			{
-				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", base.assetID);
+				var assetInfo = exchangeHandler.assets.getAsset("assetID", base.assetID);
 				var decimals = assetInfo.decimals;
 				var params = {}
 				params.requestType = "getAccountCurrentBidOrders";
-				params.account = openOrdersHandler.nxtAE.nxtRS;
+				params.account = exchangeHandler.nxtRS;
 				params.asset = base.assetID;
 				
-				IDEX.sendPost(params, true).then(function(bidOrders)
+				IDEX.sendPost(params, true).done(function(bidOrders)
 				{
 					bidOrders = bidOrders.bidOrders;
 					
 					params = {}
 					params.requestType = "getAccountCurrentAskOrders";
-					params.account = openOrdersHandler.nxtAE.nxtRS;
+					params.account = exchangeHandler.nxtRS;
 					params.asset = base.assetID;
 
 				
@@ -524,7 +546,6 @@ var IDEX = (function(IDEX, $, undefined)
 						askOrders = askOrders.askOrders;
 						
 						var allOpenOrders = bidOrders.concat(askOrders);
-						var temp = [];
 						var formattedOpenOrders = [];
 						
 						for (var i = 0; i < allOpenOrders.length; i++)
@@ -572,39 +593,40 @@ var IDEX = (function(IDEX, $, undefined)
 	AccountTrades.prototype = 
 	{
 		
-		init: function(nxtAE)
+		init: function(exchangeHandler)
 		{
 			var tradesHandler = this;
 			
-			tradesHandler.tradeHistoryLastUpdated = new Date().getTime();
+			tradesHandler.lastUpdated = new Date().getTime();
 
-			tradesHandler.nxtAE = nxtAE;
+			tradesHandler.exchangeHandler = exchangeHandler;
 			tradesHandler.trades = {};
 		},
 		
 		updateTrades: function(market, forceUpdate)
 		{
 			var tradesHandler = this;
+			var exchangeHandler = tradesHandler.exchangeHandler;
 			var dfd = new $.Deferred();
 			var time = new Date().getTime();
 			var base = market.base;
 
 			var params = {}
 			params.requestType = "getTrades";
-			params.account = tradesHandler.nxtAE.nxtRS;
+			params.account = exchangeHandler.nxtRS;
 
 			if (market)
 				params.asset = base.assetID;
 
 			params.lastIndex = 50;
 			
-			if (!forceUpdate && time - this.tradeHistoryLastUpdated < 1000)
+			if (!forceUpdate && time - this.lastUpdated < 1000)
 			{
 				dfd.resolve()
 			}
 			else
 			{
-				IDEX.sendPost(params, true).then(function(data)
+				IDEX.sendPost(params, true).done(function(data)
 				{
 					var trades = data.trades;
 					
@@ -637,7 +659,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 			
-			tradesHandler.tradeHistoryLastUpdated = time;
+			tradesHandler.lastUpdated = time;
 			
 			return dfd.promise();
 		},
@@ -654,11 +676,11 @@ var IDEX = (function(IDEX, $, undefined)
 	MarketTrades.prototype = 
 	{
 		
-		init: function(nxtAE)
+		init: function(exchangeHandler)
 		{
 			var tradesHandler = this;
 			
-			tradesHandler.nxtAE = nxtAE;
+			tradesHandler.exchangeHandler = exchangeHandler;
 			tradesHandler.markets = {};
 			
 		},
@@ -690,13 +712,9 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
-				var params = {}
+				var params = {};
 				params.requestType = "getTrades";
 				params.asset = base.assetID;
-				var assetInfo = IDEX.nxtae.assets.getAsset("assetID", base.assetID);
-				var totalNumTrades = assetInfo.numberOfTrades;
-				
-				var firstIndex = totalNumTrades - 50 || 0
 				params.lastIndex = 50;
 				
 				IDEX.sendPost(params, true).then(function(data)
@@ -736,65 +754,6 @@ var IDEX = (function(IDEX, $, undefined)
 			return dfd.promise();
 		},
 		
-		
-		getTrades: function()
-		{
-			var dfd = new $.Deferred();
-			var allAssets = IDEX.user.allAssets;
-			var oneWeek = 604800;
-
-			
-			var currentTime = Date.now();
-			var nxtCurrentTime = convertToNxtTime(currentTime);
-			var pastTime = nxtCurrentTime - oneWeek;
-			
-			var params = {}
-			params.requestType = "getAllTrades";
-			params.timestamp = pastTime;
-			
-			
-			var assetsWithVol = {};
-			
-			IDEX.sendPost(params, true).then(function(data)
-			{
-				var allTrades = data.trades;
-				
-				for (var i = 0; i < allTrades.length; i++)
-				{
-					var trade = allTrades[i];
-					var tradeAssetID = trade.asset;
-					
-					var tradeAsset = IDEX.nxtae.assets.getAsset("assetID", tradeAssetID);
-					
-					var obj = {};
-					obj.assetID = tradeAssetID;
-					obj.price = trade.priceNQT;
-					obj.quantityAsset = trade.quantityQNT;
-					obj.quantityNXT = obj.price * obj.quantityAsset
-					
-					if (!(tradeAssetID in assetsWithVol))
-					{
-						assetsWithVol[tradeAssetID] = obj;
-					}
-					else
-					{
-						assetsWithVol[tradeAssetID].quantityNXT += obj.quantityNXT;
-					}
-					
-				}
-				
-				var list = [];
-				for (assetID in assetsWithVol)
-				{
-					list.push(assetsWithVol[assetID])
-				}
-
-				dfd.resolve(list);
-			
-			})
-			
-			return dfd.promise();
-		},
 
 	}
 

@@ -7,6 +7,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allCTrades = [];
 	
 	
+	
 	IDEX.CTrade = function(obj) 
 	{	
 		this.hasMarket = false;
@@ -18,7 +19,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 
 		IDEX.constructFromObject(this, obj);
-	};
+	}
 	
 
 	
@@ -43,7 +44,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 				
 		return cTrade;
-	};
+	}
 	
 	
 	
@@ -56,16 +57,16 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		cTrade.updateMarketDOM();
 		cTrade.updateTradeHistory();
-
 	}
+	
 	
 	
 	IDEX.CTrade.prototype.updateMarketDOM = function()
 	{
 		var cTrade = this;
 		cTrade.searchInputDom.val(cTrade.market.marketName);
-
 	}
+	
 	
 	
 	$contentWrap.on("click", ".cm-trades-search-popup-trig", function()
@@ -84,50 +85,27 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (cTrade.hasMarket)
 		{
-			var market = cTrade.market;
-			var marketExchanges = market.exchanges;
-			
+			return
 			cTrade.tableDom.find("tbody").empty();
-			
-			for (var i = 0; i < marketExchanges.length; i++)
+
+			var market = cTrade.market;
+			var tradeHistoryHandler = market.tradeHistoryHandler
+
+			tradeHistoryHandler.update().done(function()
 			{
-				var exchange = marketExchanges[i];
+				var trades = tradeHistoryHandler.tradeHistory;
 				
-				if (exchange == "InstantDEX" || exchange == "nxtae")
+				for (var j = 0; j < trades.length; j++)
 				{
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					exchangeHandler = exchange == "InstantDEX" ? IDEX.allExchanges["nxtae"] : exchangeHandler;
-
-					var tradeHistoryHandler = exchangeHandler.accountTrades;
-
-					tradeHistoryHandler.updateTrades(market).done(function(trades)
-					{						
-						for (var j = 0; j < trades.length; j++)
-						{
-							var trade = trades[j];
-							cTrade.addTableRow(trade);
-
-						}
-					})
+					var trade = trades[j];
+					cTrade.addTableRow(trade);
 				}
-				else
-				{
-					continue;
-					
-					var exchangeHandler = IDEX.allExchanges[exchange];
-					var tradeHistoryHandler = exchangeHandler.accountTrades;
-					
-					tradeHistoryHandler.updateTrades().done(function()
-					{
+			})			
 			
-					})
-				}
-			}
 		}
 	}
 	
 	
-
 
 	IDEX.CTrade.prototype.addTableRow = function(trade)
 	{
@@ -148,7 +126,6 @@ var IDEX = (function(IDEX, $, undefined)
 		$tr.find("td").eq(1).addClass(tradeClass);
 		
 		cTrade.tableDom.find("tbody").append($tr);
-
 
 	}
 	

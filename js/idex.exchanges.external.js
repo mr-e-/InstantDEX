@@ -11,15 +11,18 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	Exchange.prototype = 
-	{	
+	{
 		init: function(exchangeName)
 		{
 			var exchange = this;
+			
 			exchange.exchangeName = exchangeName;
+			exchange.markets = [];
+			exchange.coins = [];
+
 			exchange.balances = new IDEX.Exchange.Balances(exchange);
 			exchange.marketTrades = new IDEX.Exchange.MarketTrades(exchange);
 
-			exchange.markets = [];
 						
 		},
 		
@@ -34,8 +37,6 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			return dfd.promise();
 		},
-		
-		
 	}
 	
 	
@@ -46,26 +47,24 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	Balances.prototype = 
 	{
-		init: function(exchange)
+		init: function(exchangeHandler)
 		{
 			var balancesHandler = this;
-			balancesHandler.exchange = exchange;
+			balancesHandler.exchangeHandler = exchangeHandler;
 			
-			//balancesHandler.updater = new IDEX.Updater();
 			balancesHandler.balancesLastUpdated = -1;
 			balancesHandler.balances = {};
-			balancesHandler.oneTime = false;
 			balancesHandler.asyncDFD = false;
-
 		},
 		
 		
-		getBalance: function(coinName)
+		getBalance: function(coin)
 		{
 			var balancesHandler = this;
 			var balances = balancesHandler.balances;
-			var exchange = balancesHandler.exchange;
+			var exchangeHandler = balancesHandler.exchangeHandler;
 			var balance = {};
+			var coinName = coin.name;
 			
 			if (coinName in balances)
 			{
@@ -73,7 +72,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
-				balance.exchange = exchange.exchangeName;
+				balance.exchange = exchangeHandler.exchangeName;
 				balance.available = 0;
 				balance.unavailable = 0;
 				balance.total = 0;
@@ -83,22 +82,77 @@ var IDEX = (function(IDEX, $, undefined)
 		},
 		
 		
-		
+		setBalances: function(balances)
+		{
+			var balancesHandler = this;		
+			var exchangeHandler = balancesHandler.exchangeHandler;
+			var exchangeName = exchangeHandler.exchangeName;
+			var exchangeCoins = exchangeHandler.coins;
+			
+			for (var i = 0; i < exchangeCoins.length; i++)
+			{
+				var exchangeCoin = exchangeCoins[i];
+				var exchangeCoinName = exchangeCoin.name;
+				var exchangeCoinBalanceHandler = exchangeCoin.balanceHandler;
+				var byExchange = exchangeCoinBalanceHandler.byExchange;
+				var exchangeCoinBalance = {};
 
-		updateBalances: function(forceUpdate)
+				if (exchangeName in byExchange)
+				{
+					exchangeCoinBalance = byExchange[exchangeName];
+				}
+				else
+				{
+					byExchange[exchangeName] = {};
+				}
+				
+				var found = false;
+				var searchBalance = false;
+				
+				for (var key in balances)
+				{
+					var balance = balances[key];
+					if (key == exchangeCoinName)
+					{
+						searchBalance = balance;
+						found = true;
+						break;
+					}
+				}
+				
+				if (found)
+				{
+					byExchange[exchangeName] = searchBalance;
+				}
+				else
+				{
+					//exchangeCoinBalance = {};
+					byExchange[exchangeName].exchange = exchangeName;
+					byExchange[exchangeName].available = 0;
+					byExchange[exchangeName].unavailable = 0;
+					byExchange[exchangeName].total = 0;
+				}
+			}
+			
+			balancesHandler.balances = balances;
+		},
+		
+		
+		
+		updateBalances: function(coin, forceUpdate)
 		{
 			var balancesHandler = this;			
 			var dfd = new $.Deferred();
 			var time = new Date().getTime()
 
-			var exchange = balancesHandler.exchange;
-			var exchangeName = exchange.exchangeName;
+			var exchangeHandler = balancesHandler.exchangeHandler;
+			var exchangeName = exchangeHandler.exchangeName;
 			var lastUpdated = balancesHandler.balancesLastUpdated;
 			var params = {"method":"balance","exchange":exchangeName};			
 
 			
 					
-			if (!forceUpdate && ((time - lastUpdated < 10000) && (lastUpdated != -1)))
+			if (!forceUpdate && ((time - lastUpdated < 15000) && (lastUpdated != -1)))
 			{
 				dfd.resolve([]);
 			}
@@ -107,7 +161,7 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.sendPost(params, false).done(function(data)
 				{	
 					var balances = normalizeBalances(data, exchangeName);
-					balancesHandler.balances = balances; 
+					balancesHandler.setBalances(balances); 
 					dfd.resolve();
 				})
 			}
@@ -224,8 +278,45 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			return dfd.promise();
 		},
-		
+	
 	}
+
+
+	
+	var AccountTrades = Exchange.AccountTrades = function()
+	{
+		this.init.apply(this, arguments)
+	}
+	
+	AccountTrades.prototype = 
+	{
+		
+		init: function(exchangeHandler)
+		{
+			var tradesHandler = this;
+			
+			tradesHandler.lastUpdated = new Date().getTime();
+
+			tradesHandler.exchangeHandler = exchangeHandler;
+			tradesHandler.trades = {};
+		},
+		
+		updateTrades: function(market, forceUpdate)
+		{
+			var tradesHandler = this;
+			var exchangeHandler = tradesHandler.exchangeHandler;
+			var dfd = new $.Deferred();
+			var time = new Date().getTime();
+			var base = market.base;
+
+			
+			tradesHandler.lastUpdated = time;
+			
+			return dfd.promise();
+		},
+	}
+		
+	
 		
 	function normalizeBalances(rawBalances, exchangeName)
 	{
@@ -241,7 +332,7 @@ var IDEX = (function(IDEX, $, undefined)
 				balance.available = rawBalance.available;
 				balance.unavailable = rawBalance.onOrders;
 				balance.total = IDEX.toSatoshi(Number(balance.available) + Number(balance.unavailable));
-				balances.name = key;
+				balance.name = key;
 				balance.exchange = exchangeName;
 
 				balances[key] = balance;
@@ -260,14 +351,14 @@ var IDEX = (function(IDEX, $, undefined)
 					balance.available = rawBalance.Available;
 					balance.total = rawBalance.Balance
 					balance.unavailable = IDEX.toSatoshi(balance.total - balance.available);
-					balances.name = rawBalance.Currency;
+					balance.name = rawBalance.Currency;
 					balance.exchange = exchangeName;
 					
 					balances[rawBalance.Currency] = balance;
 				}
 			}
 		}
-		
+				
 		return balances;
 	}
 

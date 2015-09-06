@@ -19,6 +19,33 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
+	
+	IDEX.extend = function(objA, objB)
+	{
+		if (!objA)
+		{
+			objA = {}
+		}
+
+		for (var key in objB)
+		{
+			objA[key] = objB[key];
+		}
+
+		
+		return objA
+	}
+	
+	IDEX.extendClass = function(parent, members)
+	{
+		var object = function () { return undefined; };
+		object.prototype = new parent();
+		IDEX.extend(object.prototype, members);
+		
+		return object;
+	}
+	
+	
 	IDEX.minObject = function(obj, keys)
 	{
 		var minObj = {};
