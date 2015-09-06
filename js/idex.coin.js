@@ -8,15 +8,21 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var parsedArray = [];
 		
-		for (var i = 0; i < arrB.length; i++)
+		if (arrB.length)
 		{
-			var itemB = arrB[i];
-			var isInArray = (arrA.indexOf(itemB) != -1)
-			
-			if (isInArray)
-				parsedArray.push(itemB);
+			for (var i = 0; i < arrB.length; i++)
+			{
+				var itemB = arrB[i];
+				var isInArray = (arrA.indexOf(itemB) != -1)
+				
+				if (isInArray)
+					parsedArray.push(itemB);
+			}
 		}
-		
+		else
+		{
+			parsedArray = arrA;
+		}
 		return parsedArray;
 	}
 

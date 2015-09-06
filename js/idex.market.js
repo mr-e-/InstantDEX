@@ -58,39 +58,43 @@ var IDEX = (function(IDEX, $, undefined)
 		mMarketHistoryHandler.exchangeUpdaterKey = "marketTrades";
 		mMarketHistoryHandler.exchangeUpdaterMethod = "getMarketTrades";
 		
-		mMarketHistoryHandler.marketHistoryByExchange = {};
+		mMarketHistoryHandler.byExchange = {};
 		mMarketHistoryHandler.marketHistory = [];
 	};
 	
 	
 
 
-	IDEX.MMarketHistoryHandler.prototype.update = function(forceUpdate)
+	IDEX.MMarketHistoryHandler.prototype.update = function(forceUpdate, filterExchanges)
 	{
 		var mMarketHistoryHandler = this;
-		mMarketHistoryHandler.postDFD = new $.Deferred();
+		var dfd = new $.Deferred();
 		var market = mMarketHistoryHandler.market;
 		var marketExchanges = market.exchanges;
-
-		mMarketHistoryHandler.updateExchanges(forceUpdate, marketExchanges).done(function()
+		
+		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+		filterExchanges = typeof filterExchanges == "undefined" ? [] : filterExchanges;
+		var exchangesToUpdate = IDEX.parseArray(marketExchanges, filterExchanges);
+		
+		mMarketHistoryHandler.updateExchanges(forceUpdate, exchangesToUpdate).done(function()
 		{
-			//var exchangeMarketHistory = exMarketHistoryHandler.markets[market.pairID].trades.slice();
-			//exchangeHandlerReturns[exchange] = exchangeMarketHistory;
-			mMarketHistoryHandler.marketHistoryByExchange = exchangeHandlerReturns;
-			mMarketHistoryHandler.marketHistory = [];
+			var marketHistory = [];
+			var byExchange = mMarketHistoryHandler.byExchange;
 
-			for (key in exchangeHandlerReturns)
+			for (var exchangeName in byExchange)
 			{
-				var exchangeMarketHistory = exchangeHandlerReturns[key];
-				mMarketHistoryHandler.marketHistory = mMarketHistoryHandler.marketHistory.concat(exchangeMarketHistory);
+				var exchangeMarketHistory = byExchange[exchangeName].marketHistory;
+				marketHistory = marketHistory.concat(exchangeMarketHistory);
 			}
 			
-			mMarketHistoryHandler.marketHistory.sort(IDEX.compareProp('timestamp')).reverse();
-			mMarketHistoryHandler.postDFD.resolve();
+			marketHistory.sort(IDEX.compareProp('timestamp')).reverse();
+			mMarketHistoryHandler.marketHistory = marketHistory;
+			
+			dfd.resolve();
 		})
 		
 				
-		return mMarketHistoryHandler.postDFD.promise();
+		return dfd.promise();
 	}
 	
 	

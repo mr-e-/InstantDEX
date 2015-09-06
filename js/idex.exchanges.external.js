@@ -181,39 +181,86 @@ var IDEX = (function(IDEX, $, undefined)
 	MarketTrades.prototype = 
 	{
 		
-		init: function(exchange)
+		init: function(exchangeHandler)
 		{
 			var tradesHandler = this;
 			
-			tradesHandler.exchange = exchange;
+			tradesHandler.exchangeHandler = exchangeHandler;
 			tradesHandler.markets = {};
 		
-			
+			tradesHandler.lastUpdated = -1;
 		},
 		
-	
+		
+		
+		setMarketHistory: function(market, marketHistory)
+		{
+			var tradesHandler = this;		
+			var exchangeHandler = tradesHandler.exchangeHandler;
+			var exchangeName = exchangeHandler.exchangeName;
+
+
+			var mMarketHistoryHandler = market.marketHistoryHandler;
+			var byExchange = mMarketHistoryHandler.byExchange;
+
+			byExchange[exchangeName].marketHistory = marketHistory;
+		},
+		
+		
+		
+		formatMarketHistory: function(trades)
+		{
+			var tradesHandler = this;
+			var exchangeHandler = tradesHandler.exchangeHandler;
+			var exchangeName = exchangeHandler.exchangeName;
+			var formattedTrades = [];
+			
+			for (var i = 0; i < trades.length; i++)
+			{
+				var trade = trades[i];
+				var formattedTrade = {};
+				
+				var timestamp = trade.timestamp;
+				var price = trade.price;
+				var amount = trade.amount;
+				var volume = trade.volume;
+				var tradeType = "bid";
+				
+				formattedTrade.timestamp = timestamp;
+				formattedTrade.price = price;
+				formattedTrade.amount = amount;
+				formattedTrade.exchange = exchangeName;
+				formattedTrade.tradeType = tradeType;
+				
+				formattedTrades.push(formattedTrade);
+			}
+			
+			return formattedTrades;
+		},
+		
+		
+		
 		getMarketTrades: function(market, forceUpdate)
 		{
 			var tradesHandler = this;
-			var exchange = tradesHandler.exchange;
-			var exchangeName = exchange.exchangeName;
+			var exchangeHandler = tradesHandler.exchangeHandler;
+			var exchangeName = exchangeHandler.exchangeName;
 			var dfd = new $.Deferred();
-			var time = new Date().getTime()
-			var lastUpdated = tradesHandler.marketHistoryLastUpdated;
-		
+			var time = new Date().getTime();
 			
-			if (!(market.pairID in tradesHandler.markets))
+			var mMarketHistoryHandler = market.marketHistoryHandler;
+			var byExchange = mMarketHistoryHandler.byExchange;
+			
+			if (!(exchangeName in byExchange))
 			{
-				var tradesHandlerMarket = tradesHandler.markets[market.pairID] = {};
-				tradesHandlerMarket.lastUpdated = -1;
-				tradesHandlerMarket.trades = [];
+				byExchange[exchangeName] = {};
+				byExchange[exchangeName].lastUpdated = -1;
 			}
-			else
-			{
-				var tradesHandlerMarket = tradesHandler.markets[market.pairID];
-			}
+
+			var lastUpdated = byExchange[exchangeName].lastUpdated;
 		
-			if (!forceUpdate && ((time - tradesHandlerMarket.lastUpdated < 30000) && (tradesHandlerMarket.lastUpdated != -1)))
+
+			if (!forceUpdate && ((time - lastUpdated < 30000) && (lastUpdated != -1)))
 			{
 				dfd.resolve();
 			}
@@ -236,36 +283,14 @@ var IDEX = (function(IDEX, $, undefined)
 				query.params.symbol = IDEX.flipCheckMarket(market, exchangeName);
 				params.format = format;
 				params.query = query;
-			
+
 				IDEX.sendSkynetPost(params).done(function(data)
 				{
 					var trades = data.results;
+					var formattedMarketHistory = tradesHandler.formatMarketHistory(trades);
+					tradesHandler.setMarketHistory(market, formattedMarketHistory);
 					
-					var formattedTrades = [];
-					
-					for (var i = 0; i < trades.length; i++)
-					{
-						var trade = trades[i];
-						var formattedTrade = {};
-						
-						var timestamp = trade.timestamp;
-						var price = trade.price;
-						var amount = trade.amount;
-						var volume = trade.volume;
-						var tradeType = "bid";
-						
-						formattedTrade.timestamp = timestamp;
-						formattedTrade.price = price;
-						formattedTrade.amount = amount;
-						formattedTrade.exchange = exchangeName;
-						formattedTrade.tradeType = tradeType;
-						
-						formattedTrades.push(formattedTrade);
-					}
-					
-					tradesHandlerMarket.trades = formattedTrades;
-					
-					dfd.resolve(formattedTrades);
+					dfd.resolve(formattedMarketHistory);
 				}).fail(function()
 				{
 					tradesHandlerMarket.trades = [];
@@ -274,7 +299,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			
 			
-			tradesHandlerMarket.lastUpdated = time;
+			byExchange[exchangeName].lastUpdated = time;
 			
 			return dfd.promise();
 		},

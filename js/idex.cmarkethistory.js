@@ -89,8 +89,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var market = cMarketHistory.market;
 			var marketHistoryHandler = market.marketHistoryHandler
 
-			return
-			marketHistoryHandler.update().done(function()
+			marketHistoryHandler.update(false, []).done(function()
 			{
 				var trades = marketHistoryHandler.marketHistory;
 				
