@@ -129,6 +129,9 @@ var IDEX = (function(IDEX, $, undefined)
 		market.marketKey;
 		
 		IDEX.constructFromObject(this, obj);
+
+		market.marketHistoryHandler = new IDEX.MarketHistoryMarket(market);
+		market.watchlistHandler = new IDEX.WatchlistMarket(market);
 	}
 	
 	
@@ -166,7 +169,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var coinRaw = allCoinsRaw[i];
 			var coin = new IDEX.Coin(coinRaw);
-			coin.balanceHandler = new IDEX.BalanceCoin(coin);
 			
 			allCoins.push(coin);
 		}
@@ -206,6 +208,8 @@ var IDEX = (function(IDEX, $, undefined)
 		coin.assetID = coinObj.assetID;
 		coin.exchanges = coinObj.exchanges;
 		
+		coin.balanceHandler = new IDEX.BalanceCoin(coin);
+
 		coin.balanceHandler;
 		
 	}
@@ -318,7 +322,6 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 		{
 			coinObj = new IDEX.Coin(coinObj);
-			coinObj.balanceHandler = new IDEX.BalanceCoin(coinObj);
 			coinObj.exchanges.push(exchangeName);
 			allCoins.push(coinObj);
 		}

@@ -124,9 +124,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 			cMarketHistory.cMarketHistoryDom = $el;
 			cMarketHistory.searchInputDom = $el.find(".cm-marketHistory-search-wrap input");
+			cMarketHistory.refreshDom = $el.find(".refresh-wrap img");
 			cMarketHistory.tableDom = cMarketHistory.cMarketHistoryDom.find(".cm-marketHistory-table");
 			cMarketHistory.tableDom.parent().perfectScrollbar();
-			
+
+			cMarketHistory.refreshDom.on("click", function(){ cMarketHistory.refreshClick() });
 			IDEX.allCMarketHistory.push(cMarketHistory);
 		}
 		
@@ -146,7 +148,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		cMarketHistory.updateMarketDOM();
 		cMarketHistory.updateMarketHistory();
-
 	}
 	
 	
@@ -157,15 +158,12 @@ var IDEX = (function(IDEX, $, undefined)
 
 	}
 	
-	
-	$contentWrap.on("click", ".cm-marketHistory-search-popup-trig", function()
+	IDEX.CMarketHistory.prototype.refreshClick = function()
 	{
-		var $el = $(this).closest(".cm-marketHistory-wrap");
-		var cMarketHistory = IDEX.getObjectByElement($el, IDEX.allCMarketHistory, "cMarketHistoryDom");
-
+		var cMarketHistory = this;
 		cMarketHistory.updateMarketHistory();
-	})
-	
+	}
+
 	
 	
 	IDEX.CMarketHistory.prototype.updateMarketHistory = function()

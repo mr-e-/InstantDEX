@@ -8,109 +8,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.allWatchlists = [];
 	
-	
-	
-	IDEX.WatchlistOverlord = function(obj) 
-	{	
-		
-		var overlord = this;
-		overlord.watchlists = [];
-		overlord.watchlistMarkets = [];
-	};
-	
 
-	IDEX.WatchlistOverlord.prototype.initLocalStorage = function()
-	{
-		var overlord = this;
-		var markets = [];
-				
-		if (localStorage.watchlist)
-		{
-			markets = JSON.parse(localStorage.getItem('watchlist'));
-		}
-		
-		for (var i = 0; i < markets.length; i++)
-		{
-			var market = markets[i];
-			var loadedMarket = IDEX.marketOverlord.expandMarket(market);
-			var watchlistMarket = new IDEX.WatchlistMarket(loadedMarket);
-			overlord.watchlistMarkets.push(watchlistMarket);
-		}
-	}
-	
-	
-	IDEX.WatchlistOverlord.prototype.setLocalStorage = function()
-	{
-		var overlord = this;
-		var watchlistMarkets = overlord.watchlistMarkets;
-		var markets = [];
-		
-		for (var i = 0; i < watchlistMarkets.length; i++)
-		{
-			var watchlistMarket = watchlistMarkets[i];
-			var market = watchlistMarket.market.minimizeSelf();;
-			markets.push(market);
-		}
-		
-		localStorage.setItem('watchlist', JSON.stringify(markets));
-
-	}
-	
-	
-	IDEX.WatchlistOverlord.prototype.addMarket = function(market)
-	{
-		var overlord = this;
-		var retbool = false;
-
-		var index = overlord.searchForMarket(market);
-		
-		if (index == -1)
-		{
-			var watchlistMarket = new IDEX.WatchlistMarket(market);
-			overlord.watchlistMarkets.push(watchlistMarket);
-			overlord.setLocalStorage();
-			retbool = true;
-		}
-
-		return retbool
-	}
-	
-	
-	IDEX.WatchlistOverlord.prototype.searchForMarket = function(market)
-	{
-		var overlord = this;
-		var watchlistMarkets = overlord.watchlistMarkets;
-		var index = -1;
-
-		for (var i = 0; i < watchlistMarkets.length; i++)
-		{
-			var watchlistMarket = watchlistMarkets[i];
-			var marketCheck = watchlistMarket.market;
-			
-			if (market.base.name == marketCheck.base.name && market.rel.name == marketCheck.rel.name)
-			{
-				index = i;
-				break;
-			}
-		}
-		
-		return index;
-	}
-	
-
-	IDEX.WatchlistOverlord.prototype.removeMarket = function(market)
-	{
-		var overlord = this;
-		var index = overlord.searchForMarket(market);
-		
-		if (index != -1)
-		{
-			overlord.watchlistMarkets.splice(index, 1);
-			overlord.setLocalStorage();
-		}
-	}
-	
-	
 	
 	IDEX.WatchlistMarket = function(market) 
 	{	
@@ -193,6 +91,110 @@ var IDEX = (function(IDEX, $, undefined)
 		return watchlistMarket.postDFD.promise();
 	}
 	
+	
+	
+	
+	IDEX.WatchlistOverlord = function(obj) 
+	{	
+		var overlord = this;
+		overlord.watchlists = [];
+		overlord.watchlistMarkets = [];
+	};
+	
+	
+
+
+	IDEX.WatchlistOverlord.prototype.initLocalStorage = function()
+	{
+		var overlord = this;
+		var markets = [];
+				
+		if (localStorage.watchlist)
+		{
+			markets = JSON.parse(localStorage.getItem('watchlist'));
+		}
+		
+		for (var i = 0; i < markets.length; i++)
+		{
+			var market = markets[i];
+			var loadedMarket = IDEX.marketOverlord.expandMarket(market);
+			overlord.watchlistMarkets.push(loadedMarket);
+		}
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.setLocalStorage = function()
+	{
+		var overlord = this;
+		var watchlistMarkets = overlord.watchlistMarkets;
+		var markets = [];
+		
+		for (var i = 0; i < watchlistMarkets.length; i++)
+		{
+			var market = watchlistMarkets[i];
+			var marketMin = market.minimizeSelf();;
+			markets.push(marketMin);
+		}
+		
+		localStorage.setItem('watchlist', JSON.stringify(markets));
+
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.addMarket = function(market)
+	{
+		var overlord = this;
+		var retbool = false;
+
+		var index = overlord.searchForMarket(market);
+		
+		if (index == -1)
+		{
+			overlord.watchlistMarkets.push(market);
+			overlord.setLocalStorage();
+			retbool = true;
+		}
+
+		return retbool
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.removeMarket = function(market)
+	{
+		var overlord = this;
+		var index = overlord.searchForMarket(market);
+		
+		if (index != -1)
+		{
+			overlord.watchlistMarkets.splice(index, 1);
+			overlord.setLocalStorage();
+		}
+	}
+	
+	
+	
+	
+	IDEX.WatchlistOverlord.prototype.searchForMarket = function(market)
+	{
+		var overlord = this;
+		var markets = overlord.watchlistMarkets;
+		var index = -1;
+
+		for (var i = 0; i < markets.length; i++)
+		{
+			var marketCheck = markets[i];
+			
+			if (market.marketKey == marketCheck.marketKey)
+			{
+				index = i;
+				break;
+			}
+		}
+		
+		return index;
+	}
+	
+
 
 	
 	
@@ -254,19 +256,17 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var watchlist = this;
 		var cellHandler = watchlist.cellHandler;
-		var watchlistMarket = $row.data("market");
-		var market = watchlistMarket.market;
+		var market = $row.data("market");
 		
 		cellHandler.emit("changeMarket", market);
 	}
 	
 	
 	
-	IDEX.Watchlist.prototype.addRow = function(watchlistMarket)
+	IDEX.Watchlist.prototype.addRow = function(market)
 	{
 		var watchlist = this;
 		var $table = watchlist.watchlistTableDom;
-		var market = watchlistMarket.market;
 
 		var keys = ["market", "lastBid", "lastAsk"]
 		var obj = {}
@@ -281,7 +281,7 @@ var IDEX = (function(IDEX, $, undefined)
 		//row = IDEX.addElDataAttr(row, [obj], ["baseID", "relID"]);
 
 		var $row = $(row);
-		$row.data("market", watchlistMarket);
+		$row.data("market", market);
 		$row.find("td").eq(1).addClass("watchlist-lastBid");
 		$row.find("td").eq(2).addClass("watchlist-lastAsk");
 
@@ -295,17 +295,17 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var watchlist = this;
 		var $watchlistLoading = watchlist.loadingDom;
-		var watchlistMarkets = IDEX.watchlistOverlord.watchlistMarkets;
+		var markets = IDEX.watchlistOverlord.watchlistMarkets;
 	
 		//IDEX.toggleShow($watchlistLoading, true);
 		
-		for (var i = 0; i < watchlistMarkets.length; i++)
+		for (var i = 0; i < markets.length; i++)
 		{
-			var watchlistMarket = watchlistMarkets[i];
-			watchlist.addRow(watchlistMarket);
+			var market = markets[i];
+			watchlist.addRow(market);
 		}
 		
-		watchlist.watchlistMarkets = watchlistMarkets;
+		watchlist.watchlistMarkets = markets;
 		watchlist.pollHandler(0);
 	}
 	
@@ -314,15 +314,11 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var overlord = IDEX.watchlistOverlord;
 		var allWatchlists = IDEX.allWatchlists;
-		var index = overlord.searchForMarket(market);
-		var watchlistMarket = overlord.watchlistMarkets[index];
 		
 		for (var i = 0; i < allWatchlists.length; i++)
 		{
 			var watchlist = allWatchlists[i];
-			watchlist.addRow(watchlistMarket);
-			//watchlist.watchlistTableDom.find("tbody").empty();
-			//watchlist.initWatchlist();
+			watchlist.addRow(market);
 		}
 	}
 	
@@ -353,13 +349,14 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
-				watchlistMarkets = watchlist.watchlistMarkets;
+				markets = watchlist.watchlistMarkets;
 				
-				for (var i = 0; i < watchlistMarkets.length; i++)
+				for (var i = 0; i < markets.length; i++)
 				{
-					var watchlistMarket = watchlistMarkets[i];
-					var lastBid = watchlistMarket.marketInfo.lastBid;
-					var lastAsk = watchlistMarket.marketInfo.lastAsk;
+					var market = markets[i];
+					var watchlistMarketInfo = market.watchlistHandler.marketInfo;
+					var lastBid = watchlistMarketInfo.lastBid;
+					var lastAsk = watchlistMarketInfo.lastAsk;
 
 					var $row = watchlist.watchlistTableDom.find("tbody tr").eq(i);
 					$row.find("td").eq(1).text(String(lastBid));
@@ -416,22 +413,23 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Watchlist.prototype.temp = function()
 	{
 		var watchlist = this;
-		var watchlistMarkets = watchlist.watchlistMarkets;
+		var markets = watchlist.watchlistMarkets;
 
 		var dfds = [];
 		
-		for (var i = 0; i < watchlistMarkets.length; i++)
+		for (var i = 0; i < markets.length; i++)
 		{
-			var watchlistMarket = watchlistMarkets[i];
-			var isUpdating = watchlistMarket.isUpdating
+			var market = markets[i];
+			var watchlistMarketHandler = market.watchlistHandler;
+			var isUpdating = watchlistMarketHandler.isUpdating;
 			
 			if (isUpdating)
 			{
-				dfds.push(watchlistMarket.postDFD);
+				dfds.push(watchlistMarketHandler.postDFD);
 			}
 			else
 			{
-				dfds.push(watchlistMarket.update());
+				dfds.push(watchlistMarketHandler.update());
 			}
 
 		}
@@ -452,12 +450,9 @@ var IDEX = (function(IDEX, $, undefined)
 		var watchlist = this;
 		watchlist.timeoutDFD = new $.Deferred();
 		
-		//console.log("starting setTimeout " + String(timeout));
 		watchlist.watchlistTimeout = setTimeout(function() 
 		{
-			//console.log("finished setTimeout " + String(timeout));
 			watchlist.timeoutDFD.resolve(false);
-			//watchlist.timeoutDFD = false;
 			
 		}, timeout);
 		
