@@ -147,6 +147,8 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbox.updateExchangesDom();
 		//orderbox.buyBox.balanceTitleDom.text(orderbox.relAsset.name + ": ");
 		//orderbox.sellBox.balanceTitleDom.text(orderbox.baseAsset.name + ": ");
+		orderbox.buyBox.balanceValDom.text("Loading...");
+		orderbox.sellBox.balanceValDom.text("Loading...");
 
 		
 		orderbox.resetOrderBoxForm();
@@ -157,16 +159,20 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbox.prototype.updateOrderBox = function()
 	{
-		this.resetOrderBoxForm();
-		this.updateOrderBoxBalance();
+		var orderbox = this;
+		
+		orderbox.resetOrderBoxForm();
+		orderbox.updateOrderBoxBalance();
 	}
 
 	
 	
 	IDEX.Orderbox.prototype.resetOrderBoxForm = function()
 	{
-		this.buyBox.formDom.trigger("reset");
-		this.sellBox.formDom.trigger("reset");
+		var orderbox = this;
+
+		orderbox.buyBox.formDom.trigger("reset");
+		orderbox.sellBox.formDom.trigger("reset");
 	}
 	
 	
@@ -197,9 +203,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 		exchange = exchange == "InstantDEX" ? "nxtae" : exchange; 
 		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
-
-		orderboxType.balanceValDom.text("Loading...");
-
 		
 		baseOrRel.balanceHandler.update(forceUpdate, [exchange]).done(function()
 		{
@@ -391,7 +394,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var $form = $(this).closest("form");
 		var price = $form.find("input[name='price']").val();
 		var amount = $form.find("input[name='volume']").val();
-		var total = Number(price)*Number(amount);
+		var total = IDEX.toSatoshi(Number(price)*Number(amount));
 		
 		$form.find("input[name='total']").val(String(total));
 	});
@@ -405,7 +408,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (price.length)
 		{
-			var amount = Number(total) / Number(price);
+			var amount = IDEX.toSatoshi(Number(total) / Number(price));
 			$form.find("input[name='volume']").val(String(amount));
 		}
 	});

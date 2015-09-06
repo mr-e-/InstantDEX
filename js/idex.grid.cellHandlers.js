@@ -424,7 +424,6 @@ var IDEX = (function(IDEX, $, undefined)
 		if (settings && "market" in settings)
 		{
 			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
-			console.log(loadedMarket);
 			cBalance.changeMarket(loadedMarket);
 		}
 
