@@ -33,7 +33,7 @@ html {
 body {
 	font-size: .7rem;
     font-family: 'Roboto', sans-serif;
-	color: #bbbbbb;
+	color: #cccccc;
 	-webkit-font-smoothing: antialiased;
 	background-color: black;
 	margin: 0px; 
@@ -2492,6 +2492,7 @@ table.dataTable thead th:last-child {
 .watchlist-lastAsk {
 	color:rgba(218, 59, 38, 0.9);
 	color: rgb(255,0,0);
+	color:#FF3333;
 }
 
 .generic-loading {
@@ -2604,6 +2605,7 @@ table.dataTable thead th:last-child {
 .cm-orderType-sell {
 	color:rgba(218, 59, 38, 0.9);
 	color: rgb(255,0,0);
+	color:#FF3333;
 }
 
 

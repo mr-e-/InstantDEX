@@ -229,9 +229,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 			watchlist.watchlistAddDom.on("click", function() { watchlist.toggleAddPopup(); } );
 			watchlist.watchlistTableDom.on("click", "tbody tr", function(e) { watchlist.onRowClick(e, $(this)); } );
-			watchlist.refreshDom.on("click", function(){ watchlist.refreshClick() });
+			//watchlist.refreshDom.on("click", function(){ watchlist.refreshClick() });
 
 			//watchlist.watchlistTableDom.on("mouseover", "tbody tr", function(e) { watchlist.onRowMouseover(e, $(this)); } );
+			watchlist.watchlistTableDom.parent().perfectScrollbar();
 
 			
 			IDEX.allWatchlists.push(watchlist)

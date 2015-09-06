@@ -132,6 +132,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		if (orderbox.hasMarket)
 		{
+			orderboxType.balanceValDom.text("Loading...");
 			orderboxType.updateOrderBoxBalance();
 		}
 	}

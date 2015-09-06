@@ -977,6 +977,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				$tile.css(sizeKey, adjSize);
 				$tile.css(absKey, newAbs);
 				tile.updateInternalTilePositions();
+				tile.resizeCells();
 
 			}
 		},

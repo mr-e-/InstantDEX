@@ -482,14 +482,13 @@ var IDEX = (function(IDEX, $, undefined)
 							balances = balancesHandler.normalizeBalances(balances);
 							balancesHandler.setBalances(balances);
 							balancesHandler.isUpdating = false;
+							balancesHandler.lastUpdated = time;
 
 							balancesHandler.asyncDFD.resolve();
 						})
 					})
 				}
 			}
-			
-			balancesHandler.lastUpdated = time;
 			
 			return balancesHandler.asyncDFD.promise();
 		}

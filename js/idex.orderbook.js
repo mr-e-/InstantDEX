@@ -255,6 +255,7 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				orderbook.orderbookDom.find(".empty-orderbook").hide();
 				orderbook.emptyOrderbook("Error loading orderbook");
+				orderbook.toggleStatusText(true, "Error loading orderbook");
 				
 				//$(".empty-orderbook").hide();
 				//$("#buyBook .twrap").empty();

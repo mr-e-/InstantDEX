@@ -165,16 +165,16 @@ var IDEX = (function(IDEX, $, undefined)
 				else
 				{				
 					IDEX.sendPost(params, false).done(function(data)
-					{	
+					{
 						var balances = normalizeBalances(data, exchangeName);
-						balancesHandler.setBalances(balances); 
+						balancesHandler.setBalances(balances);
+						balancesHandler.balancesLastUpdated = time;
+
 						balancesHandler.isUpdating = false;
 						balancesHandler.asyncDFD.resolve()
 					})
 				}
 			}
-
-			balancesHandler.balancesLastUpdated = time;
 
 			return balancesHandler.asyncDFD.promise();
 		}
