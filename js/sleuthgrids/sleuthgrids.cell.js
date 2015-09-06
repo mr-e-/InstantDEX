@@ -26,6 +26,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			tileNavCell.tileNavCellDOM;
 			tileNavCell.navLinkDOM;
 			tileNavCell.isActive = false;
+			tileNavCell.isMoving = false;
 		},
 		
 		
@@ -63,9 +64,9 @@ Sleuthgrids = (function(Sleuthgrids)
 		initEventListeners: function()
 		{
 			var tileNavCell = this;
+			var cellIndex = tileNavCell.index;
 			var tile = tileNavCell.tile;
 			var cell = tile.cells[cellIndex];
-			var cellIndex = tileNavCell.index;
 
 			
 			tileNavCell.tileNavCellDOM.on("mousedown", function(e)

@@ -674,7 +674,6 @@ Sleuthgrids = (function(Sleuthgrids)
 				tile.tileCellsWrapDOM.addClass("focus-border");
 				
 				activeNavCell.tileNavCellDOM.addClass("focus-border");
-				//$tile.find(".tile-header").addClass("focus-border");
 		},
 		
 		
