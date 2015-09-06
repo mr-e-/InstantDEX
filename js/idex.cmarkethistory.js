@@ -107,7 +107,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.CMarketHistory.prototype.addTableRow = function(trade)
 	{
 		var cMarketHistory = this;
-		var time = trade.timestamp;
+		var time = trade.time;
 		var price = trade.price;
 		var amount = trade.amount;
 		var exchange = trade.exchange;;

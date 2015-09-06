@@ -227,6 +227,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var tradeType = "bid";
 				
 				formattedTrade.timestamp = timestamp;
+				formattedTrade.time = IDEX.formatTime(timestamp, "HMS");
 				formattedTrade.price = price;
 				formattedTrade.amount = amount;
 				formattedTrade.exchange = exchangeName;

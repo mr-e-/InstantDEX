@@ -718,6 +718,7 @@ var IDEX = (function(IDEX, $, undefined)
 				var amount = trade.quantityQNT / Math.pow(10, trade.decimals);
 				
 				formattedTrade.timestamp = timestamp;
+				formattedTrade.time = IDEX.formatTime(timestamp, "HMS");
 				formattedTrade.price = price;
 				formattedTrade.amount = amount;
 				formattedTrade.exchange = exchangeName;

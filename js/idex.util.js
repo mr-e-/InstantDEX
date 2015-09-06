@@ -46,6 +46,34 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.formatTime = function(timestamp, temp)
+	{
+		var d = new Date(timestamp*1000);
+		var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
+		  "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+		];
+
+		var month = monthNames[d.getMonth()];
+		var day = d.getDate();
+		var hours = String(d.getHours());
+		var minutes = d.getMinutes();
+		var seconds = d.getSeconds()
+		
+		hours = hours < 10 ? "0"+String(hours) : String(hours);
+		minutes = minutes < 10 ? "0"+String(minutes) : String(minutes);
+		seconds = seconds < 10 ? "0"+String(seconds) : String(seconds);
+
+		
+		if (temp == "MD")
+			return month + ". " + day;
+		else if (temp == "MDHM")
+			return month + ". " + day + " " + hours + ":" + minutes;
+		else if (temp == "HMS")
+			return hours + ":" + minutes + ":" + seconds;
+
+	}
+	
+	
 	IDEX.minObject = function(obj, keys)
 	{
 		var minObj = {};
