@@ -683,7 +683,6 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var tile = this;
 			
-			//var $tileNavCell = $(this);
 			var cellIndex = $tileNavCell.attr("data-cellIndex");
 			var $tile = $tileNavCell.closest(".tile");
 			var $cell = $tile.find(".cell[data-cellIndex='" + cellIndex + "']")
@@ -694,42 +693,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			$tileNavCell.addClass("active");
 			$cell.removeClass("tab-hidden");
 		},
-		
-		
-		
-		moveTile: function(e, tileNavCell)
-		{
-			var tile = this;
-			var cellIndex = tileNavCell.index;
-			var cell = tile.cells[cellIndex];
-			
-			//var hasCloseClass = $(e.target).hasClass("tile-header-close") || $(e.target).hasClass("tile-header-link");
-			var has = $(e.target).hasClass("tile-header-tab");
-			
-			if (has)
-			{			
-				var $tile = tile.tileDOM;
-				var mouseY = e.clientY
-				var mouseX = e.clientX
-				var tilePositions = tile.winPositions;
-				
-				var isInsideBorder = Sleuthgrids.checkIfMouseIsInsideBorder(mouseY, mouseX, tilePositions)
-				
-				if (!isInsideBorder.isInside)
-				{
-					
-					$tileAdd.addClass("active");
-					$(".grid-arrow").addClass("active");
-
-					Sleuthgrids.updateTileAddPos(e);
-					
-					Sleuthgrids.isGridTrig = true;
-					Sleuthgrids.triggeredCell = cell;
-					Sleuthgrids.isTriggeredNew = false;
-				}
-			}
-		},
-		
 		
 		
 		addResizeClass: function(resizeClassName)
@@ -755,7 +718,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tile = this;
 			var $tileArrowWrap = tile.tileArrowWrapDOM;
 
-			//console.log(Sleuthgrids.triggeredCell);
 			if (Sleuthgrids.isGridTrig && (Sleuthgrids.triggeredCell == null || Sleuthgrids.triggeredCell.tile != tile)) //|| !$(this).is(Sleuthgrids.triggeredGrid)
 			{
 				$tileArrowWrap.addClass("active");
