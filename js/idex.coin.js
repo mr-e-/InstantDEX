@@ -59,7 +59,6 @@ var IDEX = (function(IDEX, $, undefined)
 		cBalanceHandler.updateExchanges(forceUpdate, exchangesToUpdate).done(function()
 		{
 			cBalanceHandler.balance = [];
-			
 			for (var key in cBalanceHandler.byExchange)
 			{
 				var exchangeBalance = cBalanceHandler.byExchange[key];

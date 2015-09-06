@@ -424,6 +424,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (settings && "market" in settings)
 		{
 			var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+			console.log(loadedMarket);
 			cBalance.changeMarket(loadedMarket);
 		}
 
@@ -443,6 +444,15 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var cellHandler = this;
 		var cell = cellHandler.cell;
+		var cBalance = cellHandler.cellApp;
+		
+		var saveObj = {};
+		var market = cBalance.market;
+		if (market)
+		{
+			saveObj.market = market.minimizeSelf();
+		}
+		return saveObj;
 	}
 	
 	function removeBalance()

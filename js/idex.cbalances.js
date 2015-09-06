@@ -130,7 +130,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var cBalance = cBalanceType.cBalance;
 		var market = cBalance.market;
 		
-		var baseOrRel = isBase ? market.base : market.rel
+		var baseOrRel = isBase ? market.base : market.rel;
 
 		cBalanceType.tableDom.find("tbody").empty();
 		

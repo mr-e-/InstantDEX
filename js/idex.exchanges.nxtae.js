@@ -298,6 +298,7 @@ var IDEX = (function(IDEX, $, undefined)
 			balancesHandler.lastUpdated = -1;			
 			balancesHandler.balances = {};
 			balancesHandler.asyncDFD = false;
+			balancesHandler.isUpdating = false;
 		},
 		
 		
@@ -442,47 +443,55 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var balancesHandler = this;
 			var exchangeHandler = balancesHandler.exchangeHandler;
-			var dfd = new $.Deferred();
 			var balances = [];
 			var time = new Date().getTime();
 			var lastUpdated = balancesHandler.lastUpdated;
 			
+			if (!balancesHandler.isUpdating)
+			{
+				balancesHandler.isUpdating = true;
+				balancesHandler.asyncDFD = new $.Deferred();
 
-			if (!forceUpdate && ((time - lastUpdated < 5000) && (lastUpdated != -1)))
-			{
-				dfd.resolve();
-			}
-			else
-			{
-				//var postObj = {'requestType':"getAccount",'account':IDEX.account.nxtID, 'includeAssets':true};
-				var postObj = {'requestType':"getAccountAssets",'account':exchangeHandler.nxtID};
-				
-				IDEX.sendPost(postObj, true).done(function(data)
+				if (!forceUpdate && ((time - lastUpdated < 5000) && (lastUpdated != -1)))
 				{
-					if (!("errorCode" in data) && ("accountAssets" in data))
+					balancesHandler.isUpdating = false;
+					balancesHandler.asyncDFD.resolve();
+				}
+				else
+				{
+
+					//var postObj = {'requestType':"getAccount",'account':IDEX.account.nxtID, 'includeAssets':true};
+					var postObj = {'requestType':"getAccountAssets",'account':exchangeHandler.nxtID};
+					
+					IDEX.sendPost(postObj, true).done(function(data)
 					{
-						balances = data['accountAssets'];
-					}
-						
-					IDEX.sendPost({'requestType':"getBalance", 'account':exchangeHandler.nxtID}, 1).done(function(nxtBal)
-					{
-						if (!("errorCode" in nxtBal))
+						if (!("errorCode" in data) && ("accountAssets" in data))
 						{
-							nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
-							balances.push(nxtBal);
+							balances = data['accountAssets'];
 						}
+							
+						IDEX.sendPost({'requestType':"getBalance", 'account':exchangeHandler.nxtID}, 1).done(function(nxtBal)
+						{
+							if (!("errorCode" in nxtBal))
+							{
+								nxtBal['assetID'] = IDEX.snAssets['nxt']['assetID'];
+								balances.push(nxtBal);
+							}
 												
-						balances = addAssetID(balances);
-						balances = balancesHandler.normalizeBalances(balances);
-						balancesHandler.setBalances(balances);
-						dfd.resolve();
+							balances = addAssetID(balances);
+							balances = balancesHandler.normalizeBalances(balances);
+							balancesHandler.setBalances(balances);
+							balancesHandler.isUpdating = false;
+
+							balancesHandler.asyncDFD.resolve();
+						})
 					})
-				})
+				}
 			}
 			
 			balancesHandler.lastUpdated = time;
 			
-			return dfd.promise();
+			return balancesHandler.asyncDFD.promise();
 		}
 			
 	}

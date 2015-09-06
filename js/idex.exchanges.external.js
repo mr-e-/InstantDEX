@@ -55,6 +55,7 @@ var IDEX = (function(IDEX, $, undefined)
 			balancesHandler.balancesLastUpdated = -1;
 			balancesHandler.balances = {};
 			balancesHandler.asyncDFD = false;
+			balancesHandler.isUpdating = false;
 		},
 		
 		
@@ -151,24 +152,31 @@ var IDEX = (function(IDEX, $, undefined)
 			var params = {"method":"balance","exchange":exchangeName};			
 
 			
-					
-			if (!forceUpdate && ((time - lastUpdated < 15000) && (lastUpdated != -1)))
+			if (!balancesHandler.isUpdating)
 			{
-				dfd.resolve([]);
-			}
-			else
-			{				
-				IDEX.sendPost(params, false).done(function(data)
-				{	
-					var balances = normalizeBalances(data, exchangeName);
-					balancesHandler.setBalances(balances); 
-					dfd.resolve();
-				})
+				balancesHandler.isUpdating = true;
+				balancesHandler.asyncDFD = new $.Deferred();
+				
+				if (!forceUpdate && ((time - lastUpdated < 15000) && (lastUpdated != -1)))
+				{
+					balancesHandler.isUpdating = false;
+					balancesHandler.asyncDFD.resolve();
+				}
+				else
+				{				
+					IDEX.sendPost(params, false).done(function(data)
+					{	
+						var balances = normalizeBalances(data, exchangeName);
+						balancesHandler.setBalances(balances); 
+						balancesHandler.isUpdating = false;
+						balancesHandler.asyncDFD.resolve()
+					})
+				}
 			}
 
 			balancesHandler.balancesLastUpdated = time;
 
-			return dfd.promise();
+			return balancesHandler.asyncDFD.promise();
 		}
 	}
 	
