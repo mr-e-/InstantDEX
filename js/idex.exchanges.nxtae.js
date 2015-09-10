@@ -67,7 +67,7 @@ var IDEX = (function(IDEX, $, undefined)
 			dfds.push(exchangeHandler.assets.initAllAssets());
 			dfds.push(exchangeHandler.updateNXTRS());
 			
-			$.when(dfds).done(function()
+			$.when.apply($, dfds).done(function(data)
 			{
 				retDFD.resolve();
 			})
