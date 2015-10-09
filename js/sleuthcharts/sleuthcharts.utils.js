@@ -22,6 +22,22 @@ Sleuthcharts = (function(Sleuthcharts)
 	}
 	
 	
+		
+	Sleuthcharts.convertPercent = function(hw, wrapHW)
+	{
+		var strVal = String(hw);
+		var hasPct = strVal.indexOf('%') >= 0;
+		converted = hw;
+		
+		if (hasPct)
+		{
+			var valNum = parseFloat(strVal)/100;
+			var converted = (valNum * Number(wrapHW));
+		}
+		
+		return converted
+	}
+	
 	Sleuthcharts.extend = function(objA, objB)
 	{
 		if (!objA)
