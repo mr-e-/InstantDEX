@@ -1,15 +1,13 @@
 
+// Created by CryptoSleuth <cryptosleuth@gmail.com>
+
 
 Sleuthgrids = (function(Sleuthgrids) 
-{
-	var $contentWrap = $("#content_wrap");
-	
+{	
 
 	$(window).on("beforeunload", function()
 	{
 		var saves = Sleuthgrids.saveAllGrids();
-		
-		//console.log(saves);
 		localStorage.setItem('grids', JSON.stringify(saves));
 	})
 	
@@ -52,7 +50,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	$(document).on("mousedown", function(e)
 	{	
 		var $tile = $(e.target).closest(".tile")
-		var $grid = $contentWrap.find(".grid.active");
+		var $grid = Sleuthgrids.contentWrap.find(".grid.active");
 
 		if ($grid.length)
 		{
@@ -85,7 +83,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	{
 		if (Sleuthgrids.isGridTrig)
 		{
-			var $grid = $contentWrap.find(".grid.active");
+			var $grid = Sleuthgrids.contentWrap.find(".grid.active");
 			
 			if ($grid.length)
 			{

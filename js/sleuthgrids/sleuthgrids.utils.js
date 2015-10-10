@@ -1,5 +1,7 @@
 
 
+// Created by CryptoSleuth <cryptosleuth@gmail.com>
+
 
 Sleuthgrids = (function(Sleuthgrids) 
 {
@@ -10,6 +12,25 @@ Sleuthgrids = (function(Sleuthgrids)
 		{			
 			arr[i].index = i;
 		}
+	}
+	
+	
+	Sleuthgrids.positionsToCSS = function(positions)
+	{
+		var keys = ["height", "width", "top", "left"];
+		var cssObj = {};
+		
+		for (var i = 0; i < keys.length; i++)
+		{
+			var key = keys[i];
+			
+			if (key in positions)
+			{
+				cssObj[key] = positions[key];
+			}
+		}
+		
+		return cssObj;
 	}
 	
 	
