@@ -50,6 +50,20 @@ Sleuthgrids = (function(Sleuthgrids)
 			previewTile.winPositions = winTilePositions;
 		},
 		
+		animate: function(newCSS, time)
+		{
+			var tile = this;
+			var dfd = new $.Deferred();
+			
+			tile.tileDOM.animate(newCSS, time, function()
+			{
+				tile.updateInternalTilePositions();
+			})
+			
+			return dfd.promise();
+		},
+		
+		
 		showPreviewTile: function()
 		{
 			var previewTile = this;

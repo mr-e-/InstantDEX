@@ -352,7 +352,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					
 					var newSize = smallestTilePositions[sizeKey] / 2;
 					
-					tileOverlord.resizeTilesTouchingGridEdges(foundTiles, arrowDirections, newSize, absKey, sizeKey, true);
+					grid.resizeTilesTouchingGridEdges(foundTiles, arrowDirections, newSize, absKey, sizeKey, true);
 
 					
 					var prevAbs = (arrowDirections.isBottom || arrowDirections.isRight) ? (gridPositions[sizeKey] - newSize) : 0;
@@ -387,7 +387,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				$tile.css(sizeKey, adjSize);
 				$tile.css(absKey, newAbs);
 				tile.updateInternalTilePositions();
-				tile.resizeCells();
+				tile.cellOverlord.resizeAllCells();
 			}
 		},
 		
@@ -429,7 +429,7 @@ Sleuthgrids = (function(Sleuthgrids)
 						
 						var newSize = smallestTilePositions[sizeKey];
 						
-						tileOverlord.resizeTilesTouchingGridEdges(foundTiles, arrowDirections, newSize, absKey, sizeKey, false);
+						grid.resizeTilesTouchingGridEdges(foundTiles, arrowDirections, newSize, absKey, sizeKey, false);
 						
 						previewTile.hidePreviewTile();
 					}
@@ -445,14 +445,15 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tileOverlord = grid.tileOverlord;
 			var previewTile = tileOverlord.previewTile;
 			var previewTilePositions = previewTile.positions;
-			
+			var cellType = 	Sleuthgrids.triggeredType;
+
 			var direction = $arrow.attr("data-arrow");
-			var arrowDirections = Sleuthgrids.getArrowDirections(direction);
+			var arrowDirections = Sleuthgrids.getDirections(direction);
 			
 			Sleuthgrids.toggleTileAdd(false);
-
-			grid.makeTile(arrowDirections, previewTilePositions);
 			
+			tileOverlord.addTile(arrowDirections, previewTilePositions);
+
 			previewTile.hidePreviewTile();
 		},
 		

@@ -129,14 +129,19 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.cellNav.unbindEventListeners();
 			cell.cellNav.initEventListeners();
 			
-			cellOverlord.hideAllCells();
-			cellOverlord.showCell(cellOverlord.cells[tempIndex]);
-			
+
+			newCellOverlord.hideAllCells();
+			newCellOverlord.showCell(cell);
 			
 			if (cellOverlord.cells.length == 0)
 			{
 				//cellOverlord.tile.tileOverlord.closeTileResizer(cellOverlord.tile, false);
 				cellOverlord.tile.tileOverlord.removeTile(cellOverlord.tile);
+			}
+			else
+			{
+				cellOverlord.hideAllCells();
+				cellOverlord.showCell(cellOverlord.cells[tempIndex]);
 			}
 		},
 		
