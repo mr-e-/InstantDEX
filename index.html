@@ -1,6 +1,43 @@
 
 
-<div id="main_wrap" class="unselectable">
+
+<html lang="en">
+
+
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<link rel="stylesheet" href="css/perfect-scrollbar/perfect-scrollbar.css">
+	<link rel="stylesheet" href="css/jquery.growl.css">
+	
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/perfect-scrollbar.min.css" />
+	<link rel="stylesheet" type="text/css" href="css/tooltipster.css" />
+	<link rel="stylesheet" type="text/css" href="css/spectrum.css" />
+	
+	
+	<link rel="stylesheet" href="js/sleuthgrids/sleuthgrids.style.css">
+	<link rel="stylesheet" href="css/idex.style.css">
+
+	
+    <link rel="icon" href="img/favicon.ico" type="img/x-icon" />
+
+	
+	<style type="text/css" id="temp_label_style" data-ctext="" data-cbg="">
+
+	</style>
+
+	<title>InstantDEX</title>
+	
+</head>
+
+
+<body>
+
+
+<div id="content_wrap" class="unselectable">
 	
 
 	<!------------------------- START LOADING OVERLAY ----------------------------->
@@ -91,28 +128,45 @@
 	
 	<!------------------------- START BASIC MODE ----------------------------->
 	
-	<div class="idex-classic-wrap idex-content-wrap">
-		<div class="idex-classic-sidebar">
+	<div class="idex-basic-wrap idex-content-wrap active">
+		<div class="idex-basic-sidebar">
 		
-			<div class="idex-classic-markets">
-			
-				<div class="idex-classic-markets-header">
-					<div class="idex-classic-markets-title">
-						<span>Markets</span>
+			<div class="idex-basic-exchanges">
+				<div class="dropdown-list-wrap orderbox-exchange-dropdown">
+					<div class="dropdown-outer vert-align">
+						<div class="dropdown">
+							<div class="dropdown-inner">
+								<div class="dropdown-title">
+									<span class="orderbox-exchange-title">nxtae</span>
+								</div>
+								<div class="dropdown-img">
+									<img src="img/tridownwhite.png" class="vert-align"></img>
+								</div>
+							</div>
+						</div>
+						
+						<div class="dropdown-list">
+							<ul class="active" data-inttype="exchange">
+								<li class="" data-val="InstantDEX">InstantDEX</li>
+								<li class="active" data-val="nxtae">nxtae</li>
+							</ul>
+						</div>
 					</div>
 				</div>
+			</div>
+		
+			<div class="idex-basic-markets">
 				
-				<div class="idex-classic-markets-body">
+				<div class="idex-basic-markets-body">
 				
-				
-					<div class="idex-classic-marketBox idex-classic-favs">
-						<div class="idex-classic-marketBox-inner">
-							<div class="idex-classic-marketBox-header">
-								<div class="idex-classic-marketBox-title">
+					<div class="idex-basic-marketBox idex-basic-favs">
+						<div class="idex-basic-marketBox-inner">
+							<div class="idex-basic-marketBox-header">
+								<div class="idex-basic-marketBox-title">
 									<span>Favorites</span>
 								</div>
 							</div>
-							<div class="idex-classic-marketBox-markets">
+							<div class="idex-basic-marketBox-markets">
 								<table class="nTable" data-table="markets">
 									<thead>
 										<tr>
@@ -128,14 +182,14 @@
 						</div>
 					</div>
 					
-					<div class="idex-classic-marketBox idex-classic-allMarkets">
-						<div class="idex-classic-marketBox-inner">
-							<div class="idex-classic-marketBox-header">
-								<div class="idex-classic-marketBox-title">
+					<div class="idex-basic-marketBox idex-basic-allMarkets">
+						<div class="idex-basic-marketBox-inner">
+							<div class="idex-basic-marketBox-header">
+								<div class="idex-basic-marketBox-title">
 									<span>All Markets</span>
 								</div>
 							</div>
-							<div class="idex-classic-marketBox-markets">
+							<div class="idex-basic-marketBox-markets">
 							
 								<table class="nTable" data-table="markets">
 									<thead>
@@ -159,29 +213,29 @@
 			
 		</div>
 		
-		<div class="idex-classic-content">
+		<div class="idex-basic-content">
 		
-			<div class="idex-classic-stats">
-				<div class="idex-classic-marketName">
+			<div class="idex-basic-stats">
+				<div class="idex-basic-marketName">
 					<span class="temp-create">InstantDEX_NXT</span>
 				</div>
 				
-				<div class="idex-classic-stats-cells">
-					<div class="idex-classic-stats-cell">
-						<div class="idex-classic-stats-cell-inner">
+				<div class="idex-basic-stats-cells">
+					<div class="idex-basic-stats-cell">
+						<div class="idex-basic-stats-cell-inner">
 							<span>Last Price</span>
 						</div>
 					</div>
 				</div>
 			</div>
 		
-			<div class="idex-classic-chartArea">
+			<div class="idex-basic-chartArea">
 			
 
 				
-				<div class="idex-classic-chart-wrap">
+				<div class="idex-basic-chart-wrap">
 				
-					<div class="idex-classic-chart">
+					<div class="idex-basic-chart">
 					
 					</div>
 				
@@ -190,32 +244,32 @@
 			</div>
 			
 			<!--
-			<div class="idex-classic-account">
-				<div class="idex-classic-account-tabs">
-					<div class="idex-classic-account-tab">
+			<div class="idex-basic-account">
+				<div class="idex-basic-account-tabs">
+					<div class="idex-basic-account-tab">
 						<span>Open Orders</span>
 					</div>
-					<div class="idex-classic-account-tab">
+					<div class="idex-basic-account-tab">
 						<span>History</span>
 					</div>
-					<div class="idex-classic-account-tab">
+					<div class="idex-basic-account-tab">
 						<span>Funding</span>
 					</div>
 				</div>
 			</div>-->
 			
-			<div class="idex-classic-orderboxes">
+			<div class="idex-basic-orderboxes">
 
-				<div class="idex-classic-orderbox idex-classic-buybox">
-					<div class="idex-classic-orderbox-inner">
+				<div class="idex-basic-orderbox idex-basic-buybox">
+					<div class="idex-basic-orderbox-inner">
 				
-						<div class="idex-classic-orderbox-header">
-							<div class="idex-classic-orderbox-title">
+						<div class="idex-basic-orderbox-header">
+							<div class="idex-basic-orderbox-title">
 								<span>Sell NXT</span>
 							</div>
 						</div>
 								
-						<div class="idex-classic-orderbox-body">
+						<div class="idex-basic-orderbox-body">
 					
 							<div class="orderbox-sell orderbox">
 									
@@ -328,16 +382,16 @@
 					</div>
 				</div>
 				
-				<div class="idex-classic-orderbox idex-classic-sellbox">
-					<div class="idex-classic-orderbox-inner">
+				<div class="idex-basic-orderbox idex-basic-sellbox">
+					<div class="idex-basic-orderbox-inner">
 					
-						<div class="idex-classic-orderbox-header">
-							<div class="idex-classic-orderbox-title">
+						<div class="idex-basic-orderbox-header">
+							<div class="idex-basic-orderbox-title">
 								<span>Buy NXT</span>
 							</div>
 						</div>
 						
-						<div class="idex-classic-orderbox-body">
+						<div class="idex-basic-orderbox-body">
 						
 							<div class="orderbox-buy orderbox">
 												
@@ -457,10 +511,10 @@
 			</div>
 
 			<!--
-			<div class="idex-classic-orderbooks">
+			<div class="idex-basic-orderbooks">
 			
-				<div class="idex-classic-orderbook idex-classic-sellbook">
-					<div class="idex-classic-orderbook-inner">
+				<div class="idex-basic-orderbook idex-basic-sellbook">
+					<div class="idex-basic-orderbook-inner">
 						<div class="orderbook sellbook">
 							
 							<div class="orderbook-bookLabels">
@@ -482,8 +536,8 @@
 					</div>
 				</div>
 				
-				<div class="idex-classic-orderbook idex-classic-buybook">
-					<div class="idex-classic-orderbook-inner">
+				<div class="idex-basic-orderbook idex-basic-buybook">
+					<div class="idex-basic-orderbook-inner">
 						<div class="orderbook buybook">
 							
 							<div class="orderbook-bookLabels">
@@ -519,14 +573,25 @@
 	
 	<!------------------------- START ADVANCED MODE ----------------------------->
 	
-	<div class="idex-advanced-wrap active">
+	<div class="idex-advanced-wrap">
 
 		<div class="sleuthgrids-wrap">
+		
+			<div id="tile_add">
+				<div class="tile-add-header">
+					
+				</div>
+				<div class="tile-add-body">
+				
+				</div>
+			</div>
+			
+			<div class="grids" id="grids">
 
+			</div>
+			
 		</div>
 			
-			
-		</div>
 	
 	</div>
 	<!------------------------- END ADVANCED MODE ----------------------------->
@@ -539,6 +604,16 @@
 	<div id="utilArea">
 	
 		<div class="sleuthgrids-gridTabs-wrap">
+		
+			<div class="util-grid-tabs">
+
+			</div>
+			
+			<div class="util-grid-newTab">
+				<div class="util-grid-newTab-title">
+					<span class="vert-align">Add</span>
+				</div>
+			</div>
 		
 		</div>
 	
@@ -1725,14 +1800,254 @@
 	<!------------------------- END TILES ----------------------------->
 
 	
+	
+	<!------------------------- SLEUTHGRIDS TEMPLATES TEMP----------------------------->
 
-	<!--
+	<div id="grid_template" class="template">
 
-	<script src="js/sleuthgrids/sleuthgrids.min.js" type="text/javascript"></script>
-	<script src="js/sleuthcharts/sleuthcharts.min.js" type="text/javascript"></script>
-	<script src="js/idex.min.js" type="text/javascript"></script>
+		<div class="grid" data-gridindex="0">
 
-	-->
+			<div class="grid-arrow grid-arrow-left" data-arrow="left">
+				<img src="img/trileft.png"></img>
+			</div>
+			<div class="grid-arrow grid-arrow-right" data-arrow="right">
+				<img src="img/triright.png"></img>
+			</div>
+			<div class="grid-arrow grid-arrow-top" data-arrow="top">
+				<img src="img/triup.png"></img>
+			</div>
+			<div class="grid-arrow grid-arrow-bottom" data-arrow="bottom">
+				<img src="img/tridown.png"></img>
+			</div>
+			<div class="grid-arrow-middle" data-arrow="middle">
+			</div>
+
+			
+			<div class="tiles">
+			
+			</div>
+			
+			
+
+		</div>
+	</div>
+	
+	
+		
+	<div id="tile_template" class="template">
+		<div class="tile">
+			<div class="tile-arrow-wrap">
+				<div class="tile-arrow tile-arrow-left" data-arrow="left">
+					<img src="img/trileft.png"></img>
+				</div>
+				<div class="tile-arrow tile-arrow-right" data-arrow="right">
+					<img src="img/triright.png"></img>
+				</div>
+				<div class="tile-arrow tile-arrow-top" data-arrow="top">
+					<img src="img/triup.png"></img>
+				</div>
+				<div class="tile-arrow tile-arrow-bottom" data-arrow="bottom">
+					<img src="img/tridown.png"></img>
+				</div>
+				<div class="tile-arrow tile-arrow-middle" data-arrow="middle">
+				</div>
+			</div>
+			
+			<div class="tile-header">
+
+			</div>
+			
+			<div class="tile-cells">
+				<div class="tile-overlay">
+					
+				</div>
+			</div>
+			
+			
+		</div>
+	</div>
+	
+	
+	<div id="cell_template" class="template">
+		<div class="cell">
+			
+		</div>
+	</div>
+	
+	
+	<div id="tile_header_solo_template" class="template">
+	
+		<div class="tile-header-title-wrap">
+			<span class="tile-header-title vert-align"></span>
+		</div>
+		
+		<div class="tile-header-icons">
+			<div class="tile-header-ico">
+				<img class="tile-header-close vert-align" src="img/close.png"></img>
+			</div>
+		</div>
+		
+		<div class ="tile-header-link">
+			<div class="dropdown-list-wrap tile-header-link-dropdown">
+				<div class="dropdown-outer vert-align">
+					<div class="dropdown">
+						<div class="dropdown-inner">
+							<div class="dropdown-title tile-header-link-title">
+								<span class="vert-align">#</span>
+							</div>
+							<!--<div class="dropdown-img">
+								<img src="img/tridownwhite.png" class="vert-align"></img>
+							</div>-->
+						</div>
+					</div>
+				</div>
+				<div class="dropdown-list">
+					<ul class="active">
+						<li class="active" data-val="-1">#</li>
+						<li class="" data-val="1">1</li>
+						<li data-val="2">2</li>
+						<li data-val="3">3</li>
+						<li data-val="4">4</li>
+						<li data-val="5">5</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	
+	
+	<div id="preview_tile_template" class="template">
+	
+		<div class="preview-tile">
+		
+			<div class="preview-tile-header">
+			</div>
+
+			<div class="preview-tile-content">
+				
+			</div>
+			
+		</div>
+		
+	</div>
+	
+	
+	<div id="util_grid_tab_template" class="template">
+	
+		<div class="util-grid-tab">
+			<div class="util-grid-tab-title">
+				<span class="vert-align">Default</span>
+			</div>
+			<div class="util-grid-tab-icons">
+				<div class="util-grid-tab-ico">
+					<img class="util-grid-tab-close vert-align" src="img/close.png"></img>
+				</div>
+			</div>
+		</div>
+			
+	</div>
+
+	<!------------------------- END SLEUTHGRIDS TEMPLATES TEMP----------------------------->
+
 	
 
 </div>
+
+    <script src="js/3rdparty/jquery-2.1.1.js"></script>
+    <script src="js/3rdparty/perfect-scrollbar.jquery.js"></script>
+    <script src="js/3rdparty/jquery.growl.js"></script>	
+	<script src="js/3rdparty/jquery.tooltipster.min.js"></script>
+	<script src="js/3rdparty/jquery.mousewheel.min.js"></script>
+	<script src="js/3rdparty/jquery-ui.min.js"></script>
+	<script src="js/3rdparty/jquery.ui.autocomplete.html.js"></script>
+	<script src="js/3rdparty/spectrum.js"></script>
+	
+	<script src="js/util/nxtaddress.js" type="text/javascript"></script>
+	
+	<!--
+	<script src="js/sleuthgrids/sleuthgrids.min.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.min.js" type="text/javascript"></script>
+	<script src="js/idex.min.js" type="text/javascript"></script>-->
+	
+	<script src="js/sleuthgrids/sleuthgrids.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.binds.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.gridOverlord.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.grid.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.tileOverlord.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.tile.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.cellOverlord.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.cell.js" type="text/javascript"></script>
+	<script src="js/sleuthgrids/sleuthgrids.utils.js" type="text/javascript"></script>
+
+	
+	<script src="js/sleuthcharts/d3.min.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.utils.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.axis.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.data.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.eventHandler.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.points.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.render.js" type="text/javascript"></script>
+	<script src="js/sleuthcharts/sleuthcharts.series.js" type="text/javascript"></script>
+	
+	
+	
+	<script src="js/idex/idex.js" type="text/javascript"></script>
+	<script src="js/idex/idex.basic.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.binds.js" type="text/javascript"></script>
+	<script src="js/idex/idex.ajax.js" type="text/javascript"></script>
+	<script src="js/idex/idex.util.js" type="text/javascript"></script>
+	<script src="js/idex/idex.tables.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.dmon.js" type="text/javascript"></script>
+
+	<script src="js/idex/idex.user.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.marketList.js" type="text/javascript"></script>
+
+	<script src="js/idex/idex.exchanges.js" type="text/javascript"></script>
+	<script src="js/idex/idex.exchanges.nxtae.js" type="text/javascript"></script>
+	<script src="js/idex/idex.exchanges.external.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.market.js" type="text/javascript"></script>
+	<script src="js/idex/idex.coin.js" type="text/javascript"></script>
+
+	<script src="js/idex/idex.cbalances.js" type="text/javascript"></script>
+	<script src="js/idex/idex.copenorders.js" type="text/javascript"></script>
+	<script src="js/idex/idex.ctrades.js" type="text/javascript"></script>
+	<script src="js/idex/idex.cmarkethistory.js" type="text/javascript"></script>
+	<script src="js/idex/idex.cwatchlist.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.orderbox.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbox.binds.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.makeoffer.js" type="text/javascript"></script>
+
+	<script src="js/idex/idex.orderbook.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbook.utils.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbook.async.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbook.binds.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbook.formatorders.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbook.updateorders.js" type="text/javascript"></script>
+	<script src="js/idex/idex.orderbook.labels.js" type="text/javascript"></script>
+	
+	<script src="js/idex/idex.grid.cellHandlers.js" type="text/javascript"></script>
+
+	<script src="js/idex/idex.chart.js" type="text/javascript"></script>
+
+	<script src="js/idex/idex.autocomplete.js" type="text/javascript"></script>
+	<script src="js/idex/idex.scrollbar.js" type="text/javascript"></script>
+	<script src="js/idex/idex.dom.js" type="text/javascript"></script>
+	
+	<script src="idex.demo.js" type="text/javascript"></script>
+	
+	
+</body>
+
+
+
+
+</html>
