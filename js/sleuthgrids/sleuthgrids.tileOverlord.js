@@ -92,7 +92,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			if (isTriggeredNew)
 			{
 				var triggeredCellType = Sleuthgrids.triggeredType;
-				var tile = tileOverlord.makeTile(tileCSS);				
+				var tile = tileOverlord.makeTile(tileCSS);
+				tile.updateInternalTilePositions();
 				tile.cellOverlord.makeCell(triggeredCellType, -1, true, isTriggeredNew);
 			}
 			else
@@ -113,6 +114,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					if (!arrowDirections.isMiddle)
 					{
 						newTile = tileOverlord.makeTile(tileCSS);
+						newTile.updateInternalTilePositions();
 					}
 					
 					triggeredCell.cellOverlord.moveCellToNewCellOverlord(triggeredCell, newTile.cellOverlord);	
@@ -133,7 +135,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			for (var i = 0; i < numTiles; i++)
 			{
 				var tile = tiles[i];
-				tile.resizeCells();
+				tile.cellOverlord.resizeAllCells();
 			}
 		},
 		
@@ -299,7 +301,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				var side = sides[searchDirection];
 				var sideCoord = side.coord;
-				//console.log([allTiles, sideCoord, searchDirection]);
 				var parallelTiles = tileOverlord.searchForParallelTiles(allTiles, sideCoord, searchDirection)
 				
 				if (parallelTiles.length)
@@ -308,8 +309,6 @@ Sleuthgrids = (function(Sleuthgrids)
 				}
 			}
 			
-			console.log(parallelTiles);
-
 			if (parallelTiles.length)
 			{
 				var directions = Sleuthgrids.getDirections(searchDirection);
@@ -358,8 +357,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			adjTiles.push(tile);
 
 			var parallelTiles = foundTiles.parallelTiles;
-			console.log(parallelTiles);
-			console.log(adjTiles);
+
 			if (parallelTiles.length)
 			{
 				var mousePos = directions.isVert ? mouseY : mouseX;
@@ -369,25 +367,25 @@ Sleuthgrids = (function(Sleuthgrids)
 				{
 					for (var i = 0; i < tiles.length; i++)
 					{
-						var tile = tiles[i];
-						var pos = tile.positions;
+						var loopTile = tiles[i];
+						var pos = loopTile.positions;
 						//var minSize = tile['min'+sizeKey];
 						var absKey = directions.isVert ? "top" : "left";
 						var sizeKey = directions.isVert ? "height" : "width";
 						var adjCheck = isAdjacent ? directions.isLeftOrTop : !directions.isLeftOrTop;
 
 						var newSize = adjCheck ? (pos[sizeKey] - diff) : (pos[sizeKey] + diff);
-						tile.tileDOM.css(sizeKey, newSize);
+						loopTile.tileDOM.css(sizeKey, newSize);
 						
 						if (adjCheck)
 						{
 							var newAbs = pos[absKey] + diff;
-							tile.tileDOM.css(absKey, newAbs);
+							loopTile.tileDOM.css(absKey, newAbs);
 						}
 						
-						tile.updateInternalTilePositions();
+						loopTile.updateInternalTilePositions();
 					}
-				};
+				}
 				
 				resizeFunc(adjTiles, true);
 				resizeFunc(parallelTiles, false);
@@ -401,7 +399,8 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var tileOverlord = this;
 			var allTiles = tileOverlord.getAllTiles(tile);
-			var possibleTileRanges = tileOverlord.searchForAdjacentTiles(tile, sideDirection);
+			var adjData = tileOverlord.searchForAdjacentTiles(tile, sideDirection);
+			var possibleTileRanges = adjData.rangeData;
 			
 			var adjTilesInRange = [];
 			var parallelTiles = [];
@@ -488,28 +487,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
-		
-		checkSearchTilesTotalSize: function(searchResults, searchDirection, size)
-		{
-			var isSizeEqual = false;
-			
-			var isVert = (searchDirection == "left" || searchDirection == "right");
-			var sizeKey = isVert ? "width" : "height";
 
-			var runningSize = 0;
-			
-			for (var j = 0; j < searchResults.length; j++)
-			{
-				runningSize += searchResults[j][0].tile.positions[sizeKey];
-			}
-								
-			isSizeEqual = (runningSize == size) || (Math.abs(runningSize - size) <= 0.5);
-			
-			
-			return isSizeEqual;
-		},
-		
-		
 		
 		searchForAdjacentTiles: function(tile, searchDirection)
 		{
@@ -530,12 +508,13 @@ Sleuthgrids = (function(Sleuthgrids)
 			mainTile.sideA = mainTile.sides[searchSideDirections.sideA];
 			mainTile.sideB = mainTile.sides[searchSideDirections.sideB];
 
-			//console.log([allTiles, searchDirection, searchPosition]);
-			
-			var tilesInRow = tileOverlord.getTilesInRow(allTiles, searchDirection, searchPosition);
-			var tilesInRowFormatted = tileOverlord.formatTilesInRow(tilesInRow, mainTile, searchSideDirections);
 
+			var tilesInRow = tileOverlord.getTilesInRow(allTiles, searchDirection, searchPosition);
+			
+			var tilesInRowFormatted = tileOverlord.formatTilesInRow(tilesInRow, mainTile, searchSideDirections);
+			
 			var allRowCoords = tileOverlord.getAdjacentTileCoords(tilesInRowFormatted, mainTile);
+
 			var allRowCoordsFormatted = tileOverlord.formatAdjacentTileCoords(allRowCoords, searchPosition, directions.isVert);
 
 			
@@ -688,8 +667,11 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		formatAdjacentTileData: function(tilesInRowFormatted, allRowCoordsFormatted)
 		{
-			var formattedAdjData = [];
-						
+			var formattedAdjData = {};
+			var rangeData = [];
+			
+			formattedAdjData.adjTiles = tilesInRowFormatted;
+			
 			for (var i = 0; i < allRowCoordsFormatted.length; i++)
 			{
 				var lineCoord = allRowCoordsFormatted[i];
@@ -697,16 +679,16 @@ Sleuthgrids = (function(Sleuthgrids)
 				var lineDistanceB = lineCoord.distancePoints[1];
 				var tilesInRange = [];
 
-				for (var j = 0; j < tilesInRowFormatted.length; j++)
+				for (var j = 0; j < tilesInRowFormatted.allTiles.length; j++)
 				{
-					var tileInRow = tilesInRowFormatted[j];
+					var tileInRow = tilesInRowFormatted.allTiles[j];
 
 					var firstBetween = tileInRow.sideA.pos >= lineDistanceA;
 					var secondBetween =  tileInRow.sideB.pos <= lineDistanceB;
 					
 					if (firstBetween && secondBetween)
 					{
-						tilesInRange.push(tileInRow[i]);
+						tilesInRange.push(tileInRow.tile);
 					}
 				}
 				
@@ -714,8 +696,10 @@ Sleuthgrids = (function(Sleuthgrids)
 				obj.lineCoord = lineCoord;
 				obj.tilesInRange = tilesInRange;
 				
-				formattedAdjData.push(obj);
+				rangeData.push(obj);
 			}
+			
+			formattedAdjData.rangeData = rangeData;
 			
 			return formattedAdjData;
 		},

@@ -46,7 +46,6 @@ Sleuthgrids = (function(Sleuthgrids)
 
 		var cellType = $(this).attr("data-grid");
 		
-		
 		Sleuthgrids.isGridTrig = true;
 		Sleuthgrids.isTriggeredNew = true;
 		Sleuthgrids.triggeredType = cellType;
@@ -62,12 +61,12 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			if ($grid.length)
 			{
-				var has = $tileAdd.hasClass("active")
+				var has = Sleuthgrids.tileAdd.hasClass("active")
 				
 				if (!has)
 				{
 					Sleuthgrids.updateTileAddPos(e)	
-					$tileAdd.addClass("active");
+					Sleuthgrids.tileAdd.addClass("active");
 					$grid.find(".grid-arrow").addClass("active");
 					
 					var hasGrids = $grid.find(".tile").length;
@@ -93,22 +92,21 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			Sleuthgrids.isGridTrig = false;
 			Sleuthgrids.triggeredCell = null;
-			$tileAdd.removeClass("active");
+			Sleuthgrids.tileAdd.removeClass("active");
 			$(".grid-arrow").removeClass("active");
 			$(".tile-arrow-wrap").removeClass("active");
 			$(".grid-trig").removeClass("mousedown");
 		}
 		
-		if (Sleuthgrids.isResizing && false)
+		if (Sleuthgrids.isResizing)
 		{
 			var allGrids = Sleuthgrids.allGrids;
 			
-			for (var i = 0; i < allGrids.length; i++)
+			for (var i = 0; i < Sleuthgrids.gridOverlord.grids.length; i++)
 			{
-				var grid = allGrids[i];
-				grid.toggleTileResizeOverlay(false);
-				grid.resizeTileCells();
-				//grid.resizeTiles();
+				var grid = Sleuthgrids.gridOverlord.grids[i];
+				grid.tileOverlord.toggleTileResizeOverlay(false);
+				grid.tileOverlord.resizeTileCells();
 			}
 		}
 		

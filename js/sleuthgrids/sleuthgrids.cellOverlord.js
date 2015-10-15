@@ -253,7 +253,10 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellOverlord = this;
 			var tile = cellOverlord.tile;
 			var tileOverlord = tile.tileOverlord;
-			tileOverlord.getLinkedCells(cell, includeSelf);
+			
+			var linkedCells = tileOverlord.getLinkedCells(cell, includeSelf);
+			
+			return linkedCells;
 		},
 		
 	}
