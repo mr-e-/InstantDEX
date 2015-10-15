@@ -318,14 +318,14 @@ Sleuthgrids = (function(Sleuthgrids)
 		onGridArrowMouseover: function($arrow)
 		{
 			var grid = this;
-			var gridPositions = grid.positions;
+			var gridPositions = grid.currentGridPositions;
 			var tileOverlord = grid.tileOverlord;
 			
-			var previewTile = grid.previewTile;
+			var previewTile = tileOverlord.previewTile;
 			var $previewTile = previewTile.tileDOM;
 			
 			var direction = $arrow.attr("data-arrow");
-			var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
+			var arrowDirections = Sleuthgrids.getDirections(direction);
 
 			Sleuthgrids.toggleTileAdd(false);			
 
@@ -398,7 +398,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			var grid = this;
 			var tileOverlord = grid.tileOverlord;
 			var previewTile = tileOverlord.previewTile;
-			var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
+			
+			var direction = $arrow.attr("data-arrow");
+			var arrowDirections = Sleuthgrids.getDirections(direction);
 			
 			
 			if (Sleuthgrids.isGridTrig)
@@ -443,7 +445,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tileOverlord = grid.tileOverlord;
 			var previewTile = tileOverlord.previewTile;
 			var previewTilePositions = previewTile.positions;
-			var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
+			
+			var direction = $arrow.attr("data-arrow");
+			var arrowDirections = Sleuthgrids.getArrowDirections(direction);
 			
 			Sleuthgrids.toggleTileAdd(false);
 

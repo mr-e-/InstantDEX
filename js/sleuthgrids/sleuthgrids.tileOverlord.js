@@ -99,13 +99,16 @@ Sleuthgrids = (function(Sleuthgrids)
 			else
 			{
 				var triggeredCell = Sleuthgrids.triggeredCell;
+				var triggeredCellOverlord = triggeredCell.cellOverlord;
 				var triggeredTile = triggeredCell.cellOverlord.tile;
+
 				var $triggeredTile = triggeredTile.tileDOM;
 				
-				var numCells = triggeredTile.cells.length;
+				var numCells = triggeredCellOverlord.cells.length;
 				
 				if (numCells == 1 && !arrowDirections.isMiddle)
 				{
+					triggeredTile.tileOverlord.closeTileResizer(triggeredTile, false);
 					$triggeredTile.css(tileCSS);
 					triggeredTile.updateInternalTilePositions();
 				}
@@ -117,7 +120,7 @@ Sleuthgrids = (function(Sleuthgrids)
 						newTile.updateInternalTilePositions();
 					}
 					
-					triggeredCell.cellOverlord.moveCellToNewCellOverlord(triggeredCell, newTile.cellOverlord);	
+					triggeredCellOverlord.moveCellToNewCellOverlord(triggeredCell, newTile.cellOverlord);	
 				}
 			}
 		
@@ -251,7 +254,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				
 				if (Sleuthgrids.checkIfSamePosition(edgePosition, tileEdgePosition))
 				{
-					foundTiles.push(loopTile);
+					foundTiles.push(tile);
 				}	
 			}
 			

@@ -67,6 +67,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var cellOverlord = cellNav.cellOverlord;
 			var tile = cellOverlord.tile;
 			
+			
 			cellNav.cellNavDOM.on("mousedown", function(e)
 			{				
 				//var hasCloseClass = $(e.target).hasClass("tile-header-close") || $(e.target).hasClass("tile-header-link");
@@ -107,10 +108,12 @@ Sleuthgrids = (function(Sleuthgrids)
 					Sleuthgrids.triggeredCell = cell;
 					Sleuthgrids.isTriggeredNew = false;
 					cellNav.isMoving = false;
+					
+					/*
 					//tile.closeTile(tileNavCell);
 					
-					console.log(e);
-					var gridPositions = Sleuthgrids.getPositions(grid.gridDOM, false);
+					var grid = cellNav.cell.cellOverlord.tile.tileOverlord.grid;
+					var gridPositions = grid.currentGridPositions;
 					var mouseX = e.clientX - gridPositions.left;
 					var mouseY = e.clientY - gridPositions.top;
 
@@ -118,8 +121,9 @@ Sleuthgrids = (function(Sleuthgrids)
 					console.log(mouseX);
 					tile.tileDOM.animate({left:mouseX-150, top:mouseY, width:"300px", height:"250px"}, 400);
 					tile.toggleTileOverlay(true);
-					tile.closeTileResizer();
-				  // tile.tileDOM.animate({}, 400);
+					tile.tileOverlord.closeTileResizer();
+					// tile.tileDOM.animate({}, 400);
+					*/
 				}
 			})
 			

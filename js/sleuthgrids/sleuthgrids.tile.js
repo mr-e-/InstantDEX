@@ -196,7 +196,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			})
 			
 			return dfd.promise();
-			
 		},
 		
 		
@@ -258,8 +257,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				tileOverlord.removeTile(tile);
 			}
-		},
-		
+		},		
 		
 
 		
@@ -319,7 +317,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tile = this;
 			var $tileArrowWrap = tile.tileArrowWrapDOM;
 
-			if (Sleuthgrids.isGridTrig && (Sleuthgrids.triggeredCell == null || Sleuthgrids.triggeredCell.tile != tile))
+			if (Sleuthgrids.isGridTrig && (Sleuthgrids.triggeredCell == null || Sleuthgrids.triggeredCell.cellOverlord.tile != tile))
 			{
 				$tileArrowWrap.addClass("active");
 			}

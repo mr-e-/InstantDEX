@@ -132,12 +132,12 @@ Sleuthgrids = (function(Sleuthgrids)
 			cellOverlord.hideAllCells();
 			cellOverlord.showCell(cellOverlord.cells[tempIndex]);
 			
+			
 			if (cellOverlord.cells.length == 0)
 			{
+				//cellOverlord.tile.tileOverlord.closeTileResizer(cellOverlord.tile, false);
 				cellOverlord.tile.tileOverlord.removeTile(cellOverlord.tile);
 			}
-			//triggeredTile.closeTileResizer(!arrowDirections.isMiddle);
-
 		},
 		
 		
