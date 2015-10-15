@@ -1,5 +1,3 @@
-	
-// Created by CryptoSleuth <cryptosleuth@gmail.com>
 
 
 var IDEX = (function(IDEX, $, undefined) 

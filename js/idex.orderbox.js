@@ -71,6 +71,20 @@ var IDEX = (function(IDEX, $, undefined)
 		return orderbox;
 	};
 	
+	IDEX.newBasicOrderbox = function($el)
+	{
+
+		orderbox = new IDEX.Orderbox();
+		
+		orderbox.orderboxDom = $el;
+		orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom, orderbox)
+		orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom, orderbox)
+
+		orderbox.isBasic = true;
+		
+		return orderbox;
+	};
+	
 	
 	IDEX.Orderbox.prototype.updateExchangesDom = function()
 	{
@@ -145,7 +159,8 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbox.market = market;
 
 		orderbox.hasMarket = true;
-		orderbox.updateExchangesDom();
+		if (!orderbox.isBasic)
+			orderbox.updateExchangesDom();
 		//orderbox.buyBox.balanceTitleDom.text(orderbox.relAsset.name + ": ");
 		//orderbox.sellBox.balanceTitleDom.text(orderbox.baseAsset.name + ": ");
 		orderbox.buyBox.balanceValDom.text("Loading...");
@@ -208,7 +223,6 @@ var IDEX = (function(IDEX, $, undefined)
 		baseOrRel.balanceHandler.update(forceUpdate, [exchange]).done(function()
 		{
 			var balances = baseOrRel.balanceHandler.balance;
-			
 			for (var i = 0; i < balances.length; i++)
 			{
 				var balance = balances[i];
