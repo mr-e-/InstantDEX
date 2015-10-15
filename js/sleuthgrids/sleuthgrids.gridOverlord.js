@@ -14,12 +14,39 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	GridOverlord.prototype = 
 	{	
-		init: function(tile)
+		init: function()
 		{
 			var gridOverlord = this;
 			
 			gridOverlord.grids = [];
+			
+			gridOverlord.initDOM();
+			gridOverlord.initEventListeners();
+		},
+		
+		
+		
+		initDOM: function()
+		{
+			var gridOverlord = this;
+			
 			gridOverlord.gridTabsWrap = $(".util-grid-tabs");
+			gridOverlord.gridsWrapDOM = $(".grids");
+			gridOverlord.addGridButtonDOM = $(".util-grid-newTab");
+		},
+		
+		
+		
+		initEventListeners: function()
+		{
+			var gridOverlord = this;
+			
+			gridOverlord.addGridButtonDOM.on("click", function()
+			{
+				gridOverlord.makeGrid(true);
+			});
+			
+			
 		},
 		
 		
@@ -31,34 +58,48 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				var gridSave = gridSaves[i];
 				var isActive = gridSave.isActive;
-				var grid = gridOverlord.makeGrid();
-						
+				var grid = gridOverlord.makeGrid(false);
 				grid.tileOverlord.initTilesFromSave(gridSave.tileSaves);
+				
+				if (isActive)
+				{
+					gridOverlord.hideAllGrids();
+					grid.showGrid(true);
+				}
 			}
 			
 			return gridOverlord.grids;
 		},
 		
 		
+		
 		makeGrid: function(isActive)
 		{
 			var gridOverlord = this;
 			var index = gridOverlord.grids.length;
-			
-			var grid = new Sleuthgrids.Grid(gridOverlord, index);
-			
-			$(".grids").append(grid.gridDOM);
-			gridOverlord.grids.push(grid);
-			
-			if (isActive)
+						
+			if (index >= 5)
 			{
-				grid.gridTab.gridTabDOM.trigger("click")
-				grid.isActive = gridSave.isActive;
-				//grid.showGrid();
+				$.growl.warning({'message':"Limit of 5 grids reached", 'location':"tl"});
+			}
+			else
+			{
+				var grid = new Sleuthgrids.Grid(gridOverlord, index);
+				
+				gridOverlord.grids.push(grid);
+				gridOverlord.gridsWrapDOM.append(grid.gridDOM);
+				gridOverlord.gridTabsWrap.append(grid.gridTab.gridTabDOM);
+
+				if (isActive)
+				{
+					gridOverlord.hideAllGrids();
+					grid.showGrid(true);
+				}
 			}
 			
 			return grid;
 		},
+		
 		
 		
 		removeGrid: function(grid)
@@ -83,15 +124,12 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var gridOverlord = this;
 			var grids = gridOverlord.grids;
+			var numGrids = grids.length;
 			
-			for (var i = 0; i < grids.length; i++)
+			for (var i = 0; i < numGrids; i++)
 			{
 				var grid = grids[i];
-				
-				if (grid.isActive)
-				{
-					grid.resizeGrid();
-				}
+				grid.resizeGrid();
 			}
 		},
 		
@@ -121,6 +159,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		
 		hideAllGrids: function()
 		{
 			var gridOverlord = this;
@@ -133,7 +172,8 @@ Sleuthgrids = (function(Sleuthgrids)
 				grid.hideGrid();
 			}
 		},
-			
+		
+		
 
 		updateGridTabs: function()
 		{
@@ -145,7 +185,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			{
 				var grid = grids[i];
 				var gridTab = grid.gridTab;
-				gridTab.updateIndex();
+				gridTab.updateName();
 			}
 		},
 	
@@ -154,7 +194,6 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-
 
 	return Sleuthgrids;
 	

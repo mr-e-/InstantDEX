@@ -9,7 +9,7 @@ var Sleuthgrids = {};
 Sleuthgrids = (function(Sleuthgrids) 
 {
 	Sleuthgrids.tileAdd = $("#tile_add");
-	Sleuthgrids.contentWrap = $("#content_wrap");
+	Sleuthgrids.contentWrap = $(".sleuthgrids-wrap");
 	
 	Sleuthgrids.cellHandlers = {};
 	
@@ -26,16 +26,33 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	Sleuthgrids.prevWindowHeight = 0;
 	Sleuthgrids.prevWindowWidth = 0;
+	
+	
+	Sleuthgrids.init = function(save)
+	{
+		Sleuthgrids.gridOverlord = new Sleuthgrids.GridOverlord();
+
+		Sleuthgrids.saveHeight = save.windowHeight;
+		Sleuthgrids.saveWidth = save.windowWidth;
+		var gridSaves = save.gridSaves;
+		
+		if (!gridSaves)
+			gridSaves = [];
+		
+		Sleuthgrids.gridOverlord.makeGridsFromSave(gridSaves);
+		
+		Sleuthgrids.gridOverlord.resizeAllGrids();
+	};
 
 	
 	
 	$.fn.sleuthgrids = function() 
 	{
-		var args = arguments;
 		var ret = false;
+		var $grid = $(this);
+
 		var allGrids = Sleuthgrids.allGrids;
 		var len = allGrids.length;
-		var $grid = $(this);
 		
 		if (this[0]) 
 		{

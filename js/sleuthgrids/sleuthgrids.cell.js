@@ -88,13 +88,13 @@ Sleuthgrids = (function(Sleuthgrids)
 			})
 			
 			
-			tileNavCell.cellNavDOM.on("mouseup", function(e)
+			cellNav.cellNavDOM.on("mouseup", function(e)
 			{
 				cellNav.isMoving = false;
 			})
 			
 			
-			tileNavCell.cellNavDOM.on("mouseout", function(e)
+			cellNav.cellNavDOM.on("mouseout", function(e)
 			{	
 				if (cellNav.isMoving)
 				{
@@ -106,7 +106,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					Sleuthgrids.isGridTrig = true;
 					Sleuthgrids.triggeredCell = cell;
 					Sleuthgrids.isTriggeredNew = false;
-					tileNavCell.isMoving = false;
+					cellNav.isMoving = false;
 					//tile.closeTile(tileNavCell);
 					
 					console.log(e);
@@ -437,7 +437,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 	}
 		
-		
+
 	
 	return Sleuthgrids;
 	

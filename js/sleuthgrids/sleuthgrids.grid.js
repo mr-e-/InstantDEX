@@ -3,9 +3,6 @@
 // Created by CryptoSleuth <cryptosleuth@gmail.com>
 
 
-var Sleuthgrids = {};
-
-
 Sleuthgrids = (function(Sleuthgrids) 
 {
 
@@ -18,16 +15,14 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	GridTab.prototype = 
 	{
-		init: function(grid, index)
+		init: function(grid)
 		{
 			var gridTab = this;
 			gridTab.grid = grid;
 			gridTab.gridOverlord = grid.gridOverlord;
 			
-			gridTab.index = index;
 			gridTab.isActive = false;
 			gridTab.name = "";
-			gridTab.isDefault = index == 0;
 			
 			gridTab.gridTabDOM;
 			gridTab.gridTabCloseDOM;
@@ -36,30 +31,23 @@ Sleuthgrids = (function(Sleuthgrids)
 
 			gridTab.initDOM();
 			gridTab.initEventListeners();
+			gridTab.updateName();
 		},
+		
 		
 		
 		initDOM: function()
 		{
 			var gridTab = this;
-			var index = gridTab.index;
-			var isDefault = gridTab.isDefault;
+			var grid = gridTab.grid;
+			var index = grid.index;
+			var isDefault = grid.isDefault;
 			
 			gridTab.gridTabDOM = $($("#util_grid_tab_template").html());
 			gridTab.gridTabTitleDOM = gridTab.gridTabDOM.find(".util-grid-tab-title span");
-			gridTab.gridTabCloseDOM = gridTab.gridTabDOM.find(".util-grid-tab-close");
-
-			gridTab.gridTabDOM.attr("data-gridindex", index);
-			
-			var defaultClass = isDefault ? "util-grid-tab-default" : "";
-			gridTab.gridTabDOM.addClass(defaultClass);
-
-			var name = isDefault ? "Default" : "Grid-" + String(index);
-			gridTab.name = name;
-			gridTab.gridTabTitleDOM.text(name);
-			
-			Sleuthgrids.gridTabsWrap.append(gridTab.gridTabDOM);
+			gridTab.gridTabCloseDOM = gridTab.gridTabDOM.find(".util-grid-tab-close");			
 		},
+		
 		
 		
 		initEventListeners: function()
@@ -68,7 +56,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			gridTab.gridTabDOM.on("click", function(e)
 			{
-				gridTab.showTab(e);
+				gridTab.onGridTabClick(e);
 			})
 			
 			gridTab.gridTabCloseDOM.on("click", function(e)
@@ -77,6 +65,40 @@ Sleuthgrids = (function(Sleuthgrids)
 			})
 			
 		},
+		
+		
+		updateName: function()
+		{
+			var gridTab = this;
+			var grid = gridTab.grid;
+			var index = grid.index;
+			var isDefault = grid.isDefault;
+			
+			var defaultClass = isDefault ? "util-grid-tab-default" : "";
+			gridTab.gridTabDOM.addClass(defaultClass);
+
+			var name = isDefault ? "Default" : "Grid-" + String(index);
+			gridTab.name = name;
+			gridTab.gridTabTitleDOM.text(name);
+		},
+		
+		
+		
+		onGridTabClick: function(e)
+		{
+			var gridTab = this;
+			var grid = gridTab.grid;
+			var gridOverlord = gridTab.gridOverlord;
+			
+			var isClose = $(e.target).hasClass("util-grid-tab-close");
+			
+			if (!isClose)
+			{
+				gridOverlord.hideAllGrids();
+				grid.showGrid(true);
+			}
+		},
+		
 		
 		
 		onGridTabCloseClick: function()
@@ -88,42 +110,28 @@ Sleuthgrids = (function(Sleuthgrids)
 			gridOverlord.removeGrid(grid);
 		},
 		
+
 		
-		showTab: function(e)
+		showTab: function()
+		{
+			var gridTab = this;
+			var grid = gridTab.grid;
+			
+			gridTab.gridTabDOM.addClass("active");
+		},
+		
+		
+		
+		hideTab: function()
 		{
 			var gridTab = this;
 			var grid = gridTab.grid;
 			var gridOverlord = gridTab.gridOverlord;
-			var isClose = $(e.target).hasClass("util-grid-tab-close");
 			
-			if (!isClose)
-			{
-				gridOverlord.gridTabsWrap.find(".util-grid-tab").removeClass("active");
-				gridTab.gridTabDOM.addClass("active");
-								
-				gridOverlord.hideAllGrids();
-				grid.showGrid(true);
-			}
+			gridTab.gridTabDOM.removeClass("active");
+			//gridOverlord.gridTabsWrap.find(".util-grid-tab").removeClass("active");
 		},
 		
-		
-		updateIndex: function()
-		{
-			var gridTab = this;
-			var grid = gridTab.grid;
-			var index = grid.index;
-			var isDefault = index == 0;
-			
-			gridTab.index = index;
-			gridTab.isDefault = isDefault;
-			
-			gridTab.gridTabDOM.attr("data-gridindex", index);
-			var name = isDefault ? "Default" : "Grid-" + String(index);
-			gridTab.name = name;
-			gridTab.gridTabTitleDOM.text(name);
-		},
-		
-
 		
 		
 		removeGridTab: function()
@@ -151,29 +159,34 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			grid.gridOverlord = gridOverlord;
 			grid.index = index;
+			grid.isDefault = index == 0;
 			
 			grid.currentGridPositions = {};
 			grid.prevGridPositions = {};
 
 			grid.isActive = false;
 			grid.needsResize = false;
-			grid.saveObj = {};
 
-			grid.gridTab = new Sleuthgrids.GridTab(grid, grid.index);
-			grid.tileOverlord = new Sleuthgrids.tileOverlord(grid);
-			grid.initEventListeners();
 			grid.initDOM();
+			grid.initEventListeners();
+			grid.onetime = true;
+			//grid.currentGridPositions = Sleuthgrids.getPositions(grid.gridDOM, true);
 			
+			grid.gridTab = new Sleuthgrids.GridTab(grid, grid.index);
+			grid.tileOverlord = new Sleuthgrids.TileOverlord(grid);
 		},
+		
 		
 		
 		initDOM: function()
 		{
 			var grid = this;
+			var index = grid.index;
 			
 			grid.gridDOM = $($("#grid_template").html());
-			grid.gridDOM.attr("data-gridindex", grid.index);
+			grid.gridDOM.attr("data-gridindex", index);
 		},
+		
 		
 		
 		initEventListeners: function()
@@ -197,18 +210,42 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
+		updateInternalGridPositions: function()
+		{
+			var grid = this;
+			
+			var gridPositions = Sleuthgrids.getPositions(grid.gridDOM, true);
+
+			var isVisible = grid.gridDOM.is(":visible");
+
+			if (isVisible)
+			{
+				grid.prevGridPositions = grid.currentGridPositions;
+				grid.currentGridPositions = gridPositions;
+				if (grid.onetime)
+				{
+					grid.prevGridPositions = {};
+					grid.prevGridPositions.height = Sleuthgrids.saveHeight;
+					grid.prevGridPositions.width = Sleuthgrids.saveWidth;
+					grid.onetime = false;
+				}
+			}
+			
+			//console.log(grid.prevGridPositions);
+			//console.log(grid.currentGridPositions);
+		},
+		
 		
 		showGrid: function(resize)
 		{
 			var grid = this;
+			var gridTab = grid.gridTab;
 			
 			grid.gridDOM.addClass("active");
 			grid.isActive = true;
+			gridTab.showTab();
 			
-			if (resize)
-			{
-				grid.resizeGrid();
-			}
+			grid.resizeGrid();
 		},
 		
 		
@@ -216,9 +253,12 @@ Sleuthgrids = (function(Sleuthgrids)
 		hideGrid: function()
 		{
 			var grid = this;
-			
+			var gridTab = grid.gridTab;
+
 			grid.gridDOM.removeClass("active");
 			grid.isActive = false;
+			
+			gridTab.hideTab();
 		},
 	
 		
@@ -261,9 +301,8 @@ Sleuthgrids = (function(Sleuthgrids)
 
 			if (isVisible)
 			{
-				grid.prevGridPositions = grid.currentGridPositions;
-				grid.currentGridPositions = Sleuthgrids.getPositions(grid.gridDOM, true);
-				
+				grid.updateInternalGridPositions();
+
 				tileOverlord.scaleTiles();
 
 				grid.needsResize = false;
@@ -279,16 +318,18 @@ Sleuthgrids = (function(Sleuthgrids)
 		onGridArrowMouseover: function($arrow)
 		{
 			var grid = this;
+			var gridPositions = grid.positions;
+			var tileOverlord = grid.tileOverlord;
+			
 			var previewTile = grid.previewTile;
 			var $previewTile = previewTile.tileDOM;
+			
+			var direction = $arrow.attr("data-arrow");
 			var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
 
 			Sleuthgrids.toggleTileAdd(false);			
 
-			$previewTile.css("height", "100%");
-			$previewTile.css("width", "100%");
-			$previewTile.css("top", 0);
-			$previewTile.css("left", 0);
+			previewTile.resetPositions();
 
 			
 			if (arrowDirections.isMiddle)
@@ -298,21 +339,22 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			else
 			{
-				var foundTiles = grid.findMain(arrowDirections.direction, false);
+				var edgePosition = gridPositions[arrowDirections.direction];
+				var foundTiles = tileOverlord.findTilesTouchingEdge(arrowDirections.direction, edgePosition);
 				
 				if (foundTiles.length)
 				{
-					var smallestTile = grid.getLowest(foundTiles, arrowDirections.direction);
-					var smallestTilePositions = smallestTile.positions;
-					
 					var absKey = arrowDirections.isHoriz ? "left" : "top";
 					var sizeKey = arrowDirections.isHoriz ? "width" : "height";
-					var newSize = smallestTilePositions[sizeKey]/2;
 					
-					grid.resizeMain(foundTiles, arrowDirections, newSize, absKey, sizeKey, true);
+					var smallestTile = tileOverlord.getSmallestTile(foundTiles, sizeKey);
+					var smallestTilePositions = smallestTile.positions;
+					
+					var newSize = smallestTilePositions[sizeKey] / 2;
+					
+					tileOverlord.resizeTilesTouchingGridEdges(foundTiles, arrowDirections, newSize, absKey, sizeKey, true);
 
-					var gridPositions = Sleuthgrids.getPositions(grid.gridDOM, true);
-
+					
 					var prevAbs = (arrowDirections.isBottom || arrowDirections.isRight) ? (gridPositions[sizeKey] - newSize) : 0;
 					
 					$previewTile.css(sizeKey, newSize);
@@ -325,38 +367,67 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 		},
 	
+	
+	
+		resizeTilesTouchingGridEdges: function(tiles, arrowDirections, newSize, absKey, sizeKey, isMouseover)
+		{
+			for (var i = 0; i < tiles.length; i++)
+			{
+				var tile = tiles[i];
+				var $tile = tile.tileDOM;
+				var tilePositions = tile.positions;
+				
+				var size = tilePositions[sizeKey];
+				var adjSize = isMouseover ? size - newSize : size + newSize;
+
+				var newAbs = isMouseover ? (tilePositions[absKey] + newSize) : (tilePositions[absKey] - newSize);
+				newAbs = (arrowDirections.isLeft || arrowDirections.isTop) ? newAbs : tilePositions[absKey];
+				
+				
+				$tile.css(sizeKey, adjSize);
+				$tile.css(absKey, newAbs);
+				tile.updateInternalTilePositions();
+				tile.resizeCells();
+			}
+		},
+		
 		
 		
 		onGridArrowMouseout: function($arrow)
 		{
 			var grid = this;
-			var previewTile = grid.previewTile;
+			var tileOverlord = grid.tileOverlord;
+			var previewTile = tileOverlord.previewTile;
+			var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
+			
 			
 			if (Sleuthgrids.isGridTrig)
 			{
 				Sleuthgrids.toggleTileAdd(true);
 				
-				var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
-
-
 				if (arrowDirections.isMiddle)
 				{
 					previewTile.hidePreviewTile();
 				}
 				else
 				{
-					var foundTiles = grid.findMain(arrowDirections.direction, true);
+					var previewTilePositions = previewTile.positions;
+					var previewDirection = Sleuthgrids.invertDirection(arrowDirections.direction);
+					
+					var edgePosition = previewTilePositions[previewDirection];
+					var foundTiles = tileOverlord.findTilesTouchingEdge(arrowDirections.direction, edgePosition);
 
 					if (foundTiles.length)
-					{					
-						var smallestTile = grid.getLowest(foundTiles, arrowDirections.direction);
-						var smallestTilePositions = smallestTile.positions;
-						
+					{
 						var absKey = arrowDirections.isHoriz ? "left" : "top";
 						var sizeKey = arrowDirections.isHoriz ? "width" : "height";
+						
+						var smallestTile = tileOverlord.getSmallestTile(foundTiles, sizeKey);
+						var smallestTilePositions = smallestTile.positions;
+						
 						var newSize = smallestTilePositions[sizeKey];
 						
-						grid.resizeMain(foundTiles, arrowDirections, newSize, absKey, sizeKey, false);
+						tileOverlord.resizeTilesTouchingGridEdges(foundTiles, arrowDirections, newSize, absKey, sizeKey, false);
 						
 						previewTile.hidePreviewTile();
 					}
@@ -368,14 +439,14 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		onGridArrowMouseup: function($arrow)
 		{
-			Sleuthgrids.toggleTileAdd(false);
-
 			var grid = this;
-			var previewTile = grid.previewTile;
+			var tileOverlord = grid.tileOverlord;
+			var previewTile = tileOverlord.previewTile;
 			var previewTilePositions = previewTile.positions;
-			
 			var arrowDirections = Sleuthgrids.getArrowDirections($arrow);
 			
+			Sleuthgrids.toggleTileAdd(false);
+
 			grid.makeTile(arrowDirections, previewTilePositions);
 			
 			previewTile.hidePreviewTile();

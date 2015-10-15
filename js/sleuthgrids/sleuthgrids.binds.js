@@ -4,37 +4,12 @@
 
 Sleuthgrids = (function(Sleuthgrids) 
 {	
-
-	$(window).on("beforeunload", function()
-	{
-		var saves = Sleuthgrids.saveAllGrids();
-		localStorage.setItem('grids', JSON.stringify(saves));
-	})
-	
 	
 	
 	$(window).resize(function(e)
 	{
-		Sleuthgrids.resizeAllGrids();
+		//Sleuthgrids.resizeAllGrids();
 	})
-	
-	
-	
-	$(".util-grid-newTab").on("click", function()
-	{
-		var numGrids = Sleuthgrids.allGrids.length;
-		
-		if (numGrids >= 5)
-		{
-			$.growl.warning({'message':"Limit of 5 grids reached", 'location':"tl"});
-		}
-		else
-		{
-			var grid = new Sleuthgrids.Grid();
-			grid.gridTab.gridTabDOM.trigger("click");
-		}
-	})
-	
 	
 	
 	$(document).on("mousemove", function(e)
@@ -163,7 +138,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	})
 	
 	*/
-	
+
 
 
 	return Sleuthgrids;

@@ -138,7 +138,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			}
 			//triggeredTile.closeTileResizer(!arrowDirections.isMiddle);
 
-		}
+		},
 		
 		
 		showCell: function(cell)
@@ -166,7 +166,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		resizeCells: function()
+		resizeAllCells: function()
 		{
 			var cellOverlord = this;
 			var cells = cellOverlord.cells;

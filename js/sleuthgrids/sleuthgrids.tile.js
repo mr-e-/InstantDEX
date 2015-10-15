@@ -5,7 +5,6 @@
 Sleuthgrids = (function(Sleuthgrids) 
 {
 		
-	
 	var PreviewTile = Sleuthgrids.PreviewTile = function()
 	{
 		this.init.apply(this, arguments)
@@ -26,6 +25,19 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			grid.gridDOM.append(previewTile.tileDOM);
 		},
+		
+		
+		resetPositions: function()
+		{
+			var previewTile = this;
+			var $previewTile = previewTile.tileDOM;
+			
+			$previewTile.css("height", "100%");
+			$previewTile.css("width", "100%");
+			$previewTile.css("top", 0);
+			$previewTile.css("left", 0);
+		},
+		
 		
 		updateInternalTilePositions: function()
 		{
@@ -78,14 +90,11 @@ Sleuthgrids = (function(Sleuthgrids)
 
 			tile.minwidth = 300;
 			tile.minheight = 300;
-
-			tile.isTileHeaderTabbed = false;
 			
 			tile.initDOM(tileCSS);
 			tile.initEventListeners();
+			
 			tile.cellOverlord = new Sleuthgrids.CellOverlord(tile);
-
-			//tile.updateInternalTilePositions();
 		},
 		
 		
@@ -167,6 +176,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			var tilePositions = Sleuthgrids.getPositions(tile.tileDOM, true);
 			var winTilePositions = Sleuthgrids.getPositions(tile.tileDOM, false);
+			//tilePositions.sides = Sleuthgrids.getSideCoords(tilePositions);
+			//winTilePositions.winSides = Sleuthgrids.getSideCoords(winTilePositions);
 
 			tile.positions = tilePositions;
 			tile.winPositions = winTilePositions;
@@ -208,7 +219,6 @@ Sleuthgrids = (function(Sleuthgrids)
 			saveObj.positions = tile.positions;
 			saveObj.winPositions = tile.winPositions;
 			saveObj.index = tile.index;
-			saveObj.isTileHeaderTabbed = tile.isTileHeaderTabbed;
 			saveObj.cellSaves = tile.saveCells();
 						
 			return saveObj;
@@ -237,99 +247,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		},
 		
 		
-		
-		closeTileResizer: function(withPrev)
-		{
-			var tile = this;
-			var grid = tile.grid;
-			var $tile = tile.tileDOM;
-			
-			var allTiles = grid.tiles.slice();
-			allTiles.splice(tile.index, 1);
-			if (withPrev)
-				allTiles.push(grid.previewTile);
-			
-			var tilePositions = tile.positions;
-			var searchMap = Sleuthgrids.makeSearchMap(tilePositions);
-			
-			
-			for (searchDirection in searchMap)
-			{
-				var searchPoints = searchMap[searchDirection];
-				var searchResults = grid.searchForParallelTiles(allTiles, searchPoints, searchDirection)
-				
-				if (searchResults.length)
-				{
-					var isVert = (searchDirection == "left" || searchDirection == "right");
 
-					var coordOne = isVert ? searchPoints[0][1] : searchPoints[0][0];
-					var coordTwo = isVert ? searchPoints[1][1] : searchPoints[1][0];
-					var min = Math.min(coordOne, coordTwo)
-					var max = Math.max(coordOne, coordTwo)
-					var size = max - min;
-					var runningSize = 0;
-					var sizeKey = isVert ? "height" : "width";
-					
-					for (var j = 0; j < searchResults.length; j++)
-					{
-						runningSize += searchResults[j][0].tile.positions[sizeKey];
-					}
-										
-					if (runningSize == size || Math.abs(runningSize - size) <= 0.5)
-					{
-						break;
-					}
-					else
-					{
-						searchResults = [];
-					}				
-				}
-			}
-			
-			if (!searchResults.length)
-			{
-				
-			}
-						
-			var isLeftOrTop = (searchDirection == "left" || searchDirection == "top");
-			var isHoriz = (searchDirection == "top" || searchDirection == "bottom"); //backwards
-			var isVert = (searchDirection == "left" || searchDirection == "right");
-			var absKey = isVert ? "left" : "top";
-			var sizeKey = isVert ? "width" : "height";
-
-			for (var i = 0; i < searchResults.length; i++)
-			{
-				var loopTile = searchResults[i][0].tile;
-				var loopTilePositions = loopTile.positions;
-				var $loopTile = loopTile.tileDOM;
-				
-				var size = loopTilePositions[sizeKey] + tilePositions[sizeKey];
-				var abs = isLeftOrTop ? loopTilePositions[absKey] : loopTilePositions[absKey] - tilePositions[sizeKey];
-				
-				//$loopTile.css(absKey, abs);
-				//$loopTile.css(sizeKey, size);
-				//loopTile.updateInternalTilePositions();
-
-				var obj = {}
-				obj[absKey] = abs;
-				obj[sizeKey] = size;
-				$loopTile.animate(obj, 300, function()
-				{
-					loopTile.updateInternalTilePositions();
-				})
-				
-				if ("cells" in loopTile)
-				{
-					for (var j = 0; j < loopTile.cells.length; j++)
-					{
-						var loopCell = loopTile.cells[j];
-						loopCell.resizeCell();
-					}
-				}
-			}
-		},
-		
-		
 		
 		removeTile: function()
 		{
@@ -358,7 +276,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tile = this;
 			var grid = tile.grid;
 			var $tile = tile.tileDOM;
-			
+			return
 			
 			grid.gridDOM.find(".tile-header-tab").removeClass("focus-border");
 			grid.gridDOM.find(".tile-cells").removeClass("focus-border");
@@ -410,7 +328,6 @@ Sleuthgrids = (function(Sleuthgrids)
 		onTileMousemove: function(e)
 		{
 			var tile = this;
-			var grid = tile.grid;
 			var tileOverlord = tile.tileOverlord;
 			var tilePositions = tile.winPositions;
 			
@@ -451,6 +368,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				
 			if (Sleuthgrids.isResizing)
 			{
+				var grid = tile.tileOverlord.grid;
 				var resizePos = Sleuthgrids.resizeTile.positions;
 				var offsetX = grid.gridDOM.offset().left;
 				var offsetY = grid.gridDOM.offset().top;

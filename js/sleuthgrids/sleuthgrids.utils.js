@@ -34,41 +34,107 @@ Sleuthgrids = (function(Sleuthgrids)
 	}
 	
 	
+	Sleuthgrids.getDirections = function(direction, isInverted)
+	{
+		var directions = {};
+		
+		directions.direction = direction;
+		arrowDirections.isTop = direction == "top";
+		arrowDirections.isBottom = direction == "bottom";
+		arrowDirections.isLeft = direction == "left";
+		arrowDirections.isRight = direction == "right";
+		arrowDirections.isMiddle = direction == "middle";
+		
+		directions.isLeftOrTop =  (direction == "left" || direction == "top");
+		
+		directions.isHoriz = (direction == "left" || direction == "right");
+		directions.isVert = (direction == "top" || direction == "bottom");
+		
+		directions.absKey = isVert ? "left" : "top";
+		directions.sizeKey = isVert ? "width" : "height";
+		
+		return directions;
+	}
 	
-	Sleuthgrids.makeSearchMap = function(positions)
+	
+	Sleuthgrids.getSearchDirections = function()
 	{
 		var searchMap = {};
-		searchMap.left = [["left", "bottom"], ["left", "top"]];
-		searchMap.top = [["left", "top"], ["right", "top"]];
+		
+		searchMap.left = [["left", "top"], ["left", "bottom"]];
 		searchMap.right = [["right", "top"], ["right", "bottom"]];
-		searchMap.bottom = [["right", "bottom"], ["left", "bottom"]];
+		searchMap.top = [["left", "top"], ["right", "top"]];
+		searchMap.bottom = [["left", "bottom"], ["right", "bottom"]];
+
 		
-		var map = {};
+		return map;
+	}
+	
+	
+	Sleuthgrids.getSideCoords = function(positions)
+	{
+		var searchMap = Sleuthgrids.getSearchDirections();
 		
-		for (searchDirection in searchMap)
+		var sides = {};
+		
+		for (var searchDirection in searchMap)
 		{
-			searchDirectionLine = searchMap[searchDirection];
-			map[searchDirection] = [];
+			var sideDirections = searchMap[searchDirection];
+			var directions = Sleuthgrids.getDirections(searchDirection);
 			
-			for (var i = 0; i < searchDirectionLine.length; i++)
-			{
-				var coords = [];
-				var searchDirectionPoint = searchDirectionLine[i];
-				
-				for (var j = 0; j < searchDirectionPoint.length; j++)
-				{
-					var searchDirectionCoord = searchDirectionPoint[j];
-					coords.push(positions[searchDirectionCoord]);
-				}
-				
-				map[searchDirection].push(coords);
-			}
+			var sidePointADirections = sideDirections[0];
+			var sidePointBDirections = sideDirections[1];
+
+			var sidePointACoord = [positions[sidePointADirections[0]], positions[sidePointADirections[1]]];
+			var sidePointBCoord = [positions[sidePointBDirections[0]], positions[sidePointBDirections[1]]];
+
+			var loopSide = {}
+			loopSide.coord = [sidePointACoord, sidePointBCoord];
+			loopSide.pos = directions.isHoriz ? sidePointACoord[0] : sidePointACoord[1];
+			
+			sides[searchDirection] = loopSide;
 		}
 		
 		return map;
 	}
 	
 	
+	
+	
+	
+	Sleuthgrids.checkIfSamePosition = function(posA, posB)
+	{
+		var check = Math.abs(posA - posB) <= 1;
+		
+		return check;
+	}
+	
+	
+	Sleuthgrids.getAllArrayCombinations = function(arr)
+	{
+		if (arr.length == 1)
+		{
+			return arr[0];
+		}
+		else
+		{
+			var result = [];
+			var allCasesOfRest = allPossibleCases(arr.slice(1));
+			
+			for (var i = 0; i < allCasesOfRest.length; i++)
+			{
+				for (var j = 0; j < arr[0].length; j++)
+				{
+					result.push(arr[0][j] + allCasesOfRest[i]);
+				}
+			}
+			
+			return result;
+		}
+	}
+	
+	
+
 	
 	Sleuthgrids.invertDirection = function(direction)
 	{
@@ -88,26 +154,7 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	
 	
-	Sleuthgrids.getArrowDirections = function($arrow)
-	{
-		var arrowDirections = {};
-		var direction = $arrow.attr("data-arrow");
-		
-		arrowDirections.direction = direction;
-		arrowDirections.isTop = direction == "top";
-		arrowDirections.isBottom = direction == "bottom";
-		arrowDirections.isLeft = direction == "left";
-		arrowDirections.isRight = direction == "right";
-		arrowDirections.isMiddle = direction == "middle"
-		
-		arrowDirections.isHoriz = (direction == "left" || direction == "right");
-		arrowDirections.isVert = (direction == "top" || direction == "bottom");
-		
-		arrowDirections.isTab = false;
-		
-		return arrowDirections;
-	}
-	
+
 	
 	
 	Sleuthgrids.checkIfMouseIsInsideBorder = function(mouseY, mouseX, pos)
