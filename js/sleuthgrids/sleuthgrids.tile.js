@@ -185,6 +185,22 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
+		animate: function(newCSS, time)
+		{
+			var tile = this;
+			var dfd = new $.Deferred();
+			
+			tile.tileDOM.animate(newCSS, time, function()
+			{
+				tile.updateInternalTilePositions();
+			})
+			
+			return dfd.promise();
+			
+		},
+		
+		
+		
 		resizeTile: function(sizeKey, prevWin, diff)
 		{
 			var tile = this;
@@ -226,7 +242,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		
 		
 		
-		closeTile: function(tileNavCell)
+		closeTile: function(cellNav)
 		{
 			var tile = this;
 			var tileOverlord = tile.tileOverlord;
@@ -235,14 +251,11 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			if (numCells > 1)
 			{	
-				cellOverlord.closeCell(tileNavCell);
+				cellOverlord.closeCell(cellNav.cell);
 			}
 			else
 			{
-				tile.closeTileResizer();
-
-				//tile.removeCell();
-				grid.removeTile(tile);
+				tileOverlord.removeTile(tile);
 			}
 		},
 		
@@ -253,8 +266,9 @@ Sleuthgrids = (function(Sleuthgrids)
 		{
 			var tile = this;
 			var $tile = tile.tileDOM;
+			var cellOverlord = tile.cellOverlord;
 			
-			tile.removeCell();
+			cellOverlord.removeAllCells();
 			//$tile.unbind();
 			tile.tileDOM.remove();
 		},
@@ -375,7 +389,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				var insideX = mouseX - offsetX;
 				var insideY = mouseY - offsetY;
 				
-				grid.resizeTile(insideX, insideY);
+				tileOverlord.resizeTile(insideX, insideY);
 			}
 		},
 		

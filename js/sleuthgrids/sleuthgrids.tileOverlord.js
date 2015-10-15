@@ -195,6 +195,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tileOverlord = this;
 			var tileIndex = tile.index;
 			
+			tileOverlord.closeTileResizer(tile, false);
 			tile.removeTile();
 			tileOverlord.tiles.splice(tileIndex, 1);
 			Sleuthgrids.updateArrayIndex(tileOverlord.tiles);
@@ -280,9 +281,6 @@ Sleuthgrids = (function(Sleuthgrids)
 
 		
 		
-
-		
-		
 		closeTileResizer: function(tile, withPrev)
 		{
 			var tileOverlord = this;
@@ -292,48 +290,56 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			var allTiles = tileOverlord.getAllTiles(tile);
 			if (withPrev)
-				allTiles.push(grid.previewTile);
+				allTiles.push(tileOverlord.previewTile);
 			
-			var searchMap = Sleuthgrids.makeSearchMap(tilePositions);
+			var sides = Sleuthgrids.getSideCoords(tilePositions);
 			
 			
-			for (var searchDirection in searchMap)
+			for (var searchDirection in sides)
 			{
-				var searchPoints = searchMap[searchDirection];
-				var searchResults = grid.searchForParallelTiles(allTiles, searchPoints, searchDirection)
+				var side = sides[searchDirection];
+				var sideCoord = side.coord;
+				//console.log([allTiles, sideCoord, searchDirection]);
+				var parallelTiles = tileOverlord.searchForParallelTiles(allTiles, sideCoord, searchDirection)
 				
-				if (searchResults.length && tileOverlord.checkSearchTilesTotalSize(searchResults))
+				if (parallelTiles.length)
 				{
 					break;
 				}
 			}
+			
+			console.log(parallelTiles);
 
-
-			for (var i = 0; i < searchResults.length; i++)
+			if (parallelTiles.length)
 			{
-				var loopTile = searchResults[i][0].tile;
-				var $loopTile = loopTile.tileDOM;
-				var loopTilePositions = loopTile.positions;
+				var directions = Sleuthgrids.getDirections(searchDirection);
+				var absKey = directions.isVert ? "top" : "left";
+				var sizeKey = directions.isVert ? "height" : "width";
+				var isLeftOrTop = directions.isLeftOrTop;
 				
-				var size = loopTilePositions[sizeKey] + tilePositions[sizeKey];
-				var abs = isLeftOrTop ? loopTilePositions[absKey] : loopTilePositions[absKey] - tilePositions[sizeKey];
-				
-				var obj = {}
-				obj[absKey] = abs;
-				obj[sizeKey] = size;
-				
-				//$loopTile.css(obj);
-				//loopTile.updateInternalTilePositions();
-
-
-				$loopTile.animate(obj, 300, function()
+				for (var i = 0; i < parallelTiles.length; i++)
 				{
-					loopTile.updateInternalTilePositions();
-				})
-				
-				
-				loopTile.cellOverlord.resizeAllCells();
-				
+					var loopTile = parallelTiles[i];
+					var $loopTile = loopTile.tileDOM;
+					var loopTilePositions = loopTile.positions;
+					
+					var size = loopTilePositions[sizeKey] + tilePositions[sizeKey];
+					var abs = isLeftOrTop ? loopTilePositions[absKey] : loopTilePositions[absKey] - tilePositions[sizeKey];
+					
+					var obj = {}
+					obj[absKey] = abs;
+					obj[sizeKey] = size;
+					
+					//$loopTile.css(obj);
+					//loopTile.updateInternalTilePositions();
+
+					loopTile.animate(obj, 300);
+
+					
+					
+					//loopTile.cellOverlord.resizeAllCells();
+					
+				}
 			}
 		},
 		
@@ -342,19 +348,23 @@ Sleuthgrids = (function(Sleuthgrids)
 		resizeTile: function(mouseX, mouseY)
 		{
 			var tileOverlord = this;
-			var tile = Sleuthgrids.resizeTile;			
+			var tile = Sleuthgrids.resizeTile;
+			var tilePositions = tile.positions;
 			var resizeDirection = Sleuthgrids.resizeDir;
 			var directions = Sleuthgrids.getDirections(resizeDirection);
 			
-			var foundTiles = getTilesAlongAnExpandingTileSide(tile, resizeDirection);
+			var foundTiles = tileOverlord.getTilesAlongAnExpandingTileSide(tile, resizeDirection);
 			var adjTiles = foundTiles.adjTilesInRange;
-			var parallelTiles = foundTiles.parallelTiles;
+			adjTiles.push(tile);
 
+			var parallelTiles = foundTiles.parallelTiles;
+			console.log(parallelTiles);
+			console.log(adjTiles);
 			if (parallelTiles.length)
 			{
-				var mousePos = directions.isVert ? mouseX : mouseY;
+				var mousePos = directions.isVert ? mouseY : mouseX;
 				var diff = mousePos - tilePositions[resizeDirection];
-
+			
 				var resizeFunc = function(tiles, isAdjacent)
 				{
 					for (var i = 0; i < tiles.length; i++)
@@ -362,6 +372,8 @@ Sleuthgrids = (function(Sleuthgrids)
 						var tile = tiles[i];
 						var pos = tile.positions;
 						//var minSize = tile['min'+sizeKey];
+						var absKey = directions.isVert ? "top" : "left";
+						var sizeKey = directions.isVert ? "height" : "width";
 						var adjCheck = isAdjacent ? directions.isLeftOrTop : !directions.isLeftOrTop;
 
 						var newSize = adjCheck ? (pos[sizeKey] - diff) : (pos[sizeKey] + diff);
@@ -377,7 +389,7 @@ Sleuthgrids = (function(Sleuthgrids)
 					}
 				};
 				
-				resizeFunc(adjTilesInRange, true);
+				resizeFunc(adjTiles, true);
 				resizeFunc(parallelTiles, false);
 			}
 
@@ -397,7 +409,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			for (var i = 0; i < possibleTileRanges.length; i++)
 			{
 				var tileRange = possibleTileRanges[i];
-				var coord = tileRange.lineCoord;
+				var lineObj = tileRange.lineCoord;
+				var coord = lineObj.coord;
 				adjTilesInRange = tileRange.tilesInRange;
 				
 				parallelTiles = tileOverlord.searchForParallelTiles(allTiles, coord, sideDirection);
@@ -419,50 +432,70 @@ Sleuthgrids = (function(Sleuthgrids)
 			var checkDirection = Sleuthgrids.invertDirection(searchDirection);
 			
 			var parallelTiles = [];
+			var runningSize = 0;
 			
 			for (var i = 0; i < searchTiles.length; i++)
 			{
 				var searchTile = searchTiles[i];
 				var searchTilePositions = searchTile.positions;
 				var allSidesCoords = Sleuthgrids.getSideCoords(searchTilePositions);
-				var sideCoords = allSidesCoords[checkDirection];
+
+				var sideCoords = allSidesCoords[checkDirection].coord;
 				var searchTilePointACoord = sideCoords[0];
 				var searchTilePointBCoord = sideCoords[1];
+				var isVert = (searchDirection == "top" || searchDirection == "bottom");
+				var indexOfSame = isVert ? 1 : 0;
+				var indexOfBetween = isVert ? 0 : 1;
 
-				var isVert = (direction == "left" || direction == "right");
-				var indexOfSame = isVert ? 0 : 1;
-				var indexOfBetween = isVert ? 1 : 0;
+				var min = Math.min(rangeCoord[0][indexOfBetween], rangeCoord[1][indexOfBetween]);
+				var max = Math.max(rangeCoord[0][indexOfBetween], rangeCoord[1][indexOfBetween]);
+				var size = max-min;
+				var isSame = Math.abs(rangeCoord[0][indexOfSame] - searchTilePointACoord[indexOfSame]) <= 0.5;
+				var isBetween = (searchTilePointACoord[indexOfBetween] >= min - 1) && (searchTilePointBCoord[indexOfBetween] <= max + 1);
 				
-				var min = Math.min(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween]);
-				var max = Math.max(mainPoints[0][indexOfBetween], mainPoints[1][indexOfBetween]);
+				if (isSame && isBetween)
+				{
+					parallelTiles.push(searchTile);
+				}
+				
 
-				var isSame = Math.abs(mainPoints[0][indexOfSame] - compPoint[indexOfSame]) <= 0.5;
-				var isBetween = (compPoint[indexOfBetween] >= min - 1) && (compPoint[indexOfBetween] <= max + 1);
-				
-				checkSearchTilesTotalSize(parallelTiles)
-				return isSame && isBetween
 
 			}
 			
+			if (parallelTiles.length)
+			{
+				var sizeKey = isVert ? "width" : "height";
 
+				var runningSize = 0;
+				
+				for (var i = 0; i < parallelTiles.length; i++)
+				{
+					var parallelTile = parallelTiles[i];
+					var parallelTilePosition = parallelTile.positions;
+
+					runningSize += parallelTilePosition[sizeKey];
+				}
+				
+				
+				//var ret = tileOverlord.checkSearchTilesTotalSize(parallelTiles)
+				if (Math.abs(size - runningSize) >= 1)
+				{
+					parallelTiles = [];
+				}
+			}
+			
 			return parallelTiles;
 		},
 		
 		
 		
-		checkSearchTilesTotalSize: function(searchResults, searchDirection, searchPoints)
+		checkSearchTilesTotalSize: function(searchResults, searchDirection, size)
 		{
 			var isSizeEqual = false;
 			
 			var isVert = (searchDirection == "left" || searchDirection == "right");
-			var sizeKey = isVert ? "height" : "width";
+			var sizeKey = isVert ? "width" : "height";
 
-			var coordOne = isVert ? searchPoints[0][1] : searchPoints[0][0];
-			var coordTwo = isVert ? searchPoints[1][1] : searchPoints[1][0];
-			var min = Math.min(coordOne, coordTwo);
-			var max = Math.max(coordOne, coordTwo);
-			var size = max - min;
-			
 			var runningSize = 0;
 			
 			for (var j = 0; j < searchResults.length; j++)
@@ -497,17 +530,18 @@ Sleuthgrids = (function(Sleuthgrids)
 			mainTile.sideA = mainTile.sides[searchSideDirections.sideA];
 			mainTile.sideB = mainTile.sides[searchSideDirections.sideB];
 
-			
+			//console.log([allTiles, searchDirection, searchPosition]);
 			
 			var tilesInRow = tileOverlord.getTilesInRow(allTiles, searchDirection, searchPosition);
 			var tilesInRowFormatted = tileOverlord.formatTilesInRow(tilesInRow, mainTile, searchSideDirections);
-			
+
 			var allRowCoords = tileOverlord.getAdjacentTileCoords(tilesInRowFormatted, mainTile);
 			var allRowCoordsFormatted = tileOverlord.formatAdjacentTileCoords(allRowCoords, searchPosition, directions.isVert);
 
+			
 			var formattedAdjData = tileOverlord.formatAdjacentTileData(tilesInRowFormatted, allRowCoordsFormatted);
 			
-			return allRowCoordsFormatted;
+			return formattedAdjData;
 		},
 	
 		
@@ -635,7 +669,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				var vertCoord = [[constantSidePosition, sideAPosition], [constantSidePosition, sideBPosition]];
 				var nonVertCoord = [[sideAPosition, constantSidePosition], [sideBPosition, constantSidePosition]];
 				
-				var formattedCoord = isVert ? vertCoord : nonVertCoord; 
+				var formattedCoord = !isVert ? vertCoord : nonVertCoord; 
 				
 				var lineCoord = {};
 				lineCoord.pointA = formattedCoord[0];
@@ -644,7 +678,7 @@ Sleuthgrids = (function(Sleuthgrids)
 				lineCoord.isVert = isVert;
 				lineCoord.distancePoints = [sideAPosition, sideBPosition];
 
-				allRowCoordsFormatted.push(formattedCoord);
+				allRowCoordsFormatted.push(lineCoord);
 			}
 			
 			return allRowCoordsFormatted;

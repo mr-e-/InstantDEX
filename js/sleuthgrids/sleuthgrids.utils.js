@@ -39,19 +39,19 @@ Sleuthgrids = (function(Sleuthgrids)
 		var directions = {};
 		
 		directions.direction = direction;
-		arrowDirections.isTop = direction == "top";
-		arrowDirections.isBottom = direction == "bottom";
-		arrowDirections.isLeft = direction == "left";
-		arrowDirections.isRight = direction == "right";
-		arrowDirections.isMiddle = direction == "middle";
+		directions.isTop = direction == "top";
+		directions.isBottom = direction == "bottom";
+		directions.isLeft = direction == "left";
+		directions.isRight = direction == "right";
+		directions.isMiddle = direction == "middle";
 		
 		directions.isLeftOrTop =  (direction == "left" || direction == "top");
 		
 		directions.isHoriz = (direction == "left" || direction == "right");
 		directions.isVert = (direction == "top" || direction == "bottom");
 		
-		directions.absKey = isVert ? "left" : "top";
-		directions.sizeKey = isVert ? "width" : "height";
+		directions.absKey = directions.isVert ? "left" : "top";
+		directions.sizeKey = directions.isVert ? "width" : "height";
 		
 		return directions;
 	}
@@ -67,7 +67,7 @@ Sleuthgrids = (function(Sleuthgrids)
 		searchMap.bottom = [["left", "bottom"], ["right", "bottom"]];
 
 		
-		return map;
+		return searchMap;
 	}
 	
 	
@@ -95,7 +95,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			sides[searchDirection] = loopSide;
 		}
 		
-		return map;
+		return sides;
 	}
 	
 	

@@ -99,7 +99,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			$(".grid-trig").removeClass("mousedown");
 		}
 		
-		if (Sleuthgrids.isResizing)
+		if (Sleuthgrids.isResizing && false)
 		{
 			var allGrids = Sleuthgrids.allGrids;
 			
