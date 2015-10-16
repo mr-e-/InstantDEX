@@ -2,30 +2,95 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
+
+
+	/******************	  OVERLORD   *****************/
+
 	
-	
-	IDEX.parseArray = function(arrA, arrB)
+	IDEX.CoinOverlord = function()
 	{
-		var parsedArray = [];
+		var overlord = this;
+		overlord.allCoins = [];
+	}
+	
+	
+	
+	IDEX.CoinOverlord.prototype.loadLocalStorage = function()
+	{
+		var overlord = this;
+		var allCoins = overlord.allCoins;
+		var allCoinsRaw = JSON.parse(localStorage.getItem('allCoins'));
+
+		for (var i = 0; i < allCoinsRaw.length; i++)
+		{
+			var coinRaw = allCoinsRaw[i];
+			var coin = new IDEX.Coin(coinRaw);
+			
+			allCoins.push(coin);
+		}
 		
-		if (arrB.length)
+		return allCoins;
+	}
+	
+	
+	
+	IDEX.CoinOverlord.prototype.setLocalStorage = function()
+	{
+		var overlord = this;
+		var keys = ["name", "isAsset", "assetID", "exchanges"];
+		var minCoins = [];
+		var allCoins = overlord.allCoins;
+	
+		for (var i = 0; i < allCoins.length; i++)
 		{
-			for (var i = 0; i < arrB.length; i++)
-			{
-				var itemB = arrB[i];
-				var isInArray = (arrA.indexOf(itemB) != -1)
-				
-				if (isInArray)
-					parsedArray.push(itemB);
-			}
+			var coin = allCoins[i];
+			var minCoin = coin.minimizeSelf();
+			minCoins.push(minCoin);
+			
 		}
-		else
-		{
-			parsedArray = arrA;
-		}
-		return parsedArray;
+		
+		localStorage.setItem('allCoins', JSON.stringify(minCoins));
+
+		return minCoins;
+	}
+	
+	
+	
+	
+	/******************	  COIN   *****************/
+
+	
+	IDEX.Coin = function(coinObj)
+	{
+		var coin = this;
+		coin.isAsset = coinObj.isAsset;
+		coin.name = coinObj.name;
+		coin.assetID = coinObj.assetID;
+		coin.exchanges = coinObj.exchanges;
+		
+		IDEX.constructFromObject(this, coinObj);
+
+		coin.balanceHandler = new IDEX.CBalanceHandler(coin);		
+	}
+	
+	
+
+	IDEX.Coin.prototype.minimizeSelf = function()
+	{
+		var coin = this;
+		var coinKeys = ["name", "isAsset", "assetID", "exchanges"];
+
+		var minCoin = IDEX.minObject(coin, coinKeys);
+
+		return minCoin;
 	}
 
+	
+	
+	
+	/******************	  BALANCE HANDLER   *****************/
+
+	
 	IDEX.CBalanceHandler = function(coin) 
 	{	
 		var cBalanceHandler = this;
@@ -78,7 +143,10 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 
+	
+	
 	return IDEX;
 	
 	
 }(IDEX || {}, jQuery));
+

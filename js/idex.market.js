@@ -3,14 +3,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	function check()
-	{
-		//if (filterExchanges.length && (filterExchanges.indexOf(exchange) == -1))
-		//	continue;
-	}
-
-
-
+	
 	IDEX.CMHandler = function(forceUpdate, filterExchanges)
 	{
 		var handler = this;
@@ -46,6 +39,174 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.parseArray = function(arrA, arrB)
+	{
+		var parsedArray = [];
+		
+		if (arrB.length)
+		{
+			for (var i = 0; i < arrB.length; i++)
+			{
+				var itemB = arrB[i];
+				var isInArray = (arrA.indexOf(itemB) != -1)
+				
+				if (isInArray)
+					parsedArray.push(itemB);
+			}
+		}
+		else
+		{
+			parsedArray = arrA;
+		}
+		
+		return parsedArray;
+	}
+	
+	
+	/******************	  OVERLORD   *****************/
+
+	
+	IDEX.MarketOverlord = function()
+	{
+		var overlord = this;
+		overlord.allMarkets = [];
+	}
+	
+	
+	IDEX.MarketOverlord.prototype.loadLocalStorage = function()
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var allMarketsRaw = JSON.parse(localStorage.getItem('allMarkets'));
+		var allCoins = IDEX.allCoins;
+		
+		for (var i = 0; i < allMarketsRaw.length; i++)
+		{
+			var marketRaw = allMarketsRaw[i];
+			var market = new IDEX.Market(marketRaw);
+			var baseRet = IDEX.searchListOfObjectsByKeys(allCoins, market.base, ["name", "isAsset", "assetID"]);
+			market.base = baseRet.item;
+			var relRet = IDEX.searchListOfObjectsByKeys(allCoins, market.rel, ["name", "isAsset", "assetID"]);
+			market.rel = relRet.item;
+			
+			allMarkets.push(market);
+		}
+		
+	
+		return allMarkets;
+	}
+	
+	
+	
+	IDEX.MarketOverlord.prototype.setLocalStorage = function()
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var minMarkets = [];
+
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			var minMarket = market.minimizeSelf();
+			minMarkets.push(minMarket);
+		}
+		
+		localStorage.setItem('allMarkets', JSON.stringify(minMarkets));
+		
+		return minMarkets;
+	}
+
+	
+	
+	IDEX.MarketOverlord.prototype.expandMarket = function(minMarket)
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var keys = ["marketName", "pairID", "isNxtAE"];
+		var retMarket = null;
+		
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			var ret = IDEX.compObjs(market, minMarket, keys);
+
+			if (ret)
+			{
+				retMarket = market;
+				break;
+			}
+		}
+
+		return retMarket;
+	}
+	
+	
+	IDEX.MarketOverlord.prototype.getMarket = function(marketKey)
+	{
+		var overlord = this;
+		var allMarkets = overlord.allMarkets;
+		var retMarket = null;
+		
+		for (var i = 0; i < allMarkets.length; i++)
+		{
+			var market = allMarkets[i];
+			if (market.marketKey == marketKey)
+			{
+				retMarket = market;
+				break;
+			}
+		}
+
+		return retMarket;
+	}
+	
+	
+	
+	
+	/******************	  MARKET   *****************/
+
+	
+	IDEX.Market = function(obj)
+	{
+		var market = this;
+		market.marketName;
+		market.pairID;
+		market.base;
+		market.rel;
+		market.exchanges;
+		market.exchangeSettings;
+		market.isNxtAE;
+		market.marketKey;
+		IDEX.constructFromObject(this, obj);
+
+		market.marketHistoryHandler = new IDEX.MMarketHistoryHandler(market);
+		market.tradeHistoryHandler = new IDEX.MTradeHistoryHandler(market);
+		market.watchlistHandler = new IDEX.WatchlistMarket(market);
+	}
+	
+	
+	
+	IDEX.Market.prototype.minimizeSelf = function()
+	{
+		var market = this;
+		var keys = ["marketName", "pairID", "isNxtAE", "exchangeSettings", "exchanges", "marketKey"];
+
+		var minMarket = IDEX.minObject(market, keys);
+		var minBase = market.base.minimizeSelf();
+		var minRel = market.rel.minimizeSelf();
+
+		minMarket.base = minBase;
+		minMarket.rel = minRel;
+
+		return minMarket;
+	}
+	
+	
+	
+	
+	/******************	  MARKET HISTORY HANDLER   *****************/
+
+	
 	
 	IDEX.MMarketHistoryHandler = function(market) 
 	{	
@@ -63,8 +224,7 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
-
-
+	
 	IDEX.MMarketHistoryHandler.prototype.update = function(forceUpdate, filterExchanges)
 	{
 		var mMarketHistoryHandler = this;
@@ -101,6 +261,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.MMarketHistoryHandler.prototype.updateExchanges = IDEX.CMHandler;
 	
+	
+
+	
+	/******************	  TRADE HISTORY HANDLER   *****************/
 
 	
 	IDEX.MTradeHistoryHandler = function(market) 
@@ -117,6 +281,7 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 
+	
 	
 	IDEX.MTradeHistoryHandler.prototype.update = function(forceUpdate, filterExchanges)
 	{
@@ -141,13 +306,28 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.MTradeHistoryHandler.prototype.updateExchanges = IDEX.CMHandler;
 
 	
 
+	
+	
 	
 
 	return IDEX;
 	
 	
 }(IDEX || {}, jQuery));
+
+
+/*
+
+	function check()
+	{
+		//if (filterExchanges.length && (filterExchanges.indexOf(exchange) == -1))
+		//	continue;
+	}
+	
+*/
+
