@@ -14,9 +14,11 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
+			
 			$(".mainHeader-grid-icons").addClass("active");
 			$(".idex-advanced-wrap").addClass("active");
 			$(".idex-basic-wrap").removeClass("active");
+			Sleuthgrids.gridOverlord.resizeAllGrids();
 		}
 		
 		IDEX.isAdvanced = !IDEX.isAdvanced;

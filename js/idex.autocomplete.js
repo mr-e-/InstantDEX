@@ -1,5 +1,4 @@
 
-
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
@@ -12,11 +11,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	IDEX.initAutocomplete = function()
-	{
-		initAssetAutocomplete();
-	}
-	
-	function initAssetAutocomplete()
 	{
 		var allExchanges = IDEX.exchangeList.slice();
 		allExchanges.push("InstantDEX");

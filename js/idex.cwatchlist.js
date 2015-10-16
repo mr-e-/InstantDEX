@@ -1,5 +1,4 @@
 
-
 var IDEX = (function(IDEX, $, undefined)
 {
 	var $contentWrap = $("#content_wrap");
@@ -589,6 +588,8 @@ var IDEX = (function(IDEX, $, undefined)
 			$row.find("td").eq(1).text(String(data.lastbid));
 			$row.find("td").eq(2).text(String(data.lastask));
 		})*/
+	
+	
 	
 	
 	

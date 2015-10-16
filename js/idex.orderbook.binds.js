@@ -201,12 +201,10 @@ var IDEX = (function(IDEX, $, undefined)
 		$exchangeDropdownListDOM.empty();
 		
 		var listItems = [];
-		
 
-		if (market.isNxtAE)
-			listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>")
-		else
-			listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>")
+		listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>");
+		listItems.push("<li class='' data-val='InstantDEX'>"+"InstantDEX"+"</li>")
+
 			
 		for (var i = 0; i < marketExchanges.length; i++)
 		{

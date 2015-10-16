@@ -5,6 +5,14 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	
 	
+
+	$(".idex-view-trig").on("click", function()
+	{
+		IDEX.toggleMode();
+	})
+	
+	
+	
 	$contentWrap.on("click", ".tab-nav-cell span", function()
 	{
 		var $fullWrap = $(this).closest(".tab-trig-wrap");
@@ -20,6 +28,8 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
+	
+	
 	$(".fullPopup-trig").on("click", function()
 	{
 		var popupID = $(this).attr("data-popup");
@@ -31,11 +41,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	
-	
 	IDEX.togglePopup = function($popup, show, withOverlay)
 	{
-		var $overlay = $(".popup-overlay");
+		var $overlay = $("#idex_load").find(".popup-overlay");
 		var func = show ? "addClass" : "removeClass";
 		
 		$popup[func]("active");

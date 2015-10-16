@@ -1,18 +1,84 @@
 
+// Created by CryptoSleuth <cryptosleuth@gmail.com>
+
 
 var IDEX = (function(IDEX, $, undefined)
 {
-
-	IDEX.defaultMarket = {"marketName":"InstantDEX_NXT","base":{"name":"InstantDEX","isAsset":true,"assetID":"15344649963748848799","exchanges":["nxtae"]},"rel":{"name":"NXT","isAsset":false,"exchanges":["nxtae","btc38","poloniex","bittrex"]},"pairID":"15344649963748848799_NXT","exchanges":["nxtae"],"exchangeSettings":{"nxtae":{"skynetFlipped":false}},"isNxtAE":true}
 	IDEX.isWindows = false;
+	IDEX.isAdvanced = false;
 	IDEX.user;
 	IDEX.watchlistOverlord;
+	IDEX.coinOverlord;
+	IDEX.marketOverlord;
 	
-
+	
+	
 	IDEX.init = function()
 	{
-		IDEX.isWindows = window.jscd.os == "Windows";
+		var retDFD = new $.Deferred();
+		var initializedExchanges = new $.Deferred();
+		var timeoutFinished = new $.Deferred();
 		
+		initDOM();
+
+		IDEX.isWindows = window.jscd.os == "Windows";
+
+		IDEX.user = new IDEX.User();
+		IDEX.watchlistOverlord = new IDEX.WatchlistOverlord();
+		IDEX.coinOverlord = new IDEX.CoinOverlord();
+		IDEX.marketOverlord = new IDEX.MarketOverlord();
+		IDEX.dMonOverlord = new IDEX.DMonOverlord();
+		IDEX.basicModeHandler = new IDEX.BasicModeHandler();
+
+		IDEX.initScrollbar();		
+		IDEX.user.initLabels();
+		IDEX.initChartIndicators();
+	
+		
+		IDEX.dMonOverlord.checkAll().done(function(message)
+		{			
+			IDEX.timer(1000).done(function()
+			{
+				timeoutFinished.resolve();
+			});
+			
+
+			IDEX.initExchanges().done(function()
+			{
+				IDEX.initMarketList().done(function()
+				{
+					IDEX.defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
+
+					IDEX.initAutocomplete();
+					IDEX.watchlistOverlord.initLocalStorage();
+
+					initializedExchanges.resolve();
+				});
+			});
+			
+			
+			$.when(timeoutFinished, initializedExchanges).done(function()
+			{
+				IDEX.basicModeHandler.init();
+				IDEX.initGrids();
+				IDEX.hideLoading();
+				retDFD.resolve();
+			})
+			
+		}).fail(function(message)
+		{
+			$(".temp-exit").addClass("active");
+			IDEX.editLoading()
+		});
+
+		
+		return retDFD.promise();
+	}
+	
+	
+
+	function initDOM()
+	{
 		if (window.jscd.browser == "Firefox")
 		{
 			$(".popup").each(function()
@@ -34,117 +100,8 @@ var IDEX = (function(IDEX, $, undefined)
 				speed:200
 			})
 		})
-		
-		var initializedExchanges = new $.Deferred();
-		var timeoutFinished = new $.Deferred();
-
-		IDEX.user = new IDEX.User();
-		IDEX.watchlistOverlord = new IDEX.WatchlistOverlord();
-		IDEX.coinOverlord = new IDEX.CoinOverlord();
-		IDEX.marketOverlord = new IDEX.MarketOverlord();
-		
-		IDEX.initScrollbar();		
-		IDEX.user.initLabels();
-		IDEX.initChartIndicators();
-
-	
-		IDEX.pingNxt().done(function()
-		{
-			IDEX.pingSupernet().done(function()
-			{
-				
-				IDEX.initTimer().done(function()
-				{
-					timeoutFinished.resolve();
-				});
-				
-
-				IDEX.initExchanges().done(function()
-				{
-					IDEX.initAllMarkets().done(function()
-					{
-						var defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
-						IDEX.defaultMarket = defaultMarket;
-						//console.log(JSON.stringify(defaultMarket));
-						IDEX.initAutocomplete();
-						IDEX.watchlistOverlord.initLocalStorage();
-
-						initializedExchanges.resolve()
-					});
-				});
-				
-				
-				$.when(timeoutFinished, initializedExchanges).done(function()
-				{
-					IDEX.initGrids();
-					IDEX.hideLoading();
-				})
-			
-			}).fail(function()
-			{
-				$(".temp-exit").addClass("active");
-				IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
-			})
-			
-		}).fail(function()
-		{
-			$(".temp-exit").addClass("active");
-			IDEX.editLoading("Could not connect to NXT. Start NXT and reload.")
-		})
 	}
 	
-	
-	
-	IDEX.initTimer = function()
-	{
-		var timeoutDFD = new $.Deferred();
-		
-		var timeout = setTimeout(function() 
-		{
-			timeoutDFD.resolve()
-		}, 1000)
-		
-		return timeoutDFD.promise();
-	}
-	
-	
-	IDEX.pingSupernet = function()
-	{
-		var dfd = new $.Deferred();
-		var params = {"method":"openorders","allorders":1};
-		//params = {"method":"balance","exchange":"poloniex"}
-		//params = {"method":"allexchanges"}
-		IDEX.sendPost(params, false).done(function(data)
-		{
-			console.log(data)
-			dfd.resolve()
-			
-		}).fail(function()
-		{
-			dfd.reject()
-		})
-		
-		return dfd.promise()
-	}
-	
-	
-	
-	IDEX.pingNxt = function()
-	{
-		var dfd = new $.Deferred();
-		var params = {"requestType":"getState"};
-		
-		IDEX.sendPost(params, true).done(function()
-		{
-			dfd.resolve()
-			
-		}).fail(function()
-		{
-			dfd.reject()
-		})
-		
-		return dfd.promise()
-	}
 	
 
 

@@ -77,8 +77,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			params.base = base.name;
-			params.rel = rel.name;
+			params.base = base.name.toLowerCase();
+			params.rel = rel.name.toLowerCase();
 		}
 		
 		//params.exchange="basket"
@@ -89,45 +89,17 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var tdfd = new $.Deferred();
 		
-		if (false && orderbook.market.isNxtAE)
+
+		IDEX.sendPost(params, false).done(function(orderbookData)
 		{
+			console.log(orderbookData);
 
+			orderbook.isWaitingForOrderbook = false;
+			retDFD.resolve(orderbookData);
 			
-			paramsn = {}
-			paramsn.requestType = "getUnconfirmedTransactions";
-			
-			IDEX.sendPost(paramsn, true).done(function(a)
-			{
-				tdfd.resolve(a);
-			}).fail(function(data)
-			{
-				tdfd.resolve({})
-			})
-
-		}
-		else
+		}).fail(function(data)
 		{
-			tdfd.resolve({})
-		}
-		
-			//tdfd.resolve({});
-
-		tdfd.done(function(tdata)
-		{
-			//console.log(JSON.stringify(params));
-			
-			IDEX.sendPost(params, false).done(function(orderbookData)
-			{
-				var addBids = [];
-				var addAsks = [];
-
-
-				orderbook.isWaitingForOrderbook = false;
-				retDFD.resolve(orderbookData);
-			}).fail(function(data)
-			{
-				retDFD.resolve("fail")
-			})
+			retDFD.resolve("fail")
 		})
 		
 		return retDFD.promise();

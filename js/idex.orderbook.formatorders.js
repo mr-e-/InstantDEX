@@ -144,7 +144,7 @@ var IDEX = (function(IDEX, $, undefined)
 			//trString = orderTooltip(trString, order);
 			
 			var trClasses = "fadeSlowIndy";
-			//trClasses += (order['offerNXT'] == IDEX.nxtae.nxtID) ? " own-order" : "";
+			//trClasses += (order['offerNXT'] == IDEX.allExchanges.nxtae.nxtID) ? " own-order" : "";
 			trClasses += " " + getLabelClass(order, orderbook)
 			
 			trString = IDEX.addElClass(trString, trClasses);

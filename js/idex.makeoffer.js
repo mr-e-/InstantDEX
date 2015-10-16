@@ -19,8 +19,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.makeOffer = function()
 	{	
-		//params = IDEX.buildPostPayload("makeoffer3", IDEX.user.pendingOrder)
-
 		var order = IDEX.user.pendingOrder;
 		var params = $.extend(true, {}, order.rawData);
 		//params.dotrade = 1;
