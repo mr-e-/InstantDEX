@@ -1,10 +1,18 @@
-	
-	
+
+
+
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
 
 	var GENESIS_TIMESTAMP = 1385294400000;
+	
+	
+	IDEX.snAssets = 
+	{
+		'nxt':{'name':"NXT",'assetID':"5527630", 'decimals':8}
+	};
+	
 
 	
 	IDEX.Asset = function(obj) 
@@ -29,6 +37,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		return Math.floor((timestamp - GENESIS_TIMESTAMP) / 1000);
 	}
+	
 	
 	
 	var NxtAE = IDEX.exchangeClasses.nxtae = function()
@@ -67,7 +76,7 @@ var IDEX = (function(IDEX, $, undefined)
 			dfds.push(exchangeHandler.assets.initAllAssets());
 			dfds.push(exchangeHandler.updateNXTRS());
 			
-			$.when.apply($, dfds).done(function(data)
+			$.when.apply($, dfds).done(function()
 			{
 				retDFD.resolve();
 			})
@@ -77,51 +86,56 @@ var IDEX = (function(IDEX, $, undefined)
 		},
 		
 		
-		
-		setNXTRS: function(nxtIDAndRS)
-		{
-			var exchangeHandler = this;
-
-			exchangeHandler.nxtID = "";
-			exchangeHandler.nxtRS = "";
-			
-			if (nxtIDAndRS.length == 2)
-			{
-				exchangeHandler.nxtID = nxtIDAndRS[0];
-				exchangeHandler.nxtRS = nxtIDAndRS[1];
-			}
-		},
-		
-		
-		
 		updateNXTRS: function()
 		{
-			var dfd = new $.Deferred();
-			var nxtIDAndRS = [];
 			var exchangeHandler = this;
+			var retDFD = new $.Deferred();
+			var nxtAccount = {};
+			
 			var params = {"method":"orderbook"};
 			params.baseid = "12071612744977229797";
 			params.relid = "5527630";
 			params.maxdepth = "1";
 			
 			
-			IDEX.sendPost(params, false, function(data)
+			IDEX.sendPost(params, false).done(function(data)
 			{
 				if ('NXT' in data && data['NXT'].length)
 				{
-					var id = data['NXT']
+					var id = data['NXT'];
 					var rs = IDEX.toRS(id);
-					nxtIDAndRS.push(id);
-					nxtIDAndRS.push(rs);
+					
+					nxtAccount.id = id;
+					nxtAccount.rs = rs;
 				}
 
-				exchangeHandler.setNXTRS(nxtIDAndRS);
+				exchangeHandler.setNXTRS(nxtAccount);
 				
-				dfd.resolve([exchangeHandler.nxtID, exchangeHandler.nxtRS])
+			}).always(function()
+			{
+				retDFD.resolve();
 			});
 			
 			
-			return dfd.promise()
+			return retDFD.promise();
+		},
+		
+		
+		setNXTRS: function(nxtAccount)
+		{
+			var exchangeHandler = this;
+
+			exchangeHandler.nxtID = "";
+			exchangeHandler.nxtRS = "";
+			
+			if ('id' in nxtAccount)
+			{
+				exchangeHandler.nxtID = nxtAccount.id;
+			}
+			if ('rs' in nxtAccount)
+			{
+				exchangeHandler.nxtRS = nxtAccount.rs;
+			}
 		}
 	}
 	
@@ -147,9 +161,9 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		initAllAssets: function()
 		{
+			var assetsHandler = this;
 			var retDFD = new $.Deferred();
 			var dfd = new $.Deferred();
-			var assetsHandler = this;
 			
 			if (localStorage.allAssets)
 			{
@@ -163,7 +177,6 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				assetsHandler.getAssetsLoop([], 0, 99, function(assets)
 				{
-
 					assets = assetsHandler.parseAllAssets(assets);
 					localStorage.setItem('allAssets', JSON.stringify(assets));
 					dfd.resolve(assets);
@@ -177,6 +190,7 @@ var IDEX = (function(IDEX, $, undefined)
 				assetsHandler.allAssets = assets;
 				retDFD.resolve(assets);
 			})
+			
 			
 			return retDFD.promise();
 		},
@@ -209,6 +223,9 @@ var IDEX = (function(IDEX, $, undefined)
 				{
 					callback(assets);
 				}
+			}).fail(function()
+			{
+				callback(assets);
 			})
 		},
 		
@@ -237,7 +254,6 @@ var IDEX = (function(IDEX, $, undefined)
 				parsed.push(obj);
 			}
 			
-			//parsed.push(IDEX.snAssets['nxt']);
 			
 			return parsed
 		},

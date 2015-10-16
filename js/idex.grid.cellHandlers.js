@@ -98,11 +98,12 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		call: function(funcName, args)
 		{
+			//return;
 			var cellHandler = this;
+			//if (cellHandler.cellType != "chart")
+			//	return
 			var cell = cellHandler.cell;
 			var func = cellHandler.cellMethods[funcName];
-			
-			//console.log([cellHandler, funcName], args);
 			
 			
 			if (func)
@@ -232,17 +233,7 @@ var IDEX = (function(IDEX, $, undefined)
 			return
 		
 		var $chartNode = chart.node;
-		var isVisible = $chartNode.is(":visible");
-		chart.setContainerSize();
-
-		if (!isVisible)
-		{
-			chart.needsResize = true;
-		}
-		else
-		{
-			chart.redraw();
-		}
+		chart.redraw();
 	}	
 	
 	
@@ -665,6 +656,11 @@ var IDEX = (function(IDEX, $, undefined)
 		
 	}
 	
+	$(window).load(function()
+	{
+
+	})
+	
 
 
 	
@@ -677,46 +673,27 @@ var IDEX = (function(IDEX, $, undefined)
 		//var defaultSave = {};
 		if (!localStorage.grids)
 		{
-			var saveObj = defaultSave;
+			var sleuthgridsSave = defaultSave;
 		}
 		else
 		{
-			var saveObj = JSON.parse(localStorage.getItem('grids'));
+			var sleuthgridsSave = JSON.parse(localStorage.getItem('grids'));
 			
-			if (!saveObj.gridSaves.length)
-				saveObj = defaultSave;
+			if (!sleuthgridsSave.gridSaves.length)
+				sleuthgridsSave = defaultSave;
 		}
+		
+		Sleuthgrids.init(sleuthgridsSave);
 			
-		var prevHeight = saveObj.windowHeight;
-		var prevWidth = saveObj.windowWidth;
-		var gridSaves = saveObj.gridSaves;
-		
-		if (!gridSaves)
-			gridSaves = [];
-		
-		for (var i = 0; i < gridSaves.length; i++)
-		{
-			var gridSave = gridSaves[i];
-			var grid = new Sleuthgrids.Grid();
-			grid.gridSave = gridSave;
-			grid.prevGridHeight = prevHeight;
-			grid.prevGridWidth = prevWidth;
-			grid.isActive = gridSave.isActive;
-					
-			grid.initTilesFromSave(gridSave.tileSaves);
 
-					
-			if (grid.isActive)
-			{
-				grid.gridTab.gridTabDOM.trigger("click");
-				//grid.showGrid();
-			}
-		}
-
-		
-		Sleuthgrids.resizeAllGrids();
 	}
 
+	
+	$(window).on("beforeunload", function()
+	{
+		var saves = Sleuthgrids.saveAllGrids();
+		localStorage.setItem('grids', JSON.stringify(saves));
+	});
 	
 	
 	return IDEX;

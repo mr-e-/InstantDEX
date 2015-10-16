@@ -1,3 +1,4 @@
+
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
@@ -190,7 +191,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 		
 		
-		var $node = $(this).closest(".cell").find(".chart-wrap");
+		var $node = $(this).closest(".chart-header").parent().find(".chart-wrap");
 		var chart = $node.sleuthcharts();
 		var marketHandler = chart.marketHandler;
 		
@@ -209,7 +210,7 @@ var IDEX = (function(IDEX, $, undefined)
 		$(this).addClass("active");
 		
 				
-		var $node = $(this).closest(".cell").find(".chart-wrap");
+		var $node = $(this).closest(".chart-header").parent().find(".chart-wrap");
 		var chart = $node.sleuthcharts();
 		var marketHandler = chart.marketHandler;
 		
@@ -334,7 +335,7 @@ var IDEX = (function(IDEX, $, undefined)
 	$contentWrap.on("click", ".chart-indicator-popup-trig", function(e)
 	{
 		var $node = $(this).closest(".cell").find(".chart-wrap");
-		var chart = Sleuthcharts.getChart($node);
+		var chart = $node.sleuthcharts();
 	
 		IDEX.indChart = chart;
 

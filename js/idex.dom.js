@@ -16,6 +16,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.hideLoading = function()
 	{
+		var $loadingOverlay = $("body").find(".loading-overlay");
+		var $loadingPopup = $("body").find(".loading-screen");
+		
 		$loadingOverlay.removeClass("active");
 		$loadingPopup.removeClass("active");
 	}

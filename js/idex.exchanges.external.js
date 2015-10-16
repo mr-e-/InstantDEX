@@ -1,5 +1,6 @@
 
 
+
 var IDEX = (function(IDEX, $, undefined)
 {
 	
@@ -23,19 +24,17 @@ var IDEX = (function(IDEX, $, undefined)
 			exchange.balances = new IDEX.Exchange.Balances(exchange);
 			exchange.marketTrades = new IDEX.Exchange.MarketTrades(exchange);
 
-						
 		},
 		
 		
 		initState: function()
 		{
-			var dfd = new $.Deferred();
 			var exchange = this;
-
-			dfd.resolve();
+			var retDFD = new $.Deferred();
 			
+			retDFD.resolve();
 			
-			return dfd.promise();
+			return retDFD.promise();
 		},
 	}
 	

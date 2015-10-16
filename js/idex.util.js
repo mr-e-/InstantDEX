@@ -19,6 +19,20 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
+	IDEX.timer = function(timeout)
+	{
+		var timeoutDFD = new $.Deferred();
+		timeout = typeof timeout == "undefined" ? 1000 : timeout;
+
+		var timeout = setTimeout(function() 
+		{
+			timeoutDFD.resolve()
+		}, timeout)
+		
+		return timeoutDFD.promise();
+	}
+	
+	
 	
 	IDEX.extend = function(objA, objB)
 	{
@@ -218,6 +232,30 @@ var IDEX = (function(IDEX, $, undefined)
 		var func = show ? "addClass" : "removeClass";
 		$el[func]("active");
 	}
+	
+	
+	IDEX.searchListOfObjectsByKeys = function(arr, obj, keys)
+	{
+		var retObj = {};
+		var ret = false;
+		
+		for (var i = 0; i < arr.length; i++)
+		{
+			var item = arr[i];
+			
+			var ret = IDEX.compObjs(item, obj, keys);
+			
+			if (ret)
+				break;
+		}
+		
+		retObj.ret = ret;
+		retObj.index = i;
+		retObj.item = item;
+		
+		return retObj;
+	}
+	
 	
 	
 	IDEX.searchListOfObjects = function(arr, key, val)
