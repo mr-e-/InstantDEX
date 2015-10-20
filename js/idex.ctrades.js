@@ -2,8 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	
-	var $contentWrap = $("#content_wrap");
+
 	IDEX.allCTrades = [];
 	
 	
@@ -41,7 +40,6 @@ var IDEX = (function(IDEX, $, undefined)
 			IDEX.allCTrades.push(cTrade);
 		}
 		
-
 				
 		return cTrade;
 	}
@@ -66,16 +64,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var cTrade = this;
 		cTrade.searchInputDom.val(cTrade.market.marketName);
 	}
-	
-	
-	
-	$contentWrap.on("click", ".cm-trades-search-popup-trig", function()
-	{
-		var $el = $(this).closest(".cm-trades-wrap");
-		var cTrade = IDEX.getObjectByElement($el, IDEX.allCTrades, "cTradeDom");
-
-		cTrade.updateTradeHistory();
-	})
 	
 	
 	

@@ -4,41 +4,90 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 
+
+
 	
-	
-	IDEX.buildTableRows = function(data, tableType)
+	IDEX.Table = function()
 	{
-		var row = "";
-		var rowWrap = "";
-		var tdWrap = "";
-
-		if (tableType == "table")
+		this.init.apply(this, arguments)
+	}
+	
+	
+	IDEX.Table.prototype = 
+	{	
+		init: function()
 		{
-			rowWrap = "<tr></tr>"
-			tdWrap = "<td></td>";
-		}
-		else if (tableType == "span")
-		{
-			rowWrap = "<div class='order-row'></div>"
-			tdWrap = "<span class='order-col'></span>";
-		}
+			var table = this;
+		},
 		
-		for (var i = 0; i < data.length; ++i)
+	
+	
+		buildTableRows: function(data, tableType)
 		{
-			var td = "";
+			var row = "";
+			var rowWrap = "";
+			var tdWrap = "";
 
-			for (var j = 0; j < data[i].length; ++j)
+			if (tableType == "table")
 			{
-				td += $(tdWrap).text(data[i][j])[0].outerHTML
+				rowWrap = "<tr></tr>"
+				tdWrap = "<td></td>";
+			}
+			else if (tableType == "span")
+			{
+				rowWrap = "<div class='order-row'></div>"
+				tdWrap = "<span class='order-col'></span>";
 			}
 			
-			row += $(td).wrapAll(rowWrap).parent()[0].outerHTML
-		}
+			for (var i = 0; i < data.length; ++i)
+			{
+				var td = "";
 
-		return row;
+				for (var j = 0; j < data[i].length; ++j)
+				{
+					td += $(tdWrap).text(data[i][j])[0].outerHTML
+				}
+				
+				row += $(td).wrapAll(rowWrap).parent()[0].outerHTML
+			}
+
+			return row;
+		},
 	}
 
 	
+		IDEX.buildTableRows = function(data, tableType)
+		{
+			var row = "";
+			var rowWrap = "";
+			var tdWrap = "";
+
+			if (tableType == "table")
+			{
+				rowWrap = "<tr></tr>"
+				tdWrap = "<td></td>";
+			}
+			else if (tableType == "span")
+			{
+				rowWrap = "<div class='order-row'></div>"
+				tdWrap = "<span class='order-col'></span>";
+			}
+			
+			for (var i = 0; i < data.length; ++i)
+			{
+				var td = "";
+
+				for (var j = 0; j < data[i].length; ++j)
+				{
+					td += $(tdWrap).text(data[i][j])[0].outerHTML
+				}
+				
+				row += $(td).wrapAll(rowWrap).parent()[0].outerHTML
+			}
+
+			return row;
+		}
+
 	
 
 	/*

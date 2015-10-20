@@ -1,182 +1,190 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	var $contentWrap = $("#content_wrap");
-	var $popup = $("#marketSearch_popup");
-
-
-	IDEX.allWatchlists = [];
-	
-
-	
-	IDEX.WatchlistMarket = function(market) 
-	{	
-		var watchlistMarket = this;
-		watchlistMarket.market = market;
-		
-		watchlistMarket.lastUpdated = -1;
-		watchlistMarket.isUpdating = false;
-		watchlistMarket.xhr = false;
-		watchlistMarket.postDFD = false;
-		
-		watchlistMarket.marketInfo = 
-		{
-			lastBid: -1,
-			lastAsk: -1
-		};
-	};
-	
-	
-	IDEX.WatchlistMarket.prototype.update = function(forceUpdate)
-	{
-		var watchlistMarket = this;
-		watchlistMarket.postDFD = new $.Deferred();
-		var market = watchlistMarket.market;
-		var time = new Date().getTime()
-		var lastUpdatedTime = watchlistMarket.lastUpdated;
-
-		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
-		
-		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
-		{
-			watchlistMarket.postDFD.resolve();
-		}
-		else
-		{
-			var isNxtAE = market.isNxtAE;
-			var base = market.base;
-			var rel = market.rel;
-			
-			var params = 
-			{
-				'plugin':"InstantDEX",
-				'method':"orderbook", 
-				'allfields':1,
-				'exchange':market.exchanges[0],
-				'tradeable':0,
-				//'baseid':fav.base.assetID,
-				//'relid':"5527630",
-				'maxdepth':1
-			};
-			
-			if (isNxtAE)
-			{
-				params.baseid = base.assetID;
-				params.relid = "5527630";
-				//params.exchange = "nxtae";
-			}
-			else
-			{
-				params.base = base.name;
-				params.rel = rel.name;
-			}
-			
-			watchlistMarket.isUpdating = true;
-			IDEX.sendPost(params, false).done(function(data)
-			{
-				var lastBid = data.lastbid;
-				var lastAsk = data.lastask;
-				
-				watchlistMarket.marketInfo.lastBid = lastBid;
-				watchlistMarket.marketInfo.lastAsk = lastAsk;
-				
-				watchlistMarket.isUpdating = false;
-				watchlistMarket.postDFD.resolve();
-			})
-		}
-		
-		watchlistMarket.lastUpdated = time;
-		
-		return watchlistMarket.postDFD.promise();
-	}
 	
 	
 	
-	
-	IDEX.WatchlistOverlord = function(obj) 
+	IDEX.WatchlistOverlord = function() 
 	{	
 		var overlord = this;
+		overlord.watchlistTiles = [];
 		overlord.watchlists = [];
-		overlord.watchlistMarkets = [];
+		overlord.addMarketPopup = new IDEX.WatchlistPopup();
+
+		overlord.addWatchlist();
 	};
 	
 	
-
-
-	IDEX.WatchlistOverlord.prototype.initLocalStorage = function()
+	IDEX.WatchlistOverlord.prototype.addWatchlistTile = function($el, cellHandler)
 	{
-		var overlord = this;
-		var markets = [];
+		var watchlistOverlord = this;
+		
+		var watchlistTile = new IDEX.WatchlistTile(watchlistOverlord, $el, cellHandler);
+		watchlistOverlord.watchlistTiles.push(watchlistTile)
+
+		return watchlistTile;
+	};
+	
+	IDEX.WatchlistOverlord.prototype.addWatchlist = function()
+	{
+		var watchlistOverlord = this;
+		
+		var watchlist = new IDEX.Watchlist(watchlistOverlord);
+		watchlistOverlord.watchlists.push(watchlist)
+
+		return watchlist;
+	};
+
+
+	IDEX.WatchlistOverlord.prototype.loadLocalStorage = function()
+	{
+		var watchlistOverlord = this;
+		watchlistOverlord.watchlists = [];
+		var watchlistsRaw = [];
 				
-		if (localStorage.watchlist)
+		if (localStorage.watchlists)
 		{
-			markets = JSON.parse(localStorage.getItem('watchlist'));
+			watchlistsRaw = JSON.parse(localStorage.getItem('watchlists'));
 		}
 		
-		for (var i = 0; i < markets.length; i++)
+		for (var i = 0; i < watchlistsRaw.length; i++)
 		{
-			var market = markets[i];
-			var loadedMarket = IDEX.marketOverlord.expandMarket(market);
-			overlord.watchlistMarkets.push(loadedMarket);
+			var watchlist = watchlistOverlord.addWatchlist();
+			var watchlistMarkets = watchlistsRaw[i];
+			watchlist.loadLocalStorage(watchlistMarkets);
+		}
+		
+		if (!watchlistsRaw.length)
+		{
+			watchlistOverlord.addWatchlist();
 		}
 	}
 	
 	
 	IDEX.WatchlistOverlord.prototype.setLocalStorage = function()
 	{
-		var overlord = this;
-		var watchlistMarkets = overlord.watchlistMarkets;
-		var markets = [];
+		var watchlistOverlord = this;
+		var watchlists = watchlistOverlord.watchlists;
+		var watchlistSaves = [];
 		
-		for (var i = 0; i < watchlistMarkets.length; i++)
+		for (var i = 0; i < watchlists.length; i++)
 		{
-			var market = watchlistMarkets[i];
-			var marketMin = market.minimizeSelf();;
-			markets.push(marketMin);
+			var watchlist = watchlists[i];
+			var watchlistSave = watchlist.save();
+			watchlistSaves.push(watchlistSave);
 		}
 		
-		localStorage.setItem('watchlist', JSON.stringify(markets));
-
+		localStorage.setItem('watchlists', JSON.stringify(watchlistSaves));
 	}
 	
 	
-	IDEX.WatchlistOverlord.prototype.addMarket = function(market)
+	IDEX.WatchlistOverlord.prototype.updateWatchlistTable = function()
 	{
-		var overlord = this;
+		var overlord = IDEX.watchlistOverlord;
+		var allWatchlists = IDEX.allWatchlists;
+		
+		for (var i = 0; i < allWatchlists.length; i++)
+		{
+			var watchlist = allWatchlists[i];
+			watchlist.addRow(market);
+		}
+	}
+	
+	
+	IDEX.WatchlistOverlord.prototype.togglePopup = function(watchlist)
+	{
+		var watchlistOverlord = this;
+		var addMarketPopup = watchlistOverlord.addMarketPopup;
+		addMarketPopup.watchlist = watchlist;
+		var $popup = $("#marketSearch_popup");
+
+		IDEX.togglePopup($popup, true, true);
+	}
+	
+	
+
+	
+	
+	
+	
+	
+	IDEX.Watchlist = function(watchlistOverlord) 
+	{	
+		var watchlist = this;
+		
+		watchlist.watchlistOverlord = watchlistOverlord;
+		watchlist.markets = [];
+	};
+	
+	
+	IDEX.Watchlist.prototype.loadLocalStorage = function(markets)
+	{
+		var watchlist = this;
+		
+		for (var i = 0; i < markets.length; i++)
+		{
+			var marketRaw = markets[i];
+			var loadedMarket = IDEX.marketOverlord.expandMarket(marketRaw);
+			watchlist.addMarket(loadedMarket);
+		}
+	}
+	
+	
+	IDEX.Watchlist.prototype.save = function()
+	{
+		var watchlist = this;
+		var markets = watchlist.markets;
+		var saveMarkets = [];
+		
+		for (var i = 0; i < markets.length; i++)
+		{
+			var market = markets[i];
+			var marketMin = market.minimizeSelf();
+			saveMarkets.push(marketMin);
+		}
+		
+		return saveMarkets;
+	}
+	
+	
+	IDEX.Watchlist.prototype.addMarket = function(market)
+	{
+		var watchlist = this;
+		var watchlistOverlord = watchlist.watchlistOverlord;
 		var retbool = false;
 
-		var index = overlord.searchForMarket(market);
+		var index = watchlist.searchForMarket(market);
 		
 		if (index == -1)
 		{
-			overlord.watchlistMarkets.push(market);
-			overlord.setLocalStorage();
+			watchlist.markets.push(market);
+			watchlistOverlord.setLocalStorage();
 			retbool = true;
+			//IDEX.updateWatchlistTable(market);
 		}
 
-		return retbool
+		return retbool;
 	}
 	
-	
-	IDEX.WatchlistOverlord.prototype.removeMarket = function(market)
+
+	IDEX.Watchlist.prototype.removeMarket = function(market)
 	{
-		var overlord = this;
-		var index = overlord.searchForMarket(market);
+		var watchlist = this;
+		var watchlistOverlord = watchlist.watchlistOverlord;
+		var index = watchlist.searchForMarket(market);
 		
 		if (index != -1)
 		{
-			overlord.watchlistMarkets.splice(index, 1);
-			overlord.setLocalStorage();
+			watchlist.markets.splice(index, 1);
+			watchlistOverlord.setLocalStorage();
 		}
 	}
 	
 	
-	
-	
-	IDEX.WatchlistOverlord.prototype.searchForMarket = function(market)
+	IDEX.Watchlist.prototype.searchForMarket = function(market)
 	{
-		var overlord = this;
-		var markets = overlord.watchlistMarkets;
+		var watchlist = this;
+		var markets = watchlist.markets;
 		var index = -1;
 
 		for (var i = 0; i < markets.length; i++)
@@ -193,68 +201,106 @@ var IDEX = (function(IDEX, $, undefined)
 		return index;
 	}
 	
-
+	
 
 	
 	
-	IDEX.Watchlist = function(obj) 
+	
+	
+	IDEX.WatchlistTile = function(watchlistOverlord, $watchlist, cellHandler) 
 	{	
+		var watchlistTile = this;
 		
+		watchlistTile.watchlistOverlord = watchlistOverlord;
+		watchlistTile.cellHandler = cellHandler;
+		watchlistTile.watchlist = watchlistOverlord.watchlists[0];
+		
+		watchlistTile.watchlistIndex = 0;
+		watchlistTile.pollHandler = new IDEX.PollHandler(10000, function() {return watchlistTile.temp()}, function(data, errorLevel) {return watchlistTile.callback(data, errorLevel)});
+
+		watchlistTile.initDOM($watchlist);
+		watchlistTile.initEventListeners();
+		watchlistTile.initWatchlist();
 
 	};
 	
-	
-	IDEX.Watchlist.prototype.staticVar = (function()
-	{
-		IDEX.Watchlist.allMarkets = [];
-	})();
-	
-	
-	IDEX.newWatchlist = function($el, cellHandler)
-	{
-		var watchlist = IDEX.getObjectByElement($el, IDEX.allWatchlists, "watchlistDom");
 
-		if (!watchlist)
+	
+	IDEX.WatchlistTile.prototype.initDOM = function($watchlist) 
+	{	
+		var watchlistTile = this;
+		
+		watchlistTile.watchlistDOM = $watchlist;
+		watchlistTile.watchlistAddDom = watchlistTile.watchlistDOM.find(".watchlist-add");
+		watchlistTile.watchlistTableDom = watchlistTile.watchlistDOM.find(".nTable");
+		watchlistTile.refreshDom = watchlistTile.watchlistDOM.find(".refresh-wrap img");
+		watchlistTile.loadingDom = watchlistTile.watchlistDOM.find(".watchlist-loading");
+		
+		watchlistTile.watchlistTableDom.parent().perfectScrollbar();
+	};
+	
+	
+	IDEX.WatchlistTile.prototype.initEventListeners = function() 
+	{
+		var watchlistTile = this;
+		
+		watchlistTile.watchlistAddDom.on("click", function() { watchlistTile.onAddMarketClick(); } );
+		watchlistTile.watchlistTableDom.on("click", "tbody tr", function(e) { watchlistTile.onRowClick(e, $(this)); } );
+
+		//watchlist.refreshDom.on("click", function(){ watchlist.refreshClick() });
+		//watchlist.watchlistTableDom.on("mouseover", "tbody tr", function(e) { watchlist.onRowMouseover(e, $(this)); } );			
+	}
+	
+	
+	IDEX.WatchlistTile.prototype.initWatchlist = function()
+	{
+		var watchlistTile = this;
+		var watchlistOverlord = watchlistTile.watchlistOverlord;
+		var watchlistIndex = watchlistTile.watchlistIndex;
+		var watchlist = watchlistOverlord.watchlists[watchlistIndex];
+		var markets = watchlist.markets;
+
+		for (var i = 0; i < markets.length; i++)
 		{
-			watchlist = new IDEX.Watchlist();
-			watchlist.cellHandler = cellHandler;
-			watchlist.timeoutDFD = false;
-
-			watchlist.watchlistDom = $el;
-			watchlist.watchlistAddDom = $el.find(".watchlist-add");
-			watchlist.watchlistTableDom = $el.find(".nTable");
-			watchlist.refreshDom = $el.find(".refresh-wrap img");
-			watchlist.loadingDom = $el.find(".watchlist-loading");
-
-			watchlist.watchlistAddDom.on("click", function() { watchlist.toggleAddPopup(); } );
-			watchlist.watchlistTableDom.on("click", "tbody tr", function(e) { watchlist.onRowClick(e, $(this)); } );
-			//watchlist.refreshDom.on("click", function(){ watchlist.refreshClick() });
-
-			//watchlist.watchlistTableDom.on("mouseover", "tbody tr", function(e) { watchlist.onRowMouseover(e, $(this)); } );
-			watchlist.watchlistTableDom.parent().perfectScrollbar();
-
-			
-			IDEX.allWatchlists.push(watchlist)
-			
-			watchlist.initWatchlist();
+			var market = markets[i];
+			watchlistTile.addRow(market);
 		}
-
-						
-		return watchlist;
-	};
-	
 		
+		watchlistTile.pollHandler.poll(0);
+	}
 	
-	IDEX.Watchlist.prototype.toggleAddPopup = function()
-	{		
-		IDEX.togglePopup($popup, true, true);
+	IDEX.WatchlistTile.prototype.changeWatchlist = function()
+	{
+		var watchlistTile = this;
+		var watchlistOverlord = watchlistTile.watchlistOverlord;
+		var watchlistIndex = watchlistTile.watchlistIndex;
+		watchlistTile.watchlist = watchlistOverlord.watchlists[watchlistIndex];
+	}
+	
+	IDEX.WatchlistTile.prototype.onListAddClick = function()
+	{
+		var watchlistTile = this;
+		var watchlistOverlord = watchlistTile.watchlistOverlord;
+		
+		watchlistOverlord.addWatchlist();
+	}
+	
+	
+
+	IDEX.WatchlistTile.prototype.onAddMarketClick = function()
+	{
+		var watchlistTile = this;
+		var watchlist = watchlistTile.watchlist;
+		var watchlistOverlord = watchlistTile.watchlistOverlord;
+
+		watchlistOverlord.togglePopup(watchlist);
 	}
 	
 	
 	
-	IDEX.Watchlist.prototype.onRowClick = function(e, $row)
+	IDEX.WatchlistTile.prototype.onRowClick = function(e, $row)
 	{
-		var watchlist = this;
+		var watchlistTile = this;
 		var cellHandler = watchlist.cellHandler;
 		var market = $row.data("market");
 		
@@ -263,10 +309,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.Watchlist.prototype.addRow = function(market)
+	IDEX.WatchlistTile.prototype.addRow = function(market)
 	{
-		var watchlist = this;
-		var $table = watchlist.watchlistTableDom;
+		var watchlistTile = this;
+		var $table = watchlistTile.watchlistTableDom;
 
 		var keys = ["market", "lastBid", "lastAsk"]
 		var obj = {}
@@ -289,131 +335,12 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	
-	
-	IDEX.Watchlist.prototype.initWatchlist = function()
+	IDEX.WatchlistTile.prototype.temp = function()
 	{
-		var watchlist = this;
-		var $watchlistLoading = watchlist.loadingDom;
-		var markets = IDEX.watchlistOverlord.watchlistMarkets;
-	
-		//IDEX.toggleShow($watchlistLoading, true);
-		
-		for (var i = 0; i < markets.length; i++)
-		{
-			var market = markets[i];
-			watchlist.addRow(market);
-		}
-		
-		watchlist.watchlistMarkets = markets;
-		watchlist.pollHandler(0);
-	}
-	
-	
-	IDEX.updateWatchlistTable = function(market)
-	{
-		var overlord = IDEX.watchlistOverlord;
-		var allWatchlists = IDEX.allWatchlists;
-		
-		for (var i = 0; i < allWatchlists.length; i++)
-		{
-			var watchlist = allWatchlists[i];
-			watchlist.addRow(market);
-		}
-	}
-	
-	
-	
-	
-	IDEX.Watchlist.prototype.pollHandler = function(timeout)
-	{
-		var watchlist = this;
-		
-		watchlist.getWatchlistData(timeout).done(function(data, errorLevel)
-		{
-			timeout = 10000;
+		var watchlistTile = this;
 
-			//console.log([data, errorLevel]);
-			
-			if (errorLevel == IDEX.TIMEOUT_CLEARED)
-			{
-				return;
-			}
-			else if (errorLevel == IDEX.AJAX_ABORT)
-			{
-				return;
-			}
-			else if (errorLevel == IDEX.AJAX_ERROR)
-			{
-
-			}
-			else
-			{
-				markets = watchlist.watchlistMarkets;
-				
-				for (var i = 0; i < markets.length; i++)
-				{
-					var market = markets[i];
-					var watchlistMarketInfo = market.watchlistHandler.marketInfo;
-					var lastBid = watchlistMarketInfo.lastBid;
-					var lastAsk = watchlistMarketInfo.lastAsk;
-
-					var $row = watchlist.watchlistTableDom.find("tbody tr").eq(i);
-					$row.find("td").eq(1).text(String(lastBid));
-					$row.find("td").eq(2).text(String(lastAsk));
-				}
-				
-				if (!(watchlist.isStoppingPolling))
-					watchlist.pollHandler(timeout);
-			}
-			
-		})
-	}
-	
-	IDEX.Watchlist.prototype.getWatchlistData = function(timeout)
-	{
-		var watchlist = this;
-		var retDFD = new $.Deferred();
-
-		watchlist.setTimeout(timeout).done(function(wasCleared)
-		{
-			if (wasCleared)
-			{
-				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
-			}
-			else
-			{
-				var dfds = watchlist.temp();
-
-				$.when.apply($, dfds).done(function(data)
-				{				
-					if (data == "fail")
-					{
-						retDFD.resolve({}, IDEX.AJAX_ERROR);
-					}
-					else if (watchlist.isStoppingOrderbook)
-					{
-						retDFD.resolve({}, IDEX.AJAX_ABORT);
-					}
-					else
-					{
-						
-						retDFD.resolve(data, IDEX.OK);
-					}
-				});
-				
-			}
-		})
-
-		return retDFD.promise();
-	}
-	
-	
-	
-	IDEX.Watchlist.prototype.temp = function()
-	{
-		var watchlist = this;
-		var markets = watchlist.watchlistMarkets;
+		var watchlist = watchlistTile.watchlist;
+		var markets = watchlist.markets;
 
 		var dfds = [];
 		
@@ -432,106 +359,160 @@ var IDEX = (function(IDEX, $, undefined)
 				dfds.push(watchlistMarketHandler.update());
 			}
 
-		}
-		
-		if (!dfds.length)
-		{
-			dfds.push(new $.Deferred());
-			dfds[0].resolve();
-		}
+		}		
 		
 		return dfds;
 	}
+	
 
-	
-	
-	IDEX.Watchlist.prototype.setTimeout = function(timeout)
+	IDEX.WatchlistTile.prototype.callback = function(data, errorLevel)
 	{
-		var watchlist = this;
-		watchlist.timeoutDFD = new $.Deferred();
+		var watchlistTile = this;
+		var continuePolling = false;
 		
-		watchlist.watchlistTimeout = setTimeout(function() 
+		if (errorLevel == IDEX.TIMEOUT_CLEARED)
 		{
-			watchlist.timeoutDFD.resolve(false);
+
+		}
+		else if (errorLevel == IDEX.AJAX_ABORT)
+		{
+
+		}
+		else if (errorLevel == IDEX.AJAX_ERROR)
+		{
+
+		}
+		else
+		{
+			continuePolling = true;
+			var watchlistTile = watchlistTile.watchlist;
+
+			var markets = watchlist.markets;
 			
-		}, timeout);
+			for (var i = 0; i < markets.length; i++)
+			{
+				var market = markets[i];
+				var watchlistMarketInfo = market.watchlistHandler.marketInfo;
+				var lastBid = watchlistMarketInfo.lastBid;
+				var lastAsk = watchlistMarketInfo.lastAsk;
+
+				var $row = watchlistTile.watchlistTableDom.find("tbody tr").eq(i);
+				$row.find("td").eq(1).text(String(lastBid));
+				$row.find("td").eq(2).text(String(lastAsk));
+			}
+		}
 		
-		return watchlist.timeoutDFD.promise();
+		return continuePolling;
 	}
 	
 	
-	IDEX.Watchlist.prototype.clearTimeout = function()
-	{
-		var watchlist = this;
+	
+	
+	
+	
 
-		if (watchlist.timeoutDFD)
-		{
-			clearTimeout(watchlist.watchlistTimeout);
-			clearTimeout.timeoutDFD.resolve(true);
-			clearTimeout.timeoutDFD = false;
-		}
+	
+	
+	IDEX.WatchlistPopup = function(watchlistOverlord) 
+	{	
+		var watchlistPopup = this;
+		watchlistPopup.watchlistOverlord = watchlistOverlord;
+		
+		watchlistPopup.watchlist = false;
+		
+		watchlistPopup.initDOM();
+		watchlistPopup.initEventListeners();
+	};
+	
+	
+	IDEX.WatchlistPopup.prototype.initDOM = function()
+	{
+		var watchlistPopup = this;
+
+		watchlistPopup.popupDOM = $("#marketSearch_popup");	
+		
+		watchlistPopup.bannerDOM = watchlistPopup.popupDOM.find(".banner");
+		watchlistPopup.bannerTextDOM = watchlistPopup.bannerDOM.find("span");
+
+		watchlistPopup.addMarketButton = watchlistPopup.popupDOM.find(".marketSearch-add-trig");
+		
+		watchlistPopup.formDOM = watchlistPopup.popupDOM.find(".marketSearch-popup-form");
+		watchlistPopup.marketInputDOM = watchlistPopup.popupDOM.find("input[name=market]");
+
+	}
+
+	
+	IDEX.WatchlistPopup.prototype.initEventListeners = function()
+	{
+		var watchlistPopup = this;
+
+
+		watchlistPopup.addMarketButton.on("click", function() { watchlistPopup.onAddMarketButtonClick() });
 	}
 	
 
-	
-	
-	
-	$(".marketSearch-add-trig").on("click", function()
+	IDEX.WatchlistPopup.prototype.editBanner = function(bannerStatus, message)
 	{
-		var $wrap = $(this).closest(".popup");
-		var $activeTab = $wrap.find(".tab-wrap.active");
-		var searchType = $activeTab.attr("data-searchtype");
-		var $form = $(".marketSearch-popup-form");
+		var watchlistPopup = this;
 		
-		var $banner = $wrap.find(".banner");
-		$banner.removeClass("error")
-		$banner.removeClass("success")
-		$banner.addClass("active");
+		watchlistPopup.bannerDOM.addClass("active");
+		watchlistPopup.bannerDOM.addClass(bannerStatus);
+		watchlistPopup.bannerTextDOM.text(message);
+	}
+	
+	
+	IDEX.WatchlistPopup.prototype.resetBanner = function()
+	{
+		var watchlistPopup = this;
 		
-		if (searchType == "market")
-		{
-			var $market = $form.find("input[name=market]");
-			var market = $market.data("market");
-			$banner.removeClass("active");
-
-			if (market != "-1")
-			{
-				var retbool = IDEX.watchlistOverlord.addMarket(market);
-
-				if (retbool)
-				{
-					//watchlist.addRow(market);
-					IDEX.updateWatchlistTable(market);
-					$banner.addClass("success")
-					$banner.find("span").text("Success: " + market.marketName + " added to watchlist.")
-					clearAssetInput($wrap);
-				}
-				else
-				{
-					$banner.addClass("error")
-					$banner.find("span").text("Error: This market is already in your watchlist.")
-				}
-			}
-			else
-			{
-				$banner.addClass("error")
-				$banner.find("span").text("Error: You must choose a valid market")
-			}
-		}
-
-	})
+		watchlistPopup.bannerDOM.removeClass("active success error");
+	}
 	
-
 	
-	function clearAssetInput($wrap)
-	{		
-		$wrap.find("input").each(function()
+	IDEX.WatchlistPopup.prototype.clearInput = function()
+	{
+		var watchlistPopup = this;
+		
+		watchlistPopup.formDOM.find("input").each(function()
 		{
 			$(this).val("")
 			$(this).data("market", "-1")
 		})
 	}
 	
+
+	
+	IDEX.WatchlistPopup.prototype.onAddMarketButtonClick = function()
+	{
+		var watchlistPopup = this;
+		var watchlistOverlord = watchlistPopup.watchlistOverlord;
+		var watchlist = watchlistPopup.watchlist;
+		var market = watchlistPopup.marketInputDOM.data("market");
+
+		watchlistPopup.resetBanner();
+		
+
+		if (market != "-1")
+		{
+			var retbool = watchlist.addMarket(market);
+
+			if (retbool)
+			{
+				watchlistPopup.editBanner("success", "Success: " + market.marketName + " added to watchlist.");
+				watchlistPopup.clearInput();
+			}
+			else
+			{
+				watchlistPopup.editBanner("error", "Error: This market is already in your watchlist.")
+			}
+		}
+		else
+		{
+			watchlistPopup.editBanner("error", "Error: You must choose a valid market")
+		}
+
+	}
+
 	
 
 

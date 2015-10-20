@@ -3,10 +3,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	var $contentWrap = $("#content_wrap");
-
 	IDEX.allCOpenOrders = [];
-	
 	
 	
 	
@@ -66,20 +63,11 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.COpenOrder.prototype.updateMarketDOM = function()
 	{
 		var cOpenOrder = this;
+		
 		cOpenOrder.searchInputDom.val(cOpenOrder.market.marketName);
 	}
 	
-	
-	
-	$contentWrap.on("click", ".cm-openorders-search-popup-trig", function()
-	{
-		var $el = $(this).closest(".cm-openorders-wrap");
-		var cOpenOrder = IDEX.getObjectByElement($el, IDEX.allCOpenOrders, "cOpenOrderDom");
-
-		cOpenOrder.updateOrders();
-	})
-	
-	
+		
 	
 	IDEX.COpenOrder.prototype.updateOrders = function()
 	{

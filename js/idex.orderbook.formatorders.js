@@ -22,7 +22,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	function formatOrderData(orders, isAsk)
 	{
-
 		var len = orders.length;
 		var runningTotal = 0;
 		orders.sort(IDEX.compareProp('price'))
@@ -130,7 +129,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 	function formatNewOrders(newOrders, isAsk, orderbook)
 	{	
-		
 		for (var i = 0; i < newOrders.length; i++)
 		{
 			var order = newOrders[i];
@@ -202,12 +200,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			'minWidth':240,
 			'content':$("<div style='display:block'><img src='img/user.png' height='15px' width='20px'></img> "+ nxt +"</div>"),
-			/*'functionBefore':function(origin, continueTooltip)
-			{
-				$(this).tooltipster('option','minWidth', 300)
-				$(this).tooltipster('reposition')
-				continueTooltip();
-			}*/
 		})
 	}
 	

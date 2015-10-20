@@ -4,6 +4,11 @@ var IDEX = (function(IDEX, $, undefined)
 {	
 
 
+	$(".idex-view-trig").on("click", function()
+	{
+		IDEX.toggleMode();
+	})
+	
 	IDEX.toggleMode = function()
 	{
 		if (IDEX.isAdvanced)

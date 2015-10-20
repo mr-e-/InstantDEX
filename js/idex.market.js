@@ -311,6 +311,92 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 
+	/******************	  WATCHLIST HANDLER   *****************/
+
+	
+	
+	IDEX.WatchlistMarket = function(market) 
+	{	
+		var watchlistMarket = this;
+		watchlistMarket.market = market;
+		
+		watchlistMarket.lastUpdated = -1;
+		watchlistMarket.isUpdating = false;
+		watchlistMarket.xhr = false;
+		watchlistMarket.postDFD = false;
+		
+		watchlistMarket.marketInfo = 
+		{
+			lastBid: -1,
+			lastAsk: -1
+		};
+	};
+	
+	
+	IDEX.WatchlistMarket.prototype.update = function(forceUpdate)
+	{
+		var watchlistMarket = this;
+		watchlistMarket.postDFD = new $.Deferred();
+		var market = watchlistMarket.market;
+		var time = new Date().getTime()
+		var lastUpdatedTime = watchlistMarket.lastUpdated;
+
+		forceUpdate = typeof forceUpdate == "undefined" ? false : forceUpdate;
+		
+		if (!forceUpdate && ((time - lastUpdatedTime < 10000) && (lastUpdatedTime != -1)))
+		{
+			watchlistMarket.postDFD.resolve();
+		}
+		else
+		{
+			var isNxtAE = market.isNxtAE;
+			var base = market.base;
+			var rel = market.rel;
+			
+			var params = 
+			{
+				'plugin':"InstantDEX",
+				'method':"orderbook", 
+				'allfields':1,
+				'exchange':market.exchanges[0],
+				'tradeable':0,
+				//'baseid':fav.base.assetID,
+				//'relid':"5527630",
+				'maxdepth':1
+			};
+			
+			if (isNxtAE)
+			{
+				params.baseid = base.assetID;
+				params.relid = "5527630";
+				//params.exchange = "nxtae";
+			}
+			else
+			{
+				params.base = base.name;
+				params.rel = rel.name;
+			}
+			
+			watchlistMarket.isUpdating = true;
+			IDEX.sendPost(params, false).done(function(data)
+			{
+				var lastBid = data.lastbid;
+				var lastAsk = data.lastask;
+				
+				watchlistMarket.marketInfo.lastBid = lastBid;
+				watchlistMarket.marketInfo.lastAsk = lastAsk;
+				
+				watchlistMarket.isUpdating = false;
+				watchlistMarket.postDFD.resolve();
+			})
+		}
+		
+		watchlistMarket.lastUpdated = time;
+		
+		return watchlistMarket.postDFD.promise();
+	}
+	
+	
 	
 	
 	

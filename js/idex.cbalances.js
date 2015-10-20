@@ -2,11 +2,7 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {
-	
-	var $contentWrap = $("#content_wrap");
-
 	IDEX.allCBalances = [];
-	
 
 	
 	
@@ -106,7 +102,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (cBalance.hasMarket)
 		{
-			
 			cBalance.baseSec.updateBalance();
 			cBalance.relSec.updateBalance();
 		}

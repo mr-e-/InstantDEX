@@ -123,14 +123,13 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < listItems.length; i++)
 		{
 			var $li = listItems[i];
-
-			$exchangeDropdownListDOM.append($li)
+			$exchangeDropdownListDOM.append($li);
 		}
 		
 		var title = activeMarketExchanges[0];
 		$exchangeDropdownTitleDOM.text(title);
-		orderbox.buyBox.changeExchange(listItems[0])
-		orderbox.sellBox.changeExchange(listItems[0])
+		orderbox.buyBox.changeExchange(listItems[0]);
+		orderbox.sellBox.changeExchange(listItems[0]);
 	}
 
 	
@@ -156,16 +155,15 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbox.prototype.changeMarket = function(market)
 	{
 		var orderbox = this;
+		
 		orderbox.market = market;
-
 		orderbox.hasMarket = true;
+		
 		if (!orderbox.isBasic)
 			orderbox.updateExchangesDom();
-		//orderbox.buyBox.balanceTitleDom.text(orderbox.relAsset.name + ": ");
-		//orderbox.sellBox.balanceTitleDom.text(orderbox.baseAsset.name + ": ");
+
 		orderbox.buyBox.balanceValDom.text("Loading...");
 		orderbox.sellBox.balanceValDom.text("Loading...");
-
 		
 		orderbox.resetOrderBoxForm();
 		orderbox.updateOrderBoxBalance();
@@ -498,6 +496,25 @@ var IDEX = (function(IDEX, $, undefined)
             e.preventDefault();
         }
     };
+	
+	
+	
+	var $contentWrap = $("#content_wrap");
+	
+	
+	
+	$contentWrap.on("mousedown", ".orderbox-order-button", function()
+	{
+		$(this).addClass("order-button-mousedown")
+	})
+	$contentWrap.on("mouseup", ".orderbox-order-button", function()
+	{
+		$(this).removeClass("order-button-mousedown")
+	})
+	$contentWrap.on("mouseleave", ".orderbox-order-button", function()
+	{
+		$(this).removeClass("order-button-mousedown")
+	})
 	
 	
 	

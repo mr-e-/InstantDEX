@@ -1,6 +1,4 @@
 
-// Created by CryptoSleuth <cryptosleuth@gmail.com>
-
 
 var IDEX = (function(IDEX, $, undefined)
 {
@@ -50,7 +48,7 @@ var IDEX = (function(IDEX, $, undefined)
 					IDEX.defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
 
 					IDEX.initAutocomplete();
-					IDEX.watchlistOverlord.initLocalStorage();
+					IDEX.watchlistOverlord.loadLocalStorage();
 
 					initializedExchanges.resolve();
 				});

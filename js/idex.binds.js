@@ -5,12 +5,17 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	
 	
-
-	$(".idex-view-trig").on("click", function()
+	
+	$("#topLogoWrap").on("click", function()
 	{
-		IDEX.toggleMode();
+		window.location.reload()
 	})
 	
+	
+	$(".temp-exit").on("click", function()
+	{
+		IDEX.hideLoading();
+	})
 	
 	
 	$contentWrap.on("click", ".tab-nav-cell span", function()
@@ -30,20 +35,9 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	$(".fullPopup-trig").on("click", function()
-	{
-		var popupID = $(this).attr("data-popup");
-		
-		var $targetPopup = $("#"+popupID);
-		
-		//IDEX.togglePopup($targetPopup, true, true);
-	})
-	
-	
-	
 	IDEX.togglePopup = function($popup, show, withOverlay)
 	{
-		var $overlay = $("#idex_load").find(".popup-overlay");
+		var $overlay = $(".popup-overlay");
 		var func = show ? "addClass" : "removeClass";
 		
 		$popup[func]("active");
@@ -52,6 +46,15 @@ var IDEX = (function(IDEX, $, undefined)
 			$overlay[func]("active");
 	}
 	
+	
+	$(".fullPopup-trig").on("click", function()
+	{
+		var popupID = $(this).attr("data-popup");
+		
+		var $targetPopup = $("#"+popupID);
+		
+		//IDEX.togglePopup($targetPopup, true, true);
+	})
 	
 	$(".popup-header-close").on("click", function()
 	{
@@ -62,10 +65,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 	
-	$("#topLogoWrap").on("click", function()
-	{
-		window.location.reload()
-	})
+
 
 	
 	$(".popup-trig").on("mousedown", function(e)
@@ -89,106 +89,7 @@ var IDEX = (function(IDEX, $, undefined)
 	})
 	
 
-	$contentWrap.on("mouseover", ".chart-style", function()
-	{
-		$(this).find(".dropdown-wrap").addClass("active");
-		$(this).find(".dropdown-title").addClass("active");
-	})
-	
-	$contentWrap.on("mouseleave", ".chart-style", function()
-	{
-		$(this).find(".dropdown-wrap").removeClass("active");
-		$(this).find(".dropdown-title").removeClass("active");
-	})
-	
-	
-	$contentWrap.on("mouseover", ".chart-time-button-outer", function()
-	{
-		var $wrap = $(this).closest(".chart-time-wrap");
-		$wrap.find(".chart-time-dropdown-wrap").addClass("active");
-	})
-	
-	$contentWrap.on("mouseleave", ".chart-time-wrap", function()
-	{
-		var $wrap = $(this)
-		$wrap.find(".chart-time-dropdown-wrap").removeClass("active");
-	})
-	
-	$contentWrap.on("click", ".chart-time-dropdown-wrap li", function()
-	{
-		var $wrap = $(this).closest(".chart-time-wrap");
-		var isSwitch = $(this).hasClass("time-change");		
-		var val = $(this).attr("data-val");	
-	
-		if (isSwitch)
-		{
-			$wrap.find("ul").removeClass("active");
-			var $otherList = $wrap.find("ul[data-inttype='"+val+"']")
-			var $otherCell = $otherList.find("li.active")
-			val = $otherCell.attr("data-val");
-			var title = $otherCell.text();
-			$otherList.addClass("active");
-		}
-		else
-		{
-			var $list = $(this).closest("ul");
-			var title = $(this).text();
 
-			$list.find("li").removeClass("active");
-			$(this).addClass("active");
-		}
-		
-		$wrap.find(".chart-time-button-title span").text(title);
-
-	})
-	
-	
-	
-	
-	/*		DROPDOWN		*/
-	
-	$contentWrap.on("mouseover", ".dropdown-list-wrap", function()
-	{
-		$(this).find(".dropdown-list").addClass("active");
-		$(this).find(".dropdown-title").addClass("active");
-	})
-	
-	$contentWrap.on("mouseleave", ".dropdown-list-wrap", function()
-	{
-		$(this).find(".dropdown-list").removeClass("active");
-		$(this).find(".dropdown-title").removeClass("active");
-	})
-
-	
-	$contentWrap.on("click", ".dropdown-list li", function()
-	{
-		var $wrap = $(this).closest(".dropdown-list-wrap");
-		
-		if ($wrap.hasClass("dropdown-list-mult-wrap") || $wrap.hasClass("tile-header-link-dropdown"))
-		{
-			
-		}
-		else
-		{
-			var $list = $(this).closest("ul");
-
-			var val = $(this).attr("data-val");	
-			var title = $(this).text();
-
-			$list.find("li").removeClass("active");
-			$(this).addClass("active");
-			
-			$wrap.find(".dropdown-title span").text(title);
-			$wrap.trigger("mouseleave");
-		}
-	})
-
-	
-	$(".temp-exit").on("click", function()
-	{
-		IDEX.hideLoading();
-	})
-	
 	
 	
 	return IDEX;

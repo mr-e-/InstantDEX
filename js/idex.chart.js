@@ -386,27 +386,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	/*$contentWrap.on("click", ".chart-tools-crosshair img", function()
-	{
-		var $popup = $(".shareChartPopup");
-		IDEX.togglePopup($popup, true, true);
-		var chart = $(this).closest(".cell").find(".chart-wrap svg").sleuthcharts()
-		console.log(chart);
-		$popup.data("chart", chart);
-	})
-	
-	$(".shareChartPopup-trig").on("click", function()
-	{
-		var $popup = $(this).closest(".popup");
-		IDEX.togglePopup($popup, false, true);
-		var chart = $popup.data("chart")
-		var marketSettings = chart.marketHandler.marketSettings;
-		var dataPost = {"params":{"params":{"marketSettings":marketSettings}}, "method":"shareChart", "id":1};
-		IDEX.sleuthPost(dataPost);
-		$.growl.notice({'message':"Chart opened in Cryptosleuth", 'location':"tl"});
 
-	})*/
-	
 	
 	
 	return IDEX;

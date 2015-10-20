@@ -3,10 +3,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
-	var $contentWrap = $("#content_wrap");
 	IDEX.allCMarketHistory = [];
-	
-
 
 	
 	IDEX.CMarketHistory = function(obj) 

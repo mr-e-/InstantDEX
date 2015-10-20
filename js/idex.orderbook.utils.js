@@ -22,13 +22,10 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbook.prototype.emptyOrderbook = function(price)
 	{
-		price = (typeof price === "undefined") ? '0.0' : price;
+		var orderbook = this;
 		
-		this.buyBookDom.find(".twrap").empty();
-		this.sellBookDom.find(".twrap").empty();
-		
-		//$("#currPair .order-text").text(this.baseAsset.name+"_"+this.relAsset.name);
-		//$("#currLast .order-text").empty().text(price);
+		orderbook.buyBookDom.find(".twrap").empty();
+		orderbook.sellBookDom.find(".twrap").empty();
 	}
 	
 	
@@ -49,29 +46,31 @@ var IDEX = (function(IDEX, $, undefined)
 	
 
 	
-	IDEX.Orderbook.prototype.updateLastPrice = function(orderbookData)
+	IDEX.Orderbook.prototype.updateLastPrice = function()
 	{
-		var lastPrice = orderbookData.bids.length ? orderbookData.bids[0].price : 0;
-		
-		//$("#currLast .order-text").text(Number(lastPrice).toFixed(8));	
+
 	}
 	
 
 	IDEX.Orderbook.prototype.animateOrderbook = function()
 	{
-		this.orderbookDom.find(".twrap .order-row.expiredRow").remove();
-		this.updateScrollbar(false)
-		this.orderbookDom.find(".newrow .order-col").addClass("fadeSlowIndy")
-		this.orderbookDom.find(".newrow").removeClass("newrow");
+		var orderbook = this;
+		
+		orderbook.orderbookDom.find(".twrap .order-row.expiredRow").remove();
+		orderbook.updateScrollbar(false)
+		orderbook.orderbookDom.find(".newrow .order-col").addClass("fadeSlowIndy")
+		orderbook.orderbookDom.find(".newrow").removeClass("newrow");
 	}
 	
 	IDEX.Orderbook.prototype.updateScrollbar = function(toBottom)
 	{
 		//if (toBottom)
 			//$("#sellBook").scrollTop($("#sellBook").prop("scrollHeight"));
-		this.buyBookDom.perfectScrollbar('update');
-		this.sellBookDom.perfectScrollbar('update');
+		orderbook.buyBookDom.perfectScrollbar('update');
+		orderbook.sellBookDom.perfectScrollbar('update');
 	}
+	
+	
 	
 	return IDEX;
 	

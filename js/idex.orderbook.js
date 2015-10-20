@@ -2,11 +2,9 @@
 
 var IDEX = (function(IDEX, $, undefined)
 {
-	IDEX.OK = 0;
-	IDEX.AJAX_FAILED = 1;
-	IDEX.TIMEOUT_CLEARED = 2;
-	IDEX.AJAX_ABORT = 3;
-	
+
+	var $contentWrap = $("#content_wrap");
+
 	IDEX.allOrderbooks = [];
 	
 	
@@ -24,40 +22,50 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
-	IDEX.Orderbook = function(obj) 
+	IDEX.Orderbook = function($orderbook, cellHandler) 
 	{	
-		this.isStoppingOrderbook = false;
-		this.isWaitingForOrderbook = false;
-		this.orderbookTimeout;
-		this.timeoutDFD = false;
-		this.xhr = false;
+		var orderbook = this;
 		
-		this.orderbookDom;
-		this.searchInputDom;
-		this.lastUpdatedDom;
-		this.buyBookDom;
-		this.emptyBuyBookDom;
-		this.sellBookDom;
-		this.emptyBuyBookDom;
+		orderbook.isStoppingOrderbook = false;
+		orderbook.isWaitingForOrderbook = false;
+		orderbook.orderbookTimeout;
+		orderbook.timeoutDFD = false;
+		orderbook.xhr = false;
 		
-		this.baseAsset = {};
-		this.relAsset = {};
 		
-		this.currentOrderbook;
-		this.newOrderbook;
+		orderbook.currentOrderbook;
+		orderbook.newOrderbook;
 
-		this.groupedBids = {};
-		this.groupedAsks = {};
+		orderbook.groupedBids = {};
+		orderbook.groupedAsks = {};
 		
-		this.labels = [];
-		this.exchange = "active";
+		orderbook.labels = [];
+		orderbook.exchange = "active";
 		
-		this.market;
-		this.cellHandler;
-		this.orderbox;
+		orderbook.market;
+		orderbook.cellHandler = cellHandler;
+		
+		orderbook.initDOM($orderbook);
+		orderbook.orderbox;
 
-		IDEX.constructFromObject(this, obj);
 	};
+	
+	
+	IDEX.Orderbook.prototype.initDOM = function($orderbook)
+	{
+		var orderbook = this;
+		
+		orderbook.orderbookDom = $orderbook;
+		orderbook.buyBookDom = $orderbook.find(".bookname-buybook");
+		orderbook.emptyBuyBookDom = orderbook.buyBookDom.find(".empty-orderbook");
+		orderbook.sellBookDom = $orderbook.find(".bookname-sellbook");
+		orderbook.emptySellBookDom = orderbook.sellBookDom.find(".empty-orderbook");
+		orderbook.searchInputDom = $orderbook.find(".orderbook-search-wrap input");
+		orderbook.lastUpdatedDom = $orderbook.find(".orderbook-lastUpdated");
+		
+		orderbook.buyBookDom.perfectScrollbar();
+		orderbook.sellBookDom.perfectScrollbar();
+	}
 	
 	
 	
@@ -68,19 +76,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 		if (!orderbook)
 		{
-			orderbook = new IDEX.Orderbook();
-			orderbook.cellHandler = cellHandler;
+			orderbook = new IDEX.Orderbook($el, cellHandler);
 
-			orderbook.orderbookDom = $el;
-			orderbook.buyBookDom = $el.find(".bookname-buybook");
-			orderbook.emptyBuyBookDom = orderbook.buyBookDom.find(".empty-orderbook");
-			orderbook.sellBookDom = $el.find(".bookname-sellbook");
-			orderbook.emptySellBookDom = orderbook.sellBookDom.find(".empty-orderbook");
-			orderbook.searchInputDom = $el.find(".orderbook-search-wrap input");
-			orderbook.lastUpdatedDom = $el.find(".orderbook-lastUpdated");
-
-			orderbook.buyBookDom.perfectScrollbar();
-			orderbook.sellBookDom.perfectScrollbar();
 			IDEX.allOrderbooks.push(orderbook)
 			
 			orderbook.initLabelsDom();
@@ -159,54 +156,24 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 	}
 	
-	/*IDEX.unloadMarket = function()
+	IDEX.Orderbook.prototype.changeExchange = function(exchangeName)
 	{
-		IDEX.user.clearPair();
-		IDEX.clearOrderBox();
-		
-		var $pairdom = $(".curr-pair")
-		var market = "No market loaded"
-		$pairdom.find("span").empty().text(market)
-	}*/
-	
-	
-	
-	IDEX.Orderbook.prototype.refreshOrderbook = function()
-	{
-		if (!this.isWaitingForOrderbook)
+		var orderbook = this;
+
+		orderbook.emptyOrderbook("Loading...");
+		if (!orderbook.isStoppingOrderbook)
 		{
-			//console.log('refreshing orderbook')
-			this.clearTimeout();
-			this.orderbookHandler(1);
+			orderbook.stopPollingOrderbook(function()
+			{
+				orderbook.exchange = exchangeName;
+
+				orderbook.currentOrderbook = new IDEX.OrderbookVar();
+
+				orderbook.orderbookDom.find(".empty-orderbook").hide();
+				orderbook.orderbookHandler(1);
+			});
 		}
 	}
-
-	
-	IDEX.Orderbook.prototype.stopPollingOrderbook = function(callback)
-	{
-		var thisScope = this;
-		
-		if (this.isWaitingForOrderbook) 
-		{
-			//this.xhr.abort();
-			this.isStoppingOrderbook = true;
-			
-			setTimeout(function()
-			{ 
-				thisScope.stopPollingOrderbook(callback);
-			}, 100);
-			
-			return false;
-		}
-		
-		this.clearTimeout();
-		this.isStoppingOrderbook = false;
-		
-		if (callback)
-			callback();
-	}
-	
-
 	
 	
 	IDEX.removeOrderbook = function($orderbook)
@@ -233,67 +200,165 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.Orderbook.prototype.orderbookHandler = function(timeout)
+	
+	IDEX.Orderbook.prototype.pollCallback = function(orderbookData, errorLevel)
 	{
 		var orderbook = this;
+		var continuePolling = false;
 		
-		this.getOrderbookData(timeout).done(function(orderbookData, errorLevel)
-		{
-			timeout = 5000;
-			orderbook.toggleStatusText(false);
+		orderbook.toggleStatusText(false);
 
-			//console.log(orderbookData);
-			if (errorLevel == IDEX.TIMEOUT_CLEARED)
+		if (errorLevel == IDEX.TIMEOUT_CLEARED)
+		{
+
+		}
+		else if (errorLevel == IDEX.AJAX_ABORT)
+		{
+
+		}
+		else if (errorLevel == IDEX.AJAX_ERROR)
+		{
+			orderbook.orderbookDom.find(".empty-orderbook").hide();
+			orderbook.emptyOrderbook("Error loading orderbook");
+			orderbook.toggleStatusText(true, "Error loading orderbook");
+		}
+		else
+		{
+			continuePolling = true;
+			
+			if ($.isEmptyObject(orderbookData))
 			{
-				return;
-			}
-			else if (errorLevel == IDEX.AJAX_ABORT)
-			{
-				return;
-			}
-			else if (errorLevel == IDEX.AJAX_ERROR)
-			{
-				orderbook.orderbookDom.find(".empty-orderbook").hide();
-				orderbook.emptyOrderbook("Error loading orderbook");
-				orderbook.toggleStatusText(true, "Error loading orderbook");
-				
-				//$(".empty-orderbook").hide();
-				//$("#buyBook .twrap").empty();
-				//$("#sellBook .twrap").empty();
-				
-				//IDEX.unloadMarket()
+				orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
+				orderbook.emptyOrderbook();
+				orderbook.orderbookDom.find(".empty-orderbook").show();
+				orderbook.updateScrollbar(false);
 			}
 			else
 			{
-				//orderbookData = new IDEX.OrderbookVar(orderbookData);
-				if ($.isEmptyObject(orderbookData))
-				{
-					//console.log('empty');
-					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
-					orderbook.emptyOrderbook();
-					orderbook.orderbookDom.find(".empty-orderbook").show();
-					orderbook.updateScrollbar(false);
-				}
-				else
-				{
-					//orderbook.rawData = $.extend(true, {}, orderbookData);
-					orderbook.formatOrderbookData(orderbookData);
-					orderbook.updateOrders(orderbook.buyBookDom.find(".twrap"), orderbook.groupedBids);
-					orderbook.updateOrders(orderbook.sellBookDom.find(".twrap"), orderbook.groupedAsks);
-					
-					orderbook.updateLastPrice(orderbookData);
-					orderbook.animateOrderbook();
-					orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
-				}
+				orderbook.formatOrderbookData(orderbookData);
+				orderbook.updateOrders(orderbook.buyBookDom.find(".twrap"), orderbook.groupedBids);
+				orderbook.updateOrders(orderbook.sellBookDom.find(".twrap"), orderbook.groupedAsks);
 				
-				if (!(orderbook.isStoppingOrderbook))
-					orderbook.orderbookHandler(timeout);
+				orderbook.updateLastPrice(orderbookData);
+				orderbook.animateOrderbook();
+				orderbook.currentOrderbook = new IDEX.OrderbookVar(orderbookData);
 			}
-			
-		})
+		}
+		
+		return continuePolling;
 	}
 	
+	
+	
+	IDEX.Orderbook.prototype.orderbookPost = function()
+	{
+		var retDFD = new $.Deferred();
+		var orderbook = this;
+		var base = orderbook.market.base;
+		var rel = orderbook.market.rel;
+		
+		var params = 
+		{
+			'plugin':"InstantDEX",
+			'method':"orderbook", 
+			'allfields':1,
+			'exchange':orderbook.exchange,
+			'tradeable':0
+		};
+		
+		if (orderbook.market.isNxtAE)
+		{
+			params.baseid = base.assetID;
+			params.relid = "5527630";
+			//params.exchange = "nxtae";
+		}
+		else
+		{
+			params.base = base.name.toLowerCase();
+			params.rel = rel.name.toLowerCase();
+		}
+		
 
+		
+
+		IDEX.sendPost(params, false).done(function(orderbookData)
+		{
+			if ("error" in orderbookData)
+				orderbookData = {};
+
+			retDFD.resolve(orderbookData);
+			
+		}).fail(function(data)
+		{
+			retDFD.resolve("fail")
+		})
+		
+		
+		return retDFD.promise();
+	}
+
+	
+	IDEX.Orderbook.prototype.updateExchangesDom = function()
+	{
+		var orderbook = this;
+		var market = orderbook.market;		
+		var marketExchanges = market.exchanges;
+		
+		var $exchangeDropdownDOM = orderbook.orderbookDom.find(".orderbook-exchange-dropdown");
+		var $exchangeDropdownListDOM = $exchangeDropdownDOM.find("ul");
+		var $exchangeDropdownTitleDOM = $exchangeDropdownDOM.find(".orderbook-exchange-dropdown-title");
+		$exchangeDropdownListDOM.empty();
+		
+		var listItems = [];
+
+		listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>");
+		listItems.push("<li class='' data-val='InstantDEX'>"+"InstantDEX"+"</li>")
+
+			
+		for (var i = 0; i < marketExchanges.length; i++)
+		{
+			var exchangeName = marketExchanges[i];
+			
+			var li = "<li data-val='"+exchangeName+"'>"+exchangeName+"</li>"
+			listItems.push(li);
+		}
+		
+		for (var i = 0; i < listItems.length; i++)
+		{
+			var $li = $(listItems[i]);
+			$exchangeDropdownListDOM.append($li)
+		}
+		
+		if (false && market.isNxtAE)
+		{
+			$exchangeDropdownTitleDOM.text("nxtae");
+			orderbook.exchange = "nxtae";
+		}
+		else
+		{
+			$exchangeDropdownTitleDOM.text("All Exchanges");
+			orderbook.exchange = "active";
+
+		}
+	}
+
+
+	$contentWrap.on("click", ".orderbook-exchange-dropdown li", function()
+	{
+		var $orderbook = $(this).closest(".orderbook-wrap");
+		var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
+		
+		var exchangeName = $(this).attr("data-val");
+
+				
+		if (orderbook)
+		{
+			orderbook.changeExchange(exchangeName);
+		}
+	})
+	
+	
+	
 	
 	return IDEX;
 	

@@ -28,7 +28,7 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!($book.find(".order-row").length))
 		{
 			for (var i = 0; i < orderData.newOrders.length; i++)
-				$book.append(orderData.newOrders[i]['row'])
+				$book.append(orderData.newOrders[i].row)
 
 			orderbook.updateScrollbar(true);
 		}
@@ -52,11 +52,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 	function updateSum($row, index, orderData, rowData)
 	{
-		for (var i = 0; i < orderData['oldOrders'].length; i++)
+		for (var i = 0; i < orderData.oldOrders.length; i++)
 		{
-			var oldOrder = orderData['oldOrders'][i];
+			var oldOrder = orderData.oldOrders[i];
 
-			if (index == oldOrder['index'] && (Number(oldOrder['sum']) != Number(rowData['sum'])))
+			if (index == oldOrder.index && (Number(oldOrder.sum) != Number(rowData.sum)))
 			{
 				$row.find(".order-col").eq(3).text(String(oldOrder.sum));
 			}
@@ -66,11 +66,11 @@ var IDEX = (function(IDEX, $, undefined)
 
 	function removeOrders($row, orderData, index)
 	{
-		for (var i = 0; i < orderData['expiredOrders'].length; i++)
+		for (var i = 0; i < orderData.expiredOrders.length; i++)
 		{
-			var expiredOrder = orderData['expiredOrders'][i];
+			var expiredOrder = orderData.expiredOrders[i];
 			
-			if (index == expiredOrder['index'])
+			if (index == expiredOrder.index)
 			{
 				$row.addClass("expiredRow");
 			}
@@ -86,7 +86,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var newOrder = orderData.newOrders[i];
 			var trString = IDEX.addElClass(orderData.newOrders[i]['row'], "newrow");
-			//trString = orderTooltip(trString, newOrder)
 
 			if (Number(newOrder.price) < Number(rowData.price))
 			{
@@ -121,7 +120,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var newOrder = orderData.newOrders[i];
 			var trString = IDEX.addElClass(orderData.newOrders[i]['row'], "newrow");
-			//trString = orderTooltip(trString, newOrder)
 
 			if (Number(newOrder.price) > Number(rowData.price))
 			{
