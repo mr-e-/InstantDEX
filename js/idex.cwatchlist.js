@@ -15,15 +15,19 @@ var IDEX = (function(IDEX, $, undefined)
 	};
 	
 	
+	
 	IDEX.WatchlistOverlord.prototype.addWatchlistTile = function($el, cellHandler)
 	{
 		var watchlistOverlord = this;
 		
 		var watchlistTile = new IDEX.WatchlistTile(watchlistOverlord, $el, cellHandler);
 		watchlistOverlord.watchlistTiles.push(watchlistTile)
+		watchlistTile.updateDropdown();
 
 		return watchlistTile;
 	};
+	
+	
 	
 	IDEX.WatchlistOverlord.prototype.addWatchlist = function()
 	{
@@ -31,10 +35,41 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var watchlist = new IDEX.Watchlist(watchlistOverlord);
 		watchlistOverlord.watchlists.push(watchlist)
+		
+		watchlistOverlord.updateAllTileDropdowns();
 
 		return watchlist;
 	};
+	
+	
 
+	IDEX.WatchlistOverlord.prototype.updateAllTileDropdowns = function()
+	{
+		var watchlistOverlord = this;
+		var watchlistTiles = watchlistOverlord.watchlistTiles;
+		
+		for (var i = 0; i < watchlistTiles.length; i++)
+		{
+			var watchlistTile = watchlistTiles[i];
+			watchlistTile.updateDropdown();
+		}
+	};
+
+	
+	
+	IDEX.WatchlistOverlord.prototype.updateAllTileTables = function()
+	{
+		var watchlistOverlord = this;
+		var watchlistTiles = watchlistOverlord.watchlistTiles;
+		
+		for (var i = 0; i < watchlistTiles.length; i++)
+		{
+			var watchlistTile = watchlistTiles[i];
+			watchlistTile.updateTable();
+		}
+	};
+
+	
 
 	IDEX.WatchlistOverlord.prototype.loadLocalStorage = function()
 	{
@@ -61,6 +96,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.WatchlistOverlord.prototype.setLocalStorage = function()
 	{
 		var watchlistOverlord = this;
@@ -78,6 +114,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.WatchlistOverlord.prototype.updateWatchlistTable = function()
 	{
 		var overlord = IDEX.watchlistOverlord;
@@ -89,6 +126,7 @@ var IDEX = (function(IDEX, $, undefined)
 			watchlist.addRow(market);
 		}
 	}
+	
 	
 	
 	IDEX.WatchlistOverlord.prototype.togglePopup = function(watchlist)
@@ -106,8 +144,6 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	
-	
 	IDEX.Watchlist = function(watchlistOverlord) 
 	{	
 		var watchlist = this;
@@ -115,6 +151,7 @@ var IDEX = (function(IDEX, $, undefined)
 		watchlist.watchlistOverlord = watchlistOverlord;
 		watchlist.markets = [];
 	};
+	
 	
 	
 	IDEX.Watchlist.prototype.loadLocalStorage = function(markets)
@@ -128,6 +165,7 @@ var IDEX = (function(IDEX, $, undefined)
 			watchlist.addMarket(loadedMarket);
 		}
 	}
+	
 	
 	
 	IDEX.Watchlist.prototype.save = function()
@@ -147,6 +185,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.Watchlist.prototype.addMarket = function(market)
 	{
 		var watchlist = this;
@@ -160,13 +199,14 @@ var IDEX = (function(IDEX, $, undefined)
 			watchlist.markets.push(market);
 			watchlistOverlord.setLocalStorage();
 			retbool = true;
-			//IDEX.updateWatchlistTable(market);
+			watchlistOverlord.updateAllTileTables();
 		}
 
 		return retbool;
 	}
 	
 
+	
 	IDEX.Watchlist.prototype.removeMarket = function(market)
 	{
 		var watchlist = this;
@@ -177,6 +217,7 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			watchlist.markets.splice(index, 1);
 			watchlistOverlord.setLocalStorage();
+			watchlistOverlord.updateAllTileTables();
 		}
 	}
 	
@@ -236,8 +277,12 @@ var IDEX = (function(IDEX, $, undefined)
 		watchlistTile.refreshDom = watchlistTile.watchlistDOM.find(".refresh-wrap img");
 		watchlistTile.loadingDom = watchlistTile.watchlistDOM.find(".watchlist-loading");
 		
+		watchlistTile.dropdownListDOM = watchlistTile.watchlistDOM.find(".dropdown-list ul");
+		watchlistTile.listAddDOM = watchlistTile.watchlistDOM.find(".dropdown-list-title");
+
 		watchlistTile.watchlistTableDom.parent().perfectScrollbar();
 	};
+	
 	
 	
 	IDEX.WatchlistTile.prototype.initEventListeners = function() 
@@ -246,36 +291,87 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		watchlistTile.watchlistAddDom.on("click", function() { watchlistTile.onAddMarketClick(); } );
 		watchlistTile.watchlistTableDom.on("click", "tbody tr", function(e) { watchlistTile.onRowClick(e, $(this)); } );
+		
+		watchlistTile.listAddDOM.on("click", function(e) { watchlistTile.onListAddClick(); } );
+		watchlistTile.dropdownListDOM.on("click", "li", function(e) { watchlistTile.onListClick($(this)); } );
 
 		//watchlist.refreshDom.on("click", function(){ watchlist.refreshClick() });
 		//watchlist.watchlistTableDom.on("mouseover", "tbody tr", function(e) { watchlist.onRowMouseover(e, $(this)); } );			
 	}
 	
 	
+	
 	IDEX.WatchlistTile.prototype.initWatchlist = function()
 	{
 		var watchlistTile = this;
 		var watchlistOverlord = watchlistTile.watchlistOverlord;
-		var watchlistIndex = watchlistTile.watchlistIndex;
-		var watchlist = watchlistOverlord.watchlists[watchlistIndex];
-		var markets = watchlist.markets;
+
+		watchlistTile.updateTable();
+		
+		watchlistTile.pollHandler.poll(0);
+	}
+	
+	
+	
+	IDEX.WatchlistTile.prototype.changeWatchlist = function(newWatchlistIndex)
+	{
+		var watchlistTile = this;
+		var watchlistOverlord = watchlistTile.watchlistOverlord;
+		watchlistTile.watchlistIndex = newWatchlistIndex;
+		watchlistTile.watchlist = watchlistOverlord.watchlists[newWatchlistIndex];
+		
+		watchlistTile.updateTable();
+		
+		watchlistTile.pollHandler.stopPolling(function()
+		{
+			watchlistTile.pollHandler.poll(0);
+		})
+	}
+	
+	
+	
+	IDEX.WatchlistTile.prototype.updateTable = function()
+	{
+		var watchlistTile = this;
+
+		watchlistTile.watchlistTableDom.find("tbody").empty();
+		var markets = watchlistTile.watchlist.markets;
 
 		for (var i = 0; i < markets.length; i++)
 		{
 			var market = markets[i];
 			watchlistTile.addRow(market);
 		}
-		
-		watchlistTile.pollHandler.poll(0);
 	}
 	
-	IDEX.WatchlistTile.prototype.changeWatchlist = function()
+	
+	
+	IDEX.WatchlistTile.prototype.updateDropdown = function()
 	{
 		var watchlistTile = this;
 		var watchlistOverlord = watchlistTile.watchlistOverlord;
-		var watchlistIndex = watchlistTile.watchlistIndex;
-		watchlistTile.watchlist = watchlistOverlord.watchlists[watchlistIndex];
+		var watchlists = watchlistOverlord.watchlists;
+		watchlistTile.dropdownListDOM.empty();
+		
+		for (var i = 0; i < watchlists.length; i++)
+		{
+			var watchlist = watchlists[i];
+			var str = "<li data-watchlist='"+String(i)+"'>Watchlist " + String(i+1) + "</li>";
+			watchlistTile.dropdownListDOM.append(str);
+		}
 	}
+
+	
+	IDEX.WatchlistTile.prototype.onListClick = function($li)
+	{
+		var watchlistTile = this;
+		var watchlistOverlord = watchlistTile.watchlistOverlord;
+		
+		var newWatchlistIndex = $li.data("watchlist");
+		watchlistTile.changeWatchlist(newWatchlistIndex);
+	}
+	
+	
 	
 	IDEX.WatchlistTile.prototype.onListAddClick = function()
 	{
@@ -301,10 +397,11 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.WatchlistTile.prototype.onRowClick = function(e, $row)
 	{
 		var watchlistTile = this;
-		var cellHandler = watchlist.cellHandler;
+		var cellHandler = watchlistTile.cellHandler;
 		var market = $row.data("market");
 		
-		cellHandler.emit("changeMarket", market);
+		//cellHandler.emit("changeMarket", market);
+		//watchlistTile.watchlist.removeMarket(market);
 	}
 	
 	
@@ -335,6 +432,7 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	
 	IDEX.WatchlistTile.prototype.temp = function()
 	{
 		var watchlistTile = this;
@@ -360,9 +458,12 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 
 		}		
+
+		
 		
 		return dfds;
 	}
+	
 	
 
 	IDEX.WatchlistTile.prototype.callback = function(data, errorLevel)
@@ -385,7 +486,7 @@ var IDEX = (function(IDEX, $, undefined)
 		else
 		{
 			continuePolling = true;
-			var watchlistTile = watchlistTile.watchlist;
+			var watchlist = watchlistTile.watchlist;
 
 			var markets = watchlist.markets;
 			

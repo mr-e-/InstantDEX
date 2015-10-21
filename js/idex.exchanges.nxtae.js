@@ -779,7 +779,9 @@ var IDEX = (function(IDEX, $, undefined)
 			
 			if (!forceUpdate && ((time - lastUpdated < 30000) && (lastUpdated != -1)))
 			{
-				dfd.resolve();
+				tradesHandler.setMarketHistory(market, []);
+
+				dfd.resolve([]);
 			}
 			else
 			{

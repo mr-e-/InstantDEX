@@ -24,15 +24,13 @@ var IDEX = (function(IDEX, $, undefined)
 			dfds.push(exSubHandler[exchangeUpdaterMethod](market, forceUpdate));
 		}
 		
-		if (!dfds.length)
-		{
-			dfds.push(new $.Deferred());
-			dfds[0].resolve();
-		}
-		
+
 		$.when.apply($, dfds).done(function()
 		{
 			retDFD.resolve();
+		}).fail(function()
+		{
+			retDFD.reject();
 		})
 		
 		return retDFD.promise();
@@ -388,6 +386,10 @@ var IDEX = (function(IDEX, $, undefined)
 				
 				watchlistMarket.isUpdating = false;
 				watchlistMarket.postDFD.resolve();
+			}).fail(function()
+			{
+				watchlistMarket.isUpdating = false;
+				watchlistMarket.postDFD.reject();
 			})
 		}
 		

@@ -51,13 +51,19 @@ var IDEX = (function(IDEX, $, undefined)
 
 		var orderbox = IDEX.newBasicOrderbox(basicModeHandler.orderboxesDOM)
 		var chart = basicModeHandler.initChart();
-		
+		var orderbook = new IDEX.Orderbook(basicModeHandler.orderbookWrapDOM, false);
+		orderbook.initLabelsDom();
+		orderbook.currentOrderbook = new IDEX.OrderbookVar();
+		orderbook.isBasic = true;
+		var marketHistory = IDEX.newBasicMarketHistory(basicModeHandler.marketHistoryDOM);
+
 		basicModeHandler.orderbox = orderbox;
 		basicModeHandler.chart = chart;
+		basicModeHandler.orderbook = orderbook;
+		basicModeHandler.marketHistory = marketHistory;
 		basicModeHandler.changeExchange(exchange);
 		basicModeHandler.changeMarket(market);
 		//basicModeHandler.changeChartMarket(market, exchange);
-		console.log(orderbox);
 
 	}
 
@@ -72,6 +78,8 @@ var IDEX = (function(IDEX, $, undefined)
 		basicModeHandler.marketListDOM = $(".idex-basic-marketBox");
 		basicModeHandler.marketNameDOM = $(".idex-basic-marketName span");
 		basicModeHandler.orderboxesDOM = $(".idex-basic-orderboxes");
+		basicModeHandler.orderbookWrapDOM = $(".idex-basic-orderbooks");
+		basicModeHandler.marketHistoryDOM = $(".idex-basic-account-body");
 
 	}
 	
@@ -119,7 +127,8 @@ var IDEX = (function(IDEX, $, undefined)
 		basicModeHandler.orderbox.buyBox.exchange = exchange;
 		basicModeHandler.orderbox.sellBox.exchange = exchange;
 		basicModeHandler.orderbox.changeMarket(market);
-
+		basicModeHandler.orderbook.changeMarket(market);
+		basicModeHandler.marketHistory.changeMarket(market);
 	}
 	
 	

@@ -26,15 +26,10 @@ var IDEX = (function(IDEX, $, undefined)
 	{	
 		var orderbook = this;
 		
-		orderbook.isStoppingOrderbook = false;
-		orderbook.isWaitingForOrderbook = false;
-		orderbook.orderbookTimeout;
-		orderbook.timeoutDFD = false;
-		orderbook.xhr = false;
-		
-		
 		orderbook.currentOrderbook;
 		orderbook.newOrderbook;
+		
+		orderbook.isBasic = false;
 
 		orderbook.groupedBids = {};
 		orderbook.groupedAsks = {};
@@ -44,6 +39,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		orderbook.market;
 		orderbook.cellHandler = cellHandler;
+		orderbook.pollHandler = new IDEX.PollHandler(5000, function() {return orderbook.orderbookPost()}, function(data, errorLevel) {return orderbook.pollCallback(data, errorLevel)});
+
 		
 		orderbook.initDOM($orderbook);
 		orderbook.orderbox;
@@ -132,6 +129,7 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.changeMarket = function(market)
 	{
 		var orderbook = this;
+		var pollHandler = orderbook.pollHandler;
 		
 		orderbook.market = market;
 
@@ -140,18 +138,19 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbook.updateMarketDom();
 		orderbook.updateExchangesDom();
 		
-		orderbook.orderbox.changeMarket(market);
+		if (!orderbook.isBasic)
+			orderbook.orderbox.changeMarket(market);
 		
-		if (!orderbook.isStoppingOrderbook)
+		if (!pollHandler.isStoppingPolling)
 		{
-			orderbook.stopPollingOrderbook(function()
+			pollHandler.stopPolling(function()
 			{
 				orderbook.toggleStatusText(true, "loading");
 
 				orderbook.currentOrderbook = new IDEX.OrderbookVar();
 
 				orderbook.orderbookDom.find(".empty-orderbook").hide();
-				orderbook.orderbookHandler(1);
+				pollHandler.poll(1);
 			});
 		}
 	}
@@ -159,18 +158,19 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.Orderbook.prototype.changeExchange = function(exchangeName)
 	{
 		var orderbook = this;
+		var pollHandler = orderbook.pollHandler;
 
 		orderbook.emptyOrderbook("Loading...");
-		if (!orderbook.isStoppingOrderbook)
+		if (!pollHandler.isStoppingPolling)
 		{
-			orderbook.stopPollingOrderbook(function()
+			pollHandler.stopPolling(function()
 			{
 				orderbook.exchange = exchangeName;
 
 				orderbook.currentOrderbook = new IDEX.OrderbookVar();
 
 				orderbook.orderbookDom.find(".empty-orderbook").hide();
-				orderbook.orderbookHandler(1);
+				pollHandler.poll(1);
 			});
 		}
 	}
@@ -194,7 +194,7 @@ var IDEX = (function(IDEX, $, undefined)
 				
 		if (orderbook)
 		{
-			orderbook.stopPollingOrderbook();
+			orderbook.pollHandler.stopPolling();
 			IDEX.allOrderbooks.splice(i, 1);
 		}
 	}
@@ -205,7 +205,6 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		var orderbook = this;
 		var continuePolling = false;
-		
 		orderbook.toggleStatusText(false);
 
 		if (errorLevel == IDEX.TIMEOUT_CLEARED)
@@ -252,8 +251,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbook.prototype.orderbookPost = function()
 	{
-		var retDFD = new $.Deferred();
 		var orderbook = this;
+		var retDFD = new $.Deferred();
 		var base = orderbook.market.base;
 		var rel = orderbook.market.rel;
 		
@@ -294,7 +293,7 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 		
 		
-		return retDFD.promise();
+		return [retDFD];
 	}
 
 	

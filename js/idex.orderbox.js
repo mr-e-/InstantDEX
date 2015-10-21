@@ -7,46 +7,52 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 	
-	IDEX.Orderbox = function(obj) 
+	IDEX.Orderbox = function() 
 	{	
-		this.hasMarket = false;
+		var orderbox = this;
 		
-		this.orderboxDom;
-		this.buyBox;
-		this.sellBox;
-
-
-		IDEX.constructFromObject(this, obj);
+		orderbox.hasMarket = false;
+		orderbox.isBasic = false;
+		orderbox.orderboxDom;
+		orderbox.buyBox;
+		orderbox.sellBox;
 	};
 	
 	
-	IDEX.OrderboxType = function(type, $orderboxWrap, orderbox) 
+	IDEX.OrderboxType = function(type, orderbox) 
 	{	
-		this.orderbox = orderbox;
-		this.type = type;
-		this.dom;
-		this.balanceTitleDom;
-		this.balanceValDom
-		this.exchangeDom
-		this.formDom;
-		this.buttonDom;
-		this.exchange = "nxtae";
+		var orderboxType = this;
+		
+		orderboxType.orderbox = orderbox;
+		orderboxType.type = type;
+		orderboxType.exchange = "nxtae";
 
-
-		var __construct = function(that, type, $orderboxWrap)
-		{
-			that.dom = $orderboxWrap.find(".orderbox-" + type);
-			that.balanceTitleDom = that.dom.find(".orderbox-balance-title span");
-			that.balanceValDom = that.dom.find(".orderbox-balance-val span");
-			that.exchangeDom = that.dom.find(".orderbox-exchange-title");
-			that.formDom = that.dom.find("form");
-			that.buttonDom = that.dom.find(".orderbox-order-button");
-			that.dom.find(".orderbox-exchange-dropdown .dropdown-list").on("click", "li", function() { that.changeExchange($(this)) } );
-			that.dom.find(".orderbox-order-button").on("click", function() { that.placeOrderButtonClick($(this)) });
-
-		}(this, type, $orderboxWrap)
+		orderboxType.initDOM();
+		orderboxType.initEventListeners();
 	};
 	
+	IDEX.OrderboxType.prototype.initDOM = function() 
+	{
+		var orderboxType = this;
+		var orderbox = orderboxType.orderbox;
+		var isBasic = orderbox.isBasic;
+		var type = orderboxType.type;
+		
+		orderboxType.dom = !isBasic ? orderbox.orderboxDom.find(".orderbox-" + type) : orderbox.orderboxDom.find(".idex-basic-orderbox-" + type);
+		orderboxType.balanceTitleDom = orderboxType.dom.find(".orderbox-balance-title span");
+		orderboxType.balanceValDom = orderboxType.dom.find(".orderbox-balance-val span");
+		orderboxType.exchangeDom = orderboxType.dom.find(".orderbox-exchange-title");
+		orderboxType.formDom = orderboxType.dom.find("form");
+		orderboxType.buttonDom = orderboxType.dom.find(".orderbox-order-button");
+	}
+	
+	IDEX.OrderboxType.prototype.initEventListeners = function() 
+	{
+		var orderboxType = this;
+		
+		orderboxType.dom.find(".orderbox-exchange-dropdown .dropdown-list").on("click", "li", function() { orderboxType.changeExchange($(this)) } );
+		orderboxType.dom.find(".orderbox-order-button").on("click", function() { orderboxType.placeOrderButtonClick($(this)) });
+	};
 	
 	
 	
@@ -59,10 +65,10 @@ var IDEX = (function(IDEX, $, undefined)
 			orderbox = new IDEX.Orderbox();
 			
 			orderbox.cell = cell;
-
 			orderbox.orderboxDom = $el
-			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom, orderbox)
-			orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom, orderbox)
+			
+			orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox)
+			orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox)
 			
 
 			IDEX.allOrderboxes.push(orderbox)
@@ -75,12 +81,12 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 
 		orderbox = new IDEX.Orderbox();
-		
-		orderbox.orderboxDom = $el;
-		orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox.orderboxDom, orderbox)
-		orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox.orderboxDom, orderbox)
-
 		orderbox.isBasic = true;
+		orderbox.orderboxDom = $el;
+		
+		orderbox.buyBox = new IDEX.OrderboxType("buy", orderbox)
+		orderbox.sellBox = new IDEX.OrderboxType("sell", orderbox)
+
 		
 		return orderbox;
 	};
@@ -164,7 +170,9 @@ var IDEX = (function(IDEX, $, undefined)
 
 		orderbox.buyBox.balanceValDom.text("Loading...");
 		orderbox.sellBox.balanceValDom.text("Loading...");
-		
+		orderbox.orderboxDom.find(".refcur-base").text(market.base.name);
+		orderbox.orderboxDom.find(".refcur-rel").text(market.rel.name);
+
 		orderbox.resetOrderBoxForm();
 		orderbox.updateOrderBoxBalance();
 	}

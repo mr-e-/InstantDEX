@@ -44,7 +44,7 @@ var IDEX = (function(IDEX, $, undefined)
 			if (continuePolling)
 			{
 				if (!(pollHandler.isStoppingPolling))
-					pollHandler.poll(pollHander.pollInterval);
+					pollHandler.poll(pollHandler.pollInterval);
 			}
 		})
 	}
@@ -91,6 +91,10 @@ var IDEX = (function(IDEX, $, undefined)
 					{
 						retDFD.resolve(data, IDEX.OK);
 					}
+				}).fail(function()
+				{
+					pollHandler.isWaitingForData = false;
+					retDFD.resolve({}, IDEX.AJAX_ERROR);
 				});
 				
 			}
@@ -108,6 +112,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (pollHandler.isWaitingForData) 
 		{
+			console.log(pollHandler.isWaitingForData);
 			pollHandler.isStoppingPolling = true;
 			
 			setTimeout(function()

@@ -6,16 +6,15 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.allCMarketHistory = [];
 
 	
-	IDEX.CMarketHistory = function(obj) 
+	IDEX.CMarketHistory = function() 
 	{	
-		this.hasMarket = false;
-		
-		this.cMarketHistoryDom;
-		this.searchInputDom;
-		this.tableDom;
-		this.cellHandler;
-
-		IDEX.constructFromObject(this, obj);
+		var cMarketHistory = this;
+		cMarketHistory.hasMarket = false;
+		cMarketHistory.isBasic = false;
+		cMarketHistory.cMarketHistoryDom;
+		cMarketHistory.searchInputDom;
+		cMarketHistory.tableDom;
+		cMarketHistory.cellHandler;
 	}
 	
 
@@ -45,6 +44,19 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
+	IDEX.newBasicMarketHistory = function($el)
+	{
+		var cMarketHistory = new IDEX.CMarketHistory();
+	
+		cMarketHistory.cMarketHistoryDom = $el;
+		cMarketHistory.isBasic = true;
+		cMarketHistory.tableDom = cMarketHistory.cMarketHistoryDom.find(".cm-marketHistory-table");
+		cMarketHistory.tableDom.parent().perfectScrollbar();
+
+				
+		return cMarketHistory;
+	}
+	
 	
 	IDEX.CMarketHistory.prototype.changeMarket = function(market)
 	{
@@ -53,7 +65,8 @@ var IDEX = (function(IDEX, $, undefined)
 		cMarketHistory.hasMarket = true;
 		cMarketHistory.market = market;
 		
-		cMarketHistory.updateMarketDOM();
+		if (!cMarketHistory.isBasic)
+			cMarketHistory.updateMarketDOM();
 		cMarketHistory.updateMarketHistory();
 	}
 	
@@ -89,7 +102,7 @@ var IDEX = (function(IDEX, $, undefined)
 			marketHistoryHandler.update(false, []).done(function()
 			{
 				var trades = marketHistoryHandler.marketHistory;
-				
+
 				for (var j = 0; j < trades.length; j++)
 				{
 					var trade = trades[j];

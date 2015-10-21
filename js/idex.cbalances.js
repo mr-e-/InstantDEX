@@ -112,8 +112,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.CBalance.prototype.refreshClick = function()
 	{
 		var cBalance = this;
-		
-		console.log(cBalance);
 	}
 	
 	
@@ -127,15 +125,14 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var baseOrRel = isBase ? market.base : market.rel;
 
-		cBalanceType.tableDom.find("tbody").empty();
-		
 		baseOrRel.balanceHandler.update(false, IDEX.activeExchanges).done(function()
 		{
 			var balances = baseOrRel.balanceHandler.balance;
-			
+
 			for (var i = 0; i < balances.length; i++)
 			{
 				var balance = balances[i];
+
 				var balanceExchange = balance.exchange;
 				var isActiveExchange = !(IDEX.activeExchanges.indexOf(balanceExchange) == -1);
 				if (isActiveExchange)

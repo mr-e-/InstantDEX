@@ -64,6 +64,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.Orderbook.prototype.updateScrollbar = function(toBottom)
 	{
+		var orderbook = this;
 		//if (toBottom)
 			//$("#sellBook").scrollTop($("#sellBook").prop("scrollHeight"));
 		orderbook.buyBookDom.perfectScrollbar('update');

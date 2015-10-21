@@ -89,7 +89,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var cell = cellHandler.cell;
 			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
 			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
-			var cellApp = IDEX.newCBalance($cellApp, cellHandler);
+			var cellApp = IDEX.newCOpenOrder($cellApp, cellHandler);
 			cellHandler.cellApp = cellApp;
 		},
 		
@@ -99,7 +99,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var cell = cellHandler.cell;
 			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
 			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
-			var cellApp = IDEX.newCBalance($cellApp, cellHandler);
+			var cellApp = IDEX.newCOpenOrder($cellApp, cellHandler);
 			
 			cellHandler.cellApp = cellApp;
 			
@@ -118,7 +118,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 			var cBalance = cellHandler.cellApp;
 
-			cBalance.changeMarket(market);
+			if ("changeMarket" in cBalance)
+				cBalance.changeMarket(market);
 		},
 		
 		save: function()
@@ -285,6 +286,31 @@ var IDEX = (function(IDEX, $, undefined)
 		cellAppType: "orderbook",
 		cellAppClassDOM: ".orderbook-wrap",
 		
+		new: function()
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newOrderbook($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+		},
+		
+		loadCustom: function(settings)
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newOrderbook($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+			
+			if (settings && "market" in settings)
+			{
+				var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+				cellApp.changeMarket(loadedMarket);
+			}
+		},
 
 	})
 	
@@ -302,7 +328,6 @@ var IDEX = (function(IDEX, $, undefined)
 			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
 			var cellApp = IDEX.watchlistOverlord.addWatchlistTile($cellApp, cellHandler);
 			cellHandler.cellApp = cellApp;
-			console.log(cellApp);
 		},
 		
 		loadCustom: function(settings)
@@ -313,15 +338,39 @@ var IDEX = (function(IDEX, $, undefined)
 			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
 			var cellApp = IDEX.watchlistOverlord.addWatchlistTile($cellApp, cellHandler);
 			cellHandler.cellApp = cellApp;
-			console.log(cellApp);
 		},
 	})
 	
 	IDEX.cellHandlers.balances = IDEX.extendClass(IDEX.CellHandler, 
 	{
-		cellAppType: "balance",
+		cellAppType: "balances",
 		cellAppClassDOM: ".cm-balances-wrap",
 		
+		new: function()
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newCBalance($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+		},
+		
+		loadCustom: function(settings)
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newCBalance($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+			
+			if (settings && "market" in settings)
+			{
+				var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+				cellApp.changeMarket(loadedMarket);
+			}
+		},
 
 	})
 	
@@ -348,6 +397,32 @@ var IDEX = (function(IDEX, $, undefined)
 		cellAppType: "marketHistory",
 		cellAppClassDOM: ".cm-marketHistory-wrap",
 		
+		
+		new: function()
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newCMarketHistory($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+		},
+		
+		loadCustom: function(settings)
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newCMarketHistory($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+			
+			if (settings && "market" in settings)
+			{
+				var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+				cellApp.changeMarket(loadedMarket);
+			}
+		},
 
 	})
 

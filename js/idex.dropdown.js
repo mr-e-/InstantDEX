@@ -3,6 +3,7 @@
 
 var IDEX = (function(IDEX, $, undefined) 
 {	
+	var $contentWrap = $("#content_wrap");
 
 
 	IDEX.Dropdown = function()
