@@ -31,7 +31,6 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.initScrollbar();		
 		IDEX.user.initLabels();
 		IDEX.initChartIndicators();
-	
 		
 		IDEX.dMonOverlord.checkAll().done(function(message)
 		{			
