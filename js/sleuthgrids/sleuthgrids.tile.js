@@ -243,12 +243,13 @@ Sleuthgrids = (function(Sleuthgrids)
 		saveTile: function()
 		{
 			var tile = this;
+			var cellOverlord = tile.cellOverlord;
 			var saveObj = {};
 			
 			saveObj.positions = tile.positions;
 			saveObj.winPositions = tile.winPositions;
 			saveObj.index = tile.index;
-			saveObj.cellSaves = tile.saveCells();
+			saveObj.cellSaves = cellOverlord.saveCells();
 						
 			return saveObj;
 		},

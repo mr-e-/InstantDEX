@@ -269,7 +269,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tileOverlord = grid.tileOverlord;
 			var saveObj = {};			
 
-			saveObj.tileSaves = tileOverlord.saveTiles();
+			saveObj.tileSaves = tileOverlord.saveAllTiles();
 			
 			saveObj.index = grid.index;
 			saveObj.isActive = grid.isActive;
