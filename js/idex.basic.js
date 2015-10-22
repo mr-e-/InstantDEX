@@ -13,16 +13,19 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (IDEX.isAdvanced)
 		{
+			$(".idex-view-trig").find("span").text("Advanced");
 			$(".mainHeader-grid-icons").removeClass("active");
 			$(".idex-advanced-wrap").removeClass("active");
 			$(".idex-basic-wrap").addClass("active");
+			$(".sleuthgrids-gridTabs-wrap").hide();
 		}
 		else
 		{
-			
+			$(".idex-view-trig").find("span").text("Basic");
 			$(".mainHeader-grid-icons").addClass("active");
 			$(".idex-advanced-wrap").addClass("active");
 			$(".idex-basic-wrap").removeClass("active");
+			$(".sleuthgrids-gridTabs-wrap").show();
 			Sleuthgrids.gridOverlord.resizeAllGrids();
 		}
 		
@@ -55,6 +58,7 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbook.initLabelsDom();
 		orderbook.currentOrderbook = new IDEX.OrderbookVar();
 		orderbook.isBasic = true;
+		IDEX.allOrderbooks.push(orderbook)
 		var marketHistory = IDEX.newBasicMarketHistory(basicModeHandler.marketHistoryDOM);
 
 		basicModeHandler.orderbox = orderbox;
@@ -63,6 +67,7 @@ var IDEX = (function(IDEX, $, undefined)
 		basicModeHandler.marketHistory = marketHistory;
 		basicModeHandler.changeExchange(exchange);
 		basicModeHandler.changeMarket(market);
+		basicModeHandler.updateExchangesDom();
 		//basicModeHandler.changeChartMarket(market, exchange);
 
 	}
@@ -128,6 +133,7 @@ var IDEX = (function(IDEX, $, undefined)
 		basicModeHandler.orderbox.sellBox.exchange = exchange;
 		basicModeHandler.orderbox.changeMarket(market);
 		basicModeHandler.orderbook.changeMarket(market);
+		basicModeHandler.orderbook.changeExchange(basicModeHandler.exchange);
 		basicModeHandler.marketHistory.changeMarket(market);
 	}
 	
@@ -138,6 +144,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var exchange = basicModeHandler.exchange;
 		var $tbody = basicModeHandler.allMarketsTableBodyDOM;
 		var markets = IDEX.allExchanges[exchange].markets;
+		$tbody.empty();
 		
 		for (var i = 0; i < markets.length; i++)
 		{
@@ -214,6 +221,31 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.changeChartMarket(chart, market, exchange);
 	}
 	
+	
+	IDEX.BasicModeHandler.prototype.updateExchangesDom = function()
+	{
+		var $exchangeDropdownListDOM = $(".idex-basic-exchanges-list");
+		$exchangeDropdownListDOM.empty();
+		
+		var listItems = [];
+
+		listItems.push("<li class='' data-val='InstantDEX'>"+"InstantDEX"+"</li>")
+			
+		for (var i = 0; i < IDEX.activeExchanges.length; i++)
+		{
+			var exchangeName = IDEX.activeExchanges[i];
+			
+			var li = "<li data-val='"+exchangeName+"'>"+exchangeName+"</li>"
+			listItems.push(li);
+		}
+		
+		for (var i = 0; i < listItems.length; i++)
+		{
+			var $li = $(listItems[i]);
+			$exchangeDropdownListDOM.append($li)
+		}
+		
+	}
 	
 
 	return IDEX;

@@ -1,8 +1,10 @@
 
+
+// Created by CryptoSleuth <cryptosleuth@gmail.com>
+
+
 Sleuthcharts = (function(Sleuthcharts) 
 {
-	
-	
 	
 	var PlotHandler = Sleuthcharts.PlotHandler = function()
 	{

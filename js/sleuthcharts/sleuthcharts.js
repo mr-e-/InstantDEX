@@ -1,5 +1,8 @@
-var Sleuthcharts = {};
 
+// Created by CryptoSleuth <cryptosleuth@gmail.com>
+
+
+var Sleuthcharts = {};
 
 Sleuthcharts = (function(Sleuthcharts) 
 {
@@ -17,11 +20,8 @@ Sleuthcharts = (function(Sleuthcharts)
 		
 		if (this[0]) 
 		{
-
-
 			options = args[0];
-
-			// Create the chart
+			
 			if (typeof options !== "undefined") 
 			{
 				//console.log(options);
@@ -92,6 +92,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			chart.xAxis = [];
 			chart.yAxis = [];
 			
+			chart.initDOM();
 			chart.initCanvas();
 			chart.setContainerSize();
 			chart.initMarketHandler();
@@ -109,6 +110,16 @@ Sleuthcharts = (function(Sleuthcharts)
 			return chart;
 		},
 		
+		
+		
+		initDOM: function()
+		{
+			var chart = this;
+			
+			chart.header = chart.node.find(".chart-header");
+			
+			
+		},
 		
 		
 		initCanvas: function()
@@ -401,8 +412,7 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			
 			chart.getAllSeriesData().done(function()
-			{
-				
+			{				
 				plotHandler.setDefaultMarketDataRange();
 				chart.hasRenderedOnce = true;
 				chart.redraw();
@@ -417,7 +427,7 @@ Sleuthcharts = (function(Sleuthcharts)
 			
 			
 			
-			return dfd.promise()
+			return dfd.promise();
 		},
 		
 		
@@ -509,6 +519,8 @@ Sleuthcharts = (function(Sleuthcharts)
 
 			}
 		},
+		
+		
 		
 		updateAxisMinMax: function()
 		{

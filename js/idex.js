@@ -60,6 +60,7 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.basicModeHandler.init();
 				IDEX.initGrids();
 				IDEX.hideLoading();
+				//IDEX.toggleMode();
 				retDFD.resolve();
 			})
 			

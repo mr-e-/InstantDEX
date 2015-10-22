@@ -34,6 +34,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var __construct = function(that, type, $cBalanceDom)
 		{
 			that.dom = $cBalanceDom.find(".cm-balances-" + type);
+			that.balanceTotalDOM = that.dom.find(".cm-balances-sing-balanceVal span");
 			that.balanceTitleDom = that.dom.find(".cm-balances-sing-title span");
 			//that.balanceValDom = that.dom.find(".orderbox-balance-val span");
 			that.tableDom = that.dom.find(".cm-balances-sing-table");
@@ -124,10 +125,13 @@ var IDEX = (function(IDEX, $, undefined)
 		var market = cBalance.market;
 		
 		var baseOrRel = isBase ? market.base : market.rel;
+		cBalanceType.tableDom.find("tbody").empty();
+		cBalanceType.balanceTotalDOM.text("0.00");
 
 		baseOrRel.balanceHandler.update(false, IDEX.activeExchanges).done(function()
 		{
 			var balances = baseOrRel.balanceHandler.balance;
+			var runningTotal = 0.00;
 
 			for (var i = 0; i < balances.length; i++)
 			{
@@ -135,11 +139,14 @@ var IDEX = (function(IDEX, $, undefined)
 
 				var balanceExchange = balance.exchange;
 				var isActiveExchange = !(IDEX.activeExchanges.indexOf(balanceExchange) == -1);
+				runningTotal += balance.total;
 				if (isActiveExchange)
 				{
 					cBalanceType.addTableRow(balance);
 				}
 			}
+			
+			cBalanceType.balanceTotalDOM.text(String(runningTotal));
 		})
 	}
 	

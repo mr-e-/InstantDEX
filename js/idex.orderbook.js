@@ -39,10 +39,10 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		orderbook.market;
 		orderbook.cellHandler = cellHandler;
-		orderbook.pollHandler = new IDEX.PollHandler(5000, function() {return orderbook.orderbookPost()}, function(data, errorLevel) {return orderbook.pollCallback(data, errorLevel)});
 
 		
 		orderbook.initDOM($orderbook);
+		orderbook.pollHandler = new IDEX.PollHandler(5000, function() {return orderbook.orderbookPost()}, function(data, errorLevel) {return orderbook.pollCallback(data, errorLevel)}, orderbook.lastUpdatedDom);
 		orderbook.orderbox;
 
 	};
@@ -273,8 +273,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else
 		{
-			params.base = base.name.toLowerCase();
-			params.rel = rel.name.toLowerCase();
+			params.base = base.name
+			params.rel = rel.name
 		}
 		
 
@@ -311,8 +311,11 @@ var IDEX = (function(IDEX, $, undefined)
 		var listItems = [];
 
 		listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>");
-		listItems.push("<li class='' data-val='InstantDEX'>"+"InstantDEX"+"</li>")
 
+		if (market.isNxtAE)
+		{
+			listItems.push("<li class='' data-val='InstantDEX'>"+"InstantDEX"+"</li>")
+		}
 			
 		for (var i = 0; i < marketExchanges.length; i++)
 		{
@@ -328,17 +331,9 @@ var IDEX = (function(IDEX, $, undefined)
 			$exchangeDropdownListDOM.append($li)
 		}
 		
-		if (false && market.isNxtAE)
-		{
-			$exchangeDropdownTitleDOM.text("nxtae");
-			orderbook.exchange = "nxtae";
-		}
-		else
-		{
-			$exchangeDropdownTitleDOM.text("All Exchanges");
-			orderbook.exchange = "active";
 
-		}
+		$exchangeDropdownTitleDOM.text("All Exchanges");
+		orderbook.exchange = "active";
 	}
 
 

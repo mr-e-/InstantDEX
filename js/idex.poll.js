@@ -11,7 +11,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	
 
-	IDEX.PollHandler = function(pollInterval, getDataFunc, pollCallback)
+	IDEX.PollHandler = function(pollInterval, getDataFunc, pollCallback, $lastUpdatedDOM)
 	{
 		var pollHandler = this;
 	
@@ -29,6 +29,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		pollHandler.getDataFunc = getDataFunc;
 		pollHandler.pollCallback = pollCallback;
+		pollHandler.lastUpdatedDOM = $lastUpdatedDOM;
 	}
 
 
@@ -55,16 +56,16 @@ var IDEX = (function(IDEX, $, undefined)
 		var pollHandler = this;
 		var retDFD = new $.Deferred();
 		
-		//pollHandler.counter = true;
-		//pollHandler.lastUpdatedHandler(0);
+		pollHandler.counter = true;
+		pollHandler.lastUpdatedHandler(0);
 		//orderbook.orderbox.updateOrderBoxBalance();
 
 		pollHandler.setTimeout(timeout).done(function(wasCleared)
 		{
 			if (wasCleared)
 			{
-				//pollHandler.counter = false;
-				//pollHandler.clearUpdatedTimeout()
+				pollHandler.counter = false;
+				pollHandler.clearUpdatedTimeout()
 				retDFD.resolve({}, IDEX.TIMEOUT_CLEARED);
 			}
 			else
@@ -74,8 +75,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 				$.when.apply($, dfds).done(function(data)
 				{
-					//pollHandler.counter = false;
-					//pollHandler.clearUpdatedTimeout();
+					pollHandler.counter = false;
+					pollHandler.clearUpdatedTimeout();
 					
 					pollHandler.isWaitingForData = false;		
 
@@ -165,26 +166,29 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.PollHandler.prototype.lastUpdatedHandler = function(seconds)
 	{
 		var pollHandler = this;
-		
+
 		pollHandler.lastUpdatedCounter().done(function()
 		{			
 			if (pollHandler.counter)
 			{
-				/*seconds++;
+				seconds++;
 				
-				if (orderbook.isWaitingForOrderbook)
-					var text = String(seconds) + "s..."
+				if (pollHandler.isWaitingForData)
+					var text = String(seconds) + "s...";
 				else
-					var text = String(seconds) + "s"
+					var text = String(seconds) + "s";
 				
-				orderbook.lastUpdatedDom.text(text)
+				if (pollHandler.lastUpdatedDOM)
+					pollHandler.lastUpdatedDOM.text(text);
 				
-				orderbook.lastUpdatedHandler(seconds)*/
+				pollHandler.lastUpdatedHandler(seconds);
 			}
 			else
 			{
-				var text = "0s"
-				//orderbook.lastUpdatedDom.text(text)
+				var text = "0s";
+				
+				if (pollHandler.lastUpdatedDOM)
+					pollHandler.lastUpdatedDOM.text(text);
 			}
 		})
 	}

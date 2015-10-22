@@ -400,7 +400,7 @@ var IDEX = (function(IDEX, $, undefined)
 		var cellHandler = watchlistTile.cellHandler;
 		var market = $row.data("market");
 		
-		//cellHandler.emit("changeMarket", market);
+		cellHandler.emit("changeMarket", market);
 		//watchlistTile.watchlist.removeMarket(market);
 	}
 	

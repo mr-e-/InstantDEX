@@ -176,7 +176,6 @@ body {
 .dropdown-list-wrap {
 	height:100%;
 	float:left;
-	margin-left:10px;
 }
 
 .dropdown-outer {
@@ -764,7 +763,7 @@ body {
 .idex-basic-content {
 	height:100%;
 	width:calc(100% - 280px);
-	padding:10px 60px;
+	padding:15px 80px;
 	float:left;
 }
 
@@ -1146,6 +1145,15 @@ body {
 	background-color:#404040;
 }
 
+.idex-view-trig {
+	height:100%;
+	float:right;
+	padding-top:6px;
+	padding-right:15px;
+	padding-left:15px;
+	font-size:13px;
+	border-left:1px solid #222222;
+}
 /* ------------------------- CHART ------------------------- */
 
 .chart-header {
@@ -2158,6 +2166,10 @@ body {
 	width:100%;
 }
 
+.watchlist-add {
+	margin-left:10px;
+}
+
 .watchlist-table-wrap {
 	height:calc(100% - 25px);
 	width:100%;
@@ -2593,6 +2605,7 @@ body {
 .cm-balances-sing-table-wrap table {
 	width:100%;
 	position:relative;
+	font-size:13px;
 }
 
 .cm-balances-sing-table th {

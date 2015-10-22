@@ -379,6 +379,31 @@ var IDEX = (function(IDEX, $, undefined)
 		cellAppType: "openOrders",
 		cellAppClassDOM: ".cm-openorders-wrap",
 		
+		new: function()
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newCOpenOrder($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+		},
+		
+		loadCustom: function(settings)
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellAppClassDOM = cellHandler.cellAppClassDOM;			
+			var $cellApp = cell.cellDOM.find(cellAppClassDOM);
+			var cellApp = IDEX.newCOpenOrder($cellApp, cellHandler);
+			cellHandler.cellApp = cellApp;
+			
+			if (settings && "market" in settings)
+			{
+				var loadedMarket = IDEX.marketOverlord.expandMarket(settings.market);
+				cellApp.changeMarket(loadedMarket);
+			}
+		},
 
 	})
 	

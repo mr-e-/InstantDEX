@@ -1,4 +1,5 @@
 
+// Created by CryptoSleuth <cryptosleuth@gmail.com>
 
 
 Sleuthcharts = (function(Sleuthcharts) 

@@ -21,14 +21,13 @@ var IDEX = (function(IDEX, $, undefined)
 	{	
 		var order = IDEX.user.pendingOrder;
 		var params = $.extend(true, {}, order.rawData);
-		//params.dotrade = 1;
+		params.dotrade = 1;
 		console.log(JSON.stringify(params));
 		
 		$tradesequencePopupConfirm.addClass('disabled');
 		
 		IDEX.sendPost(params, false).done(function(data)
 		{
-			console.log(JSON.stringify(data));
 			console.log(data);
 
 			if ("error" in data && data.error.length)
@@ -52,8 +51,6 @@ var IDEX = (function(IDEX, $, undefined)
 
 	IDEX.buildMakeofferModal = function(order, orderbook)
 	{
-		//console.log(order);
-		//console.log(orderbook);
 		var market = orderbook.market;
 		var marketName = market.marketName;
 		var baseName = market.base.name;

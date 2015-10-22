@@ -283,7 +283,10 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.makeCellDOM();
 			
 			cell.cellNav = new Sleuthgrids.CellNav(cell);
-			cell.handler = new Sleuthgrids.cellHandlerClass(cell);
+			//cell.handler = new Sleuthgrids.cellHandlerClass(cell);
+			cell.handler = new Sleuthgrids.cellHandlers[cellType]();
+			cell.handler.init(cell)
+
 		},
 		
 		

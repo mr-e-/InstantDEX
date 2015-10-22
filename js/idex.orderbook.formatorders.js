@@ -159,7 +159,7 @@ var IDEX = (function(IDEX, $, undefined)
 			}).parent()[0].outerHTML;
 			
 
-			trString = $(trString).prepend("<div class='order-row-inspect-trig'><img class='vert-align' src='img/eye.png'></div>")[0].outerHTML;
+			//trString = $(trString).prepend("<div class='order-row-inspect-trig'><img class='vert-align' src='img/eye.png'></div>")[0].outerHTML;
 			
 			order.row = trString;
 		}	

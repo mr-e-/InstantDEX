@@ -20,6 +20,10 @@ var IDEX = (function(IDEX, $, undefined)
 		var retDFD = new $.Deferred();
 		retDFD.resolve();
 		
+		dMonOverlord.ping().done(function()
+		{
+			
+		})
 		for (var i = 0; i < dMons.length; i++)
 		{
 			var dMon = dMons[i];
@@ -43,13 +47,14 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 	
 	
-	IDEX.DMon.prototype.ping = function()
+	IDEX.DMonOverlord.prototype.ping = function()
 	{
 		var dfd = new $.Deferred();
 		var params = {"method":"openorders","allorders":1};
-		//params = {"method":"balance","exchange":"poloniex"}
+		params = {"method":"balance","exchange":"bittrex"}
 		//params = {"method":"allexchanges"}
-		
+		//params = {"method":"tradehistory"}
+
 		IDEX.sendPost(params, false).done(function(data)
 		{
 			console.log(data)

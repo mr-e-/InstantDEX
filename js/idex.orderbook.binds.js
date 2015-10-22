@@ -24,9 +24,11 @@ var IDEX = (function(IDEX, $, undefined)
 		if (!has)
 		{
 			var bookID = $(this).closest(".bookname").attr("data-book").toLowerCase();
-			var rowIndex = $(this).index(".bookname-"+bookID+" .order-row")
+			var rowIndex = $(this).index();
 			var order = IDEX.getRowData($(this), rowIndex);
-			
+
+			if (!tempCheck(order))
+				return;
 			var $orderbook = $(this).closest(".orderbook-wrap");
 			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
 			
@@ -45,6 +47,31 @@ var IDEX = (function(IDEX, $, undefined)
 			//$("#place"+isAsk+"Amount").val(order.volume).trigger("keyup");
 		}
 	})
+	
+	function tempCheck(order)
+	{
+		var ret = false;
+		if (order)
+		{
+			var trades = order.trades;
+			if (trades)
+			{
+				for (var i = 0; i < trades.length; i++)
+				{
+					var trade = trades[i];
+					var exchange = trade.exchange;
+					ret = true;
+					if (exchange != "InstantDEX")
+					{
+						ret = false;
+						break;
+					}
+				}
+			}
+		}
+		
+		return ret
+	}
 	
 	
 	
