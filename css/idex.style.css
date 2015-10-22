@@ -1377,7 +1377,6 @@ body {
 	background-color: #329ddc;
 }
 
-
 .chart-config-wrap {
 	height:100%;
 	position:relative;
@@ -1443,7 +1442,7 @@ body {
 }
 
 .dropdown-wrap {
-	width:350px;
+	width:370px;
 	position:fixed;
 	display:none;
 	z-index:101;
@@ -1473,6 +1472,7 @@ body {
 	display:block;
 	background-color:#111111;
 	padding:5px 10px;
+	font-size:13px;
 }
 
 .chart-table {
@@ -1498,6 +1498,7 @@ body {
 .chart-table ul {
 	list-style:none;
 	text-align:left;
+	font-size:12px;
 }
 
 .chart-table li {
