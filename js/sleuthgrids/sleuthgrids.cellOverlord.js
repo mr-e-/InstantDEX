@@ -119,6 +119,7 @@ Sleuthgrids = (function(Sleuthgrids)
 			cell.cellNav.cellNavDOM.appendTo(newCellOverlord.cellHeaderDOM);
 			newCellOverlord.cells.push(cell);
 			cell.cellOverlord = newCellOverlord;
+			cell.cellNav.cellOverlord = newCellOverlord;
 
 			Sleuthgrids.updateArrayIndex(cellOverlord.cells);
 			Sleuthgrids.updateArrayIndex(newCellOverlord.cells);
