@@ -1740,6 +1740,11 @@ body {
 	margin-left:10px;
 }
 
+.orderbook-exchange-dropdown .dropdown-outer {
+	width:initial;
+	min-width:110px;
+}
+
 .orderbook-header-status {
 	height:100%;
 	position:relative;
