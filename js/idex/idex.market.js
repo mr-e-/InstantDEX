@@ -127,6 +127,9 @@ var IDEX = (function(IDEX, $, undefined)
 		marketObj.exchanges = [];
 		marketObj.exchangeSettings = {};
 		marketObj.marketKey = baseCoin.assetID + "_" + relCoin.assetID;
+		marketObj.isVirtualAsset = true;
+		marketObj.isNxtAE = false;
+		
 
 		return marketObj;
 	}

@@ -139,7 +139,12 @@ var IDEX = (function(IDEX, $, undefined)
 		orderbook.updateExchangesDom();
 		
 		if (!orderbook.isBasic)
-			orderbook.orderbox.changeMarket(market);
+		{
+			if (!market.isVirtualAsset)
+			{
+				orderbook.orderbox.changeMarket(market);
+			}
+		}
 		
 		if (!pollHandler.isStoppingPolling)
 		{
@@ -273,8 +278,8 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		else if (orderbook.market.isVirtualAsset)
 		{
-			params.base = base.assetID;
-			params.rel = rel.assetID;
+			params.baseid = base.assetID;
+			params.relid = rel.assetID;
 			params.exchange = "active";
 		}
 		else
@@ -316,7 +321,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var listItems = [];
 
-		listItems.push("<li class='active' data-val='active'>"+"All Exchanges"+"</li>");
+		listItems.push("<li class='active' data-val='active'>"+"Active Exchanges"+"</li>");
 
 		if (market.isNxtAE)
 		{
@@ -338,7 +343,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 
-		$exchangeDropdownTitleDOM.text("All Exchanges");
+		$exchangeDropdownTitleDOM.text("Active Exchanges");
 		orderbook.exchange = "active";
 	}
 

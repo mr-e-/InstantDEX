@@ -37,8 +37,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var $tab = $(this);
 		var tab = $tab.attr("data-tab");
 		var $tabWrap = $fullWrap.find(".tab-wrap[data-tab='"+tab+"']");
-		console.log(tab);
-		console.log($tabWrap);
 
 		$fullWrap.find(".tab-nav-cell").removeClass("active");
 		$fullWrap.find(".tab-wrap").removeClass("active");

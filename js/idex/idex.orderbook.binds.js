@@ -27,14 +27,17 @@ var IDEX = (function(IDEX, $, undefined)
 			var rowIndex = $(this).index();
 			var order = IDEX.getRowData($(this), rowIndex);
 
-			if (!tempCheck(order))
-				return;
+
 			var $orderbook = $(this).closest(".orderbook-wrap");
 			var orderbook = IDEX.getObjectByElement($orderbook, IDEX.allOrderbooks, "orderbookDom");
 			
 			var $orderbox = $orderbook.find(".orderbox-all");
 			var orderbox = IDEX.getObjectByElement($orderbox, IDEX.allOrderboxes, "orderboxDom");
+
+			if (!tempCheck(order) && !orderbook.market.isVirtualAsset)
+				return;
 			
+			console.log(order);
 			
 			IDEX.user.pendingOrder = order;
 
@@ -145,7 +148,6 @@ var IDEX = (function(IDEX, $, undefined)
 		var $activeTab = $wrap.find(".tab-wrap.active");
 		var searchType = $activeTab.attr("data-searchtype");
 		var $form = $activeTab.find(".orderbookSearch-popup-form");
-
 		
 		var $banner = $wrap.find(".banner");
 		$banner.removeClass("error")
@@ -176,14 +178,15 @@ var IDEX = (function(IDEX, $, undefined)
 		else if (searchType == "coin")
 		{
 			var $baseAsset = $form.find("input[name=base]");
+
 			var baseAsset = $baseAsset.data("asset");
-			var $relAsset = $form.find("input[name=rel]");
+			var $relAsset = $form.find("input[name='rel']");
 			var relAsset = $relAsset.data("asset");
 			$banner.removeClass("active");
-
-			console.log(baseAsset, relAsset);
+			
 			if (baseAsset != "-1" && relAsset != "-1")
 			{
+
 				var market = IDEX.marketOverlord.makeVirtual(baseAsset, relAsset);
 				orderbook.changeMarket(market);
 				//orderbook.cellHandler.emit("changeMarket", market);

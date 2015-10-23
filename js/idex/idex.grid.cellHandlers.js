@@ -311,6 +311,20 @@ var IDEX = (function(IDEX, $, undefined)
 				cellApp.changeMarket(loadedMarket);
 			}
 		},
+		
+		save: function()
+		{
+			var cellHandler = this;
+			var cell = cellHandler.cell;
+			var cellApp = cellHandler.cellApp;
+			var saveObj = {};
+			var market = cellApp.market;
+			if (market && !market.isVirtualAsset)
+			{
+				saveObj.market = market.minimizeSelf();
+			}
+			return saveObj;
+		},
 
 	})
 	
