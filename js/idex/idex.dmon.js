@@ -39,8 +39,9 @@ var IDEX = (function(IDEX, $, undefined)
 		var dfd = new $.Deferred();
 		var params = {"requestType":"getState"};
 		
-		IDEX.sendPost(params, true).done(function()
+		IDEX.sendPost(params, true).done(function(data)
 		{
+			console.log(data);
 			dfd.resolve()
 			
 		}).fail(function()

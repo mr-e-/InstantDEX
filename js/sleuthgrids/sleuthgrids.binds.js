@@ -8,7 +8,10 @@ Sleuthgrids = (function(Sleuthgrids)
 	
 	$(window).resize(function(e)
 	{
-		Sleuthgrids.gridOverlord.resizeAllGrids();
+		if (Sleuthgrids.gridOverlord)
+		{
+			Sleuthgrids.gridOverlord.resizeAllGrids();
+		}
 	})
 	
 	

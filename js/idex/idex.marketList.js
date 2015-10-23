@@ -24,15 +24,15 @@ var IDEX = (function(IDEX, $, undefined)
 				var allCoins = allCoinsRet.allCoins;
 				var coinedMarketsByExchange = allCoinsRet.coinedMarketsByExchange;
 				var allMarkets = initMarkets(coinedMarketsByExchange);
-				
 				IDEX.coinOverlord.allCoins = allCoins;
 				IDEX.marketOverlord.allMarkets = allMarkets;
 				
 				IDEX.allCoins = allCoins;
 				IDEX.allMarkets = allMarkets;
-				
 				IDEX.coinOverlord.setLocalStorage();
-				IDEX.marketOverlord.setLocalStorage();				
+
+				IDEX.marketOverlord.setLocalStorage();
+				
 				
 				dfd.resolve();
 			})
@@ -236,6 +236,8 @@ var IDEX = (function(IDEX, $, undefined)
 			coinObj.isAsset = false;
 			coinObj.assetID = "";
 		}
+		
+		coinObj = new IDEX.Coin(coinObj);
 		
 								
 
