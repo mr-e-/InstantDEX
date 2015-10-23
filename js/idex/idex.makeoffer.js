@@ -5,7 +5,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	var $tradesequencePopup = $(".tradesequencePopup");
 	var $tradesequencePopupConfirm = $(".tradesequencePopup-confirm");
-	var $tradesequenceTable = $tradesequencePopup.find("table");
+	var $tradesequenceTable = $tradesequencePopup.find(".tradesequencePopup-tradesTable table");
 	
 	
 	$tradesequencePopupConfirm.on("click", function()
@@ -29,6 +29,7 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.sendPost(params, false).done(function(data)
 		{
 			console.log(data);
+			buildTradesequenceResults(data);
 
 			if ("error" in data && data.error.length)
 			{
@@ -48,7 +49,33 @@ var IDEX = (function(IDEX, $, undefined)
 		})
 	}
 	
+	
+	function buildTradesequenceResults(results)
+	{	
+		var tradeResults = results.traderesults;
+		
+		var $tradesequenceResults = $tradesequencePopup.find(".tradesequencePopup-resultsTable");
+		var $tradesequenceResultsTable = $tradesequencePopup.find(".tradesequencePopup-resultsTable table");
 
+		$tradesequenceResultsTable.find("tbody").empty();
+		
+		var rows = [];
+		
+		for (var i = 0; i < tradeResults.length; i++)
+		{
+			var tradeResult = tradeResults[i];
+			
+			if ("error" in tradeResult)
+			{
+				var tr = "<tr><td>Error: "+String(tradeResult.error)+"</td></tr>";
+				$tradesequenceResultsTable.find("tbody").append($(tr));
+			}
+		}
+		
+		$tradesequenceResults.addClass("active");
+	}
+
+	
 	IDEX.buildMakeofferModal = function(order, orderbook)
 	{
 		var market = orderbook.market;
@@ -65,6 +92,8 @@ var IDEX = (function(IDEX, $, undefined)
 		$tradesequencePopup.find(".refcur-base").text(baseName);
 
 		
+		var $tradesequenceResults = $tradesequencePopup.find(".tradesequencePopup-resultsTable");
+		$tradesequenceResults.removeClass("active");
 		$tradesequenceTable.find("tbody").empty();
 		buildTradesequenceTable(order);
 		
@@ -72,16 +101,45 @@ var IDEX = (function(IDEX, $, undefined)
 	}
 
 	
+	function formatTrades(rawTrades)
+	{
+		var trades = [];
+		var formattedTrades = [];
+		
+		if (rawTrades.length)
+		{
+			trades = rawTrades.slice();
+			if (Object.prototype.toString.call( trades[0] ) === '[object Array]')
+			{
+				trades = trades[0].slice();
+			}
+		}
+		
+		for (var i = 0; i < trades.length; i++)
+		{
+			var trade = trades[i];
+			var formattedTrade = {};
+			
+			formattedTrade.type = trade.trade;
+			//formattedTrade.market = String(trade.base) + "_" + String(trade.rel);
+			formattedTrade.base = String(trade.base);
+			formattedTrade.quote = String(trade.rel);
+			formattedTrade.price = trade.orderprice;
+			formattedTrade.volume = trade.ordervolume;
+			formattedTrade.exchange = trade.exchange;
+			
+			formattedTrades.push(formattedTrade);
+		}
+		
+		return formattedTrades;
+	}
 	
 	function buildTradesequenceTable(order)
 	{
-		var trades = order.trades;
-		var len = trades.length;
+		var trades = formatTrades(order.trades);
 		
-		//if (typeof trades == "object")
-		//	trades = [trades];
-		
-		var keys = "trade asset orderprice ordervolume exchange".split(" ");
+
+		var keys = "type base quote price volume exchange".split(" ");
 		var rows = IDEX.buildTableRows(IDEX.objToList(trades, keys), "table");
 
 		$tradesequenceTable.find("tbody").append(rows);

@@ -3261,11 +3261,43 @@ body {
 	width:100%;
 	position:relative;
 	display:block;
-	margin-bottom:4px;
+	margin-bottom:6px;
+	font-size:15px;
+	font-weight:bold;
 }
 
 .tradesequencePopup-tradesTable table {
 	width:100%;
+	font-size:13px;
+}
+
+
+.tradesequencePopup-resultsTable {
+	width:100%;
+	position:relative;
+	display:none;
+	padding-top:20px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
+.tradesequencePopup-resultsTable.active {
+	display:block;
+}
+
+.tradesequencePopup-resultsTable-header {
+	height:16px;
+	width:100%;
+	position:relative;
+	display:block;
+	margin-bottom:0px;
+	font-size:15px;
+	font-weight:bold;
+}
+
+.tradesequencePopup-resultsTable table {
+	width:100%;
+	font-size:13px;
 }
 
 .tradesequencePopup-confirm.disabled {

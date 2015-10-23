@@ -145,6 +145,7 @@ var IDEX = (function(IDEX, $, undefined)
 				orderbook.orderbox.changeMarket(market);
 			}
 		}
+		//console.log(market);
 		
 		if (!pollHandler.isStoppingPolling)
 		{
@@ -288,6 +289,7 @@ var IDEX = (function(IDEX, $, undefined)
 			params.rel = rel.name
 		}
 		
+		//console.log(JSON.stringify(params));
 
 		
 

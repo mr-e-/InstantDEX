@@ -48,6 +48,7 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	IDEX.BasicModeHandler.prototype.init = function()
 	{
+		return
 		var basicModeHandler = this;
 		var market = IDEX.defaultMarket;
 		var exchange = market.exchanges[0];
