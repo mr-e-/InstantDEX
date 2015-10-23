@@ -74,6 +74,7 @@ var IDEX = (function(IDEX, $, undefined)
 			var dfds = [];
 			
 			dfds.push(exchangeHandler.assets.initAllAssets());
+			dfds.push(exchangeHandler.assets.initAllMSCoins());
 			dfds.push(exchangeHandler.updateNXTRS());
 			
 			$.when.apply($, dfds).done(function()
@@ -155,6 +156,8 @@ var IDEX = (function(IDEX, $, undefined)
 			assetsHandler.exchangeHandler = exchangeHandler;
 			
 			assetsHandler.allAssets = [];
+			assetsHandler.allMSCoins = [];
+
 		},
 		
 		
@@ -172,9 +175,6 @@ var IDEX = (function(IDEX, $, undefined)
 			}
 			else
 			{
-				var firstIndex = 1;
-				var lastIndex = 99;
-				
 				assetsHandler.getAssetsLoop([], 0, 99, function(assets)
 				{
 					assets = assetsHandler.parseAllAssets(assets);
@@ -230,6 +230,74 @@ var IDEX = (function(IDEX, $, undefined)
 		},
 		
 		
+		initAllMSCoins: function()
+		{
+			var assetsHandler = this;
+			var retDFD = new $.Deferred();
+			var dfd = new $.Deferred();
+			
+			if (localStorage.allMSCoins)
+			{
+				var msCoins = JSON.parse(localStorage.getItem('allMSCoins'));
+				dfd.resolve(msCoins);
+			}
+			else
+			{
+				assetsHandler.getMSCoinsLoop([], 0, 99, function(msCoins)
+				{
+					var msCoins = assetsHandler.parseAllMSCoins(msCoins);
+					localStorage.setItem('allMSCoins', JSON.stringify(msCoins));
+					dfd.resolve(msCoins);
+				})
+			}
+			
+			
+			dfd.done(function(msCoins)
+			{
+				msCoins.sort(IDEX.compareProp('name'));
+				assetsHandler.allMSCoins = msCoins;
+				retDFD.resolve(msCoins);
+			})
+			
+			
+			return retDFD.promise();
+		},
+		
+		
+		
+		getMSCoinsLoop: function(msCoins, firstIndex, lastIndex, callback)
+		{
+			var assetsHandler = this;
+			var params = {};
+			params.requestType = "getAllCurrencies";
+			params.firstIndex = firstIndex;
+			params.lastIndex = lastIndex;
+			
+			IDEX.sendPost(params, true).done(function(data)
+			{
+				if ("currencies" in data)
+				{
+					if (data.currencies.length)
+					{
+						var addedMSCoins = msCoins.concat(data.currencies);
+						assetsHandler.getMSCoinsLoop(addedMSCoins, firstIndex+100, lastIndex+100, callback);
+					}
+					else
+					{
+						callback(msCoins);
+					}
+				}
+				else
+				{
+					callback(msCoins);
+				}
+			}).fail(function()
+			{
+				callback(msCoins);
+			})
+		},
+		
+		
 		
 		parseAllAssets: function(assets)
 		{
@@ -258,6 +326,33 @@ var IDEX = (function(IDEX, $, undefined)
 			return parsed
 		},
 		
+		
+		parseAllMSCoins: function(msCoins)
+		{
+			var parsed = [];
+			var len = msCoins.length;
+			
+			for (var i = 0; i < len; i++)
+			{
+				var obj = {};
+				
+				for (var key in msCoins[i])
+				{
+					if (key == "description")
+						continue;
+					
+					//if (key == "currency")
+					//	obj['assetID'] = msCoins[i][key];
+					
+					obj[key] = msCoins[i][key];
+				}
+
+				parsed.push(obj);
+			}
+			
+			
+			return parsed
+		},
 		
 		
 		getAsset: function(key, val)
