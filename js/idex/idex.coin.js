@@ -67,8 +67,6 @@ var IDEX = (function(IDEX, $, undefined)
 		coin.assetID = coinObj.assetID;
 		coin.exchanges = coinObj.exchanges;
 		
-		IDEX.constructFromObject(this, coinObj);
-
 		coin.balanceHandler = new IDEX.CBalanceHandler(coin);		
 	}
 	

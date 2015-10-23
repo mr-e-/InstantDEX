@@ -236,7 +236,8 @@ var IDEX = (function(IDEX, $, undefined)
 			coinObj.assetID = "";
 		}
 				
-								
+		coinObj = new IDEX.Coin(coinObj);
+
 
 		return coinObj;
 	}
