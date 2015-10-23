@@ -6,6 +6,7 @@ var IDEX = (function(IDEX, $, undefined)
 	var autoSearchMarket = [];
 	var autoSearchSkynet = [];
 	var autoSearchExchanges = [];
+	var autoSearchAssets = [];
 	IDEX.autoSearchSkynet = autoSearchSkynet;
 	
 	
@@ -18,6 +19,16 @@ var IDEX = (function(IDEX, $, undefined)
 		var allMarkets = IDEX.allMarkets;
 		var allCoins = IDEX.allCoins;
 		var len = allCoins.length;
+		var allAssets = IDEX.allExchanges.nxtae.markets;
+		
+		/*for (var i = 0; i < allAssets.length; i++)
+		{
+			var asset = allAssets[i];
+			
+			var labelStr = coin.name + " - (Asset ID: " + coin.assetID + ")";
+			
+			autoSearchAssets.push({"label":labelStr, "value":coin.name, "vals":coin});
+		}*/
 
 		for (var i = 0; i < len; i++)
 		{
@@ -114,14 +125,14 @@ var IDEX = (function(IDEX, $, undefined)
 			var coin = item.vals;
 			var name = coin.name;
 			
-			var testName = matcher.test(name);
 			
-			var ret = testName;
+			var ret = false;
 			
 			if (coin.isAsset)
 			{
 				var testAsset = matcher.test(coin.assetID);
-				
+				var testName = matcher.test(name);
+
 				ret = testAsset || testName;
 				
 			}
@@ -142,7 +153,7 @@ var IDEX = (function(IDEX, $, undefined)
 		}
 		
 		//coinList.sort(IDEX.compareProp('label'))
-		a = coinList.concat(assetList);
+		//a = coinList.concat(assetList);
 
 		response(a);
 	}
@@ -151,7 +162,7 @@ var IDEX = (function(IDEX, $, undefined)
 	{
 		if (!ui.item)
 		{
-			$thisScope.attr('data-asset', "-1");
+			$thisScope.data('asset', "-1");
 		}
 		else
 		{

@@ -483,7 +483,8 @@ var IDEX = (function(IDEX, $, undefined)
 	
 	$(window).on("beforeunload", function()
 	{
-		var saves = Sleuthgrids.saveAllGrids();
+		var saves = Sleuthgrids.gridOverlord.saveAllGrids();
+		console.log(saves);
 		localStorage.setItem('grids', JSON.stringify(saves));
 	});
 	

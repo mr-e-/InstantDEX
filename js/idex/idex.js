@@ -32,41 +32,48 @@ var IDEX = (function(IDEX, $, undefined)
 		IDEX.user.initLabels();
 		IDEX.initChartIndicators();
 		
-		IDEX.dMonOverlord.checkAll().done(function(message)
-		{			
-			IDEX.timer(1000).done(function()
+		IDEX.dMonOverlord.pingNXT().done(function()
+		{
+			IDEX.dMonOverlord.pingSuperNET().done(function()
 			{
-				timeoutFinished.resolve();
-			});
-			
 
-			IDEX.initExchanges().done(function()
-			{
-				IDEX.initMarketList().done(function()
+				IDEX.timer(1000).done(function()
 				{
-					IDEX.defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
-
-					IDEX.initAutocomplete();
-					IDEX.watchlistOverlord.loadLocalStorage();
-
-					initializedExchanges.resolve();
+					timeoutFinished.resolve();
 				});
-			});
-			
-			
-			$.when(timeoutFinished, initializedExchanges).done(function()
+				
+
+				IDEX.initExchanges().done(function()
+				{
+					IDEX.initMarketList().done(function()
+					{
+						IDEX.defaultMarket = IDEX.marketOverlord.getMarket('15344649963748848799_nxt');
+
+						IDEX.initAutocomplete();
+						IDEX.watchlistOverlord.loadLocalStorage();
+
+						initializedExchanges.resolve();
+					});
+				});
+				
+				
+				$.when(timeoutFinished, initializedExchanges).done(function()
+				{
+					IDEX.basicModeHandler.init();
+					IDEX.initGrids();
+					IDEX.hideLoading();
+					//IDEX.toggleMode();
+					retDFD.resolve();
+				})
+				
+			}).fail(function()
 			{
-				IDEX.basicModeHandler.init();
-				IDEX.initGrids();
-				IDEX.hideLoading();
-				//IDEX.toggleMode();
-				retDFD.resolve();
+				IDEX.editLoading("Could not connect to SuperNET. Start SuperNET and reload.")
 			})
 			
-		}).fail(function(message)
+		}).fail(function()
 		{
-			$(".temp-exit").addClass("active");
-			IDEX.editLoading()
+			IDEX.editLoading("Could not connect to NXT. Start NXT and reload.")
 		});
 
 		

@@ -156,7 +156,6 @@ var IDEX = (function(IDEX, $, undefined)
 		{
 			var $market = $form.find("input[name=market]");
 			var market = $market.data("market");
-			console.log(market);
 			$banner.removeClass("active");
 
 			if (market != "-1")
@@ -171,6 +170,31 @@ var IDEX = (function(IDEX, $, undefined)
 			{
 				$banner.addClass("error")
 				$banner.find("span").text("Error: You must choose a valid market")
+			}
+		}
+		
+		else if (searchType == "coin")
+		{
+			var $baseAsset = $form.find("input[name=base]");
+			var baseAsset = $baseAsset.data("asset");
+			var $relAsset = $form.find("input[name=rel]");
+			var relAsset = $relAsset.data("asset");
+			$banner.removeClass("active");
+
+			console.log(baseAsset, relAsset);
+			if (baseAsset != "-1" && relAsset != "-1")
+			{
+				var market = IDEX.marketOverlord.makeVirtual(baseAsset, relAsset);
+				orderbook.changeMarket(market);
+				//orderbook.cellHandler.emit("changeMarket", market);
+				
+				clearAssetInput($wrap);
+				$popup.find(".popup-header-close").trigger("click");
+			}
+			else
+			{
+				$banner.addClass("error")
+				$banner.find("span").text("Error: You must choose valid assets")
 			}
 		}
 

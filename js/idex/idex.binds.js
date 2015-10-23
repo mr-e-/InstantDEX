@@ -5,6 +5,19 @@ var IDEX = (function(IDEX, $, undefined)
 	var $contentWrap = $("#content_wrap");
 	
 	
+	/*$(".tab-trig").on("click", function()
+	{
+		var $tabOverlord = $(this).closest(".tab-trig-wrap");
+		var $tab = $(this);
+		var tabName = $tab.attr("data-tab");
+		
+		$tabOverlord.find(".tab-wrap").removeClass("active");
+		var $newActiveTab = $tabOverlord.find(".tab-wrap[data-tab='"+tabName+"']");
+		$newActiveTab.addClass("active");
+		console.log($newActiveTab);
+	})*/
+	
+	
 	
 	$("#topLogoWrap").on("click", function()
 	{
@@ -21,14 +34,16 @@ var IDEX = (function(IDEX, $, undefined)
 	$contentWrap.on("click", ".tab-nav-cell span", function()
 	{
 		var $fullWrap = $(this).closest(".tab-trig-wrap");
-		var $tabNav = $(this).parent();
-		var tab = $tabNav.attr("data-tab");
+		var $tab = $(this);
+		var tab = $tab.attr("data-tab");
 		var $tabWrap = $fullWrap.find(".tab-wrap[data-tab='"+tab+"']");
+		console.log(tab);
+		console.log($tabWrap);
 
 		$fullWrap.find(".tab-nav-cell").removeClass("active");
 		$fullWrap.find(".tab-wrap").removeClass("active");
 		
-		$tabNav.addClass("active");
+		$tab.addClass("active");
 		$tabWrap.addClass("active");
 	})
 	

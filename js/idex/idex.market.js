@@ -114,6 +114,22 @@ var IDEX = (function(IDEX, $, undefined)
 		return minMarkets;
 	}
 
+	IDEX.MarketOverlord.prototype.makeVirtual = function(baseCoin, relCoin)
+	{
+		var marketOverlord = this;
+		var coinOverlord = IDEX.coinOverlord;
+
+		var marketObj = new IDEX.Market({});
+		marketObj.marketName = baseCoin.name + "_" + relCoin.name;
+		marketObj.base = baseCoin;
+		marketObj.rel = relCoin;
+		marketObj.pairID = baseCoin.assetID + "_" + relCoin.assetID;
+		marketObj.exchanges = [];
+		marketObj.exchangeSettings = {};
+		marketObj.marketKey = baseCoin.assetID + "_" + relCoin.assetID;
+
+		return marketObj;
+	}
 	
 	
 	IDEX.MarketOverlord.prototype.expandMarket = function(minMarket)

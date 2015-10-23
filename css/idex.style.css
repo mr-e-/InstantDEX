@@ -3037,6 +3037,19 @@ body {
 	padding-bottom:5px;
 }
 
+.marketSearch-nav {
+	height:30px;
+	width:100%;
+	padding-left:20px;
+}
+
+.marketSearch-nav-cell {
+	height:100%;
+	width:70px;
+	float:left;
+	font-size:13px;
+	padding-top:6px;
+}
 
 /* ------------------------- ORDERBOOK SEARCH POPUP ------------------------- */
 

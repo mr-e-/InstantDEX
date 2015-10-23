@@ -3,6 +3,7 @@
 var IDEX = (function(IDEX, $, undefined) 
 {
 	
+	/*
 
 	var nxtURL = "http://127.0.0.1:8080/nxt";
 	var snURL = "http://127.0.0.1:8080/IDEXsupernet";
@@ -99,8 +100,8 @@ var IDEX = (function(IDEX, $, undefined)
 		return dfd.promise();
 	}
 
-	
-/*
+	*/
+
 	var isWindows = window.jscd.os == "Windows";
 	
 	if (isWindows)
@@ -215,7 +216,7 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		return dfd.promise()
 	}
-*/
+
 	
 	
 	IDEX.sendSkynetPost = function(params) 

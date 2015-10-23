@@ -271,6 +271,12 @@ var IDEX = (function(IDEX, $, undefined)
 			params.relid = "5527630";
 			//params.exchange = "nxtae";
 		}
+		else if (orderbook.market.isVirtualAsset)
+		{
+			params.base = base.assetID;
+			params.rel = rel.assetID;
+			params.exchange = "active";
+		}
 		else
 		{
 			params.base = base.name

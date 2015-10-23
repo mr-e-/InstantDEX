@@ -10,54 +10,17 @@ var IDEX = (function(IDEX, $, undefined)
 		dMonOverlord.dMons = [];
 	}
 
-
 	
-	
-	IDEX.DMonOverlord.prototype.checkAll = function()
-	{
-		var dMonOverlord = this;
-		var dMons = dMonOverlord.dMons;
-		var retDFD = new $.Deferred();
-		retDFD.resolve();
-		
-		dMonOverlord.ping().done(function()
-		{
-			
-		})
-		for (var i = 0; i < dMons.length; i++)
-		{
-			var dMon = dMons[i];
-			dMon.ping().done(function()
-			{
-				//"Could not connect to SuperNET. Start SuperNET and reload."
-				//"Could not connect to NXT. Start NXT and reload."
-			})
-		}
-		
-		return retDFD.promise();
-	}
-	
-	
-	IDEX.DMon = function(monName)
-	{
-		var dMon = this;
-		
-		dMon.monName = monName;
-		
-	}
-	
-	
-	IDEX.DMonOverlord.prototype.ping = function()
+	IDEX.DMonOverlord.prototype.pingSuperNET = function()
 	{
 		var dfd = new $.Deferred();
 		var params = {"method":"openorders","allorders":1};
-		params = {"method":"balance","exchange":"bittrex"}
+		//params = {"method":"balance","exchange":"bittrex"}
 		//params = {"method":"allexchanges"}
 		//params = {"method":"tradehistory"}
 
 		IDEX.sendPost(params, false).done(function(data)
 		{
-			console.log(data)
 			dfd.resolve()
 			
 		}).fail(function()
@@ -71,7 +34,7 @@ var IDEX = (function(IDEX, $, undefined)
 
 	
 	
-	IDEX.pingNxt = function()
+	IDEX.DMonOverlord.prototype.pingNXT = function()
 	{
 		var dfd = new $.Deferred();
 		var params = {"requestType":"getState"};
