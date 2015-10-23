@@ -30,7 +30,6 @@ var IDEX = (function(IDEX, $, undefined)
 				IDEX.allCoins = allCoins;
 				IDEX.allMarkets = allMarkets;
 				IDEX.coinOverlord.setLocalStorage();
-
 				IDEX.marketOverlord.setLocalStorage();
 				
 				
@@ -236,9 +235,7 @@ var IDEX = (function(IDEX, $, undefined)
 			coinObj.isAsset = false;
 			coinObj.assetID = "";
 		}
-		
-		coinObj = new IDEX.Coin(coinObj);
-		
+				
 								
 
 		return coinObj;

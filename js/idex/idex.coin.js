@@ -18,7 +18,6 @@ var IDEX = (function(IDEX, $, undefined)
 	IDEX.CoinOverlord.prototype.loadLocalStorage = function()
 	{
 		var overlord = this;
-		var allCoins = overlord.allCoins;
 		var allCoinsRaw = JSON.parse(localStorage.getItem('allCoins'));
 
 		for (var i = 0; i < allCoinsRaw.length; i++)
@@ -26,10 +25,10 @@ var IDEX = (function(IDEX, $, undefined)
 			var coinRaw = allCoinsRaw[i];
 			var coin = new IDEX.Coin(coinRaw);
 			
-			allCoins.push(coin);
+			overlord.allCoins.push(coin);
 		}
 		
-		return allCoins;
+		return overlord.allCoins;
 	}
 	
 	

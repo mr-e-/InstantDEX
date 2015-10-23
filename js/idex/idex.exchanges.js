@@ -119,7 +119,7 @@ var IDEX = (function(IDEX, $, undefined)
 		for (var i = 0; i < allCoins.length; i++)
 		{
 			var coin = allCoins[i];
-			
+			console.log(coin);
 			for (var j = 0; j < coin.exchanges.length; j++)
 			{
 				var exchangeName = coin.exchanges[j];
