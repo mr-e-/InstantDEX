@@ -41,7 +41,6 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		IDEX.sendPost(params, true).done(function(data)
 		{
-			console.log(data);
 			dfd.resolve()
 			
 		}).fail(function()

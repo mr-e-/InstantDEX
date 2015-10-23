@@ -106,13 +106,9 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		var listItems = [];
 		
-		if (true || activeMarketExchanges.length)
+		if (market.isNxtAE)
 		{
-			activeMarketExchanges.push("InstantDEX");
-		}
-		else
-		{
-			//activeMarketExchanges.push("inactive");
+			listItems.push($("<li class='' data-val='InstantDEX'>"+"InstantDEX"+"</li>"))
 		}
 		
 		for (var i = 0; i < activeMarketExchanges.length; i++)
