@@ -75,7 +75,8 @@ var IDEX = (function(IDEX, $, undefined)
 
 		if (cOpenOrder.hasMarket)
 		{
-			return
+			return;
+			
 			cOpenOrder.tableDom.find("tbody").empty();
 			var market = cOpenOrder.market;
 			var openOrdersHandler = market.openOrdersHandler;

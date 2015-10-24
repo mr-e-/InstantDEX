@@ -732,6 +732,7 @@ Sleuthcharts = (function(Sleuthcharts)
 $(window).resize(function(e)
 {	
 	return;
+	
 	var prevWindowHeight = $(window).height();
 	var prevWindowWidth = $(window).width();
 	

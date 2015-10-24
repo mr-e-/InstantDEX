@@ -304,7 +304,8 @@ Sleuthgrids = (function(Sleuthgrids)
 			var tile = this;
 			var grid = tile.grid;
 			var $tile = tile.tileDOM;
-			return
+			
+			return;
 			
 			grid.gridDOM.find(".tile-header-tab").removeClass("focus-border");
 			grid.gridDOM.find(".tile-cells").removeClass("focus-border");

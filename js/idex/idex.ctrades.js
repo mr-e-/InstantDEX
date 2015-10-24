@@ -73,7 +73,8 @@ var IDEX = (function(IDEX, $, undefined)
 		
 		if (cTrade.hasMarket)
 		{
-			return
+			return;
+			
 			cTrade.tableDom.find("tbody").empty();
 
 			var market = cTrade.market;

@@ -129,7 +129,30 @@ var IDEX = (function(IDEX, $, undefined)
 		marketObj.marketKey = baseCoin.assetID + "_" + relCoin.assetID;
 		marketObj.isVirtualAsset = true;
 		marketObj.isNxtAE = false;
-		
+		marketObj.isMSCoin = false;
+
+
+		return marketObj;
+	}
+	
+	
+	IDEX.MarketOverlord.prototype.makeMSCoin = function(baseCoin)
+	{
+		var marketOverlord = this;
+		var coinOverlord = IDEX.coinOverlord;
+
+		var marketObj = new IDEX.Market({});
+		marketObj.marketName = baseCoin.name + "_" + "NXT";
+		marketObj.base = baseCoin;
+		marketObj.rel = relCoin;
+		marketObj.pairID = baseCoin.assetID + "_" + "NXT";
+		marketObj.exchanges = [];
+		marketObj.exchangeSettings = {};
+		marketObj.marketKey = baseCoin.assetID + "_" + "NXT";
+		marketObj.isMSCoin = true;
+		marketObj.isNxtAE = false;
+		marketObj.isVirtualAsset = false;
+
 
 		return marketObj;
 	}
