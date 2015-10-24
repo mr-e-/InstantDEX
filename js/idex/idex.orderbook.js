@@ -283,9 +283,9 @@ var IDEX = (function(IDEX, $, undefined)
 			params.relid = rel.assetID;
 			params.exchange = "active";
 			
-			params.baseid = "18038186839143430800";
-			params.relid = "5527630";
-			params.exchange = "nxtae";
+			//params.baseid = "18038186839143430800";
+			//params.relid = "5527630";
+			//params.exchange = "nxtae";
 		}
 		else
 		{
