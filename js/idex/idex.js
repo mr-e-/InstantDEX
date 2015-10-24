@@ -77,6 +77,8 @@ var IDEX = (function(IDEX, $, undefined)
 		});
 
 		
+		Sleuthgrids.gridOverlord = new Sleuthgrids.GridOverlord();
+		
 		return retDFD.promise();
 	}
 	

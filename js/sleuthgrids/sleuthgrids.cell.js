@@ -284,9 +284,9 @@ Sleuthgrids = (function(Sleuthgrids)
 			
 			cell.cellNav = new Sleuthgrids.CellNav(cell);
 			//cell.handler = new Sleuthgrids.cellHandlerClass(cell);
-			cell.handler = new Sleuthgrids.cellHandlers[cellType]();
-			cell.handler.init(cell)
-
+			//cell.handler = new Sleuthgrids.cellHandlers[cellType]();
+			//cell.handler.init(cell)
+			cell.handler = {"call":function(a){return}, "getMarket":function(){return false}};
 		},
 		
 		

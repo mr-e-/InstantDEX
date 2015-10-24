@@ -4,7 +4,7 @@ var IDEX = (function(IDEX, $, undefined)
 {
 	
 
-	var nxtURL = "http://127.0.0.1:8080/nxt";
+	var nxtURL = "http://jnxt.org:7876/nxt";
 	var snURL = "http://127.0.0.1:8080/IDEXsupernet";
 	var strURL = "http://127.0.0.1:8080/IDEXsupernet";
 	
